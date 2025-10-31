@@ -1,0 +1,78 @@
+# ============================================================================
+# Climate Litigation Database - Python Requirements
+# ============================================================================
+#
+# Install all packages with:
+#   pip install -r requirements.txt
+#
+# ============================================================================
+
+# Database and ORM
+# ----------------
+sqlalchemy>=2.0.0          # ORM framework for database operations
+psycopg2-binary>=2.9.0     # PostgreSQL adapter for Python
+python-dotenv>=1.0.0       # Load environment variables from .env file
+
+# PDF Processing (for future text extraction)
+# --------------------------------------------
+pdfplumber>=0.10.0         # PDF text extraction (recommended)
+PyPDF2>=3.0.0              # Alternative PDF library
+pytesseract>=0.3.10        # OCR for scanned PDFs (requires Tesseract installed)
+pdf2image>=1.16.0          # Convert PDF pages to images for OCR
+
+# Data Processing
+# ---------------
+pandas>=2.0.0              # Data manipulation and analysis
+openpyxl>=3.1.0            # Read/write Excel files (.xlsx)
+xlrd>=2.0.0                # Read older Excel files (.xls)
+
+# Text Processing (for future analysis)
+# --------------------------------------
+nltk>=3.8.0                # Natural language processing
+spacy>=3.6.0               # Advanced NLP (optional, install model separately)
+
+# Utilities
+# ---------
+python-dateutil>=2.8.0     # Date parsing utilities
+chardet>=5.0.0             # Character encoding detection
+
+# Progress and Logging
+# ---------------------
+tqdm>=4.66.0               # Progress bars for long operations
+
+# Hashing (for file deduplication)
+# --------------------------------
+# hashlib is built-in, no installation needed
+
+# ============================================================================
+# OPTIONAL PACKAGES
+# ============================================================================
+#
+# Uncomment if you want to use these features:
+#
+# jupyter>=1.0.0            # For interactive notebooks
+# matplotlib>=3.7.0         # Data visualization
+# seaborn>=0.12.0           # Statistical visualization
+# plotly>=5.14.0            # Interactive plots
+#
+# ============================================================================
+# INSTALLATION NOTES
+# ============================================================================
+#
+# 1. Create virtual environment (recommended):
+#    python -m venv venv
+#    source venv/bin/activate  # On Windows: venv\Scripts\activate
+#
+# 2. Install requirements:
+#    pip install -r requirements.txt
+#
+# 3. For OCR support, install Tesseract separately:
+#    - Windows: https://github.com/UB-Mannheim/tesseract/wiki
+#    - macOS: brew install tesseract
+#    - Linux: sudo apt install tesseract-ocr
+#
+# 4. For spaCy, download language model:
+#    python -m spacy download en_core_web_sm  # English
+#    python -m spacy download pt_core_news_sm  # Portuguese
+#
+# ============================================================================

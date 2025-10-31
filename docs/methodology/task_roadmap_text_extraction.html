@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Extraction & Database Configuration - Task Roadmap</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #f5f7fa;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .header .metadata {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .metadata-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Navigation Index */
+        .nav-index {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-index h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .nav-index ul {
+            list-style: none;
+        }
+
+        .nav-index li {
+            margin: 12px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .nav-index li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .nav-index a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-index a:hover {
+            color: #667eea;
+            text-decoration: underline;
+        }
+
+        /* Main Content Container */
+        .content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-bottom: 0;
+        }
+
+        .section-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .section-header h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            border-left: 4px solid #667eea;
+            padding: 25px;
+            background: #f8f9fc;
+            border-radius: 0 0 8px 8px;
+            max-height: 5000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+            padding: 0 25px;
+        }
+
+        /* Task Card Styles */
+        .task-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .task-card h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-card h4 {
+            color: #34495e;
+            font-size: 1.1em;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+
+        .task-objective {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .task-objective strong {
+            color: #2980b9;
+        }
+
+        .actions-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .actions-list > li {
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .actions-list > li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .actions-list ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .actions-list ul li {
+            list-style-type: disc;
+            color: #555;
+            margin: 8px 0;
+        }
+
+        /* Code Block Styles */
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .code-inline {
+            background: #ecf0f1;
+            color: #e74c3c;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* Deliverable Box */
+        .deliverable-box {
+            background: #e8f8f5;
+            border-left: 5px solid #27ae60;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .deliverable-box h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .deliverable-box ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+
+        .deliverable-box li {
+            padding-left: 25px;
+            position: relative;
+            margin: 8px 0;
+        }
+
+        .deliverable-box li:before {
+            content: "📄";
+            position: absolute;
+            left: 0;
+        }
+
+        /* Considerations Box */
+        .considerations-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .considerations-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .considerations-box ul {
+            margin-left: 20px;
+        }
+
+        .considerations-box li {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-current {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-pending {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Timeline Styles */
+        .timeline {
+            background: #f8f9fc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .timeline h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .timeline-item .duration {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        /* Workflow Diagram */
+        .workflow {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .workflow-step {
+            background: #f8f9fc;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .workflow-step:not(:last-child):after {
+            content: "↓";
+            display: block;
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .workflow-step h5 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .workflow-step p {
+            color: #555;
+            margin: 5px 0;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8f9fc;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .info-box h4 {
+            color: #1565c0;
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #c62828;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .section-header h2 {
+                font-size: 1.2em;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .section-header {
+                background: #667eea !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .section-content {
+                max-height: none !important;
+                padding: 25px !important;
+            }
+
+            .nav-index {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>📋 Text Extraction & Database Configuration</h1>
+        <p class="subtitle">Task Roadmap for Climate Litigation Citation Analysis Project</p>
+        <div class="metadata">
+            <div class="metadata-item">
+                <strong>Project:</strong> PhD Climate Litigation Research (Lucas "Mutley")
+            </div>
+            <div class="metadata-item">
+                <strong>Technical Lead:</strong> Gustavo (Gus)
+            </div>
+            <div class="metadata-item">
+                <strong>Phase:</strong> Phase 0 & Phase 1
+            </div>
+            <div class="metadata-item">
+                <strong>Document Date:</strong> October 31, 2025
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Index -->
+    <div class="nav-index">
+        <h2>📑 Quick Navigation Index</h2>
+        <ul>
+            <li><a href="#context">Context & Project Status</a></li>
+            <li><a href="#stage1">Stage 1: PDF Library Testing & Selection (Task G4)</a></li>
+            <li><a href="#stage2">Stage 2: Database Schema Design (Task G5)</a></li>
+            <li><a href="#stage3">Stage 3: Text Extraction Pipeline Development (Task G7)</a></li>
+            <li><a href="#stage4">Stage 4: Database Integration (Task G8)</a></li>
+            <li><a href="#stage5">Stage 5: Text Preprocessing (Task G9)</a></li>
+            <li><a href="#stage6">Stage 6: Pipeline Validation (Task G10)</a></li>
+            <li><a href="#workflow">Workflow Summary</a></li>
+            <li><a href="#timeline">Estimated Timeline</a></li>
+            <li><a href="#academic">Academic Rigor Notes</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Context Section -->
+        <div id="context" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>📊 Context & Project Status</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="info-box">
+                    <h4>Current Progress</h4>
+                    <p>You've successfully completed several foundational tasks:</p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Task</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Phase 0</td>
+                            <td>G1</td>
+                            <td><span class="badge badge-completed">✓ Completed</span></td>
+                            <td>Environment setup with all required libraries</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 0</td>
+                            <td>G2</td>
+                            <td><span class="badge badge-completed">✓ Completed</span></td>
+                            <td>Exploratory analysis of the complete database</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 0</td>
+                            <td>G3</td>
+                            <td><span class="badge badge-completed">✓ Completed</span></td>
+                            <td>Filtered database creation (2,924 decision documents)</td>
+                        </tr>
+                        <tr>
+                            <td>Phase 1</td>
+                            <td>G6 (partial)</td>
+                            <td><span class="badge badge-completed">✓ Completed</span></td>
+                            <td>PDF download script created and tested on 15 random samples</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <h4>🎯 Current Status</h4>
+                    <p><strong>Ready to move forward with text extraction and database infrastructure.</strong></p>
+                    <p>The next stages focus on building the core processing pipeline: extracting text from PDFs, storing it in a structured database, and preparing it for citation analysis.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 1 -->
+        <div id="stage1" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Stage 1: PDF Library Testing & Selection</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="task-card">
+                    <h3>📚 Task G4: Research and Test PDF Extraction Libraries</h3>
+                    
+                    <div class="task-objective">
+                        <strong>Objective:</strong> Identify the best PDF extraction tool(s) for the project's needs.
+                    </div>
+
+                    <h4>Actions:</h4>
+                    <ol class="actions-list">
+                        <li><strong>Select a diverse sample of 10-15 PDFs</strong> representing:
+                            <ul>
+                                <li>Different jurisdictions (U.S. federal, state, international)</li>
+                                <li>Different time periods (old vs. recent decisions)</li>
+                                <li>Different languages (English, Spanish, Portuguese, French)</li>
+                                <li>Different court levels and formatting styles</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Test three libraries systematically:</strong>
+                            <ul>
+                                <li><span class="code-inline">PyPDF2</span> (already installed)</li>
+                                <li><span class="code-inline">pdfplumber</span> (already installed)</li>
+                                <li><span class="code-inline">PyMuPDF/fitz</span> (already installed)</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>For each PDF in your sample, measure:</strong>
+                            <ul>
+                                <li><strong>Quality:</strong> Text coherence, preservation of structure, handling of special characters</li>
+                                <li><strong>Speed:</strong> Time to extract text</li>
+                                <li><strong>Robustness:</strong> Error handling, ability to process problematic PDFs</li>
+                                <li><strong>Metadata extraction:</strong> Can it extract page count, file size, creation date?</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Document findings in a comparison table</strong> with columns:
+                            <ul>
+                                <li>PDF filename</li>
+                                <li>Library tested</li>
+                                <li>Extraction quality score (1-5)</li>
+                                <li>Processing time</li>
+                                <li>Text sample (first 500 characters)</li>
+                                <li>Issues encountered</li>
+                                <li>Recommended for this PDF type? (Yes/No)</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="deliverable-box">
+                        <h4>📦 Deliverable:</h4>
+                        <ul>
+                            <li>A report (Jupyter Notebook or Markdown) recommending the primary library and backup option, with rationale</li>
+                        </ul>
+                    </div>
+
+                    <div class="considerations-box">
+                        <h4>⚠️ Key Considerations:</h4>
+                        <ul>
+                            <li><strong>Scanned PDFs:</strong> You will encounter some scanned documents. The task here is not to process them with OCR, but to <em>identify</em> them automatically (a heuristic: if a 10+ page PDF yields &lt;100 words, it's likely scanned). Document what percentage of your sample appears to be scanned.</li>
+                            <li><strong>Multi-language support:</strong> Test how each library handles non-English text, especially Spanish and Portuguese, which are common in Latin American jurisdictions.</li>
+                            <li><strong>Complex layouts:</strong> Legal documents often have multi-column layouts, footnotes, headers/footers. Test how well each library preserves logical reading order.</li>
+                            <li><strong>Performance at scale:</strong> Consider that <span class="code-inline">pdfplumber</span> is typically more accurate but slower than <span class="code-inline">PyPDF2</span>. With ~2,900 documents, this matters. A hybrid approach might be optimal: try PyPDF2 first, fall back to pdfplumber if extraction quality is poor.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline">
+                        <h4>⏱️ Estimated Duration: 2-3 days</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div id="stage2" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Stage 2: Database Schema Design</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="task-card">
+                    <h3>🗄️ Task G5: Define Database Structure</h3>
+                    
+                    <div class="task-objective">
+                        <strong>Objective:</strong> Design a robust, scalable database schema to store all extracted text and metadata.
+                    </div>
+
+                    <h4>Actions:</h4>
+                    <ol class="actions-list">
+                        <li><strong>Choose your database system:</strong>
+                            <ul>
+                                <li><strong>SQLite:</strong> Simpler, file-based, sufficient for ~3,000 cases, excellent for portability</li>
+                                <li><strong>PostgreSQL:</strong> More powerful, better for complex queries, overkill for this scale but good if you expect growth</li>
+                                <li><strong>Recommendation:</strong> Start with SQLite, design schema to be PostgreSQL-compatible for easy migration later</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Design the following tables:</strong>
+
+                            <h4 style="margin-top: 20px;">Table: <span class="code-inline">cases</span> (Metadata from original CSV)</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="code-inline">case_id</span></td>
+                                        <td>TEXT (PK)</td>
+                                        <td>From original "Case ID" column</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">case_name</span></td>
+                                        <td>TEXT</td>
+                                        <td>Name of the case</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">jurisdiction</span></td>
+                                        <td>TEXT</td>
+                                        <td>Court jurisdiction</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">geography_iso</span></td>
+                                        <td>TEXT</td>
+                                        <td>ISO country code</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">region</span></td>
+                                        <td>TEXT</td>
+                                        <td>"Global North" or "Global South"</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">filing_date</span></td>
+                                        <td>DATE</td>
+                                        <td>Date case was filed</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">decision_date</span></td>
+                                        <td>DATE</td>
+                                        <td>Date of decision</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">language</span></td>
+                                        <td>TEXT</td>
+                                        <td>Primary language of case</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">case_url</span></td>
+                                        <td>TEXT</td>
+                                        <td>Link to Climate Case Chart</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">created_at</span></td>
+                                        <td>TIMESTAMP</td>
+                                        <td>Record creation timestamp</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4 style="margin-top: 20px;">Table: <span class="code-inline">documents</span> (PDF documents and extraction metadata)</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="code-inline">document_id</span></td>
+                                        <td>INTEGER (PK)</td>
+                                        <td>Auto-increment primary key</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">case_id</span></td>
+                                        <td>TEXT (FK)</td>
+                                        <td>References cases.case_id</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">document_type</span></td>
+                                        <td>TEXT</td>
+                                        <td>"Decision", "Verdict", etc.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">document_url</span></td>
+                                        <td>TEXT</td>
+                                        <td>Original PDF URL</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">pdf_file_path</span></td>
+                                        <td>TEXT</td>
+                                        <td>Local storage path</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">pdf_downloaded</span></td>
+                                        <td>BOOLEAN</td>
+                                        <td>Download success flag</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">download_date</span></td>
+                                        <td>TIMESTAMP</td>
+                                        <td>When PDF was downloaded</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">file_size_bytes</span></td>
+                                        <td>INTEGER</td>
+                                        <td>PDF file size</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">page_count</span></td>
+                                        <td>INTEGER</td>
+                                        <td>Number of pages</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">is_scanned</span></td>
+                                        <td>BOOLEAN</td>
+                                        <td>Flag for scanned PDFs</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">created_at</span></td>
+                                        <td>TIMESTAMP</td>
+                                        <td>Record creation timestamp</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4 style="margin-top: 20px;">Table: <span class="code-inline">extracted_texts</span> (The actual text content)</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="code-inline">text_id</span></td>
+                                        <td>INTEGER (PK)</td>
+                                        <td>Auto-increment primary key</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">document_id</span></td>
+                                        <td>INTEGER (FK)</td>
+                                        <td>References documents.document_id</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">extraction_method</span></td>
+                                        <td>TEXT</td>
+                                        <td>"PyPDF2", "pdfplumber", or "PyMuPDF"</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">extraction_date</span></td>
+                                        <td>TIMESTAMP</td>
+                                        <td>When extraction was performed</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">raw_text</span></td>
+                                        <td>TEXT</td>
+                                        <td>Original extracted text, unprocessed</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">processed_text</span></td>
+                                        <td>TEXT</td>
+                                        <td>Cleaned and preprocessed text</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">word_count</span></td>
+                                        <td>INTEGER</td>
+                                        <td>Number of words in text</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">extraction_quality</span></td>
+                                        <td>TEXT</td>
+                                        <td>"excellent", "good", "fair", "poor", "failed"</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">extraction_notes</span></td>
+                                        <td>TEXT</td>
+                                        <td>Any warnings or issues</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">language_detected</span></td>
+                                        <td>TEXT</td>
+                                        <td>Auto-detected language code</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">created_at</span></td>
+                                        <td>TIMESTAMP</td>
+                                        <td>Record creation timestamp</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4 style="margin-top: 20px;">Table: <span class="code-inline">extraction_log</span> (Detailed processing log)</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="code-inline">log_id</span></td>
+                                        <td>INTEGER (PK)</td>
+                                        <td>Auto-increment primary key</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">document_id</span></td>
+                                        <td>INTEGER (FK)</td>
+                                        <td>References documents.document_id</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">stage</span></td>
+                                        <td>TEXT</td>
+                                        <td>"download", "extraction", "preprocessing"</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">status</span></td>
+                                        <td>TEXT</td>
+                                        <td>"success", "failure", "warning"</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">message</span></td>
+                                        <td>TEXT</td>
+                                        <td>Log message details</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-inline">timestamp</span></td>
+                                        <td>TIMESTAMP</td>
+                                        <td>When log entry was created</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </li>
+
+                        <li><strong>Create indexes for common queries:</strong>
+                            <ul>
+                                <li>Index on <span class="code-inline">cases.region</span> (for North/South filtering)</li>
+                                <li>Index on <span class="code-inline">cases.jurisdiction</span> (for geographic analysis)</li>
+                                <li>Index on <span class="code-inline">documents.case_id</span> (for joining with cases)</li>
+                                <li>Index on <span class="code-inline">extracted_texts.document_id</span> (for retrieving text)</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Write a database initialization script</strong> (<span class="code-inline">init_database.py</span>) that:
+                            <ul>
+                                <li>Creates all tables with proper schema</li>
+                                <li>Creates all indexes</li>
+                                <li>Includes foreign key constraints</li>
+                                <li>Has a function to reset/rebuild the database if needed</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Document the schema in an Entity-Relationship (ER) diagram</strong>
+                            <ul>
+                                <li>Can use tools like dbdiagram.io or draw.io</li>
+                                <li>Or simply a well-formatted Markdown table showing relationships</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="deliverable-box">
+                        <h4>📦 Deliverables:</h4>
+                        <ul>
+                            <li><span class="code-inline">init_database.py</span> script (fully commented)</li>
+                            <li><span class="code-inline">schema.sql</span> file with the SQL CREATE TABLE statements</li>
+                            <li>ER diagram (PNG or PDF)</li>
+                            <li>Schema documentation (Markdown file explaining each table and field)</li>
+                        </ul>
+                    </div>
+
+                    <div class="considerations-box">
+                        <h4>⚠️ Key Considerations:</h4>
+                        <ul>
+                            <li><strong>Separation of concerns:</strong> Keep raw text and processed text separate. This allows you to refine preprocessing without re-extracting from PDFs.</li>
+                            <li><strong>Scalability for Phase 2:</strong> Your schema should accommodate future expansion. For Phase 2 (citations in party briefs), you might need additional tables for <span class="code-inline">briefs</span> and <span class="code-inline">brief_texts</span>. Design with this in mind.</li>
+                            <li><strong>Quality tracking:</strong> The <span class="code-inline">extraction_quality</span> and <span class="code-inline">extraction_notes</span> fields are crucial for identifying problematic documents that need manual review.</li>
+                            <li><strong>Use SQLAlchemy ORM:</strong> Instead of raw SQL, consider using SQLAlchemy. It provides abstraction, makes your code database-agnostic, and simplifies CRUD operations. This is important for academic reproducibility - other researchers can run your code with different database backends.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline">
+                        <h4>⏱️ Estimated Duration: 2-3 days</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div id="stage3" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Stage 3: Text Extraction Pipeline Development</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="task-card">
+                    <h3>⚙️ Task G7: Create Modular Text Extraction Pipeline</h3>
+                    
+                    <div class="task-objective">
+                        <strong>Objective:</strong> Build a robust, modular pipeline that extracts text from PDFs and logs all operations.
+                    </div>
+
+                    <h4>Actions:</h4>
+                    <ol class="actions-list">
+                        <li><strong>Create a Python module</strong> <span class="code-inline">text_extractor.py</span> with the following functions:
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">extract_text_from_pdf(pdf_path, method='auto')</span></h4>
+                            <ul>
+                                <li>Takes PDF file path as input</li>
+                                <li>Parameter <span class="code-inline">method</span> can be: 'pypdf2', 'pdfplumber', 'pymupdf', or 'auto'</li>
+                                <li>If 'auto', tries libraries in order of preference (based on Task G4 findings)</li>
+                                <li>Returns: Dictionary with keys:
+                                    <ul>
+                                        <li><span class="code-inline">text</span>: Extracted text string</li>
+                                        <li><span class="code-inline">method_used</span>: Which library succeeded</li>
+                                        <li><span class="code-inline">page_count</span>: Number of pages</li>
+                                        <li><span class="code-inline">word_count</span>: Approximate word count</li>
+                                        <li><span class="code-inline">quality</span>: Assessment of extraction quality</li>
+                                        <li><span class="code-inline">is_scanned</span>: Boolean flag</li>
+                                        <li><span class="code-inline">errors</span>: List of any errors/warnings</li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">detect_scanned_pdf(text, page_count)</span></h4>
+                            <ul>
+                                <li>Heuristic: If word_count / page_count &lt; 50, likely scanned</li>
+                                <li>Returns: Boolean</li>
+                            </ul>
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">assess_extraction_quality(text, page_count)</span></h4>
+                            <ul>
+                                <li>Analyzes the extracted text for common issues:
+                                    <ul>
+                                        <li>Excessive whitespace or line breaks</li>
+                                        <li>Garbled characters (encoding issues)</li>
+                                        <li>Suspiciously low word density</li>
+                                        <li>Presence of "junk" characters</li>
+                                    </ul>
+                                </li>
+                                <li>Returns: Quality score ("excellent", "good", "fair", "poor", "failed")</li>
+                            </ul>
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">extract_pdf_metadata(pdf_path)</span></h4>
+                            <ul>
+                                <li>Extracts file size, creation date, modification date, page count</li>
+                                <li>Returns: Dictionary of metadata</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Create a script</strong> <span class="code-inline">process_pdfs.py</span> that:
+                            <ul>
+                                <li>Reads the list of downloaded PDFs from your directory structure</li>
+                                <li>For each PDF:
+                                    <ul>
+                                        <li>Calls <span class="code-inline">extract_text_from_pdf()</span></li>
+                                        <li>Calls <span class="code-inline">extract_pdf_metadata()</span></li>
+                                        <li>Stores results in the database (<span class="code-inline">documents</span> and <span class="code-inline">extracted_texts</span> tables)</li>
+                                        <li>Logs all operations to <span class="code-inline">extraction_log</span> table</li>
+                                    </ul>
+                                </li>
+                                <li>Provides progress tracking with <span class="code-inline">tqdm</span></li>
+                                <li>Implements error handling (skip problematic files, log errors, continue)</li>
+                                <li>Can be paused and resumed (tracks which files have been processed)</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Create output formats:</strong>
+                            <ul>
+                                <li>Store text in database (primary storage)</li>
+                                <li>Optionally export individual text files as JSON for inspection</li>
+                            </ul>
+                            <div class="code-block">
+{
+  "case_id": "US-2021-01234",
+  "document_type": "Decision",
+  "extraction_date": "2025-10-31T14:30:00Z",
+  "method": "pdfplumber",
+  "raw_text": "...",
+  "metadata": {...}
+}
+                            </div>
+                        </li>
+                    </ol>
+
+                    <div class="deliverable-box">
+                        <h4>📦 Deliverables:</h4>
+                        <ul>
+                            <li><span class="code-inline">text_extractor.py</span> module (fully commented)</li>
+                            <li><span class="code-inline">process_pdfs.py</span> script (fully commented)</li>
+                            <li>Unit tests for key functions (optional but recommended)</li>
+                        </ul>
+                    </div>
+
+                    <div class="considerations-box">
+                        <h4>⚠️ Key Considerations:</h4>
+                        <ul>
+                            <li><strong>Modularity is critical:</strong> Each function should do one thing well. This makes debugging easier and allows you to swap out components.</li>
+                            <li><strong>Comprehensive logging:</strong> Every extraction attempt should generate a log entry. This is essential for academic transparency - you need to document exactly how data was processed.</li>
+                            <li><strong>Fail gracefully:</strong> Don't let one problematic PDF crash the entire pipeline. Catch exceptions, log them, and move on.</li>
+                            <li><strong>Memory management:</strong> Don't load all PDFs into memory at once. Process them one at a time or in small batches.</li>
+                            <li><strong>Testing philosophy:</strong> Before running on all 2,900 PDFs, test your pipeline thoroughly on your 15-PDF test set. Validate that database entries are correct, text quality is good, and error handling works.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline">
+                        <h4>⏱️ Estimated Duration: 3-4 days</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 4 -->
+        <div id="stage4" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Stage 4: Database Integration</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="task-card">
+                    <h3>🔗 Task G8: Implement Database Storage System</h3>
+                    
+                    <div class="task-objective">
+                        <strong>Objective:</strong> Connect the text extraction pipeline to the database with robust data handling.
+                    </div>
+
+                    <h4>Actions:</h4>
+                    <ol class="actions-list">
+                        <li><strong>Create a Python module</strong> <span class="code-inline">database_manager.py</span> with SQLAlchemy ORM models and CRUD functions:
+
+                            <h4 style="margin-top: 15px;">ORM Models</h4>
+                            <p>Define SQLAlchemy classes for each table (cases, documents, extracted_texts, extraction_log)</p>
+
+                            <h4 style="margin-top: 15px;">CRUD Functions</h4>
+                            <ul>
+                                <li><span class="code-inline">insert_case(case_data)</span> - Add new case metadata</li>
+                                <li><span class="code-inline">insert_document(document_data)</span> - Add document record</li>
+                                <li><span class="code-inline">insert_extracted_text(text_data)</span> - Add extracted text</li>
+                                <li><span class="code-inline">insert_log_entry(log_data)</span> - Add log entry</li>
+                                <li><span class="code-inline">get_case_by_id(case_id)</span> - Retrieve case</li>
+                                <li><span class="code-inline">get_documents_by_case(case_id)</span> - Get all documents for a case</li>
+                                <li><span class="code-inline">get_text_by_document(document_id)</span> - Retrieve extracted text</li>
+                                <li><span class="code-inline">update_extraction_quality(text_id, quality)</span> - Update quality assessment</li>
+                                <li><span class="code-inline">get_all_cases_by_region(region)</span> - Filter cases by North/South</li>
+                                <li><span class="code-inline">get_extraction_statistics()</span> - Summary stats on processing</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Implement transaction management:</strong>
+                            <ul>
+                                <li>Use SQLAlchemy's session management</li>
+                                <li>Ensure atomic operations (all-or-nothing inserts)</li>
+                                <li>Handle rollbacks on errors</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Create validation functions:</strong>
+                            <ul>
+                                <li><span class="code-inline">validate_case_data(data)</span> - Check required fields, data types</li>
+                                <li><span class="code-inline">validate_document_data(data)</span> - Ensure valid URLs, paths</li>
+                                <li><span class="code-inline">validate_text_data(data)</span> - Check text is non-empty, encoding is valid</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Add database query optimization:</strong>
+                            <ul>
+                                <li>Create appropriate indexes (already defined in G5, but implement here)</li>
+                                <li>Write efficient queries using SQLAlchemy's query API</li>
+                                <li>Consider creating database views for common aggregations</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Create a migration/import script</strong> (<span class="code-inline">import_csv_to_db.py</span>) that:
+                            <ul>
+                                <li>Reads your cleaned CSV (from Task G3: <span class="code-inline">decisions_with_region.csv</span>)</li>
+                                <li>Populates the <span class="code-inline">cases</span> table with all metadata</li>
+                                <li>Links each case to its corresponding downloaded PDF</li>
+                                <li>Populates initial <span class="code-inline">documents</span> table records (before text extraction)</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="deliverable-box">
+                        <h4>📦 Deliverables:</h4>
+                        <ul>
+                            <li><span class="code-inline">database_manager.py</span> module (fully commented)</li>
+                            <li><span class="code-inline">import_csv_to_db.py</span> script (fully commented)</li>
+                            <li>Documentation of all CRUD operations (Markdown file with usage examples)</li>
+                        </ul>
+                    </div>
+
+                    <div class="considerations-box">
+                        <h4>⚠️ Key Considerations:</h4>
+                        <ul>
+                            <li><strong>Data integrity:</strong> Use foreign key constraints and validation functions to prevent orphaned records or invalid data.</li>
+                            <li><strong>Performance:</strong> For bulk inserts (like importing 2,900 cases), use SQLAlchemy's <span class="code-inline">bulk_insert_mappings()</span> for speed.</li>
+                            <li><strong>Connection pooling:</strong> If you switch to PostgreSQL later, SQLAlchemy handles connection pooling automatically.</li>
+                            <li><strong>Backup strategy:</strong> Regularly back up your SQLite database file (or use PostgreSQL's pg_dump if you go that route). Consider versioning your database snapshots.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline">
+                        <h4>⏱️ Estimated Duration: 2-3 days</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 5 -->
+        <div id="stage5" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Stage 5: Text Preprocessing</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="task-card">
+                    <h3>🧹 Task G9: Implement Linguistic Preprocessing</h3>
+                    
+                    <div class="task-objective">
+                        <strong>Objective:</strong> Clean and normalize extracted text for analysis while preserving the original.
+                    </div>
+
+                    <h4>Actions:</h4>
+                    <ol class="actions-list">
+                        <li><strong>Create a Python module</strong> <span class="code-inline">text_preprocessor.py</span> with preprocessing functions:
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">detect_language(text)</span></h4>
+                            <ul>
+                                <li>Use the <span class="code-inline">langdetect</span> library (already installed)</li>
+                                <li>Returns: ISO language code (e.g., "en", "es", "pt", "fr")</li>
+                                <li>Handles mixed-language documents by detecting dominant language</li>
+                            </ul>
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">clean_text(text)</span></h4>
+                            <ul>
+                                <li>Remove excessive whitespace (multiple spaces, tabs)</li>
+                                <li>Normalize line breaks (standardize to \n)</li>
+                                <li>Remove page numbers and headers/footers (regex patterns)</li>
+                                <li>Remove non-printable characters</li>
+                                <li>Fix common OCR artifacts (if any slipped through)</li>
+                                <li>Preserve paragraph structure</li>
+                                <li><strong>Important:</strong> Do NOT remove legal citations or case names - these are your signals for Phase 2!</li>
+                            </ul>
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">normalize_text(text)</span></h4>
+                            <ul>
+                                <li>Normalize unicode characters (e.g., smart quotes to straight quotes)</li>
+                                <li>Standardize whitespace around punctuation</li>
+                                <li>Optional: lowercase conversion (store both versions)</li>
+                                <li>Fix encoding issues (common with Spanish/Portuguese characters)</li>
+                            </ul>
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">segment_paragraphs(text)</span></h4>
+                            <ul>
+                                <li>Split text into logical paragraphs</li>
+                                <li>Returns: List of paragraph strings</li>
+                                <li>Useful for later citation extraction (citations often cluster in specific paragraphs)</li>
+                            </ul>
+
+                            <h4 style="margin-top: 15px;">Function: <span class="code-inline">preprocess_pipeline(raw_text)</span></h4>
+                            <ul>
+                                <li>Combines all preprocessing steps</li>
+                                <li>Takes raw text, returns processed text</li>
+                                <li>Logs all transformations applied</li>
+                                <li>Returns: Dictionary with:
+                                    <ul>
+                                        <li><span class="code-inline">processed_text</span>: Cleaned text</li>
+                                        <li><span class="code-inline">language</span>: Detected language</li>
+                                        <li><span class="code-inline">paragraph_count</span>: Number of paragraphs</li>
+                                        <li><span class="code-inline">sentence_count</span>: Number of sentences (using spaCy)</li>
+                                        <li><span class="code-inline">transformations</span>: List of preprocessing steps applied</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Create a script</strong> <span class="code-inline">preprocess_all_texts.py</span> that:
+                            <ul>
+                                <li>Queries the database for all records in <span class="code-inline">extracted_texts</span> where <span class="code-inline">processed_text</span> is NULL</li>
+                                <li>For each record:
+                                    <ul>
+                                        <li>Retrieves <span class="code-inline">raw_text</span></li>
+                                        <li>Runs <span class="code-inline">preprocess_pipeline()</span></li>
+                                        <li>Updates the <span class="code-inline">processed_text</span> field</li>
+                                        <li>Updates the <span class="code-inline">language_detected</span> field</li>
+                                    </ul>
+                                </li>
+                                <li>Logs all operations</li>
+                                <li>Provides progress tracking</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Add quality checks:</strong>
+                            <ul>
+                                <li>Compare word count before/after preprocessing (shouldn't differ drastically)</li>
+                                <li>Flag texts where >50% of content was removed (possible over-cleaning)</li>
+                                <li>Detect texts with unusual character distributions (encoding issues)</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="deliverable-box">
+                        <h4>📦 Deliverables:</h4>
+                        <ul>
+                            <li><span class="code-inline">text_preprocessor.py</span> module (fully commented)</li>
+                            <li><span class="code-inline">preprocess_all_texts.py</span> script (fully commented)</li>
+                            <li>Preprocessing report (Markdown file showing before/after examples and statistics)</li>
+                        </ul>
+                    </div>
+
+                    <div class="considerations-box">
+                        <h4>⚠️ Key Considerations:</h4>
+                        <ul>
+                            <li><strong>Reversibility:</strong> Always keep the raw text. Preprocessing should be reproducible - if you improve your cleaning functions later, you can reprocess from raw.</li>
+                            <li><strong>Legal text specifics:</strong> Legal documents have unique formatting (citations, headings, numbered paragraphs). Don't over-clean. A citation like "Smith v. Jones, 123 F.3d 456 (9th Cir. 2020)" must be preserved exactly.</li>
+                            <li><strong>Multi-language handling:</strong> Your preprocessing might need language-specific rules. Spanish and Portuguese have different punctuation conventions than English.</li>
+                            <li><strong>Testing:</strong> Create a test set of 10-20 paragraphs with known issues (extra spaces, weird characters, etc.) and verify your preprocessing handles them correctly.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline">
+                        <h4>⏱️ Estimated Duration: 2-3 days</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage 6 -->
+        <div id="stage6" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Stage 6: Pipeline Validation</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="task-card">
+                    <h3>✅ Task G10: Validate Complete Pipeline with Sample</h3>
+                    
+                    <div class="task-objective">
+                        <strong>Objective:</strong> Test the entire workflow end-to-end on your 15-PDF test set before processing the full database.
+                    </div>
+
+                    <h4>Actions:</h4>
+                    <ol class="actions-list">
+                        <li><strong>Run complete pipeline on test set:</strong>
+                            <div class="code-block">
+Test Set → Database → PDF Download → Text Extraction → Preprocessing → Validation
+                            </div>
+                        </li>
+
+                        <li><strong>Measure success rates at each stage:</strong>
+                            <ul>
+                                <li>Download success: X/15 PDFs downloaded successfully</li>
+                                <li>Extraction success: X/15 PDFs had text extracted</li>
+                                <li>Quality assessment: Distribution of quality scores</li>
+                                <li>Preprocessing success: X/15 texts preprocessed without errors</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Identify and document problems:</strong>
+                            <ul>
+                                <li>Which PDFs failed at which stage?</li>
+                                <li>What error messages were generated?</li>
+                                <li>Are there systematic issues (e.g., all Spanish PDFs have encoding problems)?</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Calculate performance metrics:</strong>
+                            <ul>
+                                <li>Average time per PDF (download + extraction + preprocessing)</li>
+                                <li>Estimated time for full database (2,900 PDFs)</li>
+                                <li>Disk space usage per PDF</li>
+                                <li>Estimated total disk space needed</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Manual quality review:</strong>
+                            <ul>
+                                <li>Select 5 random processed texts</li>
+                                <li>Compare original PDF with extracted text</li>
+                                <li>Verify key information is preserved (case names, dates, citations)</li>
+                                <li>Check that preprocessing didn't remove crucial content</li>
+                            </ul>
+                        </li>
+
+                        <li><strong>Generate validation report including:</strong>
+                            <ul>
+                                <li>Summary statistics for each stage</li>
+                                <li>Error analysis</li>
+                                <li>Time and space estimates for full processing</li>
+                                <li>Recommendations for adjustments before full run</li>
+                                <li>Known limitations and edge cases</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="deliverable-box">
+                        <h4>📦 Deliverables:</h4>
+                        <ul>
+                            <li><span class="code-inline">validation_report.md</span> - Comprehensive report (can include charts/tables)</li>
+                            <li>Updated scripts based on findings (if adjustments needed)</li>
+                            <li>Go/No-Go recommendation for proceeding with full database processing</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4>⚠️ Critical Checkpoint:</h4>
+                        <p><strong>This is your checkpoint:</strong> Do not proceed to process all 2,900 PDFs until you're confident the pipeline works well. Debugging after processing 2,900 files is much harder than debugging after 15.</p>
+                    </div>
+
+                    <div class="considerations-box">
+                        <h4>⚠️ Key Considerations:</h4>
+                        <ul>
+                            <li><strong>Representative sample:</strong> Your 15-PDF test set should include diverse cases (different jurisdictions, languages, time periods). If your test set is too homogeneous, you'll miss edge cases.</li>
+                            <li><strong>Lucas's input is crucial:</strong> Share your validation results with Lucas. He should review sample texts to confirm they meet his research needs. This is a shared task (Task C3 in the broader roadmap).</li>
+                            <li><strong>Performance matters:</strong> If each PDF takes 30 seconds to process, that's 24+ hours for 2,900 PDFs. Consider parallelization (but carefully - don't overload servers) or optimize slow steps.</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline">
+                        <h4>⏱️ Estimated Duration: 1-2 days</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Summary -->
+        <div id="workflow" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🔄 Workflow Summary</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="info-box">
+                    <h4>Complete Pipeline Flow</h4>
+                    <p>Here's how these tasks flow together in sequence:</p>
+                </div>
+
+                <div class="workflow">
+                    <div class="workflow-step">
+                        <h5>STAGE 1: Test PDF Libraries (G4)</h5>
+                        <p><strong>Output:</strong> Recommended library + comparison report</p>
+                    </div>
+
+                    <div class="workflow-step">
+                        <h5>STAGE 2: Design Database Schema (G5)</h5>
+                        <p><strong>Output:</strong> Database structure + initialization script</p>
+                    </div>
+
+                    <div class="workflow-step">
+                        <h5>STAGE 3: Build Text Extraction Pipeline (G7)</h5>
+                        <p><strong>Output:</strong> Extraction module + processing script</p>
+                    </div>
+
+                    <div class="workflow-step">
+                        <h5>STAGE 4: Integrate Database (G8)</h5>
+                        <p><strong>Output:</strong> Database manager + CRUD functions + CSV import</p>
+                    </div>
+
+                    <div class="workflow-step">
+                        <h5>STAGE 5: Implement Preprocessing (G9)</h5>
+                        <p><strong>Output:</strong> Preprocessing module + batch processing script</p>
+                    </div>
+
+                    <div class="workflow-step">
+                        <h5>STAGE 6: Validate Pipeline on Test Set (G10)</h5>
+                        <p><strong>Output:</strong> Validation report + Go/No-Go decision</p>
+                        <p><strong>Decision Point:</strong> If issues found → Loop back to fix relevant stages | If successful → Proceed to full database processing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div id="timeline" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>📅 Estimated Timeline</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="duration">2-3 days</div>
+                        <div>Stage 1 (G4): PDF Library Testing & Selection</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="duration">2-3 days</div>
+                        <div>Stage 2 (G5): Database Schema Design</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="duration">3-4 days</div>
+                        <div>Stage 3 (G7): Text Extraction Pipeline Development</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="duration">2-3 days</div>
+                        <div>Stage 4 (G8): Database Integration</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="duration">2-3 days</div>
+                        <div>Stage 5 (G9): Text Preprocessing</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="duration">1-2 days</div>
+                        <div>Stage 6 (G10): Pipeline Validation</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>Total Estimated Time</h4>
+                    <p><strong>12-18 days</strong> of focused work, assuming you can dedicate several hours daily.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Rigor -->
+        <div id="academic" class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🎓 Academic Rigor Notes</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="info-box">
+                    <h4>Critical Considerations for Doctoral Research</h4>
+                    <p>Since this is for Lucas's doctoral research, the following principles are essential:</p>
+                </div>
+
+                <div class="task-card">
+                    <h4>1. Documentation is as Important as Code</h4>
+                    <p>Every decision (which library, why, which preprocessing steps, why) must be documented. Future researchers should be able to replicate your exact process.</p>
+                </div>
+
+                <div class="task-card">
+                    <h4>2. Version Control</h4>
+                    <p>Use Git religiously. Tag releases at key milestones (e.g., "v1.0-extraction-pipeline-validated").</p>
+                </div>
+
+                <div class="task-card">
+                    <h4>3. Reproducibility</h4>
+                    <p>Your scripts should work on any machine with the same Python environment. Avoid hard-coded paths where possible; use configuration files or relative paths.</p>
+                </div>
+
+                <div class="task-card">
+                    <h4>4. Transparency About Limitations</h4>
+                    <p>If 5% of PDFs fail extraction, document this clearly. Academic work requires honesty about what worked and what didn't.</p>
+                </div>
+
+                <div class="warning-box">
+                    <h4>Methodological Transparency</h4>
+                    <p>Every processing step, every filter applied, every decision made must be documented and justified. This isn't just good practice—it's a requirement for academic integrity and reproducibility.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 40px; color: #7f8c8d; font-size: 0.9em;">
+        <p><strong>Climate Litigation Citation Analysis Project</strong></p>
+        <p>Task Roadmap: Text Extraction & Database Configuration</p>
+        <p>Generated: October 31, 2025</p>
+    </div>
+
+    <script>
+        // Toggle section collapse/expand
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                header.classList.remove('collapsed');
+                icon.textContent = '▼';
+            } else {
+                content.classList.add('collapsed');
+                header.classList.add('collapsed');
+                icon.textContent = '▶';
+            }
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('.nav-index a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    // Expand the section if it's collapsed
+                    const sectionContent = targetElement.querySelector('.section-content');
+                    const sectionHeader = targetElement.querySelector('.section-header');
+                    
+                    if (sectionContent && sectionContent.classList.contains('collapsed')) {
+                        toggleSection(sectionHeader);
+                    }
+                    
+                    // Smooth scroll to section
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Optional: Collapse all sections on load except the first one
+        // Uncomment the following lines if you want sections to start collapsed
+        /*
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                if (index > 0) {  // Keep first section expanded
+                    const header = section.querySelector('.section-header');
+                    const content = section.querySelector('.section-content');
+                    content.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                    header.querySelector('.toggle-icon').textContent = '▶';
+                }
+            });
+        });
+        */
+    </script>
+</body>
+</html>
