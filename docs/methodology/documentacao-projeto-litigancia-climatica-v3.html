@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto de Análise de Citações em Litigância Climática</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts - Sora -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            font-family: 'Sora', sans-serif;
+        }
+        
+        /* Global background (mais escuro) */
+        html {
+            background-color: #0d0d0d;
+        }
+        
+        /* Body background (mais claro que global) - Mobile first */
+        body {
+            background-color: #161616;
+            color: #e6e6e6;
+        }
+        
+        /* Section containers (mais claro que body) - Mobile first */
+        .section-container {
+            background-color: #1e1e1e;
+            padding: 1rem;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+        
+        /* Padding maior em telas maiores */
+        @media (min-width: 768px) {
+            body {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+            
+            .section-container {
+                padding: 1.5rem;
+                padding-bottom: 2rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            body {
+                padding-left: 4rem;
+                padding-right: 4rem;
+            }
+            
+            .section-container {
+                padding: 2rem;
+                padding-bottom: 2.5rem;
+            }
+        }
+        
+        /* Headers com background - Mobile first */
+        h1 {
+            color: #a8c5e0;
+            background-color: #2a3f54;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            border-left: 5px solid #a8c5e0;
+            margin-left: 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 26px;
+                padding: 1rem;
+            }
+        }
+        
+        h1:hover {
+            background-color: #324b63;
+        }
+        
+        h2 {
+            color: #8fb3d4;
+            background-color: #243342;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 2.5rem;
+            margin-bottom: 1.25rem;
+            margin-left: 0;
+            padding: 0.6rem;
+            border-left: 4px solid #8fb3d4;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        @media (min-width: 768px) {
+            h2 {
+                font-size: 24px;
+                padding: 0.8rem;
+            }
+        }
+        
+        h2:hover {
+            background-color: #2c3f51;
+        }
+        
+        h3 {
+            color: #76a1c8;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            margin-left: 0;
+        }
+        
+        @media (min-width: 768px) {
+            h3 {
+                font-size: 22px;
+            }
+        }
+        
+        h4 {
+            color: #5d8fbc;
+            font-weight: 500;
+            font-size: 16px;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            margin-left: 0;
+        }
+        
+        @media (min-width: 768px) {
+            h4 {
+                font-size: 20px;
+            }
+        }
+        
+        h5 {
+            color: #447db0;
+            font-weight: 500;
+            font-size: 15px;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+            margin-left: 0;
+        }
+        
+        @media (min-width: 768px) {
+            h5 {
+                font-size: 18px;
+            }
+        }
+        
+        /* Content containers com padding - Mobile first */
+        .content-wrapper {
+            padding: 1rem;
+            margin-left: 0;
+        }
+        
+        /* Media query para tablets e desktop */
+        @media (min-width: 768px) {
+            h2 {
+                margin-left: 1rem;
+            }
+            
+            h3 {
+                margin-left: 2rem;
+            }
+            
+            h4 {
+                margin-left: 3rem;
+            }
+            
+            h5 {
+                margin-left: 4rem;
+            }
+            
+            .content-wrapper {
+                padding: 1.5rem;
+                margin-left: 5rem;
+            }
+        }
+        
+        /* Media query para desktop grande */
+        @media (min-width: 1024px) {
+            h2 {
+                margin-left: 1.5rem;
+            }
+            
+            h3 {
+                margin-left: 3rem;
+            }
+            
+            h4 {
+                margin-left: 4.5rem;
+            }
+            
+            h5 {
+                margin-left: 6rem;
+            }
+            
+            .content-wrapper {
+                margin-left: 7.5rem;
+            }
+        }
+        
+        /* Parágrafos, listas e conteúdo */
+        p, li {
+            color: #e6e6e6;
+            line-height: 1.8;
+            font-size: 14px;
+            margin-left: 0;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+        }
+        
+        .section-icon {
+            color: #8fb3d4;
+            margin-right: 0.75rem;
+        }
+        
+        /* Cards com fundo mais claro que o global */
+        .phase-card {
+            background: #242424;
+            border-left: 4px solid #76a1c8;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .timeline-item {
+            border-left: 2px solid #76a1c8;
+            padding-left: 1.5rem;
+            margin-left: 1rem;
+            padding-bottom: 1rem;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #8fb3d4;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #242424;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        /* Container para scroll horizontal da tabela em mobile */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        th {
+            background-color: #2c3a4a;
+            color: #a8c5e0;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #2c2c2c;
+            color: #e6e6e6;
+            font-size: 14px;
+        }
+        
+        /* Células menores em mobile */
+        @media (max-width: 767px) {
+            th, td {
+                padding: 0.5rem;
+                font-size: 12px;
+            }
+        }
+        
+        tr:hover {
+            background-color: #2a2a2a;
+        }
+        
+        /* Highlight box com laranja secundário (20% opacity) - responsivo */
+        .highlight-box {
+            background-color: rgba(232, 128, 79, 0.2);
+            border: 1px solid #e8804f;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        @media (min-width: 768px) {
+            .highlight-box {
+                padding: 1.5rem;
+                margin: 1.5rem 0;
+            }
+        }
+        
+        strong {
+            color: #e8804f;
+            font-weight: 600;
+        }
+        
+        code {
+            background-color: #2c2c2c;
+            color: #8fb3d4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Grid com ajuste de margem */
+        .grid {
+            margin-left: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .grid.md\:grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        
+        /* Ajuste para texto dentro de highlight-box e phase-card */
+        .highlight-box p, .phase-card p, .highlight-box li, .phase-card li {
+            margin-left: 0;
+        }
+        
+        .highlight-box ul, .phase-card ul, .highlight-box ol, .phase-card ol {
+            margin-left: 1.5rem;
+        }
+        
+        /* Lista de ferramentas/código com fonte menor */
+        .text-base {
+            font-size: 13px !important;
+        }
+        
+        /* Ajustes para tamanhos de texto no header e footer */
+        header .text-xl {
+            font-size: 18px;
+        }
+        
+        footer .text-sm {
+            font-size: 12px;
+        }
+        
+        /* Índice - Mobile first */
+        .index-container {
+            background-color: #1e1e1e;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            border: 2px solid #e8804f;
+        }
+        
+        @media (min-width: 768px) {
+            .index-container {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .index-container {
+                padding: 2rem;
+            }
+        }
+        
+        .index-title {
+            color: #e8804f;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+        
+        @media (min-width: 768px) {
+            .index-title {
+                font-size: 24px;
+            }
+        }
+        
+        .index-item {
+            background-color: #242424;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 4px;
+            border-left: 3px solid #76a1c8;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .index-item:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .index-item-content {
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .index-item-title {
+            color: #a8c5e0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .index-item-description {
+            color: #b0b0b0;
+            font-size: 13px;
+            margin-top: 0.75rem;
+            line-height: 1.6;
+            display: none;
+        }
+        
+        .index-item.expanded .index-item-description {
+            display: block;
+        }
+        
+        .index-nav-button {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background-color: #2c3a4a;
+            border: 1px solid #76a1c8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2px;
+        }
+        
+        .index-nav-button:hover {
+            background-color: #e8804f;
+            border-color: #e8804f;
+        }
+        
+        .index-nav-button i {
+            color: #a8c5e0;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .index-nav-button:hover i {
+            color: #fff;
+        }
+        
+        /* Collapsible content */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        
+        .collapsible-content.expanded {
+            max-height: 10000px;
+        }
+        
+        /* Cursor pointer para elementos clicáveis */
+        .clickable {
+            cursor: pointer;
+        }
+        
+        /* Ícone de collapse */
+        .collapse-icon {
+            transition: transform 0.3s ease;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .collapse-icon.expanded {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body class="max-w-5xl mx-auto py-12" style="padding-left: 1rem; padding-right: 1rem;">
+    
+    <!-- Cabeçalho -->
+    <header class="mb-12 text-center">
+        <h1 style="cursor: default; font-size: 22px;">
+            <i class="fas fa-balance-scale section-icon"></i>
+            Projeto de Análise de Citações em Litigância Climática
+        </h1>
+        <p class="text-xl mt-4" style="color: #76a1c8; margin-left: 0; font-size: 16px;">
+            Estrutura metodológica para análise quantitativa de precedentes judiciais em casos climáticos
+        </p>
+        <p class="mt-2" style="color: #5d8fbc; margin-left: 0; font-size: 13px;">
+            Base de dados: Climate Case Chart (Columbia University & LSE)
+        </p>
+    </header>
+    
+    <style>
+        @media (min-width: 768px) {
+            header h1 {
+                font-size: 26px !important;
+            }
+            header .text-xl {
+                font-size: 18px !important;
+            }
+            header p:last-child {
+                font-size: 14px !important;
+            }
+        }
+    </style>
+
+    <!-- Índice -->
+    <div class="index-container">
+        <div class="index-title">
+            <i class="fas fa-list section-icon"></i>
+            Índice
+        </div>
+        
+        <div class="index-item" data-target="objetivos">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Objetivos do Projeto
+                </div>
+                <div class="index-item-description">
+                    Definição dos objetivos principais e específicos da pesquisa, incluindo a análise de fluxos de citação entre cortes do Norte e Sul Global em casos de litigância climática.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'objetivos')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="dados">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Escopo dos Dados
+                </div>
+                <div class="index-item-description">
+                    Detalhamento da base de dados utilizada: formato, dimensão, idiomas, tipos de documentos e definições operacionais das categorias Norte vs. Sul Global.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'dados')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="roadmap">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Roadmap: Estrutura em Fases
+                </div>
+                <div class="index-item-description">
+                    Descrição completa das cinco fases do projeto, desde fundação e preparação até documentação metodológica, incluindo entregas, ferramentas e sub-etapas de cada fase.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'roadmap')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="cronograma">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Cronograma até 30 de Novembro
+                </div>
+                <div class="index-item-description">
+                    Distribuição temporal detalhada das fases do projeto, com datas aproximadas e período de buffer para revisão antes da apresentação de dezembro.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'cronograma')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="escalabilidade">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Escalabilidade para Fase 2
+                </div>
+                <div class="index-item-description">
+                    Estratégias para expansão futura do projeto incluindo análise de correntes doutrinárias através de embedding semântico, clustering temático e identificação de influência implícita.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'escalabilidade')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="custos">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Estimativa de Custos de API
+                </div>
+                <div class="index-item-description">
+                    Projeção financeira do uso de APIs de LLMs para extração de citações, incluindo estratégias de otimização de custos e cenários de uso.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'custos')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="proximos">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Próximos Passos Imediatos
+                </div>
+                <div class="index-item-description">
+                    Ações imediatas necessárias para iniciar o projeto: análise exploratória do CSV, validação do roadmap, definição de prioridades e início da Fase 0.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'proximos')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="infraestrutura">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Infraestrutura Técnica
+                </div>
+                <div class="index-item-description">
+                    Descrição dos recursos técnicos disponíveis: hardware, linguagens de programação, bibliotecas principais e APIs que serão utilizadas no desenvolvimento do projeto.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'infraestrutura')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="index-item" data-target="limitacoes">
+            <div class="index-item-content" onclick="toggleIndexItem(this.parentElement)">
+                <div class="index-item-title">
+                    <i class="fas fa-chevron-right collapse-icon"></i>
+                    Limitações Metodológicas
+                </div>
+                <div class="index-item-description">
+                    Reconhecimento das limitações da pesquisa e considerações acadêmicas sobre reprodutibilidade, documentação e justificativas metodológicas para inclusão na tese.
+                </div>
+            </div>
+            <button class="index-nav-button" onclick="navigateToSection(event, 'limitacoes')" title="Ir para seção">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Objetivo -->
+    <section class="section-container" id="objetivos">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-bullseye section-icon"></i>
+            Objetivos do Projeto
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <div class="phase-card">
+                    <h3><i class="fas fa-chart-network section-icon"></i>Objetivo Principal</h3>
+                    <p>
+                        Fornecer insights e dados qualificados sobre as relações de citação direta em decisões de cortes superiores em casos de litigância climática, especialmente os fundados no Acordo de Paris e baseados em pareceres, relatórios e pesquisas/artigos do IPCC, considerando cortes citando decisões de outras cortes em suas próprias decisões.
+                    </p>
+                </div>
+                
+                <div class="phase-card">
+                    <h3><i class="fas fa-globe-americas section-icon"></i>Objetivo Específico: Norte Global vs. Sul Global</h3>
+                    <p>
+                        Identificar o número relativo ou proporção de citações feitas inter cortes do Norte Global, referenciando-se; versus o número relativo ou proporção de decisões do Sul Global referenciando as cortes do Norte; versus citações de cortes do Sul Global feitas por cortes do Norte.
+                    </p>
+                </div>
+                
+                <div class="highlight-box">
+                    <p><strong>Contexto Acadêmico:</strong> Este projeto integra pesquisa de doutorado sobre litigância climática, com rigor metodológico e documentação completa de todos os processos executados para alcançar as informações de interesse hábeis a suportar a tese acadêmica.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Escopo dos Dados -->
+    <section class="section-container" id="dados">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-database section-icon"></i>
+            Escopo dos Dados
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="phase-card">
+                        <h4><i class="fas fa-file-alt section-icon"></i>Formato</h4>
+                        <p>CSV estruturado contendo metadados e referências para documentos externos</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-hashtag section-icon"></i>Dimensão</h4>
+                        <p>Aproximadamente 15.000 casos de múltiplas jurisdições</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-language section-icon"></i>Idiomas</h4>
+                        <p>Múltiplos idiomas (cortes internacionais em inglês/francês; cortes nacionais em idiomas oficiais)</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-file-pdf section-icon"></i>Documentos</h4>
+                        <p>Decisões finais em PDF (maioria texto-nativo; ~20% podem requerer OCR - será ignorado)</p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4><i class="fas fa-map-marked-alt section-icon"></i>Definição Operacional: Norte vs. Sul Global</h4>
+                    <p>
+                        <strong>Norte Global:</strong> EUA, Canadá, Europa Ocidental, Austrália e Nova Zelândia<br>
+                        <strong>Sul Global:</strong> Demais jurisdições
+                    </p>
+                    <p class="mt-2 text-sm" style="color: #76a1c8;">
+                        Nota: Esta taxonomia será refinada e documentada metodologicamente na Fase 0.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section-container" id="roadmap">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-road section-icon"></i>
+            Roadmap: Estrutura em Fases
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <!-- Fase 0 -->
+                <div class="timeline-item">
+                    <div class="phase-card">
+                        <h3><i class="fas fa-compass section-icon"></i>FASE 0: Fundação e Preparação</h3>
+                        <p><strong>Duração:</strong> 3-4 dias | <strong>Período:</strong> 16-20 outubro</p>
+                        
+                        <h4>Objetivo</h4>
+                        <p>Estabelecer infraestrutura, entender os dados, definir metodologia</p>
+                        
+                        <h4>Entregas</h4>
+                        <ul>
+                            <li>Schema completo do CSV (colunas, tipos de dados, padrões)</li>
+                            <li>Taxonomia operacional de jurisdições (Norte vs Sul Global)</li>
+                            <li>Ambiente de desenvolvimento configurado (Python + bibliotecas necessárias)</li>
+                            <li>Estratégia de sampling para testes (ex: 100 casos para validação antes de processar 15k)</li>
+                            <li>Definição de padrões de citação a serem identificados</li>
+                            <li>Documento metodológico inicial (para a tese)</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-tools section-icon"></i>Ferramentas</h4>
+                        <p><code>pandas</code>, <code>jupyter notebooks</code>, <code>Git</code> para versionamento</p>
+                    </div>
+                </div>
+                
+                <!-- Fase 1 -->
+                <div class="timeline-item">
+                    <div class="phase-card">
+                        <h3><i class="fas fa-download section-icon"></i>FASE 1: Extração e Preprocessing</h3>
+                        <p><strong>Duração:</strong> 7-10 dias | <strong>Período:</strong> 21 outubro - 31 outubro</p>
+                        
+                        <h4>Objetivo</h4>
+                        <p>Obter o texto das decisões de forma estruturada e processável</p>
+                        
+                        <h4>Sub-etapas</h4>
+                        
+                        <h5>1.1 - Mapeamento e Download</h5>
+                        <ul>
+                            <li>Script para baixar PDFs das decisões finais</li>
+                            <li>Handling de erros (links quebrados, timeouts, etc.)</li>
+                            <li>Organização em estrutura de diretórios lógica</li>
+                        </ul>
+                        
+                        <h5>1.2 - Extração de Texto</h5>
+                        <ul>
+                            <li>PDFs texto-nativos: <code>PyPDF2</code> ou <code>pdfplumber</code></li>
+                            <li>PDFs escaneados: Ignorados (representam &lt;20% da base)</li>
+                            <li>Validação de qualidade da extração</li>
+                        </ul>
+                        
+                        <h5>1.3 - Estruturação e Metadados</h5>
+                        <ul>
+                            <li>Criar banco de dados estruturado (SQLite local ou PostgreSQL)</li>
+                            <li>Schema: <code>caso_id</code>, <code>jurisdição</code>, <code>corte</code>, <code>ano</code>, <code>região</code> (Norte/Sul), <code>texto_decisão</code>, <code>idioma</code>, <code>path_original</code></li>
+                            <li>Preprocessamento linguístico básico (sem tradução ainda)</li>
+                        </ul>
+                        
+                        <div class="highlight-box mt-4">
+                            <p><strong><i class="fas fa-exclamation-triangle"></i> Nota sobre OCR:</strong> Aproximadamente 20% dos documentos podem ser PDFs escaneados. Para cumprir o prazo de 30 de novembro, estes serão ignorados. Uma base de 80% (~12.000 casos) é estatisticamente robusta para identificar tendências e padrões de citação.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fase 2 -->
+                <div class="timeline-item">
+                    <div class="phase-card">
+                        <h3><i class="fas fa-quote-right section-icon"></i>FASE 2: Identificação de Citações</h3>
+                        <p><strong>Duração:</strong> 10-12 dias | <strong>Período:</strong> 1 novembro - 13 novembro</p>
+                        
+                        <h4>Objetivo</h4>
+                        <p>Extrair todas as citações explícitas inter-cortes</p>
+                        
+                        <h4>Abordagem Híbrida</h4>
+                        
+                        <h5>2.1 - Regex e Padrões (gratuito, rápido, limitado)</h5>
+                        <ul>
+                            <li>Identificar padrões comuns de citação judicial
+                                <ul>
+                                    <li>Ex: "Smith v. Jones (2019)", "Case C-123/45", "RE 123456"</li>
+                                    <li>Nomes de cortes seguidos de datas/números</li>
+                                    <li>Variações por jurisdição</li>
+                                </ul>
+                            </li>
+                            <li>Criar biblioteca de padrões por tipo de corte</li>
+                        </ul>
+                        
+                        <h5>2.2 - NER (Named Entity Recognition) com modelos open-source</h5>
+                        <ul>
+                            <li><code>spaCy</code> com modelo jurídico (legal-bert ou equivalente)</li>
+                            <li>Identificar entidades tipo "CASE", "COURT", "DATE"</li>
+                            <li>Custo: zero, mas precisão moderada</li>
+                        </ul>
+                        
+                        <h5>2.3 - LLM-powered extraction (custo controlado, alta precisão)</h5>
+                        <ul>
+                            <li>Usar Claude/GPT apenas para casos onde regex+NER falharam ou são ambíguos</li>
+                            <li>Prompt estruturado pedindo JSON com citações</li>
+                            <li><strong>Estratégia de custo:</strong>
+                                <ul>
+                                    <li>Processar apenas seções relevantes (não o PDF inteiro)</li>
+                                    <li>Identificar seções com alta probabilidade de conter citações (ex: "jurisprudência citada", "precedentes", "fundamentação")</li>
+                                    <li>Batch processing para eficiência</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <h5>2.4 - Validação e Matching</h5>
+                        <ul>
+                            <li>Cross-reference: citações identificadas correspondem a casos existentes na base?</li>
+                            <li>Resolver ambiguidades (casos com nomes similares)</li>
+                            <li>Criar matriz de citações: <code>caso_citante → caso_citado</code></li>
+                        </ul>
+                        
+                        <h4>Output desta fase</h4>
+                        <ul>
+                            <li>Tabela normalizada de citações</li>
+                            <li>Grafo direcionado de citações (<code>NetworkX</code>)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Fase 3 -->
+                <div class="timeline-item">
+                    <div class="phase-card">
+                        <h3><i class="fas fa-chart-line section-icon"></i>FASE 3: Análise Quantitativa</h3>
+                        <p><strong>Duração:</strong> 5-7 dias | <strong>Período:</strong> 14 novembro - 21 novembro</p>
+                        
+                        <h4>Objetivo</h4>
+                        <p>Responder às perguntas de pesquisa sobre fluxos de citação Norte-Sul Global</p>
+                        
+                        <h4>Análises Principais</h4>
+                        
+                        <h5>3.1 - Métricas Descritivas</h5>
+                        <ul>
+                            <li>Total de citações por região (Norte→Norte, Norte→Sul, Sul→Norte, Sul→Sul)</li>
+                            <li>Proporções relativas e absolutas</li>
+                            <li>Distribuição temporal (evolução ao longo dos anos)</li>
+                            <li>Cortes mais citadas (ranking)</li>
+                            <li>Cortes mais "citadoras" (ranking)</li>
+                        </ul>
+                        
+                        <h5>3.2 - Análise de Rede</h5>
+                        <ul>
+                            <li>Centralidade (betweenness, eigenvector) - quais cortes são "hubs"?</li>
+                            <li>Comunidades (existem clusters regionais além de Norte/Sul?)</li>
+                            <li>Caminhos: uma decisão do Sul que cita o Norte tende a ser citada por quem?</li>
+                        </ul>
+                        
+                        <h5>3.3 - Testes Estatísticos</h5>
+                        <ul>
+                            <li>A proporção Norte→Sul é significativamente diferente de Sul→Norte?</li>
+                            <li>Qui-quadrado, testes de proporção</li>
+                            <li>Regressões se houver variáveis temporais/contextuais</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-tools section-icon"></i>Ferramentas</h4>
+                        <p><code>pandas</code>, <code>NetworkX</code>, <code>scipy.stats</code>, <code>statsmodels</code></p>
+                    </div>
+                </div>
+                
+                <!-- Fase 4 -->
+                <div class="timeline-item">
+                    <div class="phase-card">
+                        <h3><i class="fas fa-chart-pie section-icon"></i>FASE 4: Visualização e Insights</h3>
+                        <p><strong>Duração:</strong> 3-4 dias | <strong>Período:</strong> 22 novembro - 26 novembro</p>
+                        
+                        <h4>Objetivo</h4>
+                        <p>Produzir gráficos e visualizações para a apresentação de dezembro</p>
+                        
+                        <h4>Outputs</h4>
+                        <ul>
+                            <li>Grafos de rede interativos (<code>Gephi</code> ou <code>Pyvis</code>)</li>
+                            <li>Mapas de calor de citações inter-regionais</li>
+                            <li>Time series de padrões de citação</li>
+                            <li>Sankey diagrams mostrando fluxos</li>
+                            <li>Dashboards exploratórios (<code>Plotly Dash</code> ou <code>Streamlit</code>)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Fase 5 -->
+                <div class="timeline-item">
+                    <div class="phase-card">
+                        <h3><i class="fas fa-file-contract section-icon"></i>FASE 5: Documentação Metodológica</h3>
+                        <p><strong>Duração:</strong> Contínua + 2 dias finais | <strong>Período:</strong> Ao longo do projeto</p>
+                        
+                        <h4>Objetivo</h4>
+                        <p>Documento técnico para inclusão na tese de doutorado</p>
+                        
+                        <h4>Conteúdo</h4>
+                        <ul>
+                            <li>Descrição da fonte de dados</li>
+                            <li>Processo de extração e limpeza</li>
+                            <li>Algoritmos de identificação de citações (com taxas de precision/recall se testadas)</li>
+                            <li>Limitações metodológicas</li>
+                            <li>Código comentado e reprodutível</li>
+                            <li>Estatísticas descritivas completas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cronograma -->
+    <section class="section-container" id="cronograma">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-calendar-alt section-icon"></i>
+            Cronograma até 30 de Novembro
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fase</th>
+                                <th>Duração</th>
+                                <th>Datas Aproximadas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fase 0: Fundação e Preparação</td>
+                                <td>3-4 dias</td>
+                                <td>16-20 outubro</td>
+                            </tr>
+                            <tr>
+                                <td>Fase 1: Extração e Preprocessing</td>
+                                <td>7-10 dias</td>
+                                <td>21 outubro - 31 outubro</td>
+                            </tr>
+                            <tr>
+                                <td>Fase 2: Identificação de Citações</td>
+                                <td>10-12 dias</td>
+                                <td>1 novembro - 13 novembro</td>
+                            </tr>
+                            <tr>
+                                <td>Fase 3: Análise Quantitativa</td>
+                                <td>5-7 dias</td>
+                                <td>14 novembro - 21 novembro</td>
+                            </tr>
+                            <tr>
+                                <td>Fase 4: Visualização e Insights</td>
+                                <td>3-4 dias</td>
+                                <td>22 novembro - 26 novembro</td>
+                            </tr>
+                            <tr>
+                                <td>Buffer/Revisão</td>
+                                <td>3-4 dias</td>
+                                <td>27 novembro - 30 novembro</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="highlight-box mt-6">
+                    <p><strong><i class="fas fa-clock"></i> Nota sobre o Cronograma:</strong> Cronograma apertado mas factível se trabalharmos de forma focada. O buffer de 3-4 dias ao final permitirá ajustes e revisões necessárias antes da apresentação.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Escalabilidade -->
+    <section class="section-container" id="escalabilidade">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-expand-arrows-alt section-icon"></i>
+            Escalabilidade para Fase 2 (Correntes Doutrinárias)
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <p>A arquitetura proposta já contempla escalabilidade para análises futuras mais complexas:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="phase-card">
+                        <h4><i class="fas fa-vector-square section-icon"></i>Embedding Semântico</h4>
+                        <p>Em vez de só identificar citações explícitas, podemos gerar embeddings dos argumentos de cada decisão usando modelos multilíngue como <code>multilingual-e5</code> ou via API</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-object-group section-icon"></i>Clustering Temático</h4>
+                        <p>Agrupar decisões por similaridade argumentativa</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-tags section-icon"></i>Topic Modeling</h4>
+                        <p>LDA ou BERTopic para identificar temas recorrentes</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-project-diagram section-icon"></i>Análise de Influência Implícita</h4>
+                        <p>Mesmo sem citação direta, decisões podem usar argumentos similares</p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box mt-6">
+                    <p><strong>Reutilização de Infraestrutura:</strong> A infraestrutura de dados e pipeline de processamento criados na fase atual serão completamente reutilizáveis para análises de segunda fase.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Custos -->
+    <section class="section-container" id="custos">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-dollar-sign section-icon"></i>
+            Estimativa de Custos de API
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <div class="phase-card">
+                    <h3>Cenário Conservador</h3>
+                    
+                    <ul>
+                        <li>15k decisões × média 30 páginas = 450k páginas</li>
+                        <li>Assumindo que precisamos de LLM para ~20% dos casos (onde regex falha)</li>
+                        <li>3k decisões × ~15k tokens cada = 45M tokens de input</li>
+                        <li>Com Claude Sonnet: ~$3 per 1M input tokens = ~$135</li>
+                        <li>Output (citações em JSON): ~5M tokens = ~$15</li>
+                    </ul>
+                    
+                    <div class="highlight-box mt-4">
+                        <p><strong>Total estimado: $150-200 para extração de citações</strong></p>
+                    </div>
+                    
+                    <h4 class="mt-6">Estratégias de Redução de Custos</h4>
+                    <ul>
+                        <li>Processando apenas seções relevantes (não decisão inteira)</li>
+                        <li>Usando modelos menores para casos simples</li>
+                        <li>Batching inteligente</li>
+                        <li>Cache de resultados para evitar reprocessamento</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Próximos Passos -->
+    <section class="section-container" id="proximos">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-forward section-icon"></i>
+            Próximos Passos Imediatos
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="phase-card">
+                        <h4><i class="fas fa-file-csv section-icon"></i>1. Análise Exploratória do CSV</h4>
+                        <p>Receber e realizar EDA (Exploratory Data Analysis) do arquivo CSV com os 15.000 casos</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-check-double section-icon"></i>2. Validação do Roadmap</h4>
+                        <p>Validar e refinar o roadmap baseado na estrutura real dos dados</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-list-ol section-icon"></i>3. Definição de Prioridades</h4>
+                        <p>Se necessário cortar algo pelo deadline, definir prioridades claras</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-rocket section-icon"></i>4. Início da Fase 0</h4>
+                        <p>Começar imediatamente com a configuração do ambiente e análise preliminar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Infraestrutura Técnica -->
+    <section class="section-container" id="infraestrutura">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-server section-icon"></i>
+            Infraestrutura Técnica
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="phase-card">
+                        <h4><i class="fas fa-laptop section-icon"></i>Hardware</h4>
+                        <p>Dois notebooks modernos + infraestrutura cloud conforme necessário</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-code section-icon"></i>Linguagem</h4>
+                        <p>Python (ecossistema padrão para ciência de dados)</p>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-cube section-icon"></i>Bibliotecas Principais</h4>
+                        <ul class="text-base">
+                            <li><code>pandas</code> - manipulação de dados</li>
+                            <li><code>NetworkX</code> - análise de redes</li>
+                            <li><code>spaCy</code> - NLP</li>
+                            <li><code>PyPDF2/pdfplumber</code> - extração de PDF</li>
+                            <li><code>scipy/statsmodels</code> - análise estatística</li>
+                            <li><code>Plotly/Streamlit</code> - visualização</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <h4><i class="fas fa-robot section-icon"></i>APIs de LLM</h4>
+                        <p>Claude (Anthropic) e/ou GPT (OpenAI) para extração de citações em casos complexos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Limitações e Considerações -->
+    <section class="section-container" id="limitacoes">
+        <h2 class="clickable" onclick="toggleSection(this)">
+            <i class="fas fa-chevron-right collapse-icon"></i>
+            <i class="fas fa-exclamation-circle section-icon"></i>
+            Limitações Metodológicas e Considerações
+        </h2>
+        
+        <div class="collapsible-content">
+            <div class="content-wrapper">
+                <div class="phase-card">
+                    <h4>Limitações Reconhecidas</h4>
+                    <ul>
+                        <li><strong>Cobertura:</strong> ~80% da base será processada (ignorando PDFs escaneados que requerem OCR)</li>
+                        <li><strong>Idiomas:</strong> Múltiplos idiomas podem apresentar variações na identificação de padrões de citação</li>
+                        <li><strong>Citações implícitas:</strong> A Fase 1 focará em citações explícitas; análise de influência doutrinária implícita ficará para fase futura</li>
+                        <li><strong>Qualidade dos PDFs:</strong> Possíveis erros de extração em documentos mal formatados</li>
+                        <li><strong>Ambiguidades:</strong> Casos com nomes similares podem requerer validação manual</li>
+                    </ul>
+                </div>
+                
+                <div class="phase-card mt-6">
+                    <h4>Considerações Acadêmicas</h4>
+                    <ul>
+                        <li>Todas as limitações serão documentadas explicitamente na tese</li>
+                        <li>Metodologia será reprodutível e auditável</li>
+                        <li>Código será versionado e comentado</li>
+                        <li>Decisões metodológicas serão justificadas com base em literatura pertinente</li>
+                        <li>Testes de robustez serão realizados sempre que possível</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 pt-8 border-t-2" style="border-color: #e8804f;">
+        <p class="text-center" style="color: #76a1c8; margin-left: 0;">
+            <i class="fas fa-university section-icon"></i>
+            Projeto de Pesquisa em Litigância Climática
+        </p>
+        <p class="text-center mt-2 text-sm" style="color: #5d8fbc; margin-left: 0; font-size: 12px;">
+            Documentação Técnica | Versão 1.0 | Outubro 2025
+        </p>
+    </footer>
+
+    <!-- JavaScript para funcionalidade interativa -->
+    <script>
+        // Toggle para seções colapsáveis
+        function toggleSection(headerElement) {
+            const content = headerElement.nextElementSibling;
+            const icon = headerElement.querySelector('.collapse-icon');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                icon.classList.add('expanded');
+            }
+        }
+        
+        // Toggle para itens do índice
+        function toggleIndexItem(itemElement) {
+            const icon = itemElement.querySelector('.collapse-icon');
+            
+            if (itemElement.classList.contains('expanded')) {
+                itemElement.classList.remove('expanded');
+                icon.classList.remove('expanded');
+            } else {
+                itemElement.classList.add('expanded');
+                icon.classList.add('expanded');
+            }
+        }
+        
+        // Função para navegação via botão
+        function navigateToSection(event, targetId) {
+            // Impedir propagação do evento para não acionar o toggle
+            event.stopPropagation();
+            
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                // Expande a seção automaticamente
+                const header = targetSection.querySelector('h2');
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.collapse-icon');
+                
+                if (!content.classList.contains('expanded')) {
+                    content.classList.add('expanded');
+                    icon.classList.add('expanded');
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
