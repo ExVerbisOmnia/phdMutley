@@ -1,0 +1,364 @@
+# ============================================================================
+# Climate Litigation Database - PostgreSQL 18 Configuration
+# ============================================================================
+#
+# 📁 PROJECT DIRECTORY: /home/gusrodgs/Gus/cienciaDeDados/phdMutley
+#
+# INSTRUCTIONS:
+# 🔹 Run these commands from: /home/gusrodgs/Gus/cienciaDeDados/phdMutley
+#
+# 1. Navigate to project directory:
+#    cd /home/gusrodgs/Gus/cienciaDeDados/phdMutley
+#
+# 2. Copy this file and rename it to: .env
+#    cp env_pg18.example .env
+#
+# 3. Edit the .env file with your credentials:
+#    nano .env
+#
+# 4. Fill in your PostgreSQL 18 credentials below
+#
+# 5. Keep the .env file secure - do NOT commit it to version control!
+#    echo ".env" >> .gitignore
+#
+# ============================================================================
+
+# ============================================================================
+# POSTGRESQL 18 SERVER CONFIGURATION
+# ============================================================================
+
+# The address where your PostgreSQL 18 server is running
+# Use 'localhost' if running on your local machine
+# Use IP address or hostname if running on a remote server
+DB_HOST=localhost
+
+# The port PostgreSQL is listening on
+# Default PostgreSQL port is 5432
+DB_PORT=5432
+
+# Database Name
+# The name of the database to use for this project
+# You must create this database first in PostgreSQL before running init_database_pg18.py
+#
+# 🔹 Run from: Any directory (PostgreSQL administrative commands)
+# To create the database, connect to PostgreSQL and run:
+#   sudo -u postgres psql
+#   CREATE DATABASE climate_litigation;
+#   \q
+#
+DB_NAME=climate_litigation
+
+# PostgreSQL User Credentials
+# Your PostgreSQL username
+# For local development, this might be 'postgres' (the default superuser)
+# For production, create a dedicated user with appropriate permissions
+DB_USER=phdmutley
+
+# Your PostgreSQL password
+# IMPORTANT: Keep this secure! Never share or commit to version control
+DB_PASSWORD=your_password_here
+
+# ============================================================================
+# POSTGRESQL 18 PERFORMANCE CONFIGURATION (Reference Only)
+# ============================================================================
+# These settings are configured in postgresql.conf, NOT in this file
+# They are documented here for reference
+#
+# 🔹 Run from: Any directory (system configuration)
+# IMPORTANT: These must be set in /etc/postgresql/18/main/postgresql.conf
+# and require a PostgreSQL restart to take effect
+#
+# To configure:
+#   sudo nano /etc/postgresql/18/main/postgresql.conf
+#   (add the settings below)
+#   sudo systemctl restart postgresql
+
+# Asynchronous I/O Method (PG 18 Feature)
+# Options: sync, worker, io_uring
+# - sync: Legacy behavior (PostgreSQL 17 compatibility mode)
+# - worker: Use I/O worker processes (default, cross-platform)
+#          Provides 2x performance improvement for reads
+# - io_uring: Best performance on Linux 5.1+ with liburing compiled
+#            Provides up to 3x performance improvement
+#
+# To configure in postgresql.conf:
+#   io_method = worker
+#
+# PG18_IO_METHOD=worker
+
+# Number of I/O Worker Processes (if using worker method)
+# Recommended: 25-100% of your CPU cores
+# Examples:
+#   4-core system: io_workers = 4
+#   8-core system: io_workers = 6-8
+#   16-core system: io_workers = 12-16
+#
+# To configure in postgresql.conf:
+#   io_workers = 4
+#
+# PG18_IO_WORKERS=4
+
+# I/O Concurrency (PG 18 default increased from 1 to 16)
+# Controls parallel I/O operations
+# Default in PG 18: 16 (was 1 in PG 17)
+#
+# To configure in postgresql.conf:
+#   effective_io_concurrency = 16
+#   maintenance_io_concurrency = 16
+#
+# PG18_EFFECTIVE_IO_CONCURRENCY=16
+# PG18_MAINTENANCE_IO_CONCURRENCY=16
+
+# Data Checksums (PG 18 Feature)
+# Enabled by default in PostgreSQL 18 for new clusters
+# Provides data integrity validation
+#
+# Note: This is set during initdb, cannot be changed later
+# initdb --data-checksums  (enabled by default in PG 18)
+# initdb --no-data-checksums  (to disable)
+#
+# PG18_DATA_CHECKSUMS=true
+
+# ============================================================================
+# APPLICATION-SPECIFIC SETTINGS
+# ============================================================================
+
+# PDF Storage Location
+# Where PDF files are stored on disk
+PDF_STORAGE_PATH=/home/gusrodgs/Gus/cienciaDeDados/phdMutley/pdfs/downloaded
+
+# Extraction Output Location
+# Where JSON extraction backups are saved
+EXTRACTION_OUTPUT_PATH=/home/gusrodgs/Gus/cienciaDeDados/phdMutley/data/processed
+
+# Logging Configuration
+LOG_LEVEL=INFO
+LOG_FILE=/home/gusrodgs/Gus/cienciaDeDados/phdMutley/logs/database.log
+
+# ============================================================================
+# SETUP CHECKLIST
+# ============================================================================
+#
+# Before running init_database_pg18.py, ensure:
+#
+# ✓ PostgreSQL 18 is installed and running
+#   🔹 Run from: Any directory
+#   Verify: psql --version
+#   Should show: psql (PostgreSQL) 18.x
+#
+# ✓ PostgreSQL 18 repository was added (not default Ubuntu repo)
+#   The default apt repo has older versions
+#   See README_PG18_SETUP.md for installation instructions
+#
+# ✓ You can connect to PostgreSQL
+#   🔹 Run from: Any directory
+#   Test: psql -U your_username -d postgres
+#
+# ✓ The database exists
+#   🔹 Run from: Any directory
+#   Create: sudo -u postgres psql -c "CREATE DATABASE climate_litigation;"
+#   Or use pgAdmin or another GUI tool
+#
+# ✓ User has proper permissions (PostgreSQL 18 requirement)
+#   🔹 Run from: Any directory
+#   sudo -u postgres psql -d climate_litigation
+#   GRANT ALL PRIVILEGES ON DATABASE climate_litigation TO your_user;
+#   GRANT ALL ON SCHEMA public TO your_user;
+#   \q
+#
+# ✓ Required Python packages are installed
+#   🔹 Run from: /home/gusrodgs/Gus/cienciaDeDados/phdMutley
+#   cd /home/gusrodgs/Gus/cienciaDeDados/phdMutley
+#   source venv/bin/activate
+#   pip install -r requirements_pg18.txt
+#
+# ✓ Asynchronous I/O is configured (optional but recommended)
+#   🔹 Run from: Any directory
+#   Edit: sudo nano /etc/postgresql/18/main/postgresql.conf
+#   Add: io_method = worker
+#   Add: io_workers = 4  (adjust for your CPU: check with 'nproc')
+#   Restart: sudo systemctl restart postgresql
+#
+# ✓ For best performance on Linux: io_uring support
+#   🔹 Run from: Any directory
+#   Check kernel: uname -r  (need 5.1+)
+#   Check liburing: ldd /usr/lib/postgresql/18/bin/postgres | grep liburing
+#   If available, set: io_method = io_uring (in postgresql.conf)
+#
+# ============================================================================
+# POSTGRESQL 18 CONFIGURATION EXAMPLE
+# ============================================================================
+#
+# 🔹 Run from: Any directory (system configuration)
+#
+# Add these lines to /etc/postgresql/18/main/postgresql.conf:
+#
+# # Asynchronous I/O (PG 18)
+# io_method = worker                    # or 'io_uring' on Linux with liburing
+# io_workers = 4                        # 25-100% of CPU cores (check with: nproc)
+# effective_io_concurrency = 16         # PG 18 default
+# maintenance_io_concurrency = 16       # For VACUUM, CREATE INDEX
+#
+# # Memory Settings (adjust for your system)
+# shared_buffers = 256MB                # 25% of RAM
+# work_mem = 64MB                       # For sorting operations
+# maintenance_work_mem = 128MB          # For maintenance operations
+#
+# # Checkpoint Settings
+# checkpoint_completion_target = 0.9
+# wal_buffers = 16MB
+#
+# # Query Planning
+# random_page_cost = 1.1                # For SSD
+# effective_cache_size = 1GB            # 50-75% of RAM
+#
+# Commands to apply changes:
+#   sudo nano /etc/postgresql/18/main/postgresql.conf
+#   (add the settings above)
+#   sudo systemctl restart postgresql
+#
+# Verify settings:
+#   psql -U phdmutley -d climate_litigation
+#   SHOW io_method;
+#   SHOW io_workers;
+#   \q
+#
+# ============================================================================
+# SECURITY NOTES
+# ============================================================================
+#
+# 1. Add .env to your .gitignore file to prevent accidental commits
+#    echo ".env" >> .gitignore
+#
+# 2. Use strong passwords in production (minimum 16 characters)
+#    Consider using a password manager to generate passwords
+#
+# 3. Consider using environment variables on production servers
+#    instead of .env files
+#
+# 4. Limit database user permissions (don't use superuser in production)
+#    Create dedicated users with minimal required permissions
+#
+# 5. Enable SSL/TLS for remote connections
+#    ssl = on  (in postgresql.conf)
+#    ssl_cert_file = 'server.crt'
+#    ssl_key_file = 'server.key'
+#
+# 6. Use connection pooling for production applications
+#    Consider pgbouncer or pgpool-II
+#
+# 7. Regular backups are essential
+#    pg_dump -U phdmutley climate_litigation > backup_$(date +%Y%m%d).sql
+#
+# ============================================================================
+# TROUBLESHOOTING
+# ============================================================================
+#
+# 🔹 All these commands can be run from: Any directory
+#
+# Issue: "could not connect to server"
+# Solution: Check if PostgreSQL is running
+#   sudo systemctl status postgresql
+#   sudo systemctl start postgresql
+#
+# Issue: "password authentication failed"
+# Solution: Verify credentials in .env match PostgreSQL user
+#   psql -U phdmutley -d climate_litigation
+#
+# Issue: "database does not exist"
+# Solution: Create the database first
+#   sudo -u postgres psql
+#   CREATE DATABASE climate_litigation;
+#   \q
+#
+# Issue: "permission denied for schema public"
+# Solution: Grant schema privileges (PG 18 requirement)
+#   sudo -u postgres psql -d climate_litigation
+#   GRANT ALL ON SCHEMA public TO phdmutley;
+#   GRANT ALL ON ALL TABLES IN SCHEMA public TO phdmutley;
+#   \q
+#
+# Issue: "io_method parameter cannot be changed"
+# Solution: io_method requires server restart
+#   Edit postgresql.conf, then:
+#   sudo systemctl restart postgresql
+#
+# Issue: "io_uring not available"
+# Solution: Check kernel version and liburing
+#   uname -r  (need 5.1+)
+#   sudo apt install liburing-dev
+#   PostgreSQL may need recompile with --with-liburing
+#
+# ============================================================================
+# POSTGRESQL 18 FEATURE DETECTION
+# ============================================================================
+#
+# 🔹 Run from: Any directory
+#
+# To check if PostgreSQL 18 features are available:
+#
+# psql -U phdmutley -d climate_litigation
+#
+# -- Check version
+# SELECT version();
+#
+# -- Check AIO configuration
+# SHOW io_method;
+# SHOW io_workers;
+# SHOW effective_io_concurrency;
+#
+# -- Check if data checksums are enabled
+# SHOW data_checksums;
+#
+# -- View active async I/O operations
+# SELECT * FROM pg_aios;
+#
+# -- Check I/O statistics
+# SELECT * FROM pg_stat_io;
+#
+# -- Exit PostgreSQL
+# \q
+#
+# ============================================================================
+# PERFORMANCE MONITORING
+# ============================================================================
+#
+# Monitor database performance with these queries:
+#
+# -- Check database size
+# SELECT pg_size_pretty(pg_database_size('climate_litigation'));
+#
+# -- Check table sizes
+# SELECT 
+#   schemaname,
+#   tablename,
+#   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
+# FROM pg_tables
+# WHERE schemaname = 'public'
+# ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+#
+# -- Check index usage
+# SELECT 
+#   schemaname,
+#   tablename,
+#   indexname,
+#   idx_scan as index_scans,
+#   pg_size_pretty(pg_relation_size(indexrelid)) AS index_size
+# FROM pg_stat_user_indexes
+# WHERE schemaname = 'public'
+# ORDER BY idx_scan DESC;
+#
+# -- Check slow queries (if pg_stat_statements is enabled)
+# SELECT 
+#   query,
+#   calls,
+#   total_exec_time,
+#   mean_exec_time,
+#   max_exec_time
+# FROM pg_stat_statements
+# ORDER BY mean_exec_time DESC
+# LIMIT 10;
+#
+# ============================================================================
+
+# End of PostgreSQL 18 configuration template

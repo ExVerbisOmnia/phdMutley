@@ -1,0 +1,13 @@
+2025-10-31 19:02:58,569 - __main__ - INFO - ======================================================================
+2025-10-31 19:02:58,569 - __main__ - INFO - STARTING PDF TEXT EXTRACTION PROCESS
+2025-10-31 19:02:58,569 - __main__ - INFO - ======================================================================
+2025-10-31 19:02:58,569 - __main__ - INFO - 
+1. Setting up database connection...
+2025-10-31 19:02:58,569 - __main__ - INFO - Connecting to database...
+2025-10-31 19:02:58,618 - __main__ - INFO - ✓ Database connection successful
+2025-10-31 19:02:58,618 - __main__ - INFO - Initializing database tables...
+2025-10-31 19:02:58,642 - __main__ - INFO - ✓ Database tables initialized successfully
+2025-10-31 19:02:58,642 - __main__ - INFO - 
+2. Finding PDF files...
+2025-10-31 19:02:58,642 - __main__ - ERROR - PDF directory not found: pdfs/first_processing_batch
+2025-10-31 19:02:58,642 - __main__ - ERROR - Please ensure PDFs have been downloaded first.

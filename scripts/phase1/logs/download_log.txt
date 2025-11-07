@@ -1,0 +1,127 @@
+2025-11-07 16:24:34,735 - INFO - ======================================================================
+2025-11-07 16:24:34,735 - INFO - PDF DOWNLOAD SCRIPT - CLIMATE LITIGATION DATABASE v2.0
+2025-11-07 16:24:34,736 - INFO - ======================================================================
+2025-11-07 16:24:34,736 - INFO - Database file: baseCompleta.xlsx
+2025-11-07 16:24:34,736 - INFO - Output directory: pdfs/downloaded
+2025-11-07 16:24:34,736 - INFO - 
+⚠️  TEST MODE: ENABLED
+2025-11-07 16:24:34,736 - INFO -    Strategy: random
+2025-11-07 16:24:34,736 - INFO -    N rows: 15
+2025-11-07 16:24:34,736 - INFO - ======================================================================
+
+2025-11-07 16:24:34,736 - ERROR - Database file not found: baseCompleta.xlsx
+2025-11-07 16:24:34,736 - ERROR - Please ensure the file is in the current directory.
+2025-11-07 16:24:34,736 - ERROR - Current directory: /home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts/phase1
+2025-11-07 16:25:57,193 - INFO - ======================================================================
+2025-11-07 16:25:57,193 - INFO - PDF DOWNLOAD SCRIPT - CLIMATE LITIGATION DATABASE v2.0
+2025-11-07 16:25:57,193 - INFO - ======================================================================
+2025-11-07 16:25:57,193 - INFO - Database file: baseCompleta.xlsx
+2025-11-07 16:25:57,193 - INFO - Output directory: pdfs/downloaded
+2025-11-07 16:25:57,193 - INFO - 
+⚠️  TEST MODE: ENABLED
+2025-11-07 16:25:57,193 - INFO -    Strategy: random
+2025-11-07 16:25:57,193 - INFO -    N rows: 15
+2025-11-07 16:25:57,193 - INFO - ======================================================================
+
+2025-11-07 16:25:57,193 - ERROR - Database file not found: baseCompleta.xlsx
+2025-11-07 16:25:57,193 - ERROR - Please ensure the file is in the current directory.
+2025-11-07 16:25:57,193 - ERROR - Current directory: /home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts/phase1
+2025-11-07 16:26:38,211 - INFO - ======================================================================
+2025-11-07 16:26:38,211 - INFO - PDF DOWNLOAD SCRIPT - CLIMATE LITIGATION DATABASE v2.0
+2025-11-07 16:26:38,211 - INFO - ======================================================================
+2025-11-07 16:26:38,211 - INFO - Database file: data/raw/baseCompleta.xlsx
+2025-11-07 16:26:38,211 - INFO - Output directory: pdfs/downloaded
+2025-11-07 16:26:38,211 - INFO - 
+⚠️  TEST MODE: ENABLED
+2025-11-07 16:26:38,211 - INFO -    Strategy: random
+2025-11-07 16:26:38,211 - INFO -    N rows: 15
+2025-11-07 16:26:38,211 - INFO - ======================================================================
+
+2025-11-07 16:26:38,211 - ERROR - Database file not found: data/raw/baseCompleta.xlsx
+2025-11-07 16:26:38,211 - ERROR - Please ensure the file is in the current directory.
+2025-11-07 16:26:38,211 - ERROR - Current directory: /home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts/phase1
+2025-11-07 16:27:20,693 - INFO - ======================================================================
+2025-11-07 16:27:20,693 - INFO - PDF DOWNLOAD SCRIPT - CLIMATE LITIGATION DATABASE v2.0
+2025-11-07 16:27:20,693 - INFO - ======================================================================
+2025-11-07 16:27:20,693 - INFO - Database file: data/raw/baseCompleta.xlsx
+2025-11-07 16:27:20,693 - INFO - Output directory: pdfs/downloaded
+2025-11-07 16:27:20,693 - INFO - 
+⚠️  TEST MODE: ENABLED
+2025-11-07 16:27:20,693 - INFO -    Strategy: random
+2025-11-07 16:27:20,693 - INFO -    N rows: 15
+2025-11-07 16:27:20,693 - INFO - ======================================================================
+
+2025-11-07 16:27:20,693 - ERROR - Database file not found: data/raw/baseCompleta.xlsx
+2025-11-07 16:27:20,693 - ERROR - Please ensure the file is in the current directory.
+2025-11-07 16:27:20,693 - ERROR - Current directory: /home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts/phase1
+2025-11-07 16:32:32,178 - INFO - ======================================================================
+2025-11-07 16:32:32,178 - INFO - PDF DOWNLOAD SCRIPT - CLIMATE LITIGATION DATABASE v2.0
+2025-11-07 16:32:32,178 - INFO - ======================================================================
+2025-11-07 16:32:32,178 - INFO - Database file: baseCompleta.xlsx
+2025-11-07 16:32:32,178 - INFO - Output directory: pdfs/downloaded
+2025-11-07 16:32:32,178 - INFO - 
+⚠️  TEST MODE: ENABLED
+2025-11-07 16:32:32,178 - INFO -    Strategy: first
+2025-11-07 16:32:32,178 - INFO -    N rows: 15
+2025-11-07 16:32:32,178 - INFO - ======================================================================
+
+2025-11-07 16:32:32,178 - INFO - Directory ready: logs
+2025-11-07 16:32:32,178 - INFO - Reading database from: baseCompleta.xlsx
+2025-11-07 16:32:35,452 - INFO - Database loaded successfully. Total rows in database: 15180
+2025-11-07 16:32:35,453 - INFO - 
+======================================================================
+2025-11-07 16:32:35,453 - INFO - ⚠️  TEST MODE ENABLED - Strategy: 'first' with N=15
+2025-11-07 16:32:35,453 - INFO - ======================================================================
+
+2025-11-07 16:32:35,453 - INFO - Processing first 15 rows (rows 0 to 14)
+2025-11-07 16:32:35,453 - INFO - Rows to process: 15
+
+2025-11-07 16:32:35,453 - INFO - Directory ready: pdfs/downloaded
+2025-11-07 16:32:35,455 - INFO - Downloading [1/15]: case_town-of-carrboro-v-duke-energy-corp_f9ea.pdf
+2025-11-07 16:32:39,288 - INFO - Successfully downloaded: case_town-of-carrboro-v-duke-energy-corp_f9ea.pdf
+2025-11-07 16:32:39,790 - INFO - Downloading [2/15]: case_in-re-federal-climate-protection-act-austria_a0db.pdf
+2025-11-07 16:32:42,180 - INFO - Successfully downloaded: case_in-re-federal-climate-protection-act-austria_a0db.pdf
+2025-11-07 16:32:42,682 - INFO - Downloading [3/15]: case_banktrack-et-al-vs-ing-bank_f9bc.pdf
+2025-11-07 16:32:44,475 - INFO - Successfully downloaded: case_banktrack-et-al-vs-ing-bank_f9bc.pdf
+2025-11-07 16:32:44,976 - INFO - Downloading [4/15]: case_municipality-of-bayamon-v-exxon-mobil-corp_4d49.pdf
+2025-11-07 16:32:46,253 - INFO - Successfully downloaded: case_municipality-of-bayamon-v-exxon-mobil-corp_4d49.pdf
+2025-11-07 16:32:46,755 - INFO - Downloading [5/15]: case_chamber-of-commerce-of-the-united-states-of-america-v-moore_d9a1.pdf
+2025-11-07 16:32:49,728 - INFO - Successfully downloaded: case_chamber-of-commerce-of-the-united-states-of-america-v-moore_d9a1.pdf
+2025-11-07 16:32:50,230 - INFO - File already exists, skipping: case_municipality-of-bayamon-v-exxon-mobil-corp_4d49.pdf
+2025-11-07 16:32:50,231 - INFO - Downloading [7/15]: case_united-states-v-new-york_e0ca.pdf
+2025-11-07 16:32:52,669 - INFO - Successfully downloaded: case_united-states-v-new-york_e0ca.pdf
+2025-11-07 16:32:53,171 - INFO - File already exists, skipping: case_united-states-v-new-york_e0ca.pdf
+2025-11-07 16:32:53,172 - INFO - File already exists, skipping: case_municipality-of-bayamon-v-exxon-mobil-corp_4d49.pdf
+2025-11-07 16:32:53,172 - INFO - File already exists, skipping: case_municipality-of-bayamon-v-exxon-mobil-corp_4d49.pdf
+2025-11-07 16:32:53,172 - INFO - Downloading [11/15]: case_restaurant-law-center-v-city-county-of-denver_3c50.pdf
+2025-11-07 16:32:54,918 - WARNING - Download failed (attempt 1/3): https://climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:32:54,918 - WARNING - Error: 404 Client Error: Not Found for url: https://admin.climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf?password-protected=login&redirect_to=https%3A%2F%2Fadmin.climatecasechart.com%2Fwp-content%2Fuploads%2Fcase-documents%2F2025%2F20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:32:57,446 - WARNING - Download failed (attempt 2/3): https://climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:32:57,446 - WARNING - Error: 404 Client Error: Not Found for url: https://admin.climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf?password-protected=login&redirect_to=https%3A%2F%2Fadmin.climatecasechart.com%2Fwp-content%2Fuploads%2Fcase-documents%2F2025%2F20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:33:00,927 - WARNING - Download failed (attempt 3/3): https://climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:33:00,927 - WARNING - Error: 404 Client Error: Not Found for url: https://admin.climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf?password-protected=login&redirect_to=https%3A%2F%2Fadmin.climatecasechart.com%2Fwp-content%2Fuploads%2Fcase-documents%2F2025%2F20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:33:06,458 - ERROR - Failed to download after 3 attempts: https://climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:33:06,458 - ERROR - Error: 404 Client Error: Not Found for url: https://admin.climatecasechart.com/wp-content/uploads/case-documents/2025/20250916_docket-124-cv-01862_order.pdf?password-protected=login&redirect_to=https%3A%2F%2Fadmin.climatecasechart.com%2Fwp-content%2Fuploads%2Fcase-documents%2F2025%2F20250916_docket-124-cv-01862_order.pdf
+2025-11-07 16:33:06,961 - INFO - Downloading [12/15]: case_united-states-v-vermont_2012.pdf
+2025-11-07 16:33:09,357 - INFO - Successfully downloaded: case_united-states-v-vermont_2012.pdf
+2025-11-07 16:33:09,859 - INFO - Downloading [13/15]: case_iowa-v-securities-exchange-commission_66e0.pdf
+2025-11-07 16:33:11,624 - INFO - Successfully downloaded: case_iowa-v-securities-exchange-commission_66e0.pdf
+2025-11-07 16:33:12,126 - INFO - File already exists, skipping: case_municipality-of-bayamon-v-exxon-mobil-corp_4d49.pdf
+2025-11-07 16:33:12,127 - INFO - File already exists, skipping: case_municipality-of-bayamon-v-exxon-mobil-corp_4d49.pdf
+2025-11-07 16:33:12,130 - INFO - 
+======================================================================
+2025-11-07 16:33:12,130 - INFO - DOWNLOAD SUMMARY
+2025-11-07 16:33:12,130 - INFO - ======================================================================
+2025-11-07 16:33:12,130 - INFO - Total rows processed:        15
+2025-11-07 16:33:12,130 - INFO - Successful downloads:        14
+2025-11-07 16:33:12,130 - INFO - Failed downloads:            1
+2025-11-07 16:33:12,130 - INFO - Skipped (no URL):            0
+2025-11-07 16:33:12,130 - INFO - Skipped (no Case ID):        0
+2025-11-07 16:33:12,130 - INFO - Success rate:                93.3%
+2025-11-07 16:33:12,130 - INFO - ======================================================================
+2025-11-07 16:33:12,131 - INFO - 
+⚠️  TEST MODE was enabled. To process the full database:
+2025-11-07 16:33:12,131 - INFO -    Set TEST_MODE = False in the configuration section
+2025-11-07 16:33:12,131 - INFO - 
+Download process completed!
+2025-11-07 16:33:12,131 - INFO - PDFs saved to: pdfs/downloaded
