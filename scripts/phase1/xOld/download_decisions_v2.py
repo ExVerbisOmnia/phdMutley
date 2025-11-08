@@ -373,6 +373,15 @@ if __name__ == "__main__":
     python download_decisions_v2.py
     """
     
+    # Check if we're in the correct directory
+    if not os.path.exists(DATABASE_FILE):
+        logging.error(f"✗ Database file not found: {DATABASE_FILE}")
+        logging.error(f"✗ Current directory: {os.getcwd()}")
+        logging.error("\n📁 You must run this script from the project root directory:")
+        logging.error("   cd /home/gusrodgs/Gus/cienciaDeDados/phdMutley")
+        logging.error("   python scripts/phase1/download_decisions_v2.py")
+        exit(1)
+    
     logging.info("="*70)
     logging.info("PDF DOWNLOAD SCRIPT - CLIMATE LITIGATION DATABASE v2.0")
     logging.info("="*70)
@@ -390,13 +399,6 @@ if __name__ == "__main__":
         logging.info(f"\n✅ FULL MODE: Processing entire database")
     
     logging.info("="*70 + "\n")
-    
-    # Check if database file exists
-    if not os.path.exists(DATABASE_FILE):
-        logging.error(f"Database file not found: {DATABASE_FILE}")
-        logging.error("Please ensure the file is in the current directory.")
-        logging.error(f"Current directory: {os.getcwd()}")
-        exit(1)
     
     # Create logs directory if it doesn't exist
     create_directory_if_not_exists('logs')

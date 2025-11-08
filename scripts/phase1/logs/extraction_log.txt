@@ -1,9 +1,0 @@
-2025-11-07 16:37:42,768 - INFO - ✓ Database connection established
-2025-11-07 16:37:42,768 - ERROR - ✗ Failed to import database models: No module named 'init_database_pg18_fixed'
-2025-11-07 16:37:42,768 - ERROR -    Make sure init_database_pg18_fixed.py is in scripts/phase0/
-2025-11-07 16:39:28,341 - INFO - ✓ Database connection established
-2025-11-07 16:39:28,341 - ERROR - ✗ Failed to import database models: No module named 'init_database_pg18_v2'
-2025-11-07 16:39:28,341 - ERROR -    Make sure init_database_pg18_v2.py is in scripts/phase0/
-2025-11-07 16:40:47,313 - INFO - ✓ Database connection established
-2025-11-07 16:40:47,313 - ERROR - ✗ Failed to import database models: No module named 'init_database_pg18'
-2025-11-07 16:40:47,313 - ERROR -    Make sure init_database_pg18.py is in scripts/phase0/
