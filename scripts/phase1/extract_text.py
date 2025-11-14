@@ -57,14 +57,14 @@ logging.basicConfig(
 
 # Path to the folder containing PDF files to be processed
 # This should match the BASE_OUTPUT_DIR from download_decisions_v2.py
-PDF_FOLDER_PATH = 'scripts/phase1/pdfs/downloaded'
+PDF_FOLDER_PATH = '/home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts/phase1/pdfs/downloaded'
 
 # Path to the Excel database (needed to map case_id to case data)
-DATABASE_FILE = 'baseDecisions.xlsx'
+DATABASE_FILE = '/home/gusrodgs/Gus/cienciaDeDados/phdMutley/baseDecisions.xlsx'
 
 # Test mode configuration
-TEST_MODE = False  # Set to False to process all PDFs
-TEST_N_FILES = 10  # Number of files to process in test mode
+TEST_MODE = True  # Set to False to process all PDFs
+TEST_N_FILES = 15  # Number of files to process in test mode
 
 # Quality assessment thresholds
 # These help determine if text extraction was successful

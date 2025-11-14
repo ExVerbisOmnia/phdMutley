@@ -82,33 +82,9 @@ def truncate_text(text, max_length):
     """Truncate text to specified length with ellipsis."""
     if text is None:
         return None
-    if not isinstance(text, str):
-        text = str(text)
     if len(text) <= max_length:
         return text
     return text[:max_length] + "..."
-
-def is_string_column(series):
-    """
-    Check if a pandas Series contains string values.
-    
-    Returns True only if the series contains actual string objects,
-    not other object types like JSON, datetime, UUID, etc.
-    """
-    if series.dtype != 'object':
-        return False
-    
-    # Check a sample of non-null values
-    non_null = series.dropna()
-    if len(non_null) == 0:
-        return False
-    
-    # Check first few non-null values
-    sample_size = min(5, len(non_null))
-    sample = non_null.iloc[:sample_size]
-    
-    # All sampled values should be strings
-    return all(isinstance(val, str) for val in sample)
 
 def prepare_dataframe(df, table_name):
     """
@@ -116,7 +92,6 @@ def prepare_dataframe(df, table_name):
     - Convert UUIDs to strings
     - Handle datetime objects
     - Truncate long text fields
-    - Handle JSON columns safely
     """
     # Create a copy to avoid modifying original
     df = df.copy()
@@ -162,19 +137,12 @@ def prepare_dataframe(df, table_name):
     # Handle other text columns in different tables
     elif table_name in ['cases', 'documents', 'text_sections']:
         for col in df.columns:
-            # Only process columns that actually contain strings
-            if is_string_column(df[col]) and MAX_TEXT_LENGTH:
-                try:
-                    # Check average length of text in this column
+            if df[col].dtype == 'object' and MAX_TEXT_LENGTH:
+                # Check if column contains long text
+                if df[col].notna().any():
                     avg_length = df[col].dropna().str.len().mean()
-                    
-                    # If average length exceeds threshold, truncate the column
                     if avg_length > MAX_TEXT_LENGTH:
-                        df[col] = df[col].apply(lambda x: truncate_text(x, MAX_TEXT_LENGTH) if pd.notna(x) else x)
-                except (AttributeError, TypeError) as e:
-                    # Column doesn't support string operations or has mixed types
-                    # This shouldn't happen after is_string_column check, but just in case
-                    pass
+                        df[col] = df[col].apply(lambda x: truncate_text(x, MAX_TEXT_LENGTH))
     
     return df
 
@@ -273,8 +241,6 @@ try:
 
 except Exception as e:
     print(f"\n✗ Error writing Excel file: {e}")
-    import traceback
-    traceback.print_exc()
     sys.exit(1)
 
 # ============================================================================
