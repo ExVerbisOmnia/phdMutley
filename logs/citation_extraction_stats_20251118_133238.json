@@ -1,0 +1,11 @@
+{
+  "documents_processed": 0,
+  "total_citations_found": 0,
+  "total_cost": 0.0,
+  "total_tokens_input": 0,
+  "total_tokens_output": 0,
+  "errors": 13,
+  "start_time": "2025-11-18 13:29:33.298525",
+  "end_time": "2025-11-18 13:32:38.603269",
+  "total_time": 185.304744
+}

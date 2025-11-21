@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Structure Analysis</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background: #1a1a1a; color: #e0e0e0; }
+        h1 { color: #4a9eff; }
+        h2 { color: #ff8c42; margin-top: 30px; }
+        h3 { color: #fbbf24; margin-top: 20px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background: #2a2a2a; }
+        th { background: #3a3a3a; color: #4a9eff; padding: 12px; text-align: left; border: 1px solid #444; }
+        td { padding: 10px; border: 1px solid #444; }
+        tr:nth-child(even) { background: #252525; }
+        .summary { background: #2a2a2a; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .populated { color: #4ade80; font-weight: bold; }
+        .empty { color: #f87171; font-weight: bold; }
+        .partial { color: #fbbf24; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>PostgreSQL Database Structure and Population Analysis</h1>
+    <div class="summary">
+        <strong>Generated:</strong> Tue 18 Nov 2025 08:13:42 AM -03<br>
+        <strong>Database:</strong> climate_litigation<br>
+        <strong>User:</strong> phdmutley<br>
+        <strong>Host:</strong> localhost:5432
+    </div>
+<h2>1. Tables Overview</h2>
+<table><tr><th>Table Name</th><th>Row Count</th><th>Status</th></tr>
+<tr><td>cases</td><td>8</td><td class='populated'>Has Data</td></tr>

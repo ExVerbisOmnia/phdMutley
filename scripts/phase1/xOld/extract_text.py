@@ -57,14 +57,14 @@ logging.basicConfig(
 
 # Path to the folder containing PDF files to be processed
 # This should match the BASE_OUTPUT_DIR from download_decisions_v2.py
-PDF_FOLDER_PATH = 'pdfs/first_processing_batch'
+PDF_FOLDER_PATH = '/home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts/phase1/pdfs/downloaded'
 
 # Path to the Excel database (needed to map case_id to case data)
-DATABASE_FILE = 'baseCompleta.xlsx'
+DATABASE_FILE = '/home/gusrodgs/Gus/cienciaDeDados/phdMutley/baseDecisions.xlsx'
 
 # Test mode configuration
-TEST_MODE = False  # Set to False to process all PDFs
-TEST_N_FILES = 10  # Number of files to process in test mode
+TEST_MODE = True  # Set to False to process all PDFs
+TEST_N_FILES = 15  # Number of files to process in test mode
 
 # Quality assessment thresholds
 # These help determine if text extraction was successful
@@ -103,13 +103,37 @@ except Exception as e:
 # Import database models (from init_database script)
 # We need these to interact with the database tables
 try:
-    # Assuming the init_database script is in scripts/phase0/
-    sys.path.insert(0, 'scripts/phase0')
+    # Check if we're in the correct directory
+    if not os.path.exists('baseDecisions.xlsx'):
+        raise FileNotFoundError(
+            "baseDecisions.xlsx not found. You must run this script from the project root:\n"
+            "   cd /home/gusrodgs/Gus/cienciaDeDados/phdMutley\n"
+            "   python scripts/phase1/extract_text.py"
+        )
+    
+    # Add the scripts/phase0 directory to Python path
+    sys.path.insert(0, os.path.join(os.getcwd(), 'scripts', 'phase0'))
+    
+    # Import database models - use the actual filename in your repository
     from init_database_pg18 import Case, Document, ExtractedText, Base
     logging.info("✓ Database models imported successfully")
-except Exception as e:
+except FileNotFoundError as e:
+    logging.error(f"✗ Wrong directory: {e}")
+    sys.exit(1)
+except ImportError as e:
     logging.error(f"✗ Failed to import database models: {e}")
     logging.error("   Make sure init_database_pg18.py is in scripts/phase0/")
+    logging.error("   Repository structure should be:")
+    logging.error("   phdMutley/")
+    logging.error("   ├── baseDecisions.xlsx")
+    logging.error("   ├── scripts/")
+    logging.error("   │   ├── phase0/")
+    logging.error("   │   │   └── init_database_pg18.py")
+    logging.error("   │   └── phase1/")
+    logging.error("   │       └── extract_text.py")
+    sys.exit(1)
+except Exception as e:
+    logging.error(f"✗ Unexpected error: {e}")
     sys.exit(1)
 
 # ============================================================================
@@ -456,7 +480,7 @@ def get_or_create_case(session, case_id_str, case_data_df):
     Args:
         session: SQLAlchemy session
         case_id_str (str): Case ID as string (from filename)
-        case_data_df (DataFrame): DataFrame with case data from baseCompleta.xlsx
+        case_data_df (DataFrame): DataFrame with case data from baseDecisions.xlsx
         
     Returns:
         Case: Case object (existing or newly created)
