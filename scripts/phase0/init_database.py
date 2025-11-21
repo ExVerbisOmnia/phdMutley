@@ -1,418 +1,703 @@
 #!/usr/bin/env python3
 """
-Database Schema Initialization for Climate Litigation Database
-===============================================================
-Creates PostgreSQL tables using SQLAlchemy ORM for climate litigation citation analysis.
+Database Initialization Script for Climate Litigation Citation Analysis
+Creates PostgreSQL database schema with all required tables and indexes.
 
-ðŸ" Run from: /home/gusrodgs/Gus/cienciaDeDados/phdMutley
-Command: python scripts/phase0/init_database.py
-
-Tables Created:
-- cases: Case metadata
-- documents: PDF documents linked to cases
-- extracted_texts: Text extracted from PDFs
-- citations: Cross-jurisdictional citations extracted from decisions
-- extraction_log: Processing audit trail
-
-Author: Lucas Biasetton (Refactored by Assistant)
-Project: Doutorado PM
-Version: 3.0 (Added document_id to Citations)
-Date: November 2025
+Author: Gustavo (Gus)
+Project: PhD Climate Litigation Research (Lucas "Mutley")
+Phase: Phase 0 & Phase 1
+Date: October/November 2025
 """
 
-import sys
 import os
-from sqlalchemy import (
-    create_engine, Column, String, Integer, Boolean, DateTime, Text, Float,
-    ForeignKey, Index, JSON
-)
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy.engine import URL
-from sqlalchemy.dialects.postgresql import UUID
+import sys
+from pathlib import Path
 from datetime import datetime
+import traceback
+from typing import Optional
+import argparse
+
+# SQLAlchemy imports - SQLAlchemy 2.0 compatible
+from sqlalchemy import (
+    create_engine, Column, String, Integer, Float, Boolean, 
+    DateTime, Text, ForeignKey, Index, inspect, text
+)
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
+
+# Logging configuration
 import logging
 
-# ============================================================================
-# CONFIGURATION & IMPORTS
-# ============================================================================
-
-# Add project root to path
-sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley')
-from config import DB_CONFIG, LOGS_DIR
-
-# ============================================================================
+# ============================================================
 # LOGGING CONFIGURATION
-# ============================================================================
+# ============================================================
 
+# Create logs directory if it doesn't exist
+log_dir = Path(__file__).parent.parent.parent / 'logs'
+log_dir.mkdir(exist_ok=True)
+
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(LOGS_DIR / 'database_init.log'),
+        logging.FileHandler(log_dir / 'database_init.log'),
         logging.StreamHandler()
     ]
 )
 
-# ============================================================================
-# DATABASE BASE
-# ============================================================================
+# Create logger instance
+logger = logging.getLogger(__name__)
 
+# ============================================================
+# DATABASE CONFIGURATION
+# ============================================================
+
+# Database connection parameters
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
+DB_NAME = os.getenv('DB_NAME', 'climate_litigation')
+DB_USER = os.getenv('DB_USER', 'gusrodgs')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+
+# Construct database URL
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+# ============================================================
+# SQLALCHEMY BASE AND MODELS
+# ============================================================
+
+# Create declarative base
 Base = declarative_base()
 
-# ============================================================================
-# TABLE MODELS
-# ============================================================================
+# ============================================================
+# TABLE DEFINITIONS
+# ============================================================
 
 class Case(Base):
     """
-    Represents a climate litigation case with complete metadata.
-    Primary entity linking to documents and citations.
+    Stores metadata about climate litigation cases.
+    
+    INPUT: Case metadata from Climate Case Chart database
+    STORAGE: One record per unique case
+    OUTPUT: Case information for analysis and citation linking
     """
     __tablename__ = 'cases'
     
-    # Primary Key (UUID generated deterministically from Case ID)
-    case_id = Column(UUID(as_uuid=True), primary_key=True)
+    # Primary key
+    case_id = Column(String(100), primary_key=True, comment="Unique case identifier from Climate Case Chart")
     
-    # Core Identification
-    case_name = Column(String, nullable=False, index=True)
-    case_number = Column(String)
+    # Basic case information
+    case_name = Column(String(500), nullable=False, comment="Official case name")
+    case_name_non_english = Column(String(500), comment="Case name in original language if non-English")
+    case_number = Column(String(200), comment="Official court docket/reference number")
     
-    # Jurisdictional Information
-    court_name = Column(String, nullable=False)
-    country = Column(String, nullable=False, index=True)
-    region = Column(String, nullable=False, index=True)  # Global North/South/International
+    # Jurisdictional information
+    jurisdiction = Column(String(300), nullable=False, comment="Court jurisdiction")
+    geographies = Column(String(300), comment="Geographic locations")
+    geography_iso = Column(String(100), comment="ISO country codes")
+    region = Column(String(50), comment="Global North or Global South classification")
     
-    # Temporal Information
-    filing_date = Column(DateTime)
-    decision_date = Column(DateTime, index=True)
+    # Temporal information
+    case_filing_year = Column(Float, comment="Year case was initially filed")
+    document_filing_date = Column(DateTime, comment="Date decision was issued")
+    last_event_date = Column(DateTime, comment="Most recent case activity date")
     
-    # Status and Metadata
-    case_status = Column(String)
-    case_url = Column(Text)
-    data_source = Column(String, default='climatecasechart.com')
-
-    # Extended Metadata (JSON)
-    # Note: Python attribute is metadata_json, but database column is 'metadata'
-    # This is because 'metadata' is reserved by SQLAlchemy's Declarative API
-    metadata_json = Column('metadata', JSON)
-
-    # Timestamps
-    created_at = Column(DateTime, default=datetime.now, nullable=False)
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    # Case characteristics
+    case_summary = Column(Text, comment="Brief description of case context")
+    case_status = Column(String(500), comment="Current status of the case")
+    case_outcome = Column(String(500), comment="Outcome/disposition")
+    case_categories = Column(Text, comment="Thematic classification")
+    
+    # Language information
+    language = Column(String(100), comment="Primary language of case documents")
+    
+    # Legal framework
+    principal_laws = Column(Text, comment="Key legal provisions cited")
+    at_issue = Column(Text, comment="Main legal issues")
+    
+    # Links and references
+    case_url = Column(String(500), comment="Link to Climate Case Chart page")
+    
+    # System metadata
+    created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, comment="Record last update timestamp")
     
     # Relationships
     documents = relationship("Document", back_populates="case", cascade="all, delete-orphan")
     
     def __repr__(self):
-        return f"<Case(id={self.case_id}, name='{self.case_name}', region='{self.region}')>"
+        return f"<Case(case_id='{self.case_id}', name='{self.case_name[:50]}...')>"
 
 
 class Document(Base):
     """
-    Represents a PDF document (judicial decision) linked to a case.
-    Tracks download status and metadata.
+    Stores information about PDF documents and extraction metadata.
+    
+    INPUT: PDF documents linked to cases
+    STORAGE: One record per document (multiple documents possible per case)
+    OUTPUT: Document metadata and extraction status for processing pipeline
     """
     __tablename__ = 'documents'
     
-    # Primary Key (UUID generated from Document ID)
-    document_id = Column(UUID(as_uuid=True), primary_key=True)
+    # Primary key
+    document_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, 
+                        comment="Auto-generated unique identifier")
     
-    # Foreign Key to Case
-    case_id = Column(UUID(as_uuid=True), ForeignKey('cases.case_id'), nullable=False, index=True)
+    # Foreign key to cases
+    case_id = Column(String(100), ForeignKey('cases.case_id', ondelete='CASCADE'), 
+                    nullable=False, comment="Links to parent case")
     
-    # Document Information
-    document_type = Column(String, default='Decision')
-    document_url = Column(Text)
+    # Document information
+    document_title = Column(String(500), comment="Title of the decision document")
+    document_type = Column(String(100), comment="Type of document (Decision, Verdict, etc.)")
+    document_date = Column(DateTime, comment="Date of the decision")
+    document_summary = Column(Text, comment="Summary of specific decision")
     
-    # Download Status
-    pdf_file_path = Column(Text)
-    pdf_downloaded = Column(Boolean, default=False, nullable=False)
-    download_date = Column(DateTime)
-    download_error = Column(Text)
+    # URL and file information
+    document_url = Column(String(500), comment="Link to Climate Case Chart document page")
+    document_content_url = Column(String(500), comment="Direct link to PDF")
+    pdf_file_path = Column(String(500), comment="Local storage path for downloaded PDF")
     
-    # File Metadata
-    file_size_bytes = Column(Integer)
-    page_count = Column(Integer)
-
-    # Extended Metadata (JSON)
-    # Note: Python attribute is metadata_json, but database column is 'metadata'
-    # This is because 'metadata' is reserved by SQLAlchemy's Declarative API
-    metadata_json = Column('metadata', JSON)
-
-    # Timestamps
-    created_at = Column(DateTime, default=datetime.now, nullable=False)
-    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    # Download status
+    pdf_downloaded = Column(Boolean, default=False, comment="Download success flag")
+    download_date = Column(DateTime, comment="When PDF was downloaded")
+    download_error = Column(Text, comment="Error message if download failed")
+    
+    # PDF metadata
+    file_size_bytes = Column(Integer, comment="PDF file size in bytes")
+    page_count = Column(Integer, comment="Number of pages in PDF")
+    is_scanned = Column(Boolean, comment="Flag for scanned PDFs (require OCR)")
+    
+    # System metadata
+    created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, 
+                       comment="Record last update timestamp")
     
     # Relationships
     case = relationship("Case", back_populates="documents")
     extracted_texts = relationship("ExtractedText", back_populates="document", cascade="all, delete-orphan")
-    citations = relationship("Citation", back_populates="document", cascade="all, delete-orphan")
+    text_sections = relationship("TextSection", back_populates="document", cascade="all, delete-orphan")
+    citations = relationship("Citation", back_populates="citing_document", cascade="all, delete-orphan")
     
     def __repr__(self):
-        return f"<Document(id={self.document_id}, case={self.case_id}, downloaded={self.pdf_downloaded})>"
+        return f"<Document(document_id='{self.document_id}', case_id='{self.case_id}')>"
 
 
 class ExtractedText(Base):
     """
-    Stores text extracted from PDF documents.
-    Separates raw and processed versions.
+    Stores extracted text content from PDFs.
+    
+    INPUT: Raw text extracted from PDF documents
+    ALGORITHM: Stores both raw and processed versions
+    OUTPUT: Text content for citation analysis
     """
-    __tablename__ = 'extracted_texts'
+    __tablename__ = 'extracted_text'
     
-    # Primary Key
-    text_id = Column(Integer, primary_key=True, autoincrement=True)
+    # Primary key
+    text_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,
+                    comment="Auto-generated unique identifier")
     
-    # Foreign Key to Document
-    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id'), nullable=False, index=True)
+    # Foreign key to documents
+    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='CASCADE'),
+                        nullable=False, comment="Links to parent document")
     
-    # Extraction Metadata
-    extraction_method = Column(String)  # 'pdfplumber', 'PyMuPDF', 'PyPDF2'
-    extraction_date = Column(DateTime, default=datetime.now)
+    # Extraction metadata
+    extraction_method = Column(String(50), comment="Library used: PyPDF2, pdfplumber, or PyMuPDF")
+    extraction_date = Column(DateTime, default=datetime.utcnow, comment="When extraction was performed")
+    extraction_quality = Column(String(20), comment="Quality assessment: excellent/good/fair/poor/failed")
+    extraction_notes = Column(Text, comment="Any warnings or issues during extraction")
     
-    # Text Content
-    raw_text = Column(Text)
-    processed_text = Column(Text)
+    # Text content
+    raw_text = Column(Text, comment="Original extracted text, unprocessed")
+    processed_text = Column(Text, comment="Cleaned and preprocessed text")
     
-    # Quality Metrics
-    word_count = Column(Integer)
-    character_count = Column(Integer)  # Added to match extract_texts.py usage
-    extraction_quality = Column(String)  # 'excellent', 'good', 'fair', 'poor', 'failed'
-    extraction_notes = Column(Text)
+    # Text statistics
+    word_count = Column(Integer, comment="Number of words in text")
+    character_count = Column(Integer, comment="Number of characters")
+    paragraph_count = Column(Integer, comment="Number of paragraphs")
+    sentence_count = Column(Integer, comment="Number of sentences")
     
-    # Language Detection
-    language_detected = Column(String)
+    # Language detection
+    language_detected = Column(String(10), comment="Auto-detected language code (ISO 639-1)")
+    language_confidence = Column(Float, comment="Confidence score for language detection")
     
-    # Timestamps
-    created_at = Column(DateTime, default=datetime.now, nullable=False)
+    # System metadata
+    created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow,
+                       comment="Record last update timestamp")
     
     # Relationships
     document = relationship("Document", back_populates="extracted_texts")
     
     def __repr__(self):
-        return f"<ExtractedText(id={self.text_id}, doc={self.document_id}, quality='{self.extraction_quality}')>"
+        return f"<ExtractedText(text_id='{self.text_id}', document_id='{self.document_id}', quality='{self.extraction_quality}')>"
 
 
-class CitationExtraction(Base):
+class TextSection(Base):
     """
-    Tracks each citation extraction attempt with API usage metrics.
-    One record per document processed for citation extraction.
+    Stores segmented sections of text for targeted analysis.
+    
+    INPUT: Extracted text divided into logical sections
+    ALGORITHM: Identifies sections likely to contain citations
+    OUTPUT: Section-level text for citation extraction
     """
-    __tablename__ = 'citation_extractions'
+    __tablename__ = 'text_sections'
     
-    # Primary Key
-    extraction_id = Column(Integer, primary_key=True, autoincrement=True)
+    # Primary key
+    section_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,
+                       comment="Auto-generated unique identifier")
     
-    # Foreign Key to Document
-    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id'), nullable=False, unique=True, index=True)
+    # Foreign key to documents
+    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='CASCADE'),
+                        nullable=False, comment="Links to parent document")
     
-    # Extraction Metadata
-    model_used = Column(String)
-    extraction_success = Column(Boolean, default=False, nullable=False)
-    extraction_error = Column(Text)
-    extraction_time_seconds = Column(Float)
+    # Section information
+    section_type = Column(String(50), comment="Type: introduction/facts/analysis/conclusion/references")
+    section_order = Column(Integer, comment="Order of section in document")
+    section_heading = Column(String(500), comment="Section heading/title if present")
     
-    # Citation Counts
-    total_citations_found = Column(Integer, default=0)
-    foreign_citations_count = Column(Integer, default=0)
-    domestic_citations_excluded = Column(Integer, default=0)
+    # Section content
+    section_text = Column(Text, comment="Text content of this section")
     
-    # API Usage Tracking
-    api_tokens_input = Column(Integer)
-    api_tokens_output = Column(Integer)
-    api_cost_usd = Column(Float)
+    # Section metadata
+    word_count = Column(Integer, comment="Number of words in section")
+    has_citations = Column(Boolean, comment="Flag indicating if section contains citations")
+    citation_count = Column(Integer, default=0, comment="Number of citations found in section")
     
-    # Raw LLM Response (JSON)
-    raw_llm_response = Column(JSON)
-    
-    # Timestamp
-    extraction_date = Column(DateTime, default=datetime.now, nullable=False)
+    # System metadata
+    created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
     
     # Relationships
-    citations = relationship("Citation", back_populates="extraction")
+    document = relationship("Document", back_populates="text_sections")
     
     def __repr__(self):
-        return f"<CitationExtraction(id={self.extraction_id}, doc={self.document_id}, success={self.extraction_success})>"
+        return f"<TextSection(section_id='{self.section_id}', type='{self.section_type}', order={self.section_order})>"
 
 
 class Citation(Base):
     """
-    Represents a cross-jurisdictional citation extracted from a judicial decision.
-    Links citing case to cited case with classification and confidence.
+    Stores identified citations between cases.
     
-    VERSION 3.0: Added document_id to track which specific document contains the citation.
+    INPUT: Citations extracted from decision texts
+    ALGORITHM: Links citing document to cited case
+    OUTPUT: Citation network for North-South analysis
     """
     __tablename__ = 'citations'
     
-    # Primary Key
-    citation_id = Column(Integer, primary_key=True, autoincrement=True)
+    # Primary key
+    citation_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,
+                        comment="Auto-generated unique identifier")
     
-    # Foreign Keys
-    extraction_id = Column(Integer, ForeignKey('citation_extractions.extraction_id'), nullable=False, index=True)
-    case_id = Column(UUID(as_uuid=True), ForeignKey('cases.case_id'), nullable=False, index=True)
-    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id'), nullable=False, index=True)
+    # Foreign keys
+    citing_document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='CASCADE'),
+                                nullable=False, comment="Document that contains the citation")
+    cited_case_id = Column(String(100), ForeignKey('cases.case_id', ondelete='CASCADE'),
+                          comment="Case being cited (if in database)")
     
-    # Citation Information
-    cited_case_name = Column(String, nullable=False)
-    cited_court = Column(String)
-    cited_jurisdiction = Column(String, index=True)
-    cited_country = Column(String)
-    cited_year = Column(Integer)
-    cited_case_number = Column(String)
+    # Citation information
+    citation_text = Column(Text, comment="Full text of citation as it appears")
+    citation_type = Column(String(50), comment="Type: foreign/international/domestic")
+    cited_case_name = Column(String(500), comment="Name of cited case")
+    cited_jurisdiction = Column(String(300), comment="Jurisdiction of cited case")
+    cited_year = Column(Integer, comment="Year of cited decision")
+    cited_court = Column(String(300), comment="Court that issued cited decision")
     
-    # Classification
-    citation_type = Column(String, nullable=False, index=True)  # 'Foreign Citation', 'International Citation', 'Foreign International Citation'
-    confidence_score = Column(Float)
+    # Context information
+    context_before = Column(Text, comment="Text before citation (100 chars)")
+    context_after = Column(Text, comment="Text after citation (100 chars)")
+    paragraph_position = Column(Integer, comment="Paragraph number where citation appears")
     
-    # Citation Location in Document
-    citation_string_raw = Column(Text)  # Exact citation text as found
-    citation_paragraph = Column(Text)  # Full paragraph containing citation
-    position_in_document = Column(Integer)  # Order of appearance
-    start_char_index = Column(Integer)  # Character position start
-    end_char_index = Column(Integer)  # Character position end
+    # Extraction metadata
+    extraction_method = Column(String(50), comment="Method used: regex/NER/LLM")
+    confidence_score = Column(Float, comment="Confidence in citation extraction (0-1)")
     
-    # Timestamps
-    created_at = Column(DateTime, default=datetime.now, nullable=False)
+    # Validation
+    is_validated = Column(Boolean, default=False, comment="Manual validation flag")
+    validation_notes = Column(Text, comment="Notes from manual validation")
+    
+    # System metadata
+    created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
     
     # Relationships
-    case = relationship("Case")
-    document = relationship("Document", back_populates="citations")
-    extraction = relationship("CitationExtraction", back_populates="citations")
+    citing_document = relationship("Document", back_populates="citations")
     
     def __repr__(self):
-        return f"<Citation(id={self.citation_id}, case={self.case_id}, cited='{self.cited_case_name}', type='{self.citation_type}')>"
+        return f"<Citation(citation_id='{self.citation_id}', type='{self.citation_type}')>"
 
 
-class ExtractionLog(Base):
+class ProcessingLog(Base):
     """
-    Audit trail for all processing operations.
-    Tracks downloads, extractions, and citation detection.
+    Detailed log of all processing operations.
+    
+    INPUT: Processing events from all pipeline stages
+    ALGORITHM: Records success, failures, and warnings
+    OUTPUT: Audit trail for reproducibility and debugging
     """
-    __tablename__ = 'extraction_log'
+    __tablename__ = 'processing_log'
     
-    # Primary Key
-    log_id = Column(Integer, primary_key=True, autoincrement=True)
+    # Primary key
+    log_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,
+                   comment="Auto-generated unique identifier")
     
-    # Foreign Key to Document
-    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id'), index=True)
+    # Foreign key (optional - some logs may not relate to specific document)
+    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='SET NULL'),
+                        comment="Related document if applicable")
     
-    # Log Information
-    stage = Column(String, nullable=False, index=True)  # 'download', 'extraction', 'citation_detection', 'preprocessing'
-    status = Column(String, nullable=False, index=True)  # 'success', 'failure', 'warning'
-    message = Column(Text)
+    # Log information
+    stage = Column(String(50), nullable=False, 
+                  comment="Processing stage: download/extraction/preprocessing/citation_detection")
+    status = Column(String(20), nullable=False, comment="Status: success/failure/warning")
+    message = Column(Text, comment="Detailed log message")
+    error_type = Column(String(100), comment="Type of error if failure")
+    error_traceback = Column(Text, comment="Full error traceback if available")
     
-    # Error Details
-    error_type = Column(String)
-    error_traceback = Column(Text)
+    # Processing metadata
+    processing_time_seconds = Column(Float, comment="Time taken for operation")
     
-    # Timestamp
-    timestamp = Column(DateTime, default=datetime.now, nullable=False, index=True)
+    # System metadata
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False, 
+                      comment="When log entry was created")
     
     def __repr__(self):
-        return f"<ExtractionLog(id={self.log_id}, doc={self.document_id}, stage='{self.stage}', status='{self.status}')>"
+        return f"<ProcessingLog(log_id='{self.log_id}', stage='{self.stage}', status='{self.status}')>"
 
 
-# ============================================================================
-# INDEXES
-# ============================================================================
+# ============================================================
+# DATABASE INITIALIZATION FUNCTIONS
+# ============================================================
 
-# Create indexes for common queries
-Index('idx_cases_region_country', Case.region, Case.country)
-Index('idx_citations_type_jurisdiction', Citation.citation_type, Citation.cited_jurisdiction)
-Index('idx_citations_case_document', Citation.case_id, Citation.document_id)
-Index('idx_log_document_stage', ExtractionLog.document_id, ExtractionLog.stage)
-
-# ============================================================================
-# DATABASE INITIALIZATION
-# ============================================================================
-
-def init_database(drop_existing=False):
+def init_database(reset: bool = False, verbose: bool = True) -> bool:
     """
-    Initialize database schema.
+    Initialize or reset the PostgreSQL database with proper schema.
     
-    INPUT: 
-        - drop_existing: Boolean, if True drops all tables before creating
+    INPUT:
+    - reset (bool): If True, drops all existing tables before creating new ones
+    - verbose (bool): If True, prints detailed progress messages
     
     ALGORITHM:
-        1. Connect to PostgreSQL
-        2. Optionally drop existing tables
-        3. Create all tables from SQLAlchemy models
-        4. Create indexes
+    1. Connects to PostgreSQL database
+    2. If reset=True, drops all existing tables using CASCADE
+    3. Creates all tables defined in Base.metadata
+    4. Creates indexes for optimization
+    5. Verifies table creation
     
-    OUTPUT: Success or error message
+    OUTPUT:
+    - bool: True if successful, False otherwise
     """
     try:
-        # Create database connection
-        db_url = URL.create(**DB_CONFIG)
-        engine = create_engine(db_url)
+        logger.info("=" * 60)
+        if verbose:
+            print("\n" + "=" * 60)
+            print("DATABASE INITIALIZATION")
+            print("=" * 60)
         
-        logging.info("="*60)
-        logging.info("DATABASE INITIALIZATION")
-        logging.info("="*60)
+        # Create engine
+        engine = create_engine(DATABASE_URL, echo=False)
         
-        # Drop existing tables if requested
-        if drop_existing:
-            logging.warning("⚠ Dropping existing tables...")
-            Base.metadata.drop_all(engine)
-            logging.info("✓ Existing tables dropped")
+        # Reset database if requested
+        if reset:
+            logger.warning("⚠️  Dropping existing tables...")
+            if verbose:
+                print("\n⚠️  WARNING: Dropping all existing tables...")
+            
+            # Drop all tables with CASCADE to handle foreign key dependencies
+            with engine.begin() as conn:
+                # Drop tables manually in correct order (children first)
+                logger.info("Dropping tables with CASCADE...")
+                conn.execute(text("DROP TABLE IF EXISTS citations CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS text_sections CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS extracted_text CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS documents CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS cases CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS processing_log CASCADE;"))
+                
+            logger.info("✓ All tables dropped successfully")
+            if verbose:
+                print("✓ All tables dropped successfully")
         
         # Create all tables
-        logging.info("Creating tables...")
-        Base.metadata.create_all(engine)
-        logging.info("✓ All tables created successfully")
+        logger.info("Creating tables...")
+        if verbose:
+            print("\n📊 Creating database tables...")
         
-        # Verify tables
-        logging.info("\nVerifying table creation...")
-        from sqlalchemy import inspect
+        Base.metadata.create_all(engine)
+        
+        logger.info("✓ All tables created successfully")
+        if verbose:
+            print("✓ All tables created successfully")
+        
+        # Create additional indexes
+        logger.info("Creating indexes...")
+        if verbose:
+            print("\n🔍 Creating indexes for query optimization...")
+        
+        with engine.begin() as conn:
+            # Indexes for cases table
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_cases_region 
+                ON cases(region);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_cases_jurisdiction 
+                ON cases(jurisdiction);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_cases_geography_iso 
+                ON cases(geography_iso);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_cases_filing_year 
+                ON cases(case_filing_year);
+            """))
+            
+            # Indexes for documents table
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_documents_case_id 
+                ON documents(case_id);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_documents_is_scanned 
+                ON documents(is_scanned);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_documents_downloaded 
+                ON documents(pdf_downloaded);
+            """))
+            
+            # Indexes for extracted_text table
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_extracted_text_document_id 
+                ON extracted_text(document_id);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_extracted_text_quality 
+                ON extracted_text(extraction_quality);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_extracted_text_language 
+                ON extracted_text(language_detected);
+            """))
+            
+            # Indexes for text_sections table
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_text_sections_document_id 
+                ON text_sections(document_id);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_text_sections_has_citations 
+                ON text_sections(has_citations);
+            """))
+            
+            # Indexes for citations table
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_citations_citing_doc 
+                ON citations(citing_document_id);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_citations_cited_case 
+                ON citations(cited_case_id);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_citations_type 
+                ON citations(citation_type);
+            """))
+            
+            # Indexes for processing_log table
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_processing_log_document_id 
+                ON processing_log(document_id);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_processing_log_stage 
+                ON processing_log(stage);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_processing_log_status 
+                ON processing_log(status);
+            """))
+            
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS idx_processing_log_timestamp 
+                ON processing_log(timestamp);
+            """))
+        
+        logger.info("✓ All indexes created successfully")
+        if verbose:
+            print("✓ All indexes created successfully")
+        
+        # Verify tables were created
+        logger.info("Verifying table creation...")
+        if verbose:
+            print("\n✓ Verifying database structure...")
+        
         inspector = inspect(engine)
         tables = inspector.get_table_names()
         
-        expected_tables = ['cases', 'documents', 'extracted_texts', 'citations', 'citation_extractions', 'extraction_log']
-        for table in expected_tables:
-            if table in tables:
-                logging.info(f"  ✓ {table}")
-            else:
-                logging.error(f"  ✗ {table} NOT FOUND")
+        expected_tables = ['cases', 'documents', 'extracted_text', 'text_sections', 
+                          'citations', 'processing_log']
         
-        logging.info("\n" + "="*60)
-        logging.info("✓ DATABASE INITIALIZATION COMPLETED")
-        logging.info("="*60)
+        missing_tables = set(expected_tables) - set(tables)
+        
+        if missing_tables:
+            logger.error(f"✗ Missing tables: {missing_tables}")
+            if verbose:
+                print(f"\n✗ ERROR: Missing tables: {missing_tables}")
+            return False
+        
+        logger.info(f"✓ All {len(expected_tables)} tables verified")
+        if verbose:
+            print(f"✓ All {len(expected_tables)} tables created and verified:")
+            for table in expected_tables:
+                print(f"  • {table}")
+        
+        # Display summary
+        if verbose:
+            print("\n📋 Database Summary:")
+            print(f"  • Database: {DB_NAME}")
+            print(f"  • Host: {DB_HOST}:{DB_PORT}")
+            print(f"  • Tables: {len(expected_tables)}")
+            print(f"  • Status: ✓ Ready for data import")
+        
+        logger.info("=" * 60)
+        logger.info("✓ Database initialization completed successfully!")
+        if verbose:
+            print("\n" + "=" * 60)
+            print("✓ DATABASE INITIALIZATION COMPLETED SUCCESSFULLY!")
+            print("=" * 60 + "\n")
         
         return True
         
     except Exception as e:
-        logging.error(f"\n✗ Database initialization failed: {e}")
-        import traceback
-        logging.error(traceback.format_exc())
+        logger.error(f"\n✗ Database initialization failed: {e}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        if verbose:
+            print(f"\n✗ ERROR: Database initialization failed!")
+            print(f"Error: {e}")
+            print("\nPlease check the log file for details:")
+            print(f"  {log_dir / 'database_init.log'}")
         return False
 
 
-def reset_database():
+def reset_database() -> bool:
     """
-    Complete database reset - drops and recreates all tables.
-    USE WITH CAUTION - destroys all data.
-    """
-    logging.warning("="*60)
-    logging.warning("⚠⚠⚠ DATABASE RESET - ALL DATA WILL BE LOST ⚠⚠⚠")
-    logging.warning("="*60)
+    Reset database with user confirmation.
     
+    ALGORITHM:
+    1. Prompts user for confirmation
+    2. If confirmed, calls init_database with reset=True
+    3. If cancelled, returns False
+    
+    OUTPUT:
+    - bool: True if reset successful, False if cancelled or failed
+    """
     response = input("Are you sure you want to reset the database? Type 'yes' to confirm: ")
-    
     if response.lower() == 'yes':
-        return init_database(drop_existing=True)
+        return init_database(reset=True)
     else:
-        logging.info("Database reset cancelled")
+        print("Database reset cancelled.")
         return False
 
 
-# ============================================================================
-# MAIN
-# ============================================================================
+def get_database_info(verbose: bool = True) -> dict:
+    """
+    Get information about current database state.
+    
+    ALGORITHM:
+    1. Connects to database
+    2. Queries table existence and row counts
+    3. Returns summary information
+    
+    OUTPUT:
+    - dict: Database information including table names and row counts
+    """
+    try:
+        engine = create_engine(DATABASE_URL, echo=False)
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        
+        info = {
+            'database': DB_NAME,
+            'host': f"{DB_HOST}:{DB_PORT}",
+            'tables': tables,
+            'table_count': len(tables)
+        }
+        
+        if verbose:
+            print("\n" + "=" * 60)
+            print("DATABASE INFORMATION")
+            print("=" * 60)
+            print(f"\nDatabase: {info['database']}")
+            print(f"Host: {info['host']}")
+            print(f"Tables: {info['table_count']}")
+            
+            if tables:
+                print("\nExisting tables:")
+                for table in tables:
+                    print(f"  • {table}")
+            else:
+                print("\nNo tables found. Database may need initialization.")
+            
+            print("=" * 60 + "\n")
+        
+        return info
+        
+    except Exception as e:
+        logger.error(f"Failed to get database info: {e}")
+        if verbose:
+            print(f"\n✗ ERROR: Failed to connect to database")
+            print(f"Error: {e}")
+        return {}
+
+
+# ============================================================
+# MAIN EXECUTION
+# ============================================================
 
 if __name__ == "__main__":
-    import sys
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Initialize or reset the Climate Litigation database"
+    )
+    parser.add_argument(
+        '--reset',
+        action='store_true',
+        help='Reset database (drops all existing tables)'
+    )
+    parser.add_argument(
+        '--info',
+        action='store_true',
+        help='Display database information'
+    )
+    parser.add_argument(
+        '--quiet',
+        action='store_true',
+        help='Suppress verbose output'
+    )
     
-    if len(sys.argv) > 1 and sys.argv[1] == '--reset':
+    args = parser.parse_args()
+    
+    verbose = not args.quiet
+    
+    if args.info:
+        # Display database information
+        get_database_info(verbose=verbose)
+    elif args.reset:
+        # Reset database with confirmation
         reset_database()
     else:
-        init_database(drop_existing=False)
+        # Initialize database (create tables if they don't exist)
+        init_database(reset=False, verbose=verbose)

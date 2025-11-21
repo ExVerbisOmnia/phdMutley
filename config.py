@@ -25,7 +25,7 @@ load_dotenv()
 PROJECT_ROOT = Path('/home/gusrodgs/Gus/cienciaDeDados/phdMutley')
 PDF_DOWNLOAD_DIR = PROJECT_ROOT / 'pdfs/downloaded'
 LOGS_DIR = PROJECT_ROOT / 'logs'
-DATABASE_FILE = PROJECT_ROOT / 'baseCompleta.xlsx'
+DATABASE_FILE = PROJECT_ROOT / 'baseDecisions.xlsx'
 
 # Create directories immediately
 PDF_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -141,7 +141,7 @@ CONFIG = {
 # Centralized Test Configuration
 # Used for development testing with limited row counts
 TEST_CONFIG = {
-    'ENABLED': False,          # Master switch for all scripts
+    'ENABLED': True,          # Master switch for all scripts
     'LIMIT': 50,              # Number of rows/files/docs to process in test mode
     'STRATEGY': 'first',      # Options: 'first', 'random'
 }
