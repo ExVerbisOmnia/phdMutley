@@ -43,12 +43,16 @@ from tqdm import tqdm
 # CONFIGURATION & IMPORTS
 # ============================================================================
 
-# Add project root to path to import config
-sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley')
+# Add project root and scripts directory to path
+PROJECT_ROOT = '/home/gusrodgs/Gus/cienciaDeDados/phdMutley'
+sys.path.insert(0, PROJECT_ROOT)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'scripts'))
+
+# Import config
 from config import CONFIG, DB_CONFIG, DATABASE_FILE, UUID_NAMESPACE, LOGS_DIR, TRIAL_BATCH_CONFIG
 
 # Import database models
-sys.path.insert(0, os.path.join('/home/gusrodgs/Gus/cienciaDeDados/phdMutley', 'scripts', 'phase0'))
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'scripts', '0-initialize-database'))
 from init_database import Case, Document, Base
 
 from uuid import uuid5
@@ -179,7 +183,8 @@ def create_metadata_json(row, metadata_type='case'):
             'case_summary': 'Case Summary',
             'principal_laws': 'Principal Laws',
             'at_issue': 'At Issue',
-            'bundles': 'Bundle Name(s)'
+            'bundles': 'Bundle Name(s)',
+            'Geographies': 'Geographies'  # FIX: Add for backward compatibility with v5 citation extraction
         }
         for key, col in text_mappings.items():
             if pd.notna(row.get(col)):
@@ -278,7 +283,7 @@ def apply_trial_batch_filter(df):
 # ============================================================================
 
 def process_case(row, session):
-    case_uuid = generate_case_uuid(row['Case ID'])
+    case_uuid = str(generate_case_uuid(row['Case ID']))
     existing_case = session.query(Case).filter(Case.case_id == case_uuid).first()
     
     court_name = parse_jurisdiction(row.get('Jurisdictions'))
@@ -294,15 +299,15 @@ def process_case(row, session):
     case_data = {
         'case_name': str(row['Case Name']),
         'case_number': str(row['Case Number']) if pd.notna(row.get('Case Number')) else None,
-        'court_name': court_name,
-        'country': country,
+        'jurisdiction': court_name,
+        'geographies': str(row['Geographies']) if pd.notna(row.get('Geographies')) else None,  # FIX: Populate geographies column
         'region': region,
-        'filing_date': filing_date,
-        'decision_date': decision_date,
+        'case_filing_year': filing_date.year if filing_date else None,
+        'last_event_date': decision_date,
         'case_status': str(row['Status']) if pd.notna(row.get('Status')) else None,
         'case_url': str(row['Case URL']) if pd.notna(row.get('Case URL')) else None,
-        'data_source': 'climatecasechart.com',
-        'metadata_json': metadata  # Python attr metadata_json maps to DB column 'metadata'
+        # 'data_source': 'climatecasechart.com', # Removed as it's not in the model
+        'metadata_data': metadata  # Maps to DB column 'metadata_data'
     }
     
     if existing_case:
@@ -324,7 +329,7 @@ def process_document(row, case, session):
         'case_id': case.case_id,
         'document_type': str(row['Document Type']) if pd.notna(row.get('Document Type')) else 'Decision',
         'document_url': str(row['Document Content URL']) if pd.notna(row.get('Document Content URL')) else None,
-        'metadata_json': metadata  # Python attr metadata_json maps to DB column 'metadata'
+        'metadata_data': metadata  # Maps to DB column 'metadata_data'
     }
     
     if existing_doc:

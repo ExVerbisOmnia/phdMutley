@@ -30,7 +30,7 @@ from pathlib import Path
 # ============================================================================
 
 # Add project root to path to import config
-sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley')
+sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts')
 from config import CONFIG, PDF_DOWNLOAD_DIR, DATABASE_FILE, LOGS_DIR, TRIAL_BATCH_CONFIG
 
 # ============================================================================

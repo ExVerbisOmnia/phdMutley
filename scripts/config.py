@@ -25,7 +25,7 @@ load_dotenv()
 PROJECT_ROOT = Path('/home/gusrodgs/Gus/cienciaDeDados/phdMutley')
 PDF_DOWNLOAD_DIR = PROJECT_ROOT / 'pdfs/downloaded'
 LOGS_DIR = PROJECT_ROOT / 'logs'
-DATABASE_FILE = PROJECT_ROOT / 'baseDecisions.xlsx'
+DATABASE_FILE = PROJECT_ROOT / 'data/processed/baseFiltrada.xlsx'
 
 # Create directories immediately
 PDF_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -141,7 +141,7 @@ CONFIG = {
 # Centralized Test Configuration
 # Used for development testing with limited row counts
 TEST_CONFIG = {
-    'ENABLED': True,          # Master switch for all scripts
+    'ENABLED': False,          # Master switch for all scripts
     'LIMIT': 50,              # Number of rows/files/docs to process in test mode
     'STRATEGY': 'first',      # Options: 'first', 'random'
 }
@@ -151,7 +151,7 @@ TEST_CONFIG = {
 # This is different from TEST_CONFIG - trial batch targets specific documents
 # marked in the Excel file, while TEST_CONFIG limits to first N rows
 TRIAL_BATCH_CONFIG = {
-    'ENABLED': True,                    # Master switch for trial batch filtering
+    'ENABLED': False,                    # Master switch for trial batch filtering
     'COLUMN_NAME': 'Trial batch',       # Name of the column in Excel/database
     'TRUE_VALUES': [True, 'TRUE', 'True', 'true', 1, '1', 'yes', 'Yes', 'YES']  # Values indicating trial batch membership
 }

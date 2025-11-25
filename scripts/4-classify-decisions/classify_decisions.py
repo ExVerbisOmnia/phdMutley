@@ -55,11 +55,11 @@ from sqlalchemy.engine import URL
 # CONFIGURATION & IMPORTS
 # ============================================================================
 
-sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley')
+sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts')
 from config import (CONFIG, DB_CONFIG, LOGS_DIR, TRIAL_BATCH_CONFIG, 
                     DATABASE_FILE, UUID_NAMESPACE)
 
-sys.path.insert(0, os.path.join('/home/gusrodgs/Gus/cienciaDeDados/phdMutley', 'scripts', 'phase0'))
+sys.path.insert(0, os.path.join('/home/gusrodgs/Gus/cienciaDeDados/phdMutley', 'scripts', '0-initialize-database'))
 from init_database import Document, ExtractedText
 
 # ============================================================================
@@ -309,8 +309,7 @@ A judicial decision is a formal ruling, judgment, or order issued by a court or 
 Return ONLY valid JSON with no additional text or markdown:
 {{
   "is_judicial_decision": true,
-  "confidence_score": 0.95,
-  "reasoning": "This document is a final appellate ruling issued by the Supreme Court. It contains comprehensive legal analysis, applies precedent, and renders a binding decision on the substantive legal issues presented. The document exhibits all characteristics of a judicial decision including formal court heading, case citation, detailed reasoning, and dispositive order."
+  "confidence_score": 0.95
 }}
 
 CRITICAL: Output ONLY the JSON object. No markdown, no code blocks, no explanatory text.
@@ -343,9 +342,9 @@ CRITICAL: Output ONLY the JSON object. No markdown, no code blocks, no explanato
                 
                 is_decision = data.get('is_judicial_decision', False)
                 confidence = data.get('confidence_score', 0.0)
-                reasoning = data.get('reasoning', 'No reasoning provided')
                 
-                return is_decision, confidence, reasoning
+                return is_decision, confidence
+
                 
             except json.JSONDecodeError as e:
                 logging.error(f"JSON parse error (attempt {attempt + 1}/3): {e}")
@@ -415,7 +414,6 @@ def classify_single_document(doc_uuid, extracted_text, document_titles, session,
             document.decision_classification_method = 'document_title'
             document.decision_classification_confidence = 1.0  # Heuristic is definitive for positive matches
             document.decision_classification_date = datetime.now()
-            document.decision_classification_reasoning = f"Last word of Document Title: '{last_word}'"
             
             session.commit()
             
@@ -434,12 +432,12 @@ def classify_single_document(doc_uuid, extracted_text, document_titles, session,
             stats['no_text'] += 1
             return False
         
-        metadata = document.metadata_json or {}
-        is_decision, confidence, reasoning = classify_with_llm(extracted_text.raw_text, metadata)
+        metadata = document.metadata_data or {}
+        is_decision, confidence = classify_with_llm(extracted_text.raw_text, metadata)
         
         if is_decision is None:
             # LLM classification failed
-            logging.error(f"LLM classification failed for {doc_uuid}: {reasoning}")
+            logging.error(f"LLM classification failed for {doc_uuid}")
             stats['llm_errors'] += 1
             return False
         
@@ -448,7 +446,6 @@ def classify_single_document(doc_uuid, extracted_text, document_titles, session,
         document.decision_classification_method = 'llm_sonnet'
         document.decision_classification_confidence = confidence
         document.decision_classification_date = datetime.now()
-        document.decision_classification_reasoning = reasoning
         
         session.commit()
         

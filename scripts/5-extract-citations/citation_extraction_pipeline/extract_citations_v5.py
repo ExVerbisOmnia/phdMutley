@@ -1,53 +1,42 @@
 #!/usr/bin/env python3
 """
-Citation Extraction Script - Version 5.3 (Full Text Processing)
-================================================================
-Enhanced Foreign Case Law Capture with Complete Document Analysis
+Citation Extraction Script - Version 5.0 (Phased Approach)
+======================================================================
+Enhanced Foreign Case Law Capture with 4-Phase Architecture
 
 🏃 Run from: /home/gusrodgs/Gus/cienciaDeDados/phdMutley
-Command: python scripts/phase2/extract_citations_v5_3_fulltext.py
+Command: python scripts/phase2/extract_citations_v5_phased.py
 
-VERSION 5.3 - FULL TEXT PROCESSING WITH SEPARATION OF CONCERNS
-==============================================================
-
-CHANGES FROM v5.2:
-- FULL TEXT PROCESSING: Passes entire document to LLM (no arbitrary text window)
-- RESTORED ALL 12 EXTRACTION PATTERNS (v5.2 accidentally removed 6)
-- TWO-PASS APPROACH: Extraction and Functional Classification are separated
-  - Pass 1: Pure extraction (maximize recall)
-  - Pass 2: Functional classification (applied to extracted citations)
-- DYNAMIC CHUNKING: Only if document exceeds safe token threshold (~150K tokens)
-- NO OUTPUT TOKEN LIMIT: Set to model maximum (16,384 for Sonnet 4.5)
-- DEDUPLICATION: Removes duplicate citations when using chunked processing
+VERSION 5.0 - PHASED EXTRACTION ARCHITECTURE
+============================================
 
 ARCHITECTURE:
-Phase 1: Source Jurisdiction Identification (from Case.geographies)
-Phase 2A: Extract ALL case law references - FULL DOCUMENT (Sonnet 4.5)
-Phase 2B: Functional Classification of extracted citations (Sonnet 4.5)
+Phase 1: Source Jurisdiction Identification (from database)
+Phase 2: Extract ALL case law references (no filtering)
 Phase 3: Identify case origin (3-tier: Dictionary → Sonnet → Web Search)
-Phase 4: Classify citation type (Geographic + Functional)
+Phase 4: Classify citation type (Foreign / International / Foreign International)
 
-KEY IMPROVEMENTS (v5.3):
-- 100% document coverage (no text truncation)
-- All 12 extraction patterns restored
-- Separation of concerns: extraction vs. classification
-- Dynamic chunking for very long documents (>300 pages)
-- Improved recall targeting 85-95%
+KEY IMPROVEMENTS:
+- Extracts ALL case law references in Phase 2 (no premature filtering)
+- 3-tier origin identification for higher recall
+- Enhanced citation format patterns (12 types)
+- Captures extended context (before/after sentences)
+- Caching for repeated citations
+- Confidence-based manual review flagging
 
 EXPECTED PERFORMANCE:
-- Recall: 85-95% (major improvement from full document processing)
-- Precision: 90-95%
-- Cost: ~$0.10-0.25 per document (higher but necessary for quality)
+- Recall: 75-85% (up from 40-50%)
+- Precision: 85-90% (down from 95%, acceptable tradeoff)
+- Cost: Similar to v4 (~$0.02-0.05 per document)
 
 REQUIREMENTS:
 - Documents must be classified first (is_decision = True)
-- Database tables: citation_extraction_phased, citation_extraction_phased_summary
-- NO DATABASE RESET REQUIRED - uses existing schema
+- New database tables: citation_extraction_phased, citation_extraction_phased_summary
 
-Author: Lucas Biasetton & Claude
+Author: Lucas Biasetton & Assistant
 Project: Doutorado PM
-Version: 5.3
-Date: November 25, 2025
+Version: 5.0
+Date: November 22, 2025
 """
 
 import sys
@@ -97,7 +86,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(LOGS_DIR / 'citation_extraction_v5_3.log'),
+        logging.FileHandler(LOGS_DIR / 'citation_extraction_v5.log'),
         logging.StreamHandler()
     ]
 )
@@ -112,24 +101,6 @@ if not CONFIG['ANTHROPIC_API_KEY']:
     sys.exit(1)
 
 client = anthropic.Anthropic(api_key=CONFIG['ANTHROPIC_API_KEY'])
-
-# ============================================================================
-# PROCESSING CONFIGURATION
-# ============================================================================
-
-# Token estimation: ~1 token per 4 characters (conservative estimate for legal text)
-CHARS_PER_TOKEN = 4
-
-# Sonnet 4.5 has 200K context window - we use 150K as safe threshold for input
-# to leave room for system prompt and output
-SAFE_TOKEN_THRESHOLD = 150000
-SAFE_CHAR_THRESHOLD = SAFE_TOKEN_THRESHOLD * CHARS_PER_TOKEN  # ~600K chars
-
-# Model maximum output tokens (Sonnet 4.5 supports up to 16,384)
-MAX_OUTPUT_TOKENS = 16384
-
-# Overlap for chunking (to avoid missing citations at chunk boundaries)
-CHUNK_OVERLAP_CHARS = 5000
 
 # ============================================================================
 # ENHANCED DICTIONARIES - KNOWN FOREIGN COURTS
@@ -306,81 +277,6 @@ JURISDICTION_ALIASES = {
 }
 
 # ============================================================================
-# KNOWN COUNTRIES LIST - FOR GEOGRAPHY PARSING
-# ============================================================================
-
-KNOWN_COUNTRIES = {
-    # AMERICAS
-    'United States', 'Canada', 'Mexico', 'Brazil', 'Argentina', 'Chile', 'Peru',
-    'Colombia', 'Ecuador', 'Venezuela', 'Bolivia', 'Paraguay', 'Uruguay',
-    'Guatemala', 'Honduras', 'El Salvador', 'Nicaragua', 'Costa Rica', 'Panama',
-    'Cuba', 'Jamaica', 'Haiti', 'Dominican Republic', 'Puerto Rico', 'Bahamas',
-    'Barbados', 'Trinidad and Tobago', 'Grenada', 'Guyana', 'Suriname',
-    
-    # EUROPE - WESTERN
-    'United Kingdom', 'Ireland', 'France', 'Germany', 'Netherlands', 'Belgium',
-    'Luxembourg', 'Switzerland', 'Austria', 'Spain', 'Portugal', 'Italy',
-    'Holy See (Vatican City State)',
-    
-    # EUROPE - NORTHERN
-    'Norway', 'Sweden', 'Finland', 'Denmark', 'Iceland',
-    
-    # EUROPE - EASTERN
-    'Poland', 'Czech Republic', 'Czechia', 'Slovakia', 'Hungary', 'Romania',
-    'Bulgaria', 'Ukraine', 'Russia', 'Russian Federation', 'Belarus', 'Moldova',
-    'Estonia', 'Latvia', 'Lithuania',
-    
-    # EUROPE - SOUTHEASTERN
-    'Greece', 'Turkey', 'Türkiye', 'Cyprus', 'Malta', 'Croatia', 'Slovenia',
-    'Serbia', 'Bosnia and Herzegovina', 'Montenegro', 'North Macedonia', 'Albania',
-    
-    # ASIA - EAST
-    'China', 'Japan', 'South Korea', 'North Korea', 'Taiwan', 'Mongolia',
-    
-    # ASIA - SOUTH
-    'India', 'Pakistan', 'Bangladesh', 'Sri Lanka', 'Nepal', 'Bhutan', 'Maldives',
-    
-    # ASIA - SOUTHEAST
-    'Philippines', 'Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Vietnam',
-    'Myanmar', 'Cambodia', 'Laos', 'Brunei', 'East Timor',
-    
-    # ASIA - CENTRAL & WEST
-    'Kazakhstan', 'Uzbekistan', 'Turkmenistan', 'Kyrgyzstan', 'Tajikistan',
-    'Afghanistan', 'Iran', 'Iraq', 'Saudi Arabia', 'United Arab Emirates',
-    'Qatar', 'Kuwait', 'Bahrain', 'Oman', 'Yemen', 'Israel', 'Jordan',
-    'Lebanon', 'Syria', 'Palestine',
-    
-    # AFRICA - NORTH
-    'Egypt', 'Morocco', 'Algeria', 'Tunisia', 'Libya', 'Sudan', 'South Sudan',
-    
-    # AFRICA - WEST
-    'Nigeria', 'Ghana', 'Senegal', 'Ivory Coast', 'Mali', 'Burkina Faso',
-    'Niger', 'Guinea', 'Sierra Leone', 'Liberia', 'Gambia', 'Mauritania',
-    'Cape Verde', 'Benin', 'Togo',
-    
-    # AFRICA - CENTRAL
-    'Democratic Republic of the Congo', 'Republic of the Congo', 'Cameroon',
-    'Central African Republic', 'Chad', 'Gabon', 'Equatorial Guinea',
-    
-    # AFRICA - EAST
-    'Kenya', 'Ethiopia', 'Tanzania', 'Uganda', 'Rwanda', 'Burundi', 'Somalia',
-    'Eritrea', 'Djibouti', 'Seychelles', 'Comoros', 'Mauritius', 'Madagascar',
-    'Malawi',
-    
-    # AFRICA - SOUTHERN
-    'South Africa', 'Zimbabwe', 'Zambia', 'Botswana', 'Namibia', 'Mozambique',
-    'Angola', 'Lesotho', 'Eswatini',
-    
-    # OCEANIA
-    'Australia', 'New Zealand', 'Papua New Guinea', 'Fiji', 'Vanuatu', 'Samoa',
-    'Tonga', 'Solomon Islands', 'Kiribati', 'Micronesia', 'Palau',
-    'Marshall Islands', 'Nauru', 'Tuvalu',
-    
-    # INTERNATIONAL / SUPRANATIONAL
-    'European Union', 'International'
-}
-
-# ============================================================================
 # GLOBAL CACHES
 # ============================================================================
 
@@ -536,7 +432,7 @@ def extract_paragraph_context(text: str, start_index: int, end_index: int) -> Op
     return text[paragraph_start:paragraph_end].strip()
 
 def extract_context_sentences(text: str, start_index: int, end_index: int, 
-                              num_sentences: int = 5) -> Tuple[str, str]:
+                              num_sentences: int = 3) -> Tuple[str, str]:
     """
     Extract sentences before and after citation.
     
@@ -544,7 +440,7 @@ def extract_context_sentences(text: str, start_index: int, end_index: int,
         - text: Full document text
         - start_index: Citation start position
         - end_index: Citation end position
-        - num_sentences: Number of sentences to extract (default 5)
+        - num_sentences: Number of sentences to extract (default 3)
     ALGORITHM:
         1. Split text into sentences using basic punctuation
         2. Find citation location
@@ -583,66 +479,6 @@ def extract_context_sentences(text: str, start_index: int, end_index: int,
         logging.debug(f"Error extracting context sentences: {e}")
         return "", ""
 
-def estimate_token_count(text: str) -> int:
-    """
-    Estimate token count for a text string.
-    
-    INPUT: Text string
-    ALGORITHM: Divide character count by average chars per token (4)
-    OUTPUT: Estimated token count
-    """
-    return len(text) // CHARS_PER_TOKEN
-
-def should_chunk_document(text: str) -> bool:
-    """
-    Determine if document needs to be chunked based on size.
-    
-    INPUT: Document text
-    ALGORITHM: Compare character count to safe threshold
-    OUTPUT: True if chunking needed, False otherwise
-    """
-    return len(text) > SAFE_CHAR_THRESHOLD
-
-def chunk_document(text: str) -> List[Tuple[str, int, int]]:
-    """
-    Split document into overlapping chunks for processing.
-    
-    INPUT: Full document text
-    ALGORITHM:
-        1. Calculate chunk size (half of safe threshold for 2 chunks)
-        2. Create chunks with overlap at boundaries
-        3. Return list of (chunk_text, start_position, end_position)
-    OUTPUT: List of tuples (chunk_text, start_pos, end_pos)
-    """
-    # Use half the safe threshold for each chunk to ensure two chunks fit comfortably
-    chunk_size = SAFE_CHAR_THRESHOLD // 2
-    
-    chunks = []
-    start = 0
-    
-    while start < len(text):
-        # Calculate end position for this chunk
-        end = min(start + chunk_size, len(text))
-        
-        # If this is not the last chunk, extend to include overlap
-        if end < len(text):
-            end = min(end + CHUNK_OVERLAP_CHARS, len(text))
-        
-        chunk_text = text[start:end]
-        chunks.append((chunk_text, start, end))
-        
-        # Move start position (accounting for overlap in previous chunk)
-        if end < len(text):
-            start = end - CHUNK_OVERLAP_CHARS
-        else:
-            break
-    
-    logging.info(f"Document chunked into {len(chunks)} parts")
-    for i, (chunk, s, e) in enumerate(chunks):
-        logging.info(f"  Chunk {i+1}: chars {s}-{e} ({len(chunk):,} chars, ~{estimate_token_count(chunk):,} tokens)")
-    
-    return chunks
-
 # ============================================================================
 # PHASE 1: SOURCE JURISDICTION IDENTIFICATION
 # ============================================================================
@@ -677,9 +513,9 @@ def get_source_region(country: str) -> str:
     
     INPUT: Country name
     ALGORITHM:
-        1. Check if international
-        2. Check against GLOBAL_NORTH_COUNTRIES list
-        3. Default to Global South
+        1. Use get_binding_courts() from config.py
+        2. Check if country is in Global North or South lists
+        3. Return classification
     OUTPUT: "Global North" | "Global South" | "International" | "Unknown"
     """
     if country == "International":
@@ -687,6 +523,13 @@ def get_source_region(country: str) -> str:
     
     if not country or country == "Unknown":
         return "Unknown"
+    
+    # Get binding courts configuration (contains region mapping)
+    binding_courts = get_binding_courts(country, "Unknown")
+    
+    # Simple heuristic: if binding_courts includes ICJ/ITLOS, likely International
+    # Otherwise, use Maria Tigre's definition from config.py
+    # For now, we'll use a simplified mapping
     
     GLOBAL_NORTH_COUNTRIES = {
         "United States", "United Kingdom", "Canada", "Australia", "New Zealand",
@@ -701,210 +544,155 @@ def get_source_region(country: str) -> str:
     else:
         return "Global South"
 
-
-def extract_country_from_geographies(geographies_string: str) -> str:
-    """
-    Extract country name from Case.geographies field.
-    
-    INPUT: Geography string from Case.geographies column
-    ALGORITHM:
-        1. If empty/null, return "Unknown"
-        2. Split by semicolon and strip whitespace
-        3. Check each part against KNOWN_COUNTRIES set
-        4. Return first country found or first part as fallback
-    OUTPUT: Country name string
-    """
-    if not geographies_string:
-        return "Unknown"
-    
-    # Split and clean parts
-    parts = [p.strip() for p in str(geographies_string).split(';')]
-    
-    # Find the country among the parts
-    for part in parts:
-        if part in KNOWN_COUNTRIES:
-            return part
-    
-    # No country found in KNOWN_COUNTRIES
-    logging.debug(f"No recognized country in geography: {geographies_string}")
-    return parts[0] if parts else "Unknown"
-
 # ============================================================================
-# PHASE 2A: PURE EXTRACTION (MAXIMUM RECALL)
+# PHASE 2: ENHANCED EXTRACTION
 # ============================================================================
 
-def generate_extraction_prompt(text: str, source_jurisdiction: str, 
-                               source_region: str, chunk_info: str = "") -> str:
+def generate_phase2_extraction_prompt(text: str, source_jurisdiction: str, 
+                                     source_region: str) -> str:
     """
-    Generate comprehensive extraction prompt for Phase 2A.
+    Generate comprehensive extraction prompt for Phase 2.
     
-    KEY PRINCIPLE: Extract EVERYTHING - no filtering, no classification.
-    FOCUS: Maximum recall of case law references.
+    KEY PRINCIPLE: Extract EVERYTHING - no filtering for foreign/domestic.
     
     INPUT:
-        - text: Document text (full or chunk)
+        - text: Document text
         - source_jurisdiction: Where the citing court is located
         - source_region: Global North/South/International
-        - chunk_info: Optional info about which chunk this is
     ALGORITHM:
         1. Build detailed extraction instructions
-        2. List ALL 12 citation format patterns (RESTORED)
-        3. Specify JSON output format focused on extraction
+        2. List all citation format patterns
+        3. Request context capture
+        4. Specify JSON output format
     OUTPUT: Complete prompt string
     """
     
-    chunk_notice = ""
-    if chunk_info:
-        chunk_notice = f"\n\nNOTE: This is {chunk_info}. Extract ALL case law references from this portion.\n"
-    
     prompt = f"""You are extracting ALL judicial decision references from a legal document.
-Your ONLY task is EXTRACTION - identify and extract every reference to case law.
-{chunk_notice}
+
 SOURCE COURT INFORMATION:
 - Jurisdiction: {source_jurisdiction}
 - Region: {source_region}
 
-============================================================
-CRITICAL INSTRUCTIONS:
-============================================================
-1. Extract EVERY reference to case law, regardless of domestic or foreign origin
-2. Do NOT filter by jurisdiction - extract everything
-3. Do NOT classify how citations are used - just extract them
-4. Be EXHAUSTIVE - capture every mention of any case, court ruling, or judicial decision
-5. Read the ENTIRE text carefully - do not skip any sections
+CRITICAL INSTRUCTION: Extract EVERY reference to case law, regardless of whether it's domestic or foreign.
+Do NOT filter by jurisdiction - we will classify that later.
 
-============================================================
-EXTRACTION PATTERNS - CAPTURE ALL OF THESE:
-============================================================
+EXTRACTION PATTERNS (extract ALL of these):
 
-1. TRADITIONAL CITATIONS (formal legal citations)
+1. Traditional Citations
    - "Brown v. Board of Education, 347 U.S. 483 (1954)"
    - "R (Miller) v Secretary of State [2017] UKSC 5"
-   - "Case C-473/14 Dimos Kropias Attikis"
    - Include ALL citation formats and parallel citations
 
-2. NARRATIVE REFERENCES (descriptive mentions)
+2. Narrative References
    - "The Norwegian Supreme Court held in 2020..."
    - "Following the Dutch court's approach in..."
    - "The Oslo District Court ruled..."
-   - "The European Court of Human Rights stated..."
 
-3. SHORTHAND REFERENCES (abbreviated mentions)
+3. Shorthand References
    - "the Urgenda case"
    - "following Abraham"
    - "the landmark Dutch climate decision"
-   - "as established in Öneryıldız"
 
-4. SCHOLARLY CITATIONS (academic references to cases)
+4. Scholarly Citations
    - "Professor X's analysis of the Urgenda case"
    - "As noted by UNEP regarding the Norwegian ruling"
-   - "Commentary on the ECtHR jurisprudence"
 
-5. PROCEDURAL REFERENCES (case history)
+5. Procedural References
    - "On appeal from..."
    - "Affirmed by..."
    - "Following reversal by..."
-   - "Remanded to..."
 
-6. COMPARATIVE REFERENCES (comparing to other cases)
+6. Comparative References
    - "Unlike the approach in..."
    - "Similar to..."
    - "Distinguishing..."
-   - "Consistent with..."
 
-7. SIGNAL CITATIONS (legal signals)
+7. Signal Citations
    - "See also..."
    - "Cf..."
    - "Compare with..."
-   - "But see..."
-   - "Accord..."
 
-8. FOOTNOTE/ENDNOTE CITATIONS
-   - Include ALL citations appearing in footnotes
+8. Footnote/Endnote Citations
+   - Include ALL citations in footnotes
    - Include "supra" and "infra" references
-   - Include ibid. and id. references that refer to cases
 
-9. DISSENTING/CONCURRING OPINION CITATIONS
-   - Citations in dissenting opinions
-   - Citations in concurring opinions
-   - Note which type of opinion contains the citation
+9. Dissenting/Concurring Opinion Citations
+   - Include citations from ALL opinion types
 
-10. DOCTRINE REFERENCES (legal principle attributions)
+10. Doctrine References
     - "European precautionary principle jurisprudence"
     - "Following the approach developed in..."
-    - "The doctrine established by..."
 
-11. ADVISORY OPINIONS
+11. Advisory Opinions
     - ICJ Advisory Opinions
     - Other international tribunal advisory opinions
-    - "Advisory Opinion on..."
 
-12. PENDING/ONGOING CASE REFERENCES
+12. Pending/Ongoing Cases
     - "pending before..."
     - "currently before..."
-    - "the ongoing case of..."
 
-============================================================
+CONTEXT CAPTURE:
+For EACH citation found, capture:
+- The complete citation text
+- The 2-3 sentences BEFORE the citation
+- The 2-3 sentences AFTER the citation
+- The section heading where it appears (if identifiable)
+- Whether it's in main text, footnote, dissent, or concurrence
+
 OUTPUT FORMAT (JSON):
-============================================================
 {{
   "case_law_references": [
     {{
-      "case_name": "extracted case name (e.g., 'Urgenda Foundation v. State of the Netherlands')",
-      "raw_text": "complete citation text exactly as it appears",
+      "case_name": "extracted case name",
+      "raw_text": "complete citation as it appears",
+      "format": "traditional|narrative|shorthand|scholarly|procedural|comparative|signal|footnote|dissent|doctrine|advisory|pending",
+      "context_before": "2-3 sentences before",
+      "context_after": "2-3 sentences after",
+      "section": "section heading if available",
+      "location": "main_text|footnote|dissent|concurrence",
       "confidence": 0.0-1.0
     }}
   ],
   "total_references_found": number,
-  "extraction_notes": "any notes about the extraction process"
+  "sections_with_citations": ["list of sections"]
 }}
 
-============================================================
-IMPORTANT REMINDERS:
-============================================================
-- Extract EVERYTHING that looks like a case reference
-- Do NOT skip any sections of the document
-- Include citations even if you're uncertain about the format
-- Better to over-extract than to miss citations
-- Your job is ONLY extraction - classification comes later
+REMEMBER: Extract EVERYTHING that looks like case law. Do NOT filter by jurisdiction.
+Your job is extraction, not classification.
 
 Document text:
-{text}"""
+{text[:15000]}"""  # Limit to first 15,000 chars to manage token usage
     
     return prompt
 
-def extract_citations_from_text(document_id: uuid.UUID, text: str,
-                                source_jurisdiction: str, source_region: str,
-                                chunk_info: str = "") -> Optional[Dict]:
+def extract_all_case_references_phase2(document_id: uuid.UUID, raw_text: str, 
+                                      source_jurisdiction: str, source_region: str,
+                                      session) -> Optional[Dict]:
     """
-    Phase 2A: Extract ALL case law references using Sonnet 4.5.
+    Phase 2: Extract ALL case law references using Haiku.
     
     INPUT:
         - document_id: UUID of document
-        - text: Document text (full or chunk)
+        - raw_text: Full document text
         - source_jurisdiction: Source court jurisdiction
         - source_region: Global North/South/International
-        - chunk_info: Optional info about which chunk this is
+        - session: Database session
     ALGORITHM:
         1. Generate extraction prompt
-        2. Call Claude Sonnet 4.5 with maximum output tokens
+        2. Call Claude Haiku 4.5
         3. Parse JSON response
-        4. Return extracted references
+        4. Return all extracted references
     OUTPUT: Dict with extracted references or None
     """
     try:
         # Generate prompt
-        prompt = generate_extraction_prompt(text, source_jurisdiction, source_region, chunk_info)
+        prompt = generate_phase2_extraction_prompt(raw_text, source_jurisdiction, source_region)
         
-        # Log token estimate
-        estimated_tokens = estimate_token_count(prompt)
-        logging.info(f"  Prompt size: ~{estimated_tokens:,} tokens")
-        
-        # Call Claude Sonnet 4.5 with maximum output tokens
+        # Call Claude Haiku
         start_time = time.time()
         message = client.messages.create(
-            model="claude-sonnet-4-5-20250929",  # Sonnet 4.5 for precision
-            max_tokens=MAX_OUTPUT_TOKENS,  # Maximum output tokens (16,384)
+            model="claude-haiku-4-5-20251001",  # Haiku 4.5
+            max_tokens=4000,
             temperature=0.0,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -915,262 +703,24 @@ def extract_citations_from_text(document_id: uuid.UUID, text: str,
         data = extract_json_from_text(response_text)
         
         if not data:
-            logging.error(f"Failed to parse extraction JSON for document {document_id}")
-            logging.debug(f"Raw response: {response_text[:1000]}...")
+            logging.error(f"Failed to parse Phase 2 JSON for document {document_id}")
             return None
         
         # Add metadata
-        data['extraction_time'] = extraction_time
-        data['tokens_input'] = message.usage.input_tokens
-        data['tokens_output'] = message.usage.output_tokens
-        data['model'] = "claude-sonnet-4-5-20250929"
+        data['phase_2_extraction_time'] = extraction_time
+        data['phase_2_tokens_input'] = message.usage.input_tokens
+        data['phase_2_tokens_output'] = message.usage.output_tokens
+        data['phase_2_model'] = "claude-haiku-4-5-20251001"
         
-        logging.info(f"  Extraction complete: {data.get('total_references_found', 0)} references in {extraction_time:.1f}s")
-        logging.info(f"  Tokens: {message.usage.input_tokens:,} in / {message.usage.output_tokens:,} out")
+        logging.info(f"Phase 2: Extracted {data.get('total_references_found', 0)} references")
         
         return data
         
     except Exception as e:
-        logging.error(f"Error in extraction: {e}")
+        logging.error(f"Error in Phase 2 extraction: {e}")
         import traceback
         logging.error(traceback.format_exc())
         return None
-
-def deduplicate_citations(all_references: List[Dict]) -> List[Dict]:
-    """
-    Remove duplicate citations from combined chunk results.
-    
-    INPUT: List of citation dictionaries (potentially with duplicates from overlapping chunks)
-    ALGORITHM:
-        1. Create signature for each citation (case_name + raw_text)
-        2. Keep first occurrence of each unique citation
-        3. Return deduplicated list
-    OUTPUT: Deduplicated list of citations
-    """
-    seen_signatures = set()
-    unique_references = []
-    
-    for ref in all_references:
-        # Create signature from case name and raw text
-        case_name = ref.get('case_name', '').lower().strip()
-        raw_text = ref.get('raw_text', '').lower().strip()[:100]  # Use first 100 chars
-        signature = f"{case_name}|{raw_text}"
-        
-        if signature not in seen_signatures:
-            seen_signatures.add(signature)
-            unique_references.append(ref)
-    
-    if len(all_references) != len(unique_references):
-        logging.info(f"  Deduplication: {len(all_references)} → {len(unique_references)} citations")
-    
-    return unique_references
-
-def extract_all_case_references_phase2(document_id: uuid.UUID, raw_text: str, 
-                                       source_jurisdiction: str, source_region: str) -> Optional[Dict]:
-    """
-    Phase 2A: Extract ALL case law references from full document.
-    Handles chunking automatically if document is too large.
-    
-    INPUT:
-        - document_id: UUID of document
-        - raw_text: Full document text
-        - source_jurisdiction: Source court jurisdiction
-        - source_region: Global North/South/International
-    ALGORITHM:
-        1. Check if document needs chunking
-        2. If yes, chunk and process each chunk separately
-        3. Merge and deduplicate results
-        4. If no, process entire document at once
-    OUTPUT: Dict with extracted references or None
-    """
-    
-    # Log document size
-    char_count = len(raw_text)
-    estimated_tokens = estimate_token_count(raw_text)
-    logging.info(f"  Document size: {char_count:,} chars (~{estimated_tokens:,} tokens)")
-    
-    # Check if chunking is needed
-    if should_chunk_document(raw_text):
-        logging.info(f"  Document exceeds safe threshold ({SAFE_CHAR_THRESHOLD:,} chars) - using chunked processing")
-        chunks = chunk_document(raw_text)
-        
-        all_references = []
-        total_tokens_input = 0
-        total_tokens_output = 0
-        total_time = 0
-        
-        for i, (chunk_text, start_pos, end_pos) in enumerate(chunks):
-            chunk_info = f"chunk {i+1} of {len(chunks)} (chars {start_pos:,}-{end_pos:,})"
-            logging.info(f"  Processing {chunk_info}...")
-            
-            chunk_result = extract_citations_from_text(
-                document_id, chunk_text, source_jurisdiction, source_region, chunk_info
-            )
-            
-            if chunk_result:
-                # Adjust citation positions for chunk offset
-                for ref in chunk_result.get('case_law_references', []):
-                    ref['chunk_number'] = i + 1
-                    ref['chunk_offset'] = start_pos
-                
-                all_references.extend(chunk_result.get('case_law_references', []))
-                total_tokens_input += chunk_result.get('tokens_input', 0)
-                total_tokens_output += chunk_result.get('tokens_output', 0)
-                total_time += chunk_result.get('extraction_time', 0)
-        
-        # Deduplicate citations from overlapping regions
-        unique_references = deduplicate_citations(all_references)
-        
-        return {
-            'case_law_references': unique_references,
-            'total_references_found': len(unique_references),
-            'extraction_time': total_time,
-            'tokens_input': total_tokens_input,
-            'tokens_output': total_tokens_output,
-            'model': "claude-sonnet-4-5-20250929",
-            'chunked': True,
-            'chunk_count': len(chunks)
-        }
-    
-    else:
-        # Process entire document at once
-        logging.info(f"  Processing full document (no chunking needed)")
-        result = extract_citations_from_text(
-            document_id, raw_text, source_jurisdiction, source_region
-        )
-        if result:
-            result['chunked'] = False
-            result['chunk_count'] = 1
-        return result
-
-# ============================================================================
-# PHASE 2B: FUNCTIONAL CLASSIFICATION (SEPARATE PASS)
-# ============================================================================
-
-def generate_functional_classification_prompt(citations: List[Dict], 
-                                              document_text_sample: str,
-                                              source_jurisdiction: str) -> str:
-    """
-    Generate prompt for functional classification of extracted citations.
-    
-    INPUT:
-        - citations: List of extracted citation dictionaries
-        - document_text_sample: Sample of document text for context
-        - source_jurisdiction: Source court jurisdiction
-    OUTPUT: Prompt string for functional classification
-    """
-    
-    # Format citations for the prompt
-    citations_list = ""
-    for i, cit in enumerate(citations[:30]):  # Limit to 30 citations per batch
-        citations_list += f"""
-{i+1}. Case: {cit.get('case_name', 'Unknown')}
-   Citation: {cit.get('raw_text', '')[:200]}
-   Context: {cit.get('context_snippet', '')}
-"""
-    
-    prompt = f"""You are classifying HOW a court used each citation in its judgment.
-
-SOURCE COURT: {source_jurisdiction}
-
-For each citation below, determine:
-
-1. FUNCTIONAL USE:
-   - "parties_argument": The court is recounting what a party argued
-   - "dismissed": The court REJECTS or distinguishes this citation
-   - "contributed": The citation supports the court's own reasoning
-
-2. OPINION TYPE:
-   - "majority": Main/majority opinion
-   - "dissent": Dissenting opinion
-   - "concurrence": Concurring opinion
-   - "unclear": Cannot determine
-
-KEY SIGNALS:
-- "parties_argument": "submitted", "argued", "contended", "relied on", "appellant/respondent"
-- "dismissed": "distinguish", "not applicable", "unlike", "differs from", "little transfer value"
-- "contributed": "following", "applying", "as held in", "consistent with", "we adopt"
-
-CITATIONS TO CLASSIFY:
-{citations_list}
-
-OUTPUT FORMAT (JSON):
-{{
-  "classifications": [
-    {{
-      "citation_index": 1,
-      "functional_use": "parties_argument|dismissed|contributed",
-      "opinion_type": "majority|dissent|concurrence|unclear",
-      "key_signals": ["list", "of", "signals"]
-    }}
-  ]
-}}
-
-If uncertain, use "contributed" with low confidence."""
-    
-    return prompt
-
-def classify_citations_functionally(citations: List[Dict], 
-                                   raw_text: str,
-                                   source_jurisdiction: str) -> Dict[int, Dict]:
-    """
-    Phase 2B: Classify extracted citations by functional use.
-    
-    INPUT:
-        - citations: List of extracted citation dictionaries
-        - raw_text: Full document text for context
-        - source_jurisdiction: Source court jurisdiction
-    ALGORITHM:
-        1. Generate classification prompt
-        2. Call Claude Sonnet 4.5
-        3. Parse and return classifications
-    OUTPUT: Dict mapping citation index to classification data
-    """
-    if not citations:
-        return {}
-    
-    try:
-        # Take a sample of the document for context (first 10K chars)
-        text_sample = raw_text[:10000]
-        
-        # Generate prompt
-        prompt = generate_functional_classification_prompt(
-            citations, text_sample, source_jurisdiction
-        )
-        
-        # Call Claude Sonnet 4.5
-        message = client.messages.create(
-            model="claude-sonnet-4-5-20250929",
-            max_tokens=4000,
-            temperature=0.0,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        
-        # Parse response
-        response_text = message.content[0].text
-        data = extract_json_from_text(response_text)
-        
-        if not data:
-            logging.warning("Failed to parse functional classification JSON")
-            return {}
-        
-        # Convert to dict indexed by citation_index
-        classifications = {}
-        for item in data.get('classifications', []):
-            idx = item.get('citation_index', 0) - 1  # Convert to 0-indexed
-            classifications[idx] = {
-                'functional_use': item.get('functional_use', 'unknown'),
-                'opinion_type': item.get('opinion_type', 'unclear'),
-                'key_signals': item.get('key_signals', []),
-                'reasoning': item.get('reasoning', '')
-            }
-        
-        logging.info(f"  Functional classification complete for {len(classifications)} citations")
-        return classifications
-        
-    except Exception as e:
-        logging.warning(f"Error in functional classification: {e}")
-        return {}
 
 # ============================================================================
 # PHASE 3: ORIGIN IDENTIFICATION (3-TIER APPROACH)
@@ -1232,15 +782,18 @@ def identify_origin_tier1_dictionary(case_name: str, raw_text: str) -> Optional[
     logging.debug(f"Tier 1: No match for '{case_name}'")
     return None
 
-def identify_origin_tier2_sonnet(case_name: str, raw_text: str) -> Optional[Dict]: 
+def identify_origin_tier2_sonnet(case_name: str, raw_text: str, 
+                                context_before: str, context_after: str) -> Optional[Dict]:
     """
     Tier 2: Use Claude Sonnet for intelligent origin identification.
     
     INPUT:
         - case_name: Extracted case name
         - raw_text: Raw citation text
+        - context_before: Context sentences before citation
+        - context_after: Context sentences after citation
     ALGORITHM:
-        1. Build prompt
+        1. Build prompt with full context
         2. Call Claude Sonnet 4.5
         3. Parse origin identification
         4. Return with confidence score
@@ -1252,11 +805,18 @@ def identify_origin_tier2_sonnet(case_name: str, raw_text: str) -> Optional[Dict
 CASE NAME: {case_name}
 RAW CITATION: {raw_text}
 
+CONTEXT BEFORE:
+{context_before}
+
+CONTEXT AFTER:
+{context_after}
+
 Analyze ALL available signals:
 1. Court name in citation
 2. Citation format (e.g., "U.S." suggests United States, "UKSC" suggests UK)
 3. Case name patterns
-4. Legal system indicators
+4. Geographic references in context
+5. Legal system indicators
 
 Respond in JSON:
 {{
@@ -1315,33 +875,50 @@ def identify_origin_tier3_websearch(case_name: str, raw_text: str) -> Optional[D
     INPUT:
         - case_name: Extracted case name
         - raw_text: Raw citation text
+    ALGORITHM:
+        1. Construct search query
+        2. Use web_search tool (if available)
+        3. Parse search results
+        4. Extract jurisdiction information
     OUTPUT: Dict with origin data or None
     
-    integration with search API.
+    NOTE: This is a placeholder - actual web search implementation
+    would require integration with search API or tool.
     """
+    # Placeholder for web search functionality
+    # In production, this would:
+    # 1. Search for case name + "court" + "jurisdiction"
+    # 2. Parse top results
+    # 3. Extract country/court information
+    # 4. Return with moderate confidence (0.6-0.8)
+    
     logging.debug(f"Tier 3: Web search not implemented for '{case_name}'")
     return None
 
-def identify_case_origin(case_name: str, raw_text: str) -> Dict:
+def identify_case_origin(case_name: str, raw_text: str, 
+                        context_before: str, context_after: str) -> Dict:
     """
-    Identify origin using 3-tier approach.
+    Master function: Identify case origin using 3-tier approach.
     
     INPUT:
         - case_name: Extracted case name
         - raw_text: Raw citation text
+        - context_before: Context sentences before
+        - context_after: Context sentences after
     ALGORITHM:
-        Tier 1: Dictionary lookup (fastest)
-        Tier 2: LLM Analysis (Sonnet)
-        Tier 3: Web Search (fallback - placeholder)
-    OUTPUT: Dict with origin, region, confidence, method
+        1. Try Tier 1 (Dictionary) - fastest, highest confidence
+        2. If fails, try Tier 2 (Sonnet) - intelligent analysis
+        3. If fails, try Tier 3 (Web Search) - last resort
+        4. If all fail, return unknown with low confidence
+    OUTPUT: Dict with origin data (always returns, never None)
     """
     # Tier 1: Dictionary lookup
     tier1_result = identify_origin_tier1_dictionary(case_name, raw_text)
     if tier1_result:
         return tier1_result
     
-    # Tier 2: LLM Analysis
-    tier2_result = identify_origin_tier2_sonnet(case_name, raw_text)
+    # Tier 2: Sonnet analysis
+    tier2_result = identify_origin_tier2_sonnet(case_name, raw_text, context_before, context_after)
     if tier2_result and tier2_result['confidence'] >= 0.5:
         return tier2_result
     
@@ -1379,7 +956,11 @@ def classify_citation_type(source_jurisdiction: str, source_region: str,
     ALGORITHM:
         1. Normalize jurisdictions
         2. Compare source vs. case jurisdiction
-        3. Apply classification logic
+        3. Apply classification logic:
+           - Same jurisdiction = Domestic (exclude)
+           - Different jurisdiction + one is International = International Citation
+           - Different jurisdiction + both are countries = Foreign Citation
+           - Special case: both foreign + one is international = Foreign International
     OUTPUT: (citation_type, is_cross_jurisdictional)
     """
     # Normalize jurisdictions
@@ -1418,28 +999,24 @@ def classify_citation_type(source_jurisdiction: str, source_region: str,
 
 def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
     """
-    Process a single document through all phases with separation of concerns.
+    Process a single document through all 4 phases.
     
     INPUT:
         - doc_tuple: Database query result tuple
-                     (document_id, metadata_data, raw_text, case_id, geographies)
         - session: SQLAlchemy session
         - stats: Statistics dictionary
     ALGORITHM:
-        Phase 1: Identify source jurisdiction from Case.geographies
-        Phase 2A: Extract ALL case references (pure extraction)
-        Phase 2B: Functional classification (separate pass)
+        Phase 1: Identify source jurisdiction
+        Phase 2: Extract ALL case references
         Phase 3: Identify origin for each reference
         Phase 4: Classify each citation
         Save results to database
     OUTPUT: True if successful, False otherwise
     """
-    # Unpack query results
     document_id = doc_tuple[0]
     metadata_data = doc_tuple[1]
     raw_text = doc_tuple[2]
     case_id = doc_tuple[3]
-    geographies = doc_tuple[4]
     
     start_time = time.time()
     total_api_calls = 0
@@ -1452,41 +1029,36 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
         logging.info(f"{'='*70}")
         
         # ====================================================================
-        # PHASE 1: SOURCE JURISDICTION 
+        # PHASE 1: SOURCE JURISDICTION
         # ====================================================================
         logging.info("Phase 1: Identifying source jurisdiction...")
         
-        # Fallback to metadata_data if Case.geographies is NULL
-        if not geographies and isinstance(metadata_data, dict):
-            geographies = metadata_data.get('Geographies', '')
-            logging.debug(f"  Case.geographies was NULL, using metadata_data: {geographies}")
-        
-        # Extract country from geography string
-        source_jurisdiction = extract_country_from_geographies(geographies)
+        # Extract from metadata
+        geographies = metadata_data.get('Geographies', '') if isinstance(metadata_data, dict) else ''
+        source_jurisdiction = get_source_jurisdiction(geographies)
         source_region = get_source_region(source_jurisdiction)
         
-        logging.info(f"  Geography raw: {geographies}")
         logging.info(f"  Source: {source_jurisdiction} ({source_region})")
         
         # ====================================================================
-        # PHASE 2A: PURE EXTRACTION
+        # PHASE 2: EXTRACTION
         # ====================================================================
-        logging.info("Phase 2A: Extracting ALL case law references (full document)...")
+        logging.info("Phase 2: Extracting ALL case law references...")
         
-        phase2a_result = extract_all_case_references_phase2(
-            document_id, raw_text, source_jurisdiction, source_region
+        phase2_result = extract_all_case_references_phase2(
+            document_id, raw_text, source_jurisdiction, source_region, session
         )
         
-        if not phase2a_result:
-            logging.error("  Phase 2A failed - skipping document")
+        if not phase2_result:
+            logging.error("  Phase 2 failed - skipping document")
             stats['phase2_failures'] += 1
             return False
         
-        total_api_calls += phase2a_result.get('chunk_count', 1)
-        total_tokens_input += phase2a_result.get('tokens_input', 0)
-        total_tokens_output += phase2a_result.get('tokens_output', 0)
+        total_api_calls += 1
+        total_tokens_input += phase2_result.get('phase_2_tokens_input', 0)
+        total_tokens_output += phase2_result.get('phase_2_tokens_output', 0)
         
-        references = phase2a_result.get('case_law_references', [])
+        references = phase2_result.get('case_law_references', [])
         logging.info(f"  Extracted {len(references)} references")
         
         if len(references) == 0:
@@ -1502,7 +1074,7 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
                 total_api_calls=total_api_calls,
                 total_tokens_input=total_tokens_input,
                 total_tokens_output=total_tokens_output,
-                total_cost_usd=(total_tokens_input/1e6 * 3.0) + (total_tokens_output/1e6 * 15.0),
+                total_cost_usd=(total_tokens_input/1e6 * 0.25) + (total_tokens_output/1e6 * 1.25),
                 extraction_started_at=datetime.fromtimestamp(start_time),
                 extraction_completed_at=datetime.utcnow(),
                 total_processing_time_seconds=time.time() - start_time,
@@ -1518,18 +1090,6 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
             return True
         
         # ====================================================================
-        # PHASE 2B: FUNCTIONAL CLASSIFICATION (OPTIONAL SEPARATE PASS)
-        # ====================================================================
-        logging.info("Phase 2B: Functional classification of citations...")
-        
-        functional_classifications = classify_citations_functionally(
-            references, raw_text, source_jurisdiction
-        )
-        
-        if functional_classifications:
-            total_api_calls += 1
-        
-        # ====================================================================
         # PHASE 3 & 4: ORIGIN IDENTIFICATION AND CLASSIFICATION
         # ====================================================================
         logging.info("Phase 3: Identifying case origins...")
@@ -1542,25 +1102,33 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
         confidences = []
         items_for_review = 0
         
-        # Functional classification counters
-        functional_parties_count = 0
-        functional_dismissed_count = 0
-        functional_contributed_count = 0
-        majority_count = 0
-        dissent_count = 0
-        
         for i, ref in enumerate(references):
+            # Extract citation location in text
+            start_idx, end_idx = find_citation_indices(raw_text, ref.get('raw_text', ''))
+            paragraph = extract_paragraph_context(raw_text, start_idx, end_idx)
+            
+            # Get context (already in ref, but extract from full text too for consistency)
+            context_before = ref.get('context_before', '')
+            context_after = ref.get('context_after', '')
+            
+            if not context_before or not context_after:
+                context_before, context_after = extract_context_sentences(
+                    raw_text, start_idx, end_idx, num_sentences=3
+                )
+            
             # Phase 3: Identify origin
             origin_data = identify_case_origin(
                 ref.get('case_name', ''),
-                ref.get('raw_text', '')
+                ref.get('raw_text', ''),
+                context_before,
+                context_after
             )
             
             # Track API calls (Tier 2 uses Sonnet)
             if origin_data.get('tier') == 2:
                 total_api_calls += 1
             
-            # Phase 4: Classify (Geographic)
+            # Phase 4: Classify
             citation_type, is_cross_jurisdictional = classify_citation_type(
                 source_jurisdiction,
                 source_region,
@@ -1573,33 +1141,13 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
                 logging.debug(f"  Skipping domestic citation: {ref.get('case_name', 'Unknown')}")
                 continue
             
-            # Get functional classification from Phase 2B
-            func_class = functional_classifications.get(i, {})
-            functional_use = func_class.get('functional_use', 'unknown')
-            opinion_type = func_class.get('opinion_type', ref.get('location', 'unclear'))
-            key_signals = func_class.get('key_signals', [])
-            
-            # Count by type (geographic)
+            # Count by type
             if citation_type == 'Foreign Citation':
                 foreign_count += 1
             elif citation_type == 'International Citation':
                 international_count += 1
             elif citation_type == 'Foreign International Citation':
                 foreign_international_count += 1
-            
-            # Count by functional use
-            if functional_use == 'parties_argument':
-                functional_parties_count += 1
-            elif functional_use == 'dismissed':
-                functional_dismissed_count += 1
-            elif functional_use == 'contributed':
-                functional_contributed_count += 1
-            
-            # Count by opinion type
-            if opinion_type == 'majority':
-                majority_count += 1
-            elif opinion_type in ['dissent', 'concurrence']:
-                dissent_count += 1
             
             # Check if needs manual review
             confidence = origin_data.get('confidence', 0.0)
@@ -1608,15 +1156,7 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
             if needs_review:
                 items_for_review += 1
             
-            # Prepare functional metadata for storage
-            functional_metadata = {
-                'functional_use': functional_use,
-                'opinion_type': opinion_type,
-                'key_signals': key_signals,
-                'v5_3_extraction': True
-            }
-            
-            # Create citation record using existing schema fields
+            # Create citation record
             citation_record = CitationExtractionPhased(
                 document_id=document_id,
                 case_id=case_id,
@@ -1628,7 +1168,11 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
                 # Phase 2
                 case_name=ref.get('case_name'),
                 raw_citation_text=ref.get('raw_text'),
-                location_in_document=opinion_type,  # Use for opinion_type
+                citation_format=ref.get('format'),
+                context_before=context_before,
+                context_after=context_after,
+                section_heading=ref.get('section'),
+                location_in_document=ref.get('location'),
                 
                 # Phase 3
                 case_law_origin=origin_data['origin'],
@@ -1636,7 +1180,7 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
                 origin_identification_tier=origin_data['tier'],
                 origin_confidence=origin_data['confidence'],
                 
-                # Phase 4 - Geographic Classification
+                # Phase 4
                 citation_type=citation_type,
                 is_cross_jurisdictional=is_cross_jurisdictional,
                 
@@ -1644,19 +1188,22 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
                 cited_court=origin_data.get('court'),
                 cited_year=origin_data.get('year'),
                 
+                # Context
+                full_paragraph=paragraph,
+                position_in_document=i + 1,
+                start_char_index=start_idx,
+                end_char_index=end_idx,
+                
                 # Processing metadata
-                phase_2_model='claude-sonnet-4-5-20250929',
+                phase_2_model='claude-haiku-4-5-20251001',
                 phase_3_model=origin_data.get('method'),
                 phase_4_model='rule-based',
                 processing_time_seconds=time.time() - start_time,
                 api_calls_used=total_api_calls,
                 
-                # Quality control - store functional metadata in manual_review_reason
+                # Quality control
                 requires_manual_review=needs_review,
-                manual_review_reason=(
-                    f"Low confidence: {confidence:.2f} | FUNC: {json.dumps(functional_metadata)}"
-                    if needs_review else f"FUNC: {json.dumps(functional_metadata)}"
-                )
+                manual_review_reason=f"Low confidence: {confidence:.2f}" if needs_review else None
             )
             
             citation_records.append(citation_record)
@@ -1670,8 +1217,8 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
         total_cross_jurisdictional = foreign_count + international_count + foreign_international_count
         avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
         
-        # Calculate cost (Sonnet 4.5: $3/M input, $15/M output)
-        total_cost = (total_tokens_input/1e6 * 3.0) + (total_tokens_output/1e6 * 15.0)
+        # Calculate cost (Haiku: $0.25/M input, $1.25/M output)
+        total_cost = (total_tokens_input/1e6 * 0.25) + (total_tokens_output/1e6 * 1.25)
         
         # Create summary
         summary = CitationExtractionPhasedSummary(
@@ -1706,11 +1253,6 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
         stats['international_citations'] += international_count
         stats['foreign_international_citations'] += foreign_international_count
         stats['needs_review'] += items_for_review
-        stats['functional_parties'] += functional_parties_count
-        stats['functional_dismissed'] += functional_dismissed_count
-        stats['functional_contributed'] += functional_contributed_count
-        stats['majority_citations'] += majority_count
-        stats['dissent_citations'] += dissent_count
         
         logging.info(f"✓ Completed successfully:")
         logging.info(f"  Total references: {len(references)}")
@@ -1718,13 +1260,6 @@ def process_single_document_phased(doc_tuple, session, stats: Dict) -> bool:
         logging.info(f"    - Foreign: {foreign_count}")
         logging.info(f"    - International: {international_count}")
         logging.info(f"    - Foreign International: {foreign_international_count}")
-        logging.info(f"  Functional Classification:")
-        logging.info(f"    - Parties' argument: {functional_parties_count}")
-        logging.info(f"    - Dismissed/Distinguished: {functional_dismissed_count}")
-        logging.info(f"    - Contributed to decision: {functional_contributed_count}")
-        logging.info(f"  Opinion Type:")
-        logging.info(f"    - Majority: {majority_count}")
-        logging.info(f"    - Dissent/Concurrence: {dissent_count}")
         logging.info(f"  Avg confidence: {avg_confidence:.2f}")
         logging.info(f"  Needs review: {items_for_review}")
         logging.info(f"  Cost: ${total_cost:.4f}")
@@ -1769,28 +1304,19 @@ def main():
         2. Query documents classified as decisions (is_decision = True)
         3. Filter by trial batch if enabled
         4. Exclude already processed documents
-        5. Process each document through all phases
+        5. Process each document through 4 phases
         6. Report comprehensive statistics
     OUTPUT: Statistics printed to log
     """
     logging.info("="*70)
-    logging.info("CITATION EXTRACTION v5.3 - FULL TEXT PROCESSING")
-    logging.info("Complete Document Analysis with Separation of Concerns")
+    logging.info("CITATION EXTRACTION v5 - PHASED APPROACH")
+    logging.info("Enhanced Foreign Case Law Capture")
     logging.info("="*70)
     logging.info("Architecture:")
-    logging.info("  Phase 1:  Source Jurisdiction Identification")
-    logging.info("  Phase 2A: Extract ALL Case References - FULL DOCUMENT (Sonnet 4.5)")
-    logging.info("  Phase 2B: Functional Classification (Separate Pass)")
-    logging.info("  Phase 3:  Identify Case Origin (3-Tier)")
-    logging.info("  Phase 4:  Classify Citation Type (Geographic + Functional)")
-    logging.info("="*70)
-    logging.info("v5.3 Key Features:")
-    logging.info("  - FULL document processing (no text truncation)")
-    logging.info("  - ALL 12 extraction patterns restored")
-    logging.info("  - Separation of concerns: extraction vs. classification")
-    logging.info("  - Dynamic chunking for documents > 600K chars")
-    logging.info("  - Maximum output tokens (16,384)")
-    logging.info("  - Uses existing database schema (no reset required)")
+    logging.info("  Phase 1: Source Jurisdiction Identification")
+    logging.info("  Phase 2: Extract ALL Case References (Haiku 4.5)")
+    logging.info("  Phase 3: Identify Case Origin (3-Tier)")
+    logging.info("  Phase 4: Classify Citation Type")
     logging.info("="*70)
     
     # Get trial batch filter
@@ -1813,15 +1339,14 @@ def main():
             Document.document_id,
             Document.metadata_data,
             ExtractedText.raw_text,
-            Case.case_id,
-            Case.geographies
+            Case.case_id
         ).join(
             ExtractedText, Document.document_id == ExtractedText.document_id
         ).join(
             Case, Document.case_id == Case.case_id
         ).filter(
             ExtractedText.raw_text != None,
-            Document.is_decision == True
+            Document.is_decision == True  # Only process decisions
         )
         
         # Count total decisions
@@ -1866,18 +1391,12 @@ def main():
             'needs_review': 0,
             'phase2_failures': 0,
             'no_citations': 0,
-            'errors': 0,
-            # Functional classification stats
-            'functional_parties': 0,
-            'functional_dismissed': 0,
-            'functional_contributed': 0,
-            'majority_citations': 0,
-            'dissent_citations': 0
+            'errors': 0
         }
         
         # Process each document
         logging.info("\n" + "="*70)
-        logging.info("STARTING FULL-TEXT EXTRACTION")
+        logging.info("STARTING PHASED EXTRACTION")
         logging.info("="*70)
         
         for doc in tqdm(documents, desc="Processing Documents"):
@@ -1885,7 +1404,7 @@ def main():
         
         # Report final statistics
         logging.info("\n" + "="*70)
-        logging.info("EXTRACTION COMPLETE - FINAL STATISTICS (v5.3)")
+        logging.info("EXTRACTION COMPLETE - FINAL STATISTICS")
         logging.info("="*70)
         logging.info(f"Total decisions in database:     {total_decisions}")
         logging.info(f"Documents processed:             {stats['processed']}")
@@ -1893,21 +1412,12 @@ def main():
         logging.info(f"Phase 2 failures:                {stats['phase2_failures']}")
         logging.info(f"Other errors:                    {stats['errors']}")
         logging.info("")
-        logging.info("GEOGRAPHIC CLASSIFICATION:")
+        logging.info("CITATION COUNTS:")
         logging.info(f"Total references extracted:      {stats['total_references']}")
         logging.info(f"Foreign Citations:               {stats['foreign_citations']}")
         logging.info(f"International Citations:         {stats['international_citations']}")
         logging.info(f"Foreign International Citations: {stats['foreign_international_citations']}")
         logging.info(f"Total cross-jurisdictional:      {stats['foreign_citations'] + stats['international_citations'] + stats['foreign_international_citations']}")
-        logging.info("")
-        logging.info("FUNCTIONAL CLASSIFICATION:")
-        logging.info(f"  Reference to parties' arguments: {stats['functional_parties']}")
-        logging.info(f"  Dismissed/Distinguished:         {stats['functional_dismissed']}")
-        logging.info(f"  Contributed to decision:         {stats['functional_contributed']}")
-        logging.info("")
-        logging.info("OPINION TYPE BREAKDOWN:")
-        logging.info(f"  Majority opinion citations:      {stats['majority_citations']}")
-        logging.info(f"  Dissent/Concurrence citations:   {stats['dissent_citations']}")
         logging.info("")
         logging.info(f"Items requiring manual review:   {stats['needs_review']}")
         

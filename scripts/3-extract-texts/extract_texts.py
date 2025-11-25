@@ -39,12 +39,12 @@ from sqlalchemy.engine import URL
 # ============================================================================
 
 # Add project root to path to import config
-sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley')
+sys.path.insert(0, '/home/gusrodgs/Gus/cienciaDeDados/phdMutley/scripts')
 from config import (CONFIG, DB_CONFIG, PDF_DOWNLOAD_DIR, UUID_NAMESPACE, 
                     LOGS_DIR, TRIAL_BATCH_CONFIG, DATABASE_FILE)
 
 # Import database models
-sys.path.insert(0, os.path.join('/home/gusrodgs/Gus/cienciaDeDados/phdMutley', 'scripts', 'phase0'))
+sys.path.insert(0, os.path.join('/home/gusrodgs/Gus/cienciaDeDados/phdMutley', 'scripts', '0-initialize-database'))
 from init_database import Document, ExtractedText, Base
 
 # ============================================================================

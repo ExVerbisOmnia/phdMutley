@@ -16,11 +16,16 @@ from datetime import datetime
 import traceback
 from typing import Optional
 import argparse
+from dotenv import load_dotenv
+
+# Load environment variables from project root .env
+env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+load_dotenv(env_path)
 
 # SQLAlchemy imports - SQLAlchemy 2.0 compatible
 from sqlalchemy import (
     create_engine, Column, String, Integer, Float, Boolean, 
-    DateTime, Text, ForeignKey, Index, inspect, text
+    DateTime, Text, ForeignKey, Index, inspect, text, DECIMAL, TIMESTAMP, JSON
 )
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.dialects.postgresql import UUID
@@ -120,6 +125,9 @@ class Case(Base):
     # Links and references
     case_url = Column(String(500), comment="Link to Climate Case Chart page")
     
+    # Extra Metadata
+    metadata_data = Column(JSON, comment="Additional metadata from Excel")
+
     # System metadata
     created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, comment="Record last update timestamp")
@@ -170,6 +178,16 @@ class Document(Base):
     page_count = Column(Integer, comment="Number of pages in PDF")
     is_scanned = Column(Boolean, comment="Flag for scanned PDFs (require OCR)")
     
+    # Classification
+    is_decision = Column(Boolean, default=None, comment="True if document is a decision, False otherwise")
+    classification_confidence = Column(Float, comment="Confidence score of classification")
+    decision_classification_method = Column(String(50), comment="Method used for classification (document_title or llm_sonnet)")
+    decision_classification_confidence = Column(Float, comment="Confidence score of decision classification")
+    decision_classification_date = Column(DateTime, comment="When classification was performed")
+    
+    # Extra Metadata
+    metadata_data = Column(JSON, comment="Additional metadata from Excel")
+    
     # System metadata
     created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, 
@@ -178,8 +196,6 @@ class Document(Base):
     # Relationships
     case = relationship("Case", back_populates="documents")
     extracted_texts = relationship("ExtractedText", back_populates="document", cascade="all, delete-orphan")
-    text_sections = relationship("TextSection", back_populates="document", cascade="all, delete-orphan")
-    citations = relationship("Citation", back_populates="citing_document", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Document(document_id='{self.document_id}', case_id='{self.case_id}')>"
@@ -235,133 +251,104 @@ class ExtractedText(Base):
         return f"<ExtractedText(text_id='{self.text_id}', document_id='{self.document_id}', quality='{self.extraction_quality}')>"
 
 
-class TextSection(Base):
-    """
-    Stores segmented sections of text for targeted analysis.
-    
-    INPUT: Extracted text divided into logical sections
-    ALGORITHM: Identifies sections likely to contain citations
-    OUTPUT: Section-level text for citation extraction
-    """
-    __tablename__ = 'text_sections'
-    
-    # Primary key
-    section_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,
-                       comment="Auto-generated unique identifier")
-    
-    # Foreign key to documents
-    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='CASCADE'),
-                        nullable=False, comment="Links to parent document")
-    
-    # Section information
-    section_type = Column(String(50), comment="Type: introduction/facts/analysis/conclusion/references")
-    section_order = Column(Integer, comment="Order of section in document")
-    section_heading = Column(String(500), comment="Section heading/title if present")
-    
-    # Section content
-    section_text = Column(Text, comment="Text content of this section")
-    
-    # Section metadata
-    word_count = Column(Integer, comment="Number of words in section")
-    has_citations = Column(Boolean, comment="Flag indicating if section contains citations")
-    citation_count = Column(Integer, default=0, comment="Number of citations found in section")
-    
-    # System metadata
-    created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
-    
-    # Relationships
-    document = relationship("Document", back_populates="text_sections")
-    
-    def __repr__(self):
-        return f"<TextSection(section_id='{self.section_id}', type='{self.section_type}', order={self.section_order})>"
+# Legacy tables (Citation, TextSection, ProcessingLog) removed as per cleanup plan
 
 
-class Citation(Base):
+class CitationExtractionPhased(Base):
     """
-    Stores identified citations between cases.
-    
-    INPUT: Citations extracted from decision texts
-    ALGORITHM: Links citing document to cited case
-    OUTPUT: Citation network for North-South analysis
+    Model for phased citation extraction results (v5).
+    Stores individual citations with full phase tracking.
     """
-    __tablename__ = 'citations'
+    __tablename__ = 'citation_extraction_phased'
     
-    # Primary key
-    citation_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,
-                        comment="Auto-generated unique identifier")
+    extraction_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='CASCADE'), nullable=False)
+    case_id = Column(String(100), ForeignKey('cases.case_id', ondelete='CASCADE'))
     
-    # Foreign keys
-    citing_document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='CASCADE'),
-                                nullable=False, comment="Document that contains the citation")
-    cited_case_id = Column(String(100), ForeignKey('cases.case_id', ondelete='CASCADE'),
-                          comment="Case being cited (if in database)")
+    # Phase 1: Source Jurisdiction
+    source_jurisdiction = Column(String(200))
+    source_region = Column(String(50))
     
-    # Citation information
-    citation_text = Column(Text, comment="Full text of citation as it appears")
-    citation_type = Column(String(50), comment="Type: foreign/international/domestic")
-    cited_case_name = Column(String(500), comment="Name of cited case")
-    cited_jurisdiction = Column(String(300), comment="Jurisdiction of cited case")
-    cited_year = Column(Integer, comment="Year of cited decision")
-    cited_court = Column(String(300), comment="Court that issued cited decision")
+    # Phase 2: Extraction Results
+    case_name = Column(String(500))
+    raw_citation_text = Column(Text)
+    raw_citation_text = Column(Text)
+    section_heading = Column(String(500))
+    location_in_document = Column(String(50))
     
-    # Context information
-    context_before = Column(Text, comment="Text before citation (100 chars)")
-    context_after = Column(Text, comment="Text after citation (100 chars)")
-    paragraph_position = Column(Integer, comment="Paragraph number where citation appears")
+    # Phase 3: Origin Identification
+    case_law_origin = Column(String(200))
+    case_law_region = Column(String(50))
+    origin_identification_tier = Column(Integer)
+    origin_confidence = Column(DECIMAL(3,2))
     
-    # Extraction metadata
-    extraction_method = Column(String(50), comment="Method used: regex/NER/LLM")
-    confidence_score = Column(Float, comment="Confidence in citation extraction (0-1)")
+    # Phase 4: Classification
+    citation_type = Column(String(50))
+    is_cross_jurisdictional = Column(Boolean)
     
-    # Validation
-    is_validated = Column(Boolean, default=False, comment="Manual validation flag")
-    validation_notes = Column(Text, comment="Notes from manual validation")
+    # Extended Metadata
+    cited_court = Column(String(500))
+    cited_year = Column(Integer)
+    cited_case_citation = Column(String(500))
     
-    # System metadata
-    created_at = Column(DateTime, default=datetime.utcnow, comment="Record creation timestamp")
+    # Citation Context
+    # Citation Context
+    # full_paragraph, position_in_document, start/end_char_index removed in v5.4
     
-    # Relationships
-    citing_document = relationship("Document", back_populates="citations")
+    # Processing Metadata
+    phase_2_model = Column(String(50), default='claude-haiku-4.5')
+    phase_3_model = Column(String(50))
+    phase_4_model = Column(String(50), default='claude-haiku-4.5')
+    processing_time_seconds = Column(DECIMAL(10,2))
+    api_calls_used = Column(Integer)
     
-    def __repr__(self):
-        return f"<Citation(citation_id='{self.citation_id}', type='{self.citation_type}')>"
+    # Quality Control
+    requires_manual_review = Column(Boolean, default=False)
+    manual_review_reason = Column(Text)
+    reviewed_by = Column(String(100))
+    reviewed_at = Column(TIMESTAMP)
+    
+    # Timestamps
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class ProcessingLog(Base):
+class CitationExtractionPhasedSummary(Base):
     """
-    Detailed log of all processing operations.
-    
-    INPUT: Processing events from all pipeline stages
-    ALGORITHM: Records success, failures, and warnings
-    OUTPUT: Audit trail for reproducibility and debugging
+    Model for document-level extraction summary (v5).
+    Stores aggregate metrics per document.
     """
-    __tablename__ = 'processing_log'
+    __tablename__ = 'citation_extraction_phased_summary'
     
-    # Primary key
-    log_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,
-                   comment="Auto-generated unique identifier")
+    summary_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='CASCADE'), nullable=False, unique=True)
     
-    # Foreign key (optional - some logs may not relate to specific document)
-    document_id = Column(UUID(as_uuid=True), ForeignKey('documents.document_id', ondelete='SET NULL'),
-                        comment="Related document if applicable")
+    # Processing Results
+    total_references_extracted = Column(Integer, default=0)
+    foreign_citations_count = Column(Integer, default=0)
+    international_citations_count = Column(Integer, default=0)
+    foreign_international_citations_count = Column(Integer, default=0)
     
-    # Log information
-    stage = Column(String(50), nullable=False, 
-                  comment="Processing stage: download/extraction/preprocessing/citation_detection")
-    status = Column(String(20), nullable=False, comment="Status: success/failure/warning")
-    message = Column(Text, comment="Detailed log message")
-    error_type = Column(String(100), comment="Type of error if failure")
-    error_traceback = Column(Text, comment="Full error traceback if available")
+    # API Usage
+    total_api_calls = Column(Integer, default=0)
+    total_tokens_input = Column(Integer, default=0)
+    total_tokens_output = Column(Integer, default=0)
+    total_cost_usd = Column(DECIMAL(10,4), default=0.0000)
     
-    # Processing metadata
-    processing_time_seconds = Column(Float, comment="Time taken for operation")
+    # Processing Metadata
+    extraction_started_at = Column(TIMESTAMP)
+    extraction_completed_at = Column(TIMESTAMP)
+    total_processing_time_seconds = Column(DECIMAL(10,2))
+    extraction_success = Column(Boolean, default=False)
+    extraction_error = Column(Text)
     
-    # System metadata
-    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False, 
-                      comment="When log entry was created")
+    # Quality Metrics
+    average_confidence = Column(DECIMAL(3,2))
+    items_requiring_review = Column(Integer, default=0)
     
-    def __repr__(self):
-        return f"<ProcessingLog(log_id='{self.log_id}', stage='{self.stage}', status='{self.status}')>"
+    # Timestamps
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 # ============================================================
@@ -406,12 +393,18 @@ def init_database(reset: bool = False, verbose: bool = True) -> bool:
             with engine.begin() as conn:
                 # Drop tables manually in correct order (children first)
                 logger.info("Dropping tables with CASCADE...")
-                conn.execute(text("DROP TABLE IF EXISTS citations CASCADE;"))
-                conn.execute(text("DROP TABLE IF EXISTS text_sections CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS citation_extraction_phased_summary CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS citation_extraction_phased CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS citations CASCADE;")) # Legacy
+                conn.execute(text("DROP TABLE IF EXISTS citation_extractions CASCADE;")) # Legacy
+                conn.execute(text("DROP TABLE IF EXISTS text_sections CASCADE;")) # Legacy
                 conn.execute(text("DROP TABLE IF EXISTS extracted_text CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS extracted_texts CASCADE;")) # Duplicate
                 conn.execute(text("DROP TABLE IF EXISTS documents CASCADE;"))
                 conn.execute(text("DROP TABLE IF EXISTS cases CASCADE;"))
-                conn.execute(text("DROP TABLE IF EXISTS processing_log CASCADE;"))
+                conn.execute(text("DROP TABLE IF EXISTS processing_log CASCADE;")) # Legacy
+                conn.execute(text("DROP TABLE IF EXISTS extraction_log CASCADE;")) # Legacy
+                conn.execute(text("DROP TABLE IF EXISTS keywords_tags CASCADE;")) # Legacy
                 
             logger.info("✓ All tables dropped successfully")
             if verbose:
@@ -487,52 +480,25 @@ def init_database(reset: bool = False, verbose: bool = True) -> bool:
                 ON extracted_text(language_detected);
             """))
             
-            # Indexes for text_sections table
+            # Indexes for citation_extraction_phased table
             conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_text_sections_document_id 
-                ON text_sections(document_id);
+                CREATE INDEX IF NOT EXISTS idx_citation_phased_document_id 
+                ON citation_extraction_phased(document_id);
             """))
             
             conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_text_sections_has_citations 
-                ON text_sections(has_citations);
-            """))
-            
-            # Indexes for citations table
-            conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_citations_citing_doc 
-                ON citations(citing_document_id);
+                CREATE INDEX IF NOT EXISTS idx_citation_phased_case_id 
+                ON citation_extraction_phased(case_id);
             """))
             
             conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_citations_cited_case 
-                ON citations(cited_case_id);
+                CREATE INDEX IF NOT EXISTS idx_citation_phased_type 
+                ON citation_extraction_phased(citation_type);
             """))
             
             conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_citations_type 
-                ON citations(citation_type);
-            """))
-            
-            # Indexes for processing_log table
-            conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_processing_log_document_id 
-                ON processing_log(document_id);
-            """))
-            
-            conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_processing_log_stage 
-                ON processing_log(stage);
-            """))
-            
-            conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_processing_log_status 
-                ON processing_log(status);
-            """))
-            
-            conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_processing_log_timestamp 
-                ON processing_log(timestamp);
+                CREATE INDEX IF NOT EXISTS idx_citation_phased_origin 
+                ON citation_extraction_phased(case_law_origin);
             """))
         
         logger.info("✓ All indexes created successfully")
@@ -547,8 +513,8 @@ def init_database(reset: bool = False, verbose: bool = True) -> bool:
         inspector = inspect(engine)
         tables = inspector.get_table_names()
         
-        expected_tables = ['cases', 'documents', 'extracted_text', 'text_sections', 
-                          'citations', 'processing_log']
+        expected_tables = ['cases', 'documents', 'extracted_text', 
+                          'citation_extraction_phased', 'citation_extraction_phased_summary']
         
         missing_tables = set(expected_tables) - set(tables)
         
