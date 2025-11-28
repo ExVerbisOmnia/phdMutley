@@ -1,0 +1,58 @@
+{
+  "asymmetry_data": [
+    {
+      "sixfold_type": "Foreign Citation",
+      "n_to_n": 868,
+      "n_to_s": 24,
+      "s_to_n": 273,
+      "s_to_s": 147,
+      "total": 1312
+    },
+    {
+      "sixfold_type": "Non-Member Citation",
+      "n_to_n": 0,
+      "n_to_s": 0,
+      "s_to_n": 0,
+      "s_to_s": 0,
+      "total": 515
+    }
+  ],
+  "global_south_engagement": [
+    {
+      "sixfold_type": "Foreign Citation",
+      "citations_from_south": 420,
+      "citations_to_south": 171,
+      "total_citations": 1312
+    },
+    {
+      "sixfold_type": "International Citation",
+      "citations_from_south": 194,
+      "citations_to_south": 0,
+      "total_citations": 872
+    },
+    {
+      "sixfold_type": "Foreign International Citation",
+      "citations_from_south": 46,
+      "citations_to_south": 0,
+      "total_citations": 188
+    },
+    {
+      "sixfold_type": "Unclassified",
+      "citations_from_south": 28,
+      "citations_to_south": 1,
+      "total_citations": 615
+    },
+    {
+      "sixfold_type": "Inter-System Citation",
+      "citations_from_south": 0,
+      "citations_to_south": 0,
+      "total_citations": 2472
+    },
+    {
+      "sixfold_type": "Non-Member Citation",
+      "citations_from_south": 0,
+      "citations_to_south": 99,
+      "total_citations": 515
+    }
+  ]
+}

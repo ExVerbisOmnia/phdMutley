@@ -1,0 +1,29 @@
+# ============================================================================
+# SIXFOLD CITATION CLASSIFICATION - Python Dependencies
+# ============================================================================
+# 
+# Install with: pip install -r requirements.txt
+# 
+# For development: pip install -r requirements.txt --break-system-packages
+# ============================================================================
+
+# Core Database
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.9    # PostgreSQL adapter
+
+# Data Processing
+pandas>=2.0.0
+
+# API Server
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Production Server (optional)
+gunicorn>=21.0.0
+
+# Development Tools (optional)
+ipython>=8.0.0
+jupyter>=1.0.0
+
+# Environment Management
+python-dotenv>=1.0.0

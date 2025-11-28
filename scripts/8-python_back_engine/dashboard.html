@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sixfold Citation Analysis Dashboard</title>
+    
+    <!-- D3.js for network visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    
+    <!-- Chart.js for charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    
+    <style>
+        /* ================================================================
+           GLOBAL STYLES
+           ================================================================ */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-color: #ecf0f1;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-color: #bdc3c7;
+            
+            /* Region colors */
+            --north-color: #3498db;
+            --south-color: #e74c3c;
+            --international-color: #9b59b6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* ================================================================
+           LAYOUT
+           ================================================================ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: white;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        /* ================================================================
+           CARDS
+           ================================================================ */
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-color);
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .card-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        /* ================================================================
+           STAT CARDS
+           ================================================================ */
+        .stat-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* ================================================================
+           TABLES
+           ================================================================ */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        tr:hover {
+            background: rgba(52, 152, 219, 0.05);
+        }
+        
+        /* ================================================================
+           NETWORK VISUALIZATION
+           ================================================================ */
+        #network-container {
+            width: 100%;
+            height: 500px;
+            background: #fafafa;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        #network-svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .node {
+            cursor: pointer;
+        }
+        
+        .node circle {
+            stroke: white;
+            stroke-width: 2px;
+        }
+        
+        .node text {
+            font-size: 10px;
+            fill: var(--text-color);
+        }
+        
+        .link {
+            fill: none;
+            stroke-opacity: 0.6;
+        }
+        
+        /* ================================================================
+           CONTROLS
+           ================================================================ */
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        select, input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            background: white;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button.secondary {
+            background: var(--text-muted);
+        }
+        
+        button.secondary:hover {
+            background: #5d6d7e;
+        }
+        
+        /* ================================================================
+           LEGEND
+           ================================================================ */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 10px;
+            background: var(--bg-color);
+            border-radius: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .legend-color.north { background: var(--north-color); }
+        .legend-color.south { background: var(--south-color); }
+        .legend-color.international { background: var(--international-color); }
+        
+        /* ================================================================
+           LOADING & STATUS
+           ================================================================ */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--bg-color);
+            border-top-color: var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.connected { background: var(--success-color); }
+        .status-indicator.disconnected { background: var(--accent-color); }
+        
+        /* ================================================================
+           TABS
+           ================================================================ */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--bg-color);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background: var(--bg-color);
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--secondary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ================================================================
+           RESPONSIVE
+           ================================================================ */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🌍 Sixfold Citation Classification Dashboard</h1>
+            <p>Climate Litigation Transnational Judicial Dialogue Analysis</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">
+                <span class="status-indicator" id="api-status"></span>
+                <span id="api-status-text">Connecting to API...</span>
+            </p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Summary Stats -->
+        <section id="summary-section">
+            <h2 style="margin-bottom: 20px;">📊 Summary Statistics</h2>
+            <div class="grid grid-3" id="summary-stats">
+                <div class="card stat-card">
+                    <div class="stat-value" id="total-citations">-</div>
+                    <div class="stat-label">Total Citations</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-value" id="total-decisions">-</div>
+                    <div class="stat-label">Decisions Analyzed</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-value" id="total-cases">-</div>
+                    <div class="stat-label">Cases Covered</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Category Breakdown -->
+        <section id="category-section">
+            <h2 style="margin-bottom: 20px;">📁 Citation Categories</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Citations by Category</span>
+                    </div>
+                    <canvas id="category-chart" height="300"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Regional Flow Matrix</span>
+                    </div>
+                    <canvas id="flow-chart" height="300"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Network Visualization -->
+        <section id="network-section" style="margin-top: 30px;">
+            <h2 style="margin-bottom: 20px;">🔗 Citation Network</h2>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Jurisdiction Citation Network</span>
+                    <span class="card-badge">Interactive</span>
+                </div>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Min Weight:</label>
+                        <input type="number" id="min-weight" value="1" min="1" max="100">
+                    </div>
+                    <div class="control-group">
+                        <label>Classification:</label>
+                        <select id="sixfold-filter">
+                            <option value="">All Types</option>
+                            <option value="Foreign Citation">Foreign Citation</option>
+                            <option value="International Citation">International Citation</option>
+                            <option value="Foreign International Citation">Foreign International</option>
+                            <option value="Inter-System Citation">Inter-System Citation</option>
+                            <option value="Member-State Citation">Member-State Citation</option>
+                            <option value="Non-Member Citation">Non-Member Citation</option>
+                        </select>
+                    </div>
+                    <button onclick="loadNetwork()">Apply Filters</button>
+                    <button class="secondary" onclick="resetNetwork()">Reset</button>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-color north"></span>
+                        <span>Global North</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color south"></span>
+                        <span>Global South</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color international"></span>
+                        <span>International</span>
+                    </div>
+                </div>
+                
+                <div id="network-container">
+                    <svg id="network-svg"></svg>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Detailed Tables -->
+        <section id="tables-section" style="margin-top: 30px;">
+            <h2 style="margin-bottom: 20px;">📋 Detailed Analysis</h2>
+            
+            <div class="card">
+                <div class="tabs">
+                    <div class="tab active" data-tab="top-cases">Top Cited Cases</div>
+                    <div class="tab" data-tab="top-jurisdictions">Top Jurisdictions</div>
+                    <div class="tab" data-tab="flow-details">Flow Details</div>
+                </div>
+                
+                <div class="tab-content active" id="top-cases">
+                    <div class="table-container">
+                        <table id="top-cases-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Case Name</th>
+                                    <th>Origin</th>
+                                    <th>Region</th>
+                                    <th>Citations</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="top-jurisdictions">
+                    <div class="table-container">
+                        <table id="top-jurisdictions-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Jurisdiction</th>
+                                    <th>Region</th>
+                                    <th>Citations Made</th>
+                                    <th>Citations Received</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="flow-details">
+                    <div class="table-container">
+                        <table id="flow-details-table">
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Target</th>
+                                    <th>Type</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Export Section -->
+        <section id="export-section" style="margin-top: 30px;">
+            <h2 style="margin-bottom: 20px;">📥 Data Export</h2>
+            <div class="card">
+                <div class="controls">
+                    <button onclick="exportData('dashboard')">Export Dashboard (JSON)</button>
+                    <button onclick="exportData('network', 'json')">Export Network (JSON)</button>
+                    <button onclick="exportData('network', 'csv')">Export Network (CSV)</button>
+                    <button onclick="exportData('network', 'gephi')">Export for Gephi</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // ================================================================
+        // CONFIGURATION
+        // ================================================================
+        
+        // API base URL - adjust for your deployment
+        const API_BASE = 'http://127.0.0.1:5000/api';
+        
+        // Color mapping for regions
+        const REGION_COLORS = {
+            'Global North': '#3498db',
+            'Global South': '#e74c3c',
+            'International': '#9b59b6',
+            'Unknown': '#95a5a6'
+        };
+        
+        // ================================================================
+        // API FUNCTIONS
+        // ================================================================
+        
+        /**
+         * Make an API request with error handling
+         * 
+         * @param {string} endpoint - API endpoint path
+         * @param {object} params - Query parameters
+         * @returns {Promise<object>} - Response data
+         */
+        async function apiRequest(endpoint, params = {}) {
+            const url = new URL(`${API_BASE}${endpoint}`);
+            Object.keys(params).forEach(key => {
+                if (params[key] !== null && params[key] !== '') {
+                    url.searchParams.append(key, params[key]);
+                }
+            });
+            
+            try {
+                const response = await fetch(url);
+                const json = await response.json();
+                
+                if (json.status === 'success') {
+                    return json.data;
+                } else {
+                    throw new Error(json.message || 'API error');
+                }
+            } catch (error) {
+                console.error(`API Error (${endpoint}):`, error);
+                throw error;
+            }
+        }
+        
+        /**
+         * Check API health and update status indicator
+         */
+        async function checkApiHealth() {
+            const statusEl = document.getElementById('api-status');
+            const textEl = document.getElementById('api-status-text');
+            
+            try {
+                const data = await apiRequest('/health');
+                statusEl.className = 'status-indicator connected';
+                textEl.textContent = `Connected to API (v${data.version || '1.0'})`;
+                return true;
+            } catch (error) {
+                statusEl.className = 'status-indicator disconnected';
+                textEl.textContent = 'API Disconnected - Check server';
+                return false;
+            }
+        }
+        
+        // ================================================================
+        // DASHBOARD LOADING
+        // ================================================================
+        
+        /**
+         * Load and display summary statistics
+         */
+        async function loadSummaryStats() {
+            try {
+                const data = await apiRequest('/dashboard/summary_stats');
+                
+                document.getElementById('total-citations').textContent = 
+                    data.total_citations?.toLocaleString() || '-';
+                document.getElementById('total-decisions').textContent = 
+                    data.total_decisions?.toLocaleString() || '-';
+                document.getElementById('total-cases').textContent = 
+                    data.total_cases?.toLocaleString() || '-';
+                    
+            } catch (error) {
+                console.error('Failed to load summary stats:', error);
+            }
+        }
+        
+        /**
+         * Load and render category breakdown chart
+         */
+        async function loadCategoryChart() {
+            try {
+                const data = await apiRequest('/dashboard/summary_stats');
+                const categories = data.by_category || [];
+                
+                const ctx = document.getElementById('category-chart').getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: categories.map(c => c.citation_category),
+                        datasets: [{
+                            label: 'Citations',
+                            data: categories.map(c => c.total_citations),
+                            backgroundColor: [
+                                '#3498db', '#e74c3c', '#f39c12', 
+                                '#9b59b6', '#1abc9c', '#34495e'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load category chart:', error);
+            }
+        }
+        
+        /**
+         * Load and render regional flow chart
+         */
+        async function loadFlowChart() {
+            try {
+                const data = await apiRequest('/dashboard/regional_flows');
+                const asymmetry = data.asymmetry_data || [];
+                
+                // Aggregate flows
+                let flows = { 'N→N': 0, 'N→S': 0, 'S→N': 0, 'S→S': 0 };
+                asymmetry.forEach(row => {
+                    flows['N→N'] += row.n_to_n || 0;
+                    flows['N→S'] += row.n_to_s || 0;
+                    flows['S→N'] += row.s_to_n || 0;
+                    flows['S→S'] += row.s_to_s || 0;
+                });
+                
+                const ctx = document.getElementById('flow-chart').getContext('2d');
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(flows),
+                        datasets: [{
+                            data: Object.values(flows),
+                            backgroundColor: ['#3498db', '#9b59b6', '#f39c12', '#e74c3c']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'right' }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load flow chart:', error);
+            }
+        }
+        
+        // ================================================================
+        // NETWORK VISUALIZATION
+        // ================================================================
+        
+        let simulation = null;
+        
+        /**
+         * Load and render citation network
+         */
+        async function loadNetwork() {
+            const container = document.getElementById('network-container');
+            const svg = d3.select('#network-svg');
+            
+            // Clear existing
+            svg.selectAll('*').remove();
+            
+            // Get filter values
+            const minWeight = document.getElementById('min-weight').value || 1;
+            const sixfoldType = document.getElementById('sixfold-filter').value;
+            
+            try {
+                const data = await apiRequest('/network', {
+                    min_weight: minWeight,
+                    sixfold_type: sixfoldType
+                });
+                
+                if (!data.nodes || data.nodes.length === 0) {
+                    svg.append('text')
+                        .attr('x', '50%')
+                        .attr('y', '50%')
+                        .attr('text-anchor', 'middle')
+                        .text('No data available. Run analysis first.');
+                    return;
+                }
+                
+                renderNetwork(svg, data, container);
+                
+            } catch (error) {
+                console.error('Failed to load network:', error);
+                svg.append('text')
+                    .attr('x', '50%')
+                    .attr('y', '50%')
+                    .attr('text-anchor', 'middle')
+                    .text('Failed to load network data');
+            }
+        }
+        
+        /**
+         * Render D3 force-directed network
+         */
+        function renderNetwork(svg, data, container) {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            // Create scales
+            const nodeScale = d3.scaleSqrt()
+                .domain([0, d3.max(data.nodes, d => d.total_degree)])
+                .range([5, 30]);
+            
+            const linkScale = d3.scaleLinear()
+                .domain([1, d3.max(data.links, d => d.value)])
+                .range([1, 5]);
+            
+            // Create simulation
+            simulation = d3.forceSimulation(data.nodes)
+                .force('link', d3.forceLink(data.links).id(d => d.id).distance(100))
+                .force('charge', d3.forceManyBody().strength(-200))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(d => nodeScale(d.total_degree) + 5));
+            
+            // Draw links
+            const link = svg.append('g')
+                .selectAll('line')
+                .data(data.links)
+                .join('line')
+                .attr('class', 'link')
+                .attr('stroke', '#999')
+                .attr('stroke-width', d => linkScale(d.value));
+            
+            // Draw nodes
+            const node = svg.append('g')
+                .selectAll('g')
+                .data(data.nodes)
+                .join('g')
+                .attr('class', 'node')
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended));
+            
+            node.append('circle')
+                .attr('r', d => nodeScale(d.total_degree))
+                .attr('fill', d => REGION_COLORS[d.region] || REGION_COLORS['Unknown']);
+            
+            node.append('text')
+                .attr('dx', d => nodeScale(d.total_degree) + 3)
+                .attr('dy', 4)
+                .text(d => d.label);
+            
+            // Add tooltips
+            node.append('title')
+                .text(d => `${d.label}\nRegion: ${d.region}\nIn: ${d.in_degree} | Out: ${d.out_degree}`);
+            
+            // Update positions on tick
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+                
+                node.attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+            
+            // Drag functions
+            function dragstarted(event) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
+            }
+            
+            function dragged(event) {
+                event.subject.fx = event.x;
+                event.subject.fy = event.y;
+            }
+            
+            function dragended(event) {
+                if (!event.active) simulation.alphaTarget(0);
+                event.subject.fx = null;
+                event.subject.fy = null;
+            }
+        }
+        
+        /**
+         * Reset network filters
+         */
+        function resetNetwork() {
+            document.getElementById('min-weight').value = 1;
+            document.getElementById('sixfold-filter').value = '';
+            loadNetwork();
+        }
+        
+        // ================================================================
+        // TABLE LOADING
+        // ================================================================
+        
+        /**
+         * Load top cited cases table
+         */
+        async function loadTopCases() {
+            try {
+                const data = await apiRequest('/custom/top-cases', { limit: 20 });
+                
+                const tbody = document.querySelector('#top-cases-table tbody');
+                tbody.innerHTML = data.map((row, i) => `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${row.case_name || '-'}</td>
+                        <td>${row.case_law_origin || '-'}</td>
+                        <td>${row.case_law_region || '-'}</td>
+                        <td>${row.citation_count || 0}</td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Failed to load top cases:', error);
+            }
+        }
+        
+        /**
+         * Load top jurisdictions table
+         */
+        async function loadTopJurisdictions() {
+            try {
+                const nodes = await apiRequest('/network/nodes', { 
+                    sort_by: 'total_degree', 
+                    limit: 20 
+                });
+                
+                const tbody = document.querySelector('#top-jurisdictions-table tbody');
+                tbody.innerHTML = nodes.map((node, i) => `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${node.node_id || '-'}</td>
+                        <td>${node.region || '-'}</td>
+                        <td>${node.out_degree || 0}</td>
+                        <td>${node.in_degree || 0}</td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Failed to load jurisdictions:', error);
+            }
+        }
+        
+        /**
+         * Load flow details table
+         */
+        async function loadFlowDetails() {
+            try {
+                const data = await apiRequest('/custom/flow', {});
+                
+                const tbody = document.querySelector('#flow-details-table tbody');
+                tbody.innerHTML = data.slice(0, 50).map(row => `
+                    <tr>
+                        <td>${row.source_jurisdiction || '-'}</td>
+                        <td>${row.case_law_origin || '-'}</td>
+                        <td>${row.sixfold_type || '-'}</td>
+                        <td>${row.citation_count || 0}</td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Failed to load flow details:', error);
+            }
+        }
+        
+        // ================================================================
+        // EXPORT FUNCTIONS
+        // ================================================================
+        
+        /**
+         * Trigger data export
+         */
+        function exportData(type, format = 'json') {
+            let url;
+            
+            switch (type) {
+                case 'dashboard':
+                    url = `${API_BASE}/export/dashboard`;
+                    break;
+                case 'network':
+                    url = `${API_BASE}/export/network/${format}`;
+                    break;
+                default:
+                    console.error('Unknown export type:', type);
+                    return;
+            }
+            
+            // Trigger download
+            window.open(url, '_blank');
+        }
+        
+        // ================================================================
+        // TAB HANDLING
+        // ================================================================
+        
+        function initTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update tab states
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Update content
+                    const tabId = tab.dataset.tab;
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+        
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
+        
+        async function init() {
+            // Initialize tabs
+            initTabs();
+            
+            // Check API health
+            const isConnected = await checkApiHealth();
+            
+            if (isConnected) {
+                // Load all data
+                await Promise.all([
+                    loadSummaryStats(),
+                    loadCategoryChart(),
+                    loadFlowChart(),
+                    loadNetwork(),
+                    loadTopCases(),
+                    loadTopJurisdictions(),
+                    loadFlowDetails()
+                ]);
+            }
+        }
+        
+        // Run initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

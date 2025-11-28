@@ -1,0 +1,96 @@
+{
+  "types_distribution": [
+    {
+      "citation_types_present": 1,
+      "number_of_decisions": 279,
+      "percentage": 59.6
+    },
+    {
+      "citation_types_present": 2,
+      "number_of_decisions": 148,
+      "percentage": 31.6
+    },
+    {
+      "citation_types_present": 3,
+      "number_of_decisions": 37,
+      "percentage": 7.9
+    },
+    {
+      "citation_types_present": 4,
+      "number_of_decisions": 4,
+      "percentage": 0.9
+    }
+  ],
+  "top_cases_overall": [
+    {
+      "case_name": "US – Clove Cigarettes",
+      "case_law_origin": "International (WTO)",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 37
+    },
+    {
+      "case_name": "Urgenda Foundation v. State of the Netherlands",
+      "case_law_origin": "Netherlands",
+      "case_law_region": "Global North",
+      "sixfold_type": "Foreign Citation",
+      "citation_count": 32
+    },
+    {
+      "case_name": "US – COOL",
+      "case_law_origin": "International (WTO)",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 30
+    },
+    {
+      "case_name": "EC – Seal Products",
+      "case_law_origin": "International - World Trade Organization",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 27
+    },
+    {
+      "case_name": "Borealis Polyolefine and Others",
+      "case_law_origin": "European Union",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 24
+    },
+    {
+      "case_name": "Australia – Tobacco Plain Packaging",
+      "case_law_origin": "International (WTO)",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 23
+    },
+    {
+      "case_name": "Achmea",
+      "case_law_origin": "European Union",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 22
+    },
+    {
+      "case_name": "Silver Ridge",
+      "case_law_origin": "International Arbitration",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 20
+    },
+    {
+      "case_name": "Inuit Tapiriit Kanatami and Others v Parliament and Council",
+      "case_law_origin": "European Union",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 19
+    },
+    {
+      "case_name": "Verein KlimaSeniorinnen Schweiz and Others",
+      "case_law_origin": "Switzerland",
+      "case_law_region": "International",
+      "sixfold_type": "Inter-System Citation",
+      "citation_count": 17
+    }
+  ]
+}
