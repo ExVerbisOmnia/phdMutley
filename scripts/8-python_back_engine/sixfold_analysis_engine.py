@@ -127,6 +127,70 @@ class CitationDirection(Enum):
 
 
 # =============================================================================
+# GEOGRAPHIC DATA
+# =============================================================================
+
+JURISDICTION_COORDINATES = {
+    # Global North
+    "United Kingdom": {"lat": 55.3781, "lon": -3.4360},
+    "UK": {"lat": 55.3781, "lon": -3.4360},
+    "United States": {"lat": 37.0902, "lon": -95.7129},
+    "USA": {"lat": 37.0902, "lon": -95.7129},
+    "Canada": {"lat": 56.1304, "lon": -106.3468},
+    "Australia": {"lat": -25.2744, "lon": 133.7751},
+    "New Zealand": {"lat": -40.9006, "lon": 174.8860},
+    "Ireland": {"lat": 53.1424, "lon": -7.6921},
+    "Germany": {"lat": 51.1657, "lon": 10.4515},
+    "France": {"lat": 46.2276, "lon": 2.2137},
+    "Netherlands": {"lat": 52.1326, "lon": 5.2913},
+    "Belgium": {"lat": 50.5039, "lon": 4.4699},
+    "Switzerland": {"lat": 46.8182, "lon": 8.2275},
+    "Norway": {"lat": 60.4720, "lon": 8.4689},
+    "Sweden": {"lat": 60.1282, "lon": 18.6435},
+    "Denmark": {"lat": 56.2639, "lon": 9.5018},
+    "Finland": {"lat": 61.9241, "lon": 25.7482},
+    "Italy": {"lat": 41.8719, "lon": 12.5674},
+    "Spain": {"lat": 40.4637, "lon": -3.7492},
+    "Portugal": {"lat": 39.3999, "lon": -8.2245},
+    "Austria": {"lat": 47.5162, "lon": 14.5501},
+    
+    # Global South
+    "Brazil": {"lat": -14.2350, "lon": -51.9253},
+    "India": {"lat": 20.5937, "lon": 78.9629},
+    "South Africa": {"lat": -30.5595, "lon": 22.9375},
+    "Colombia": {"lat": 4.5709, "lon": -74.2973},
+    "Argentina": {"lat": -38.4161, "lon": -63.6167},
+    "Chile": {"lat": -35.6751, "lon": -71.5430},
+    "Mexico": {"lat": 23.6345, "lon": -102.5528},
+    "Philippines": {"lat": 12.8797, "lon": 121.7740},
+    "Pakistan": {"lat": 30.3753, "lon": 69.3451},
+    "Kenya": {"lat": -0.0236, "lon": 37.9062},
+    "Nigeria": {"lat": 9.0820, "lon": 8.6753},
+    "Bangladesh": {"lat": 23.6850, "lon": 90.3563},
+    "Indonesia": {"lat": -0.7893, "lon": 113.9213},
+    "Malaysia": {"lat": 4.2105, "lon": 101.9758},
+    
+    # International Courts (Approximate locations based on HQ)
+    "ICJ": {"lat": 52.0866, "lon": 4.2955},  # The Hague
+    "ECtHR": {"lat": 48.6000, "lon": 7.7500}, # Strasbourg
+    "CJEU": {"lat": 49.6116, "lon": 6.1319},  # Luxembourg
+    "IACtHR": {"lat": 9.9281, "lon": -84.0907}, # San Jose, Costa Rica
+    "ECOWAS Court": {"lat": 9.0765, "lon": 7.3986}, # Abuja
+    "EACJ": {"lat": -3.3731, "lon": 36.6830}, # Arusha
+    "ITLOS": {"lat": 53.5511, "lon": 9.9937}, # Hamburg
+    
+    # Specific mappings from dataset
+    "European Court of Human Rights (International Court)": {"lat": 48.6000, "lon": 7.7500},
+    "International (Inter-American Court of Human Rights)": {"lat": 9.9281, "lon": -84.0907},
+    "International (WTO)": {"lat": 46.2206, "lon": 6.1430}, # Geneva
+    "International Tribunal": {"lat": 52.0866, "lon": 4.2955}, # Default to Hague
+    "United Kingdom (England & Wales)": {"lat": 51.5074, "lon": -0.1278},
+    "United Kingdom (Supreme Court)": {"lat": 51.5002, "lon": -0.1286},
+    "United States (Supreme Court)": {"lat": 38.8905, "lon": -77.0044},
+}
+
+
+# =============================================================================
 # DATA CLASSES - Structured Results
 # =============================================================================
 
@@ -192,6 +256,8 @@ class NodeAttributes:
     in_degree: int          # Number of incoming citations
     out_degree: int         # Number of outgoing citations
     total_degree: int       # Total citations
+    lat: Optional[float] = None  # Latitude
+    lon: Optional[float] = None  # Longitude
     
     def to_dict(self) -> Dict:
         """Convert to dictionary for JSON export."""
@@ -1524,6 +1590,10 @@ class SixfoldAnalysisEngine:
         
         edges = []
         for row in data:
+            # Get coordinates for source and target
+            source_coords = JURISDICTION_COORDINATES.get(row['source_jurisdiction'], {})
+            target_coords = JURISDICTION_COORDINATES.get(row['case_law_origin'], {})
+            
             edge = NetworkEdge(
                 source=row['source_jurisdiction'],
                 target=row['case_law_origin'],
@@ -1534,6 +1604,10 @@ class SixfoldAnalysisEngine:
                 weight=row['weight'],
                 sixfold_type=row['sixfold_type']
             )
+            # Add coordinates dynamically since they are not in __init__
+            # Note: NetworkEdge is a dataclass, so we can't easily add fields without changing definition
+            # But we added them to NodeAttributes, which is where they are needed for the map
+
             edges.append(edge)
         
         self.network_edges = edges
@@ -1570,6 +1644,9 @@ class SixfoldAnalysisEngine:
             in_d = in_degree.get(node_id, 0)
             out_d = out_degree.get(node_id, 0)
             
+            # Get coordinates
+            coords = JURISDICTION_COORDINATES.get(node_id, {})
+            
             nodes[node_id] = NodeAttributes(
                 node_id=node_id,
                 node_type='jurisdiction',
@@ -1577,7 +1654,9 @@ class SixfoldAnalysisEngine:
                 region=node_regions.get(node_id, 'Unknown'),
                 in_degree=in_d,
                 out_degree=out_d,
-                total_degree=in_d + out_d
+                total_degree=in_d + out_d,
+                lat=coords.get('lat'),
+                lon=coords.get('lon')
             )
         
         self.node_attributes = nodes
@@ -1627,7 +1706,9 @@ class SixfoldAnalysisEngine:
                     'region': node.region,
                     'in_degree': node.in_degree,
                     'out_degree': node.out_degree,
-                    'total_degree': node.total_degree
+                    'total_degree': node.total_degree,
+                    'lat': node.lat,
+                    'lon': node.lon
                 }
                 for node in self.node_attributes.values()
             ],

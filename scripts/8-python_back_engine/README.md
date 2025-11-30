@@ -7,7 +7,8 @@ This package provides a comprehensive analysis system for the sixfold citation c
 1. **Analysis Engine** (`sixfold_analysis_engine.py`) - Core query execution and data processing
 2. **REST API Server** (`api_server.py`) - Backend for frontend applications
 3. **Dashboard Frontend** (`dashboard.html`) - Sample visualization interface
-4. **SQL Scripts** - Database setup and view creation
+4. **Setup Script** (`setup_analysis_db.py`) - Automates database preparation
+5. **SQL Scripts** - Database setup and view creation
 
 ## Architecture
 
@@ -45,9 +46,9 @@ This package provides a comprehensive analysis system for the sixfold citation c
 
 ## Prerequisites
 
-1. **PostgreSQL 18** with the climate_litigation database
+1. **PostgreSQL 18** with the `climate_litigation` database
 2. **Python 3.11+**
-3. The `citation_sixfold_classification` view must exist (run the SQL scripts first)
+3. **.env file** in the project root with database credentials
 
 ## Installation
 
@@ -57,31 +58,29 @@ This package provides a comprehensive analysis system for the sixfold citation c
 pip install -r requirements.txt --break-system-packages
 ```
 
-### 2. Run SQL Setup Scripts
+### 2. Configure Environment
 
-Before running the analysis, ensure the database views are created:
+Ensure you have a `.env` file in the project root with the following variables:
 
-```bash
-# Create the international court jurisdiction table
-psql -d climate_litigation -f international_court_jurisdiction.sql
-
-# Create the sixfold classification view
-psql -d climate_litigation -f sixfold_classification_complete.sql
+```env
+DB_USER=phdmutley
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=climate_litigation
 ```
 
-### 3. Configure Database Connection
+### 3. Run Setup Script
 
-Set the `DATABASE_URL` environment variable:
+Run the automated setup script to create the necessary database tables and views:
 
 ```bash
-# Linux/Mac
-export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/climate_litigation"
-
-# Windows PowerShell
-$env:DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/climate_litigation"
+python setup_analysis_db.py
 ```
 
-Or modify the default in `sixfold_analysis_engine.py`.
+This script will execute:
+- `international_court_jurisdiction.sql`
+- `sixfold_classification_complete.sql`
 
 ## Usage
 
@@ -120,7 +119,7 @@ python sixfold_analysis_engine.py -v
 
 ```bash
 # Development mode
-python api_server.py --debug
+python api_server.py
 
 # Production mode (with Gunicorn)
 gunicorn -w 4 -b 0.0.0.0:5000 api_server:app
@@ -339,22 +338,23 @@ def my_custom_endpoint():
 ### Common Issues
 
 1. **"View does not exist" error**
-   - Run the SQL setup scripts first
-   - Ensure `international_court_jurisdiction.sql` runs before `sixfold_classification_complete.sql`
+   - Run the setup script: `python setup_analysis_db.py`
 
 2. **API Connection Failed**
    - Check if the API server is running
    - Verify the port is not blocked by firewall
-   - Ensure CORS is configured for your frontend origin
+   - Ensure CORS is configured (default: allows all origins)
 
 3. **Empty Results**
    - Run the full analysis first: `python sixfold_analysis_engine.py`
    - Check if the source data is populated in `citation_extraction_phased`
 
-4. **Performance Issues**
-   - Increase `pool_size` in engine configuration for high concurrency
-   - Add database indexes if queries are slow
-   - Use `min_weight` filter to reduce network complexity
+4. **Database Connection Errors**
+   - Verify `.env` file exists and contains correct credentials
+   - Ensure PostgreSQL service is running
+
+5. **JSON Serialization Errors**
+   - The engine uses a custom `DecimalEncoder` to handle database types. Ensure `json.dump` calls use `cls=DecimalEncoder`.
 
 ## License
 
