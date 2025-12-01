@@ -66,16 +66,50 @@ from sixfold_analysis_engine import (
 )
 
 # =============================================================================
+# PRODUCTION ENVIRONMENT CONFIGURATION
+# =============================================================================
+
+import logging
+
+# Configure logging for production
+if os.getenv('RAILWAY_ENVIRONMENT'):
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+# Handle Railway's DATABASE_URL format
+# Railway provides postgres:// but SQLAlchemy 2.0+ requires postgresql://
+_production_db_url = os.getenv('DATABASE_URL')
+if _production_db_url:
+    if _production_db_url.startswith('postgres://'):
+        _production_db_url = _production_db_url.replace('postgres://', 'postgresql://', 1)
+    # Override the imported DATABASE_URL with production version
+    DATABASE_URL = _production_db_url
+
+# Determine environment for logging and CORS
+IS_PRODUCTION = os.getenv('RAILWAY_ENVIRONMENT') is not None
+
+# =============================================================================
 # FLASK APPLICATION SETUP
 # =============================================================================
 
 app = Flask(__name__)
 
-# Enable CORS for frontend access
-# In production, restrict origins to your frontend domain
-# Enable CORS for frontend access
-# Allow all origins to support file:// access during development
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+# =============================================================================
+# CORS CONFIGURATION
+# =============================================================================
+# In production, restrict to Railway frontend domain
+# In development, allow all origins for flexibility
+
+if IS_PRODUCTION:
+    # Get frontend URL from environment variable, or allow all Railway domains
+    frontend_url = os.getenv('FRONTEND_URL', '*')
+    CORS(app, resources={r"/api/*": {"origins": frontend_url}})
+    app.logger.info(f"CORS configured for production: {frontend_url}")
+else:
+    # Development: allow all origins (localhost, file://, etc.)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Configuration
 app.config['JSON_SORT_KEYS'] = False  # Preserve order in JSON responses
@@ -88,6 +122,7 @@ _engine: Optional[SixfoldAnalysisEngine] = None
 def get_engine() -> SixfoldAnalysisEngine:
     """
     Get or create the analysis engine singleton.
+    Uses production DATABASE_URL if available, otherwise falls back to local.
     
     Returns:
     --------
@@ -95,8 +130,13 @@ def get_engine() -> SixfoldAnalysisEngine:
     """
     global _engine
     if _engine is None:
-        db_url = os.getenv('DATABASE_URL', DATABASE_URL)
-        _engine = SixfoldAnalysisEngine(database_url=db_url)
+        # DATABASE_URL is already processed above (postgres:// → postgresql://)
+        _engine = SixfoldAnalysisEngine(database_url=DATABASE_URL)
+        
+        if IS_PRODUCTION:
+            app.logger.info("✓ Connected to PRODUCTION database (Railway)")
+        else:
+            app.logger.info("✓ Connected to LOCAL database")
     return _engine
 
 

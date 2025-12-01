@@ -21,6 +21,3 @@ pandas>=2.0.0
 
 # --- Environment ---
 python-dotenv>=1.0.0
-
-# --- Utilities ---
-# Note: These are used by sixfold_analysis_engine.py

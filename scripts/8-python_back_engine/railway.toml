@@ -1,0 +1,15 @@
+# =============================================================================
+# RAILWAY.TOML - Railway Platform Configuration
+# =============================================================================
+# PhD Climate Litigation Project - Sixfold Citation Analysis API
+# =============================================================================
+
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "gunicorn --bind 0.0.0.0:$PORT --workers 4 --timeout 120 api_server:app"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

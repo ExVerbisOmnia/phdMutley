@@ -1,7 +1,7 @@
 # PhD Climate Litigation Project - AI Agent Context File
 ## Complete Project Documentation for IDE AI Integration
 
-**Last Updated:** November 22, 2025  
+**Last Updated:** December 01, 2025  
 **Project:** Doutorado PM - Climate Litigation Citation Analysis  
 **Researcher:** Gustavo Rodrigues  
 **Academic Collaborator:** Lucas Biasetton  
@@ -122,28 +122,33 @@ How do courts cite foreign and international decisions in climate cases, and wha
 ```
 /home/gusrodgs/Gus/cienciaDeDados/phdMutley/
 ├── config.py                          # Central configuration
+├── .env                               # Database credentials and API keys
 ├── baseCompleta.xlsx                  # Source database (2,924 rows)
 ├── scripts/
-│   ├── phase0/
+│   ├── 0-initialize-database/
 │   │   └── init_database.py          # Database schema definitions
-│   ├── phase1/
-│   │   ├── populate_metadata.py      # Excel → PostgreSQL import
-│   │   ├── download_pdfs.py          # PDF download pipeline
-│   │   └── extract_text.py           # Text extraction pipeline
-│   ├── phase2/
-│   │   ├── classify_decisions.py     # Document classification
-│   │   ├── extract_citations_v4.py   # OLD: Single-pass extraction
-│   │   ├── extract_citations_v5_phased.py  # NEW: 4-phase extraction (Located in scripts/5-extract-citations/)
-│   │   └── migrate_citation_phased_schema.sql  # NEW: Database schema
-│   └── analysis/
-│       └── (future analysis scripts)
+│   ├── 1-download-decisions/
+│   │   └── download_decisions.py     # PDF download pipeline
+│   ├── 2-populate-metadata/
+│   │   └── populate_metadata.py      # Excel → PostgreSQL import
+│   ├── 3-extract-texts/
+│   │   └── extract_texts.py          # Text extraction pipeline
+│   ├── 4-classify-decisions/
+│   │   └── classify_decisions.py     # Document classification
+│   ├── 5-extract-citations/
+│   │   ├── extract_citations.py      # Citation extraction v5
+│   │   └── citation_extraction_pipeline/ # Pipeline modules
+│   ├── 6-adjustments/
+│   │   └── (adjustment scripts)
+│   ├── 7-queries/
+│   │   └── (SQL queries)
+│   └── 8-python_back_engine/
+│       ├── api_server.py             # Backend API for dashboard
+│       ├── dashboard.html            # Frontend Dashboard
+│       ├── sixfold_analysis_engine.py # Analysis Logic
+│       └── setup_analysis_db.py      # Analysis DB setup
 ├── logs/
-│   ├── metadata_population.log
-│   ├── pdf_download.log
-│   ├── text_extraction.log
-│   ├── classification.log
-│   ├── citation_extraction.log
-│   └── citation_extraction_v5.log    # NEW
+│   └── (log files)
 ├── data/
 │   ├── pdfs/                          # Downloaded PDF files
 │   └── control_group/                 # Test documents
@@ -507,14 +512,14 @@ The methodology provides:
 ### config.py Structure
 
 ```python
-# Database Configuration
+# Database Configuration (Loaded from .env)
 DB_CONFIG = {
-    'drivername': 'postgresql',
-    'username': 'your_username',
-    'password': 'your_password',
-    'host': 'localhost',
-    'port': 5432,
-    'database': 'phdMutley'
+    'drivername': 'postgresql+psycopg2',
+    'host': os.getenv('DB_HOST', 'localhost'),
+    'port': os.getenv('DB_PORT', '5432'),
+    'database': os.getenv('DB_NAME', 'climate_litigation'),
+    'username': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
 }
 
 # Anthropic API
@@ -581,19 +586,18 @@ def get_binding_courts(country: str, region: str) -> List[str]:
 6. ✅ Database schema v5 (ready to deploy)
 
 #### **Next Steps:**
-1. ⏳ Deploy database schema (migrate_citation_phased_schema.sql)
-2. ⏳ Run trial batch (5-10 test documents)
-3. ⏳ Verify control group results:
+1. ⏳ Run trial batch (5-10 test documents)
+2. ⏳ Verify control group results:
    - Thomson v Minister (should find Urgenda)
    - Plan B Earth (should find Massachusetts v. EPA)
    - Mathur v Ontario (multiple international refs)
    - Friends of Irish Environment (European cases)
    - Greenpeace Nordic (comparative law)
-4. ⏳ Full dataset processing (2,924 documents)
-5. ⏳ Manual review of flagged citations (confidence <0.7)
-6. ⏳ Export for statistical analysis
-7. ⏳ Network analysis (Phase 3)
-8. ⏳ Visualization & dashboard (Phase 4)
+3. ⏳ Full dataset processing (2,924 documents)
+4. ⏳ Manual review of flagged citations (confidence <0.7)
+5. ⏳ Export for statistical analysis
+6. ⏳ Network analysis (Phase 3) - **IN PROGRESS** (Sixfold Analysis Engine)
+7. ⏳ Visualization & dashboard (Phase 4) - **IN PROGRESS** (Dashboard & API Server)
 
 ### Trial Batch Testing Protocol
 
