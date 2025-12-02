@@ -57,7 +57,7 @@ from functools import wraps
 from typing import Dict, Any, Optional
 
 # Flask imports
-from flask import Flask, jsonify, request, send_file, Response
+from flask import Flask, jsonify, request, send_file, Response, render_template
 from flask_cors import CORS
 
 # Import our analysis engine
@@ -203,6 +203,11 @@ def handle_exceptions(f):
 # =============================================================================
 # API ENDPOINTS - Health & Status
 # =============================================================================
+
+@app.route('/')
+def serve_dashboard():
+    """Serve the dashboard HTML file."""
+    return render_template('dashboard.html')
 
 @app.route('/api/health', methods=['GET'])
 def health_check():

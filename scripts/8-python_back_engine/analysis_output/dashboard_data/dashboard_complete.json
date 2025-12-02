@@ -1,0 +1,1254 @@
+{
+  "summary_stats": {
+    "total_citations": 5974,
+    "total_decisions": 721,
+    "total_cases": 586,
+    "by_category": [
+      {
+        "citation_category": "Foreign Citation",
+        "direction": "National → National",
+        "total_citations": 1312,
+        "decisions": 242,
+        "cases": 193,
+        "pct_of_total": 21.96
+      },
+      {
+        "citation_category": "Unclassified",
+        "direction": "National → National",
+        "total_citations": 325,
+        "decisions": 62,
+        "cases": 50,
+        "pct_of_total": 5.44
+      },
+      {
+        "citation_category": "Foreign International Citation",
+        "direction": "National → International",
+        "total_citations": 188,
+        "decisions": 48,
+        "cases": 40,
+        "pct_of_total": 3.15
+      },
+      {
+        "citation_category": "International Citation",
+        "direction": "National → International",
+        "total_citations": 872,
+        "decisions": 128,
+        "cases": 93,
+        "pct_of_total": 14.6
+      },
+      {
+        "citation_category": "Inter-System Citation",
+        "direction": "International → International",
+        "total_citations": 2472,
+        "decisions": 101,
+        "cases": 84,
+        "pct_of_total": 41.38
+      },
+      {
+        "citation_category": "Non-Member Citation",
+        "direction": "International → National",
+        "total_citations": 515,
+        "decisions": 46,
+        "cases": 37,
+        "pct_of_total": 8.62
+      },
+      {
+        "citation_category": "Unclassified",
+        "direction": "Other",
+        "total_citations": 290,
+        "decisions": 94,
+        "cases": 89,
+        "pct_of_total": 4.85
+      }
+    ],
+    "generated_at": "2025-12-01T11:05:52.191173"
+  },
+  "category_breakdown": {
+    "Foreign Citation": {
+      "overview": {
+        "total_citations": 1312,
+        "decisions_with_foreign": 242,
+        "cases_with_foreign": 193
+      },
+      "flow_matrix": [
+        {
+          "source": "Global North",
+          "to_global_north": 868,
+          "to_global_south": 24,
+          "total": 892
+        },
+        {
+          "source": "Global South",
+          "to_global_north": 273,
+          "to_global_south": 147,
+          "total": 420
+        }
+      ],
+      "top_sources": [
+        {
+          "source_jurisdiction": "Australia",
+          "source_region": "Global North",
+          "citations_made": 317
+        },
+        {
+          "source_jurisdiction": "New Zealand",
+          "source_region": "Global North",
+          "citations_made": 190
+        },
+        {
+          "source_jurisdiction": "Canada",
+          "source_region": "Global North",
+          "citations_made": 105
+        },
+        {
+          "source_jurisdiction": "Brazil",
+          "source_region": "Global South",
+          "citations_made": 98
+        },
+        {
+          "source_jurisdiction": "United Kingdom",
+          "source_region": "Global North",
+          "citations_made": 83
+        },
+        {
+          "source_jurisdiction": "Czechia",
+          "source_region": "Global South",
+          "citations_made": 80
+        },
+        {
+          "source_jurisdiction": "Ireland",
+          "source_region": "Global North",
+          "citations_made": 64
+        },
+        {
+          "source_jurisdiction": "Nigeria",
+          "source_region": "Global South",
+          "citations_made": 39
+        },
+        {
+          "source_jurisdiction": "Argentina",
+          "source_region": "Global South",
+          "citations_made": 29
+        },
+        {
+          "source_jurisdiction": "Kenya",
+          "source_region": "Global South",
+          "citations_made": 27
+        }
+      ],
+      "top_cited": [
+        {
+          "case_law_origin": "United Kingdom",
+          "case_law_region": "Global North",
+          "times_cited": 383
+        },
+        {
+          "case_law_origin": "United States",
+          "case_law_region": "Global North",
+          "times_cited": 148
+        },
+        {
+          "case_law_origin": "Netherlands",
+          "case_law_region": "Global North",
+          "times_cited": 135
+        },
+        {
+          "case_law_origin": "Australia",
+          "case_law_region": "Global North",
+          "times_cited": 78
+        },
+        {
+          "case_law_origin": "Germany",
+          "case_law_region": "Global North",
+          "times_cited": 66
+        },
+        {
+          "case_law_origin": "England and Wales",
+          "case_law_region": "Global North",
+          "times_cited": 59
+        },
+        {
+          "case_law_origin": "Czech Republic",
+          "case_law_region": "Global North",
+          "times_cited": 50
+        },
+        {
+          "case_law_origin": "Canada",
+          "case_law_region": "Global North",
+          "times_cited": 44
+        },
+        {
+          "case_law_origin": "Colombia",
+          "case_law_region": "Global South",
+          "times_cited": 41
+        },
+        {
+          "case_law_origin": "India",
+          "case_law_region": "Global South",
+          "times_cited": 30
+        }
+      ],
+      "top_cases": [
+        {
+          "case_name": "Urgenda Foundation v. State of the Netherlands",
+          "case_law_origin": "Netherlands",
+          "case_law_region": "Global North",
+          "citation_count": 32
+        },
+        {
+          "case_name": "Urgenda case",
+          "case_law_origin": "Netherlands",
+          "case_law_region": "Global North",
+          "citation_count": 14
+        },
+        {
+          "case_name": "Finch",
+          "case_law_origin": "United States",
+          "case_law_region": "Global North",
+          "citation_count": 12
+        },
+        {
+          "case_name": "Peko-Wallsend",
+          "case_law_origin": "Australia",
+          "case_law_region": "Global North",
+          "citation_count": 9
+        },
+        {
+          "case_name": "Donoghue v Stevenson",
+          "case_law_origin": "United Kingdom",
+          "case_law_region": "Global North",
+          "citation_count": 7
+        },
+        {
+          "case_name": "LL 148 p. 692, 29.625-S",
+          "case_law_origin": "Germany",
+          "case_law_region": "Global North",
+          "citation_count": 6
+        },
+        {
+          "case_name": "Massachusetts v. EPA",
+          "case_law_origin": "United States",
+          "case_law_region": "Global North",
+          "citation_count": 6
+        },
+        {
+          "case_name": "LL 144 p. 611, 27.641-S",
+          "case_law_origin": "Germany",
+          "case_law_region": "Global North",
+          "citation_count": 6
+        },
+        {
+          "case_name": "LL 145 p. 346",
+          "case_law_origin": "Germany",
+          "case_law_region": "Global North",
+          "citation_count": 6
+        },
+        {
+          "case_name": "Brown v. Board of Education",
+          "case_law_origin": "United States",
+          "case_law_region": "Global North",
+          "citation_count": 5
+        }
+      ]
+    },
+    "International Citation": {
+      "overview": {
+        "total_citations": 872,
+        "decisions_with_intl": 128,
+        "cases_with_intl": 93
+      },
+      "by_region": [
+        {
+          "source_region": "Global North",
+          "citations": 678,
+          "decisions": 91
+        },
+        {
+          "source_region": "Global South",
+          "citations": 194,
+          "decisions": 37
+        }
+      ],
+      "top_sources": [
+        {
+          "source_jurisdiction": "Switzerland",
+          "source_region": "Global North",
+          "citations_made": 187
+        },
+        {
+          "source_jurisdiction": "Belgium",
+          "source_region": "Global North",
+          "citations_made": 133
+        },
+        {
+          "source_jurisdiction": "Netherlands",
+          "source_region": "Global North",
+          "citations_made": 115
+        },
+        {
+          "source_jurisdiction": "Ireland",
+          "source_region": "Global North",
+          "citations_made": 65
+        },
+        {
+          "source_jurisdiction": "Czechia",
+          "source_region": "Global South",
+          "citations_made": 51
+        },
+        {
+          "source_jurisdiction": "Italy",
+          "source_region": "Global North",
+          "citations_made": 40
+        },
+        {
+          "source_jurisdiction": "Romania",
+          "source_region": "Global South",
+          "citations_made": 36
+        },
+        {
+          "source_jurisdiction": "Austria",
+          "source_region": "Global North",
+          "citations_made": 31
+        },
+        {
+          "source_jurisdiction": "Norway",
+          "source_region": "Global North",
+          "citations_made": 29
+        },
+        {
+          "source_jurisdiction": "Brazil",
+          "source_region": "Global South",
+          "citations_made": 27
+        }
+      ],
+      "top_tribunals": [
+        {
+          "case_law_origin": "European Union",
+          "times_cited": 207
+        },
+        {
+          "case_law_origin": "International (Council of Europe)",
+          "times_cited": 171
+        },
+        {
+          "case_law_origin": "European Court of Human Rights (International)",
+          "times_cited": 127
+        },
+        {
+          "case_law_origin": "International (European Court of Human Rights)",
+          "times_cited": 110
+        },
+        {
+          "case_law_origin": "Council of Europe",
+          "times_cited": 77
+        },
+        {
+          "case_law_origin": "International (Inter-American Court of Human Rights)",
+          "times_cited": 41
+        },
+        {
+          "case_law_origin": "International (Inter-American System)",
+          "times_cited": 36
+        },
+        {
+          "case_law_origin": "International",
+          "times_cited": 33
+        },
+        {
+          "case_law_origin": "France",
+          "times_cited": 12
+        },
+        {
+          "case_law_origin": "France/Council of Europe",
+          "times_cited": 9
+        }
+      ],
+      "top_cases": [
+        {
+          "case_name": "Öneryıldız",
+          "case_law_origin": "European Court of Human Rights (International)",
+          "citation_count": 15
+        },
+        {
+          "case_name": "bpost",
+          "case_law_origin": "European Union",
+          "citation_count": 12
+        },
+        {
+          "case_name": "Kudrevicius et autres c. Lituanie",
+          "case_law_origin": "International (Council of Europe)",
+          "citation_count": 9
+        },
+        {
+          "case_name": "KlimaSeniorinnen ügy",
+          "case_law_origin": "European Court of Human Rights (International)",
+          "citation_count": 8
+        },
+        {
+          "case_name": "Kudrevicius und andere gegen Litauen",
+          "case_law_origin": "International (European Court of Human Rights)",
+          "citation_count": 7
+        },
+        {
+          "case_name": "Fadeyeva v. Russia",
+          "case_law_origin": "International (Council of Europe)",
+          "citation_count": 6
+        },
+        {
+          "case_name": "Budayeva et al. v. Russia",
+          "case_law_origin": "Council of Europe",
+          "citation_count": 6
+        },
+        {
+          "case_name": "Öneryildiz v. Turkey",
+          "case_law_origin": "Council of Europe",
+          "citation_count": 5
+        },
+        {
+          "case_name": "Demir and Baykara v. Turkey",
+          "case_law_origin": "International (Council of Europe)",
+          "citation_count": 5
+        },
+        {
+          "case_name": "Navalnyy c. Russie",
+          "case_law_origin": "European Court of Human Rights (International)",
+          "citation_count": 5
+        }
+      ]
+    },
+    "Foreign International Citation": {
+      "overview": {
+        "total_citations": 188,
+        "decisions_with_foreign_intl": 48,
+        "cases_with_foreign_intl": 40
+      },
+      "by_region": [
+        {
+          "source_region": "Global North",
+          "citations": 142,
+          "decisions": 34
+        },
+        {
+          "source_region": "Global South",
+          "citations": 46,
+          "decisions": 14
+        }
+      ],
+      "top_sources": [
+        {
+          "source_jurisdiction": "United Kingdom",
+          "source_region": "Global North",
+          "citations_made": 79
+        },
+        {
+          "source_jurisdiction": "Australia",
+          "source_region": "Global North",
+          "citations_made": 19
+        },
+        {
+          "source_jurisdiction": "New Zealand",
+          "source_region": "Global North",
+          "citations_made": 19
+        },
+        {
+          "source_jurisdiction": "Norway",
+          "source_region": "Global North",
+          "citations_made": 16
+        },
+        {
+          "source_jurisdiction": "Czechia",
+          "source_region": "Global South",
+          "citations_made": 12
+        },
+        {
+          "source_jurisdiction": "Philippines",
+          "source_region": "Global South",
+          "citations_made": 11
+        },
+        {
+          "source_jurisdiction": "Brazil",
+          "source_region": "Global South",
+          "citations_made": 10
+        },
+        {
+          "source_jurisdiction": "Colombia",
+          "source_region": "Global South",
+          "citations_made": 7
+        },
+        {
+          "source_jurisdiction": "Netherlands",
+          "source_region": "Global North",
+          "citations_made": 3
+        },
+        {
+          "source_jurisdiction": "Germany",
+          "source_region": "Global North",
+          "citations_made": 3
+        }
+      ],
+      "top_tribunals": [
+        {
+          "case_law_origin": "European Union",
+          "times_cited": 96
+        },
+        {
+          "case_law_origin": "International",
+          "times_cited": 35
+        },
+        {
+          "case_law_origin": "Council of Europe",
+          "times_cited": 11
+        },
+        {
+          "case_law_origin": "International (Council of Europe)",
+          "times_cited": 10
+        },
+        {
+          "case_law_origin": "European Court of Human Rights (International)",
+          "times_cited": 9
+        },
+        {
+          "case_law_origin": "International (European Court of Human Rights)",
+          "times_cited": 8
+        },
+        {
+          "case_law_origin": "International/Regional (African Union)",
+          "times_cited": 2
+        },
+        {
+          "case_law_origin": "Andean Community",
+          "times_cited": 2
+        },
+        {
+          "case_law_origin": "International Arbitration",
+          "times_cited": 2
+        },
+        {
+          "case_law_origin": "Ireland/European Union",
+          "times_cited": 2
+        }
+      ],
+      "top_cases": [
+        {
+          "case_name": "Dutch Nitrogen",
+          "case_law_origin": "European Union",
+          "citation_count": 9
+        },
+        {
+          "case_name": "Öneryıldız",
+          "case_law_origin": "European Court of Human Rights (International)",
+          "citation_count": 7
+        },
+        {
+          "case_name": "Case C-473/14 Dimos Kropias Attikis",
+          "case_law_origin": "European Union",
+          "citation_count": 6
+        },
+        {
+          "case_name": "Brussels Hoofdstedelijk Gewest v Vlaams Gewest",
+          "case_law_origin": "European Union",
+          "citation_count": 4
+        },
+        {
+          "case_name": "Abraham v Wallonia",
+          "case_law_origin": "European Union",
+          "citation_count": 3
+        },
+        {
+          "case_name": "Abraham v Region Wallonne",
+          "case_law_origin": "European Union",
+          "citation_count": 2
+        },
+        {
+          "case_name": "CILFIT v Ministry of Health",
+          "case_law_origin": "European Union",
+          "citation_count": 2
+        },
+        {
+          "case_name": "Afton Chemical Ltd. v Secretary of State for Transport",
+          "case_law_origin": "European Union",
+          "citation_count": 2
+        },
+        {
+          "case_name": "Budayeva v Russia",
+          "case_law_origin": "International (European Court of Human Rights)",
+          "citation_count": 2
+        },
+        {
+          "case_name": "Commission v Spain",
+          "case_law_origin": "European Union",
+          "citation_count": 2
+        }
+      ],
+      "cross_system": [
+        {
+          "source_jurisdiction": "United Kingdom",
+          "case_law_origin": "European Union",
+          "citations": 74
+        },
+        {
+          "source_jurisdiction": "Norway",
+          "case_law_origin": "European Union",
+          "citations": 14
+        },
+        {
+          "source_jurisdiction": "Czechia",
+          "case_law_origin": "International",
+          "citations": 8
+        },
+        {
+          "source_jurisdiction": "Australia",
+          "case_law_origin": "Council of Europe",
+          "citations": 8
+        },
+        {
+          "source_jurisdiction": "New Zealand",
+          "case_law_origin": "International",
+          "citations": 6
+        },
+        {
+          "source_jurisdiction": "Australia",
+          "case_law_origin": "International",
+          "citations": 6
+        },
+        {
+          "source_jurisdiction": "Colombia",
+          "case_law_origin": "European Union",
+          "citations": 5
+        },
+        {
+          "source_jurisdiction": "New Zealand",
+          "case_law_origin": "International (Council of Europe)",
+          "citations": 5
+        },
+        {
+          "source_jurisdiction": "Philippines",
+          "case_law_origin": "International (Council of Europe)",
+          "citations": 4
+        },
+        {
+          "source_jurisdiction": "Philippines",
+          "case_law_origin": "International",
+          "citations": 4
+        },
+        {
+          "source_jurisdiction": "Australia",
+          "case_law_origin": "International (European Court of Human Rights)",
+          "citations": 4
+        },
+        {
+          "source_jurisdiction": "New Zealand",
+          "case_law_origin": "International (European Court of Human Rights)",
+          "citations": 4
+        },
+        {
+          "source_jurisdiction": "Brazil",
+          "case_law_origin": "European Court of Human Rights (International)",
+          "citations": 3
+        },
+        {
+          "source_jurisdiction": "Germany",
+          "case_law_origin": "International",
+          "citations": 3
+        },
+        {
+          "source_jurisdiction": "Netherlands",
+          "case_law_origin": "International",
+          "citations": 3
+        }
+      ]
+    },
+    "Inter-System Citation": {
+      "overview": {
+        "total_citations": 2472,
+        "decisions_with_intersystem": 101,
+        "cases_with_intersystem": 84
+      },
+      "flows": [
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "European Union",
+          "citation_count": 1121
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International (Inter-American System)",
+          "citation_count": 169
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International (Council of Europe)",
+          "citation_count": 161
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International Arbitration",
+          "citation_count": 147
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "European Court of Human Rights (International)",
+          "citation_count": 127
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International (Inter-American Court of Human Rights)",
+          "citation_count": 123
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International (WTO)",
+          "citation_count": 98
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International (European Court of Human Rights)",
+          "citation_count": 88
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "Sweden",
+          "citation_count": 75
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "United Nations",
+          "citation_count": 63
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International Court of Justice",
+          "citation_count": 44
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International - Inter-American System",
+          "citation_count": 40
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "International - World Trade Organization",
+          "citation_count": 32
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "Council of Europe",
+          "citation_count": 19
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_tribunal": "Inter-American Court of Human Rights (International Tribunal)",
+          "citation_count": 18
+        }
+      ],
+      "active_tribunals": [
+        {
+          "source_jurisdiction": "International",
+          "citations_made": 2472,
+          "tribunals_cited": 68
+        }
+      ],
+      "cited_tribunals": [
+        {
+          "case_law_origin": "European Union",
+          "times_cited": 1121,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "International (Inter-American System)",
+          "times_cited": 169,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "International (Council of Europe)",
+          "times_cited": 161,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "International Arbitration",
+          "times_cited": 147,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "European Court of Human Rights (International)",
+          "times_cited": 127,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "International (Inter-American Court of Human Rights)",
+          "times_cited": 123,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "International (WTO)",
+          "times_cited": 98,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "International (European Court of Human Rights)",
+          "times_cited": 88,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "Sweden",
+          "times_cited": 75,
+          "citing_tribunals": 1
+        },
+        {
+          "case_law_origin": "United Nations",
+          "times_cited": 63,
+          "citing_tribunals": 1
+        }
+      ],
+      "top_cases": [
+        {
+          "case_name": "US – Clove Cigarettes",
+          "case_law_origin": "International (WTO)",
+          "citation_count": 37
+        },
+        {
+          "case_name": "US – COOL",
+          "case_law_origin": "International (WTO)",
+          "citation_count": 30
+        },
+        {
+          "case_name": "EC – Seal Products",
+          "case_law_origin": "International - World Trade Organization",
+          "citation_count": 27
+        },
+        {
+          "case_name": "Borealis Polyolefine and Others",
+          "case_law_origin": "European Union",
+          "citation_count": 24
+        },
+        {
+          "case_name": "Australia – Tobacco Plain Packaging",
+          "case_law_origin": "International (WTO)",
+          "citation_count": 23
+        },
+        {
+          "case_name": "Achmea",
+          "case_law_origin": "European Union",
+          "citation_count": 22
+        },
+        {
+          "case_name": "Silver Ridge",
+          "case_law_origin": "International Arbitration",
+          "citation_count": 20
+        },
+        {
+          "case_name": "Inuit Tapiriit Kanatami and Others v Parliament and Council",
+          "case_law_origin": "European Union",
+          "citation_count": 19
+        },
+        {
+          "case_name": "Verein KlimaSeniorinnen Schweiz and Others",
+          "case_law_origin": "Switzerland",
+          "citation_count": 17
+        },
+        {
+          "case_name": "Borealis and Others",
+          "case_law_origin": "European Union",
+          "citation_count": 16
+        }
+      ]
+    },
+    "Member-State Citation": {
+      "overview": {
+        "total_citations": 0,
+        "decisions_with_member_state": 0,
+        "cases_with_member_state": 0
+      },
+      "by_region": [],
+      "top_tribunals": [],
+      "top_jurisdictions": [],
+      "top_cases": []
+    },
+    "Non-Member Citation": {
+      "overview": {
+        "total_citations": 515,
+        "decisions_with_non_member": 46,
+        "cases_with_non_member": 37
+      },
+      "by_region": [
+        {
+          "cited_region": "Global North",
+          "citations": 416,
+          "decisions": 44
+        },
+        {
+          "cited_region": "Global South",
+          "citations": 99,
+          "decisions": 7
+        }
+      ],
+      "top_tribunals": [
+        {
+          "source_jurisdiction": "International",
+          "citations_made": 515,
+          "non_members_cited": 36
+        }
+      ],
+      "top_jurisdictions": [
+        {
+          "case_law_origin": "Spain",
+          "case_law_region": "Global North",
+          "times_cited": 134
+        },
+        {
+          "case_law_origin": "Italy",
+          "case_law_region": "Global North",
+          "times_cited": 44
+        },
+        {
+          "case_law_origin": "United Kingdom",
+          "case_law_region": "Global North",
+          "times_cited": 40
+        },
+        {
+          "case_law_origin": "Netherlands",
+          "case_law_region": "Global North",
+          "times_cited": 32
+        },
+        {
+          "case_law_origin": "Germany",
+          "case_law_region": "Global North",
+          "times_cited": 31
+        },
+        {
+          "case_law_origin": "Colombia",
+          "case_law_region": "Global South",
+          "times_cited": 29
+        },
+        {
+          "case_law_origin": "France",
+          "case_law_region": "Global North",
+          "times_cited": 26
+        },
+        {
+          "case_law_origin": "Switzerland",
+          "case_law_region": "Global North",
+          "times_cited": 23
+        },
+        {
+          "case_law_origin": "Sweden",
+          "case_law_region": "Global North",
+          "times_cited": 19
+        },
+        {
+          "case_law_origin": "United States",
+          "case_law_region": "Global North",
+          "times_cited": 16
+        }
+      ],
+      "top_cases": [
+        {
+          "case_name": "Italian Constitutional Court Decision No. 16/2017",
+          "case_law_origin": "Italy",
+          "case_law_region": "Global North",
+          "citation_count": 12
+        },
+        {
+          "case_name": "Urgenda Foundation v. State of the Netherlands",
+          "case_law_origin": "Netherlands",
+          "case_law_region": "Global North",
+          "citation_count": 10
+        },
+        {
+          "case_name": "Neubauer and Others v. Federal Republic of Germany",
+          "case_law_origin": "Germany",
+          "case_law_region": "Global North",
+          "citation_count": 5
+        },
+        {
+          "case_name": "Charanne",
+          "case_law_origin": "Spain",
+          "case_law_region": "Global North",
+          "citation_count": 5
+        },
+        {
+          "case_name": "Brown v. Board of Education",
+          "case_law_origin": "United States",
+          "case_law_region": "Global North",
+          "citation_count": 4
+        },
+        {
+          "case_name": "Mohammad Ammar Al-Bahloul v. The Republic of Tajikistan",
+          "case_law_origin": "Sweden",
+          "case_law_region": "Global North",
+          "citation_count": 3
+        },
+        {
+          "case_name": "Milieudefensie v. Royal Dutch Shell",
+          "case_law_origin": "Netherlands",
+          "case_law_region": "Global North",
+          "citation_count": 3
+        },
+        {
+          "case_name": "Collins v. Environmental Protection Agency (Guyana)",
+          "case_law_origin": "Guyana",
+          "case_law_region": "Global South",
+          "citation_count": 3
+        },
+        {
+          "case_name": "Judgment of Section Three of the Spanish Supreme Court of 9 December 2009",
+          "case_law_origin": "Spain",
+          "case_law_region": "Global North",
+          "citation_count": 3
+        },
+        {
+          "case_name": "Leghari v. Federation of Pakistan",
+          "case_law_origin": "Pakistan",
+          "case_law_region": "Global South",
+          "citation_count": 3
+        }
+      ],
+      "cross_regional": [
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Spain",
+          "case_law_region": "Global North",
+          "citations": 134
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Italy",
+          "case_law_region": "Global North",
+          "citations": 44
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "United Kingdom",
+          "case_law_region": "Global North",
+          "citations": 40
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Netherlands",
+          "case_law_region": "Global North",
+          "citations": 32
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Germany",
+          "case_law_region": "Global North",
+          "citations": 31
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Colombia",
+          "case_law_region": "Global South",
+          "citations": 29
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "France",
+          "case_law_region": "Global North",
+          "citations": 26
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Switzerland",
+          "case_law_region": "Global North",
+          "citations": 23
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Sweden",
+          "case_law_region": "Global North",
+          "citations": 19
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "United States",
+          "case_law_region": "Global North",
+          "citations": 16
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Argentina",
+          "case_law_region": "Global South",
+          "citations": 13
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "India",
+          "case_law_region": "Global South",
+          "citations": 12
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Brazil",
+          "case_law_region": "Global South",
+          "citations": 11
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Ecuador",
+          "case_law_region": "Global South",
+          "citations": 11
+        },
+        {
+          "citing_tribunal": "International",
+          "cited_jurisdiction": "Australia",
+          "case_law_region": "Global North",
+          "citations": 8
+        }
+      ]
+    }
+  },
+  "regional_flows": {
+    "asymmetry_data": [
+      {
+        "sixfold_type": "Foreign Citation",
+        "n_to_n": 868,
+        "n_to_s": 24,
+        "s_to_n": 273,
+        "s_to_s": 147,
+        "total": 1312
+      },
+      {
+        "sixfold_type": "Non-Member Citation",
+        "n_to_n": 0,
+        "n_to_s": 0,
+        "s_to_n": 0,
+        "s_to_s": 0,
+        "total": 515
+      }
+    ],
+    "global_south_engagement": [
+      {
+        "sixfold_type": "Foreign Citation",
+        "citations_from_south": 420,
+        "citations_to_south": 171,
+        "total_citations": 1312
+      },
+      {
+        "sixfold_type": "International Citation",
+        "citations_from_south": 194,
+        "citations_to_south": 0,
+        "total_citations": 872
+      },
+      {
+        "sixfold_type": "Foreign International Citation",
+        "citations_from_south": 46,
+        "citations_to_south": 0,
+        "total_citations": 188
+      },
+      {
+        "sixfold_type": "Unclassified",
+        "citations_from_south": 28,
+        "citations_to_south": 1,
+        "total_citations": 615
+      },
+      {
+        "sixfold_type": "Inter-System Citation",
+        "citations_from_south": 0,
+        "citations_to_south": 0,
+        "total_citations": 2472
+      },
+      {
+        "sixfold_type": "Non-Member Citation",
+        "citations_from_south": 0,
+        "citations_to_south": 99,
+        "total_citations": 515
+      }
+    ]
+  },
+  "comparative": {
+    "types_distribution": [
+      {
+        "citation_types_present": 1,
+        "number_of_decisions": 279,
+        "percentage": 59.6
+      },
+      {
+        "citation_types_present": 2,
+        "number_of_decisions": 148,
+        "percentage": 31.6
+      },
+      {
+        "citation_types_present": 3,
+        "number_of_decisions": 37,
+        "percentage": 7.9
+      },
+      {
+        "citation_types_present": 4,
+        "number_of_decisions": 4,
+        "percentage": 0.9
+      }
+    ],
+    "top_cases_overall": [
+      {
+        "case_name": "US – Clove Cigarettes",
+        "case_law_origin": "International (WTO)",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 37
+      },
+      {
+        "case_name": "Urgenda Foundation v. State of the Netherlands",
+        "case_law_origin": "Netherlands",
+        "case_law_region": "Global North",
+        "sixfold_type": "Foreign Citation",
+        "citation_count": 32
+      },
+      {
+        "case_name": "US – COOL",
+        "case_law_origin": "International (WTO)",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 30
+      },
+      {
+        "case_name": "EC – Seal Products",
+        "case_law_origin": "International - World Trade Organization",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 27
+      },
+      {
+        "case_name": "Borealis Polyolefine and Others",
+        "case_law_origin": "European Union",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 24
+      },
+      {
+        "case_name": "Australia – Tobacco Plain Packaging",
+        "case_law_origin": "International (WTO)",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 23
+      },
+      {
+        "case_name": "Achmea",
+        "case_law_origin": "European Union",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 22
+      },
+      {
+        "case_name": "Silver Ridge",
+        "case_law_origin": "International Arbitration",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 20
+      },
+      {
+        "case_name": "Inuit Tapiriit Kanatami and Others v Parliament and Council",
+        "case_law_origin": "European Union",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 19
+      },
+      {
+        "case_name": "Verein KlimaSeniorinnen Schweiz and Others",
+        "case_law_origin": "Switzerland",
+        "case_law_region": "International",
+        "sixfold_type": "Inter-System Citation",
+        "citation_count": 17
+      }
+    ]
+  }
+}

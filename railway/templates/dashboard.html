@@ -777,10 +777,10 @@
                 return 'https://YOUR-API-SERVICE.up.railway.app/api';
             }
 
-            // Production: If served from a custom domain
-            if (hostname !== 'localhost' && hostname !== '127.0.0.1' && !hostname.includes('file://') && hostname !== '') {
+            // Production: If served from a custom domain or the same origin
+            if (hostname !== 'localhost' && hostname !== '127.0.0.1' && !hostname.includes('file://')) {
                 // Assume API is at same domain with /api path
-                return `${window.location.origin}/api`;
+                return '/api';
             }
 
             // Development: localhost

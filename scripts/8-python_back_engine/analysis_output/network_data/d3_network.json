@@ -1,0 +1,4834 @@
+{
+  "nodes": [
+    {
+      "id": "Council of Europe",
+      "label": "Council of Europe",
+      "region": "International",
+      "in_degree": 107,
+      "out_degree": 0,
+      "total_degree": 107,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Finland",
+      "label": "Finland",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 17,
+      "total_degree": 18,
+      "lat": 61.9241,
+      "lon": 25.7482
+    },
+    {
+      "id": "Cameroon",
+      "label": "Cameroon",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Caribbean Commonwealth jurisdiction",
+      "label": "Caribbean Commonwealth jurisdiction",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Grenada",
+      "label": "Grenada",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 17,
+      "total_degree": 17,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Romania",
+      "label": "Romania",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 53,
+      "total_degree": 53,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Czechia",
+      "label": "Czechia",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 144,
+      "total_degree": 144,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Namibia",
+      "label": "Namibia",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 4,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Papua New Guinea",
+      "label": "Papua New Guinea",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 29,
+      "total_degree": 30,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Ireland",
+      "label": "Ireland",
+      "region": "Global North",
+      "in_degree": 20,
+      "out_degree": 133,
+      "total_degree": 153,
+      "lat": 53.1424,
+      "lon": -7.6921
+    },
+    {
+      "id": "International (NAFTA/ICSID)",
+      "label": "International (NAFTA/ICSID)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Estonia",
+      "label": "Estonia",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 2,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union",
+      "label": "European Union",
+      "region": "International",
+      "in_degree": 1424,
+      "out_degree": 0,
+      "total_degree": 1424,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "African Union",
+      "label": "African Union",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Germany or Austria",
+      "label": "Germany or Austria",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (NAFTA)",
+      "label": "International Arbitration (NAFTA)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union (Court of Justice of the European Union)",
+      "label": "European Union (Court of Justice of the European Union)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International/Council of Europe",
+      "label": "International/Council of Europe",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France",
+      "label": "France",
+      "region": "Global North",
+      "in_degree": 64,
+      "out_degree": 17,
+      "total_degree": 81,
+      "lat": 46.2276,
+      "lon": 2.2137
+    },
+    {
+      "id": "Australia",
+      "label": "Australia",
+      "region": "Global North",
+      "in_degree": 86,
+      "out_degree": 453,
+      "total_degree": 539,
+      "lat": -25.2744,
+      "lon": 133.7751
+    },
+    {
+      "id": "International (Iran-United States Claims Tribunal)",
+      "label": "International (Iran-United States Claims Tribunal)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France (via European Court of Human Rights)",
+      "label": "France (via European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Angola",
+      "label": "Angola",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United Kingdom (Northern Ireland)",
+      "label": "United Kingdom (Northern Ireland)",
+      "region": "Global North",
+      "in_degree": 18,
+      "out_degree": 0,
+      "total_degree": 18,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Canada",
+      "label": "Canada",
+      "region": "Global North",
+      "in_degree": 53,
+      "out_degree": 127,
+      "total_degree": 180,
+      "lat": 56.1304,
+      "lon": -106.3468
+    },
+    {
+      "id": "Saint Lucia",
+      "label": "Saint Lucia",
+      "region": "Global South",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Netherlands",
+      "label": "Netherlands",
+      "region": "Global North",
+      "in_degree": 168,
+      "out_degree": 133,
+      "total_degree": 301,
+      "lat": 52.1326,
+      "lon": 5.2913
+    },
+    {
+      "id": "Scotland/United Kingdom",
+      "label": "Scotland/United Kingdom",
+      "region": "Global North",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Norway (case heard by European Court of Human Rights)",
+      "label": "Norway (case heard by European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Court of Human Rights (International Court)",
+      "label": "European Court of Human Rights (International Court)",
+      "region": "International",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": 48.6,
+      "lon": 7.75
+    },
+    {
+      "id": "International - Inter-American System",
+      "label": "International - Inter-American System",
+      "region": "International",
+      "in_degree": 44,
+      "out_degree": 0,
+      "total_degree": 44,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Council of Europe)",
+      "label": "International (Council of Europe)",
+      "region": "International",
+      "in_degree": 342,
+      "out_degree": 0,
+      "total_degree": 342,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union (supranational)",
+      "label": "European Union (supranational)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United States of America",
+      "label": "United States of America",
+      "region": "Global North",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Hungary",
+      "label": "Hungary",
+      "region": "Global South",
+      "in_degree": 14,
+      "out_degree": 13,
+      "total_degree": 27,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (European Union)",
+      "label": "International (European Union)",
+      "region": "International",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (Sweden)",
+      "label": "International Arbitration (Sweden)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (African Commission on Human and Peoples' Rights)",
+      "label": "International (African Commission on Human and Peoples' Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France (but decided by European Court of Human Rights)",
+      "label": "France (but decided by European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "East Africa (Kenya, Tanzania, or Uganda)",
+      "label": "East Africa (Kenya, Tanzania, or Uganda)",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Singapore",
+      "label": "Singapore",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Austria",
+      "label": "Austria",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 49,
+      "total_degree": 51,
+      "lat": 47.5162,
+      "lon": 14.5501
+    },
+    {
+      "id": "Organization of American States",
+      "label": "Organization of American States",
+      "region": "International",
+      "in_degree": 17,
+      "out_degree": 0,
+      "total_degree": 17,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Inter-American Court of Human Rights)",
+      "label": "International (Inter-American Court of Human Rights)",
+      "region": "International",
+      "in_degree": 164,
+      "out_degree": 0,
+      "total_degree": 164,
+      "lat": 9.9281,
+      "lon": -84.0907
+    },
+    {
+      "id": "Ecuador",
+      "label": "Ecuador",
+      "region": "Global South",
+      "in_degree": 12,
+      "out_degree": 8,
+      "total_degree": 20,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Sweden as seat)",
+      "label": "International (Sweden as seat)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Sweden)",
+      "label": "International (Sweden)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Switzerland/European Court of Human Rights",
+      "label": "Switzerland/European Court of Human Rights",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Luxembourg",
+      "label": "Luxembourg",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 11,
+      "total_degree": 13,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Philippines",
+      "label": "Philippines",
+      "region": "Global South",
+      "in_degree": 20,
+      "out_degree": 31,
+      "total_degree": 51,
+      "lat": 12.8797,
+      "lon": 121.774
+    },
+    {
+      "id": "European Union (Belgium)",
+      "label": "European Union (Belgium)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Norway",
+      "label": "Norway",
+      "region": "Global North",
+      "in_degree": 18,
+      "out_degree": 64,
+      "total_degree": 82,
+      "lat": 60.472,
+      "lon": 8.4689
+    },
+    {
+      "id": "Colombia",
+      "label": "Colombia",
+      "region": "Global South",
+      "in_degree": 70,
+      "out_degree": 34,
+      "total_degree": 104,
+      "lat": 4.5709,
+      "lon": -74.2973
+    },
+    {
+      "id": "International (United States as arbitrator)",
+      "label": "International (United States as arbitrator)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "China",
+      "label": "China",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Guyana",
+      "label": "Guyana",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Nepal",
+      "label": "Nepal",
+      "region": "Global South",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (NAFTA/ICSID Arbitration)",
+      "label": "International (NAFTA/ICSID Arbitration)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Federated States of Micronesia",
+      "label": "Federated States of Micronesia",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Romania (case before European Court of Human Rights)",
+      "label": "Romania (case before European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International - World Trade Organization",
+      "label": "International - World Trade Organization",
+      "region": "International",
+      "in_degree": 32,
+      "out_degree": 0,
+      "total_degree": 32,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "England and Wales",
+      "label": "England and Wales",
+      "region": "Global North",
+      "in_degree": 321,
+      "out_degree": 0,
+      "total_degree": 321,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Ireland/European Union",
+      "label": "Ireland/European Union",
+      "region": "International",
+      "in_degree": 4,
+      "out_degree": 0,
+      "total_degree": 4,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Inter-American Court of Human Rights (Regional International Court)",
+      "label": "Inter-American Court of Human Rights (Regional International Court)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (ICSID/Investment Arbitration)",
+      "label": "International (ICSID/Investment Arbitration)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Inter-American Human Rights System",
+      "label": "Inter-American Human Rights System",
+      "region": "International",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Inter-American System)",
+      "label": "International (Inter-American System)",
+      "region": "International",
+      "in_degree": 205,
+      "out_degree": 0,
+      "total_degree": 205,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Switzerland",
+      "label": "Switzerland",
+      "region": "International",
+      "in_degree": 50,
+      "out_degree": 215,
+      "total_degree": 265,
+      "lat": 46.8182,
+      "lon": 8.2275
+    },
+    {
+      "id": "International - Inter-American Court of Human Rights",
+      "label": "International - Inter-American Court of Human Rights",
+      "region": "International",
+      "in_degree": 6,
+      "out_degree": 0,
+      "total_degree": 6,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Bermuda",
+      "label": "Bermuda",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "South Africa",
+      "label": "South Africa",
+      "region": "Global South",
+      "in_degree": 20,
+      "out_degree": 5,
+      "total_degree": 25,
+      "lat": -30.5595,
+      "lon": 22.9375
+    },
+    {
+      "id": "International (WTO)",
+      "label": "International (WTO)",
+      "region": "International",
+      "in_degree": 98,
+      "out_degree": 0,
+      "total_degree": 98,
+      "lat": 46.2206,
+      "lon": 6.143
+    },
+    {
+      "id": "Switzerland (European Court of Human Rights)",
+      "label": "Switzerland (European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Council of Europe (European Court of Human Rights)",
+      "label": "Council of Europe (European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Denmark",
+      "label": "Denmark",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": 56.2639,
+      "lon": 9.5018
+    },
+    {
+      "id": "International/European",
+      "label": "International/European",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Switzerland (case before European Court of Human Rights)",
+      "label": "Switzerland (case before European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Spain",
+      "label": "Spain",
+      "region": "International",
+      "in_degree": 143,
+      "out_degree": 38,
+      "total_degree": 181,
+      "lat": 40.4637,
+      "lon": -3.7492
+    },
+    {
+      "id": "International - Council of Europe",
+      "label": "International - Council of Europe",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Germany",
+      "label": "Germany",
+      "region": "International",
+      "in_degree": 101,
+      "out_degree": 18,
+      "total_degree": 119,
+      "lat": 51.1657,
+      "lon": 10.4515
+    },
+    {
+      "id": "Not a legal case",
+      "label": "Not a legal case",
+      "region": "Not applicable",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Jamaica",
+      "label": "Jamaica",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Indonesia",
+      "label": "Indonesia",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 5,
+      "total_degree": 8,
+      "lat": -0.7893,
+      "lon": 113.9213
+    },
+    {
+      "id": "United Kingdom",
+      "label": "United Kingdom",
+      "region": "Global North",
+      "in_degree": 423,
+      "out_degree": 568,
+      "total_degree": 991,
+      "lat": 55.3781,
+      "lon": -3.436
+    },
+    {
+      "id": "France (case before European Court of Human Rights)",
+      "label": "France (case before European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "England",
+      "label": "England",
+      "region": "Global North",
+      "in_degree": 9,
+      "out_degree": 0,
+      "total_degree": 9,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Panama",
+      "label": "Panama",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Turkey",
+      "label": "Turkey",
+      "region": "International",
+      "in_degree": 13,
+      "out_degree": 0,
+      "total_degree": 13,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Convention on Human Rights System (Council of Europe)",
+      "label": "European Convention on Human Rights System (Council of Europe)",
+      "region": "International",
+      "in_degree": 4,
+      "out_degree": 0,
+      "total_degree": 4,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union (Denmark)",
+      "label": "European Union (Denmark)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International/Inter-American System",
+      "label": "International/Inter-American System",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union/European Court of Justice",
+      "label": "European Union/European Court of Justice",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration",
+      "label": "International Arbitration",
+      "region": "International",
+      "in_degree": 153,
+      "out_degree": 0,
+      "total_degree": 153,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Guernsey",
+      "label": "Guernsey",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Turkey (case originated) / European Court of Human Rights (adjudicating court)",
+      "label": "Turkey (case originated) / European Court of Human Rights (adjudicating court)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Arbitration)",
+      "label": "International (Arbitration)",
+      "region": "International",
+      "in_degree": 10,
+      "out_degree": 0,
+      "total_degree": 10,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union/Supranational",
+      "label": "European Union/Supranational",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Belgium",
+      "label": "Belgium",
+      "region": "International",
+      "in_degree": 28,
+      "out_degree": 150,
+      "total_degree": 178,
+      "lat": 50.5039,
+      "lon": 4.4699
+    },
+    {
+      "id": "European Court of Human Rights (International)",
+      "label": "European Court of Human Rights (International)",
+      "region": "International",
+      "in_degree": 263,
+      "out_degree": 0,
+      "total_degree": 263,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "South Korea",
+      "label": "South Korea",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 14,
+      "total_degree": 16,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Saint Kitts and Nevis",
+      "label": "Saint Kitts and Nevis",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Ghana",
+      "label": "Ghana",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (World Trade Organization)",
+      "label": "International (World Trade Organization)",
+      "region": "International",
+      "in_degree": 7,
+      "out_degree": 0,
+      "total_degree": 7,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Permanent Court of Arbitration)",
+      "label": "International (Permanent Court of Arbitration)",
+      "region": "International",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Argentina",
+      "label": "Argentina",
+      "region": "International",
+      "in_degree": 16,
+      "out_degree": 41,
+      "total_degree": 57,
+      "lat": -38.4161,
+      "lon": -63.6167
+    },
+    {
+      "id": "European Union/Council of Europe",
+      "label": "European Union/Council of Europe",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "New Zealand",
+      "label": "New Zealand",
+      "region": "Global North",
+      "in_degree": 27,
+      "out_degree": 212,
+      "total_degree": 239,
+      "lat": -40.9006,
+      "lon": 174.886
+    },
+    {
+      "id": "International Tribunal",
+      "label": "International Tribunal",
+      "region": "International",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": 52.0866,
+      "lon": 4.2955
+    },
+    {
+      "id": "International/Multiple Jurisdictions",
+      "label": "International/Multiple Jurisdictions",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Greece",
+      "label": "Greece",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Türkiye",
+      "label": "Türkiye",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 6,
+      "total_degree": 6,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Italy",
+      "label": "Italy",
+      "region": "Global North",
+      "in_degree": 47,
+      "out_degree": 47,
+      "total_degree": 94,
+      "lat": 41.8719,
+      "lon": 12.5674
+    },
+    {
+      "id": "International/Regional (African Union)",
+      "label": "International/Regional (African Union)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Bangladesh",
+      "label": "Bangladesh",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": 23.685,
+      "lon": 90.3563
+    },
+    {
+      "id": "Portugal",
+      "label": "Portugal",
+      "region": "Global North",
+      "in_degree": 6,
+      "out_degree": 4,
+      "total_degree": 10,
+      "lat": 39.3999,
+      "lon": -8.2245
+    },
+    {
+      "id": "United States",
+      "label": "United States",
+      "region": "Global North",
+      "in_degree": 167,
+      "out_degree": 1,
+      "total_degree": 168,
+      "lat": 37.0902,
+      "lon": -95.7129
+    },
+    {
+      "id": "Scotland",
+      "label": "Scotland",
+      "region": "Global North",
+      "in_degree": 11,
+      "out_degree": 0,
+      "total_degree": 11,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "South West Africa/Namibia",
+      "label": "South West Africa/Namibia",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Kenya",
+      "label": "Kenya",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 29,
+      "total_degree": 32,
+      "lat": -0.0236,
+      "lon": 37.9062
+    },
+    {
+      "id": "International (ICSID)",
+      "label": "International (ICSID)",
+      "region": "International",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France/Council of Europe",
+      "label": "France/Council of Europe",
+      "region": "International",
+      "in_degree": 9,
+      "out_degree": 0,
+      "total_degree": 9,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (NAFTA)",
+      "label": "International (NAFTA)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union (European Court of Human Rights/European General Court)",
+      "label": "European Union (European Court of Human Rights/European General Court)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Ukraine",
+      "label": "Ukraine",
+      "region": "International",
+      "in_degree": 4,
+      "out_degree": 0,
+      "total_degree": 4,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Taiwan (Republic of China)",
+      "label": "Taiwan (Republic of China)",
+      "region": "Global North",
+      "in_degree": 9,
+      "out_degree": 0,
+      "total_degree": 9,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Scotland (United Kingdom)",
+      "label": "Scotland (United Kingdom)",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Eastern Caribbean States",
+      "label": "Eastern Caribbean States",
+      "region": "Global South",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Poland",
+      "label": "Poland",
+      "region": "Global North",
+      "in_degree": 3,
+      "out_degree": 5,
+      "total_degree": 8,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Sierra Leone",
+      "label": "Sierra Leone",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France/European Union",
+      "label": "France/European Union",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Peru",
+      "label": "Peru",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 26,
+      "total_degree": 29,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United Kingdom (Scotland)",
+      "label": "United Kingdom (Scotland)",
+      "region": "Global North",
+      "in_degree": 7,
+      "out_degree": 0,
+      "total_degree": 7,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Scotland, United Kingdom",
+      "label": "Scotland, United Kingdom",
+      "region": "Global North",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Andean Community",
+      "label": "Andean Community",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United Kingdom or Canada",
+      "label": "United Kingdom or Canada",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (ICSID/NAFTA)",
+      "label": "International Arbitration (ICSID/NAFTA)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Sweden",
+      "label": "Sweden",
+      "region": "International",
+      "in_degree": 96,
+      "out_degree": 0,
+      "total_degree": 96,
+      "lat": 60.1282,
+      "lon": 18.6435
+    },
+    {
+      "id": "United Nations",
+      "label": "United Nations",
+      "region": "International",
+      "in_degree": 67,
+      "out_degree": 0,
+      "total_degree": 67,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Trinidad and Tobago",
+      "label": "Trinidad and Tobago",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Spain (International Court)",
+      "label": "Spain (International Court)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Zambia",
+      "label": "Zambia",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Benin",
+      "label": "Benin",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International",
+      "label": "International",
+      "region": "International",
+      "in_degree": 68,
+      "out_degree": 3023,
+      "total_degree": 3091,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Patent Office",
+      "label": "European Patent Office",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Pakistan",
+      "label": "Pakistan",
+      "region": "Global South",
+      "in_degree": 12,
+      "out_degree": 15,
+      "total_degree": 27,
+      "lat": 30.3753,
+      "lon": 69.3451
+    },
+    {
+      "id": "France (European Court of Human Rights)",
+      "label": "France (European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (United Nations)",
+      "label": "International (United Nations)",
+      "region": "International",
+      "in_degree": 13,
+      "out_degree": 0,
+      "total_degree": 13,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Council of Europe (International Court)",
+      "label": "Council of Europe (International Court)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (Netherlands)",
+      "label": "International Arbitration (Netherlands)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (European Court of Human Rights)",
+      "label": "International (European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 206,
+      "out_degree": 0,
+      "total_degree": 206,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Unknown",
+      "label": "Unknown",
+      "region": "Unknown",
+      "in_degree": 287,
+      "out_degree": 0,
+      "total_degree": 287,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Court of Justice",
+      "label": "International Court of Justice",
+      "region": "International",
+      "in_degree": 44,
+      "out_degree": 0,
+      "total_degree": 44,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Chile",
+      "label": "Chile",
+      "region": "Global South",
+      "in_degree": 7,
+      "out_degree": 3,
+      "total_degree": 10,
+      "lat": -35.6751,
+      "lon": -71.543
+    },
+    {
+      "id": "International (Sweden - seat of arbitration)",
+      "label": "International (Sweden - seat of arbitration)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United Kingdom, Canada, Australia, or New Zealand",
+      "label": "United Kingdom, Canada, Australia, or New Zealand",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union (Germany)",
+      "label": "European Union (Germany)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Turkey (case originated) / European Court of Human Rights",
+      "label": "Turkey (case originated) / European Court of Human Rights",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "India",
+      "label": "India",
+      "region": "Global South",
+      "in_degree": 42,
+      "out_degree": 5,
+      "total_degree": 47,
+      "lat": 20.5937,
+      "lon": 78.9629
+    },
+    {
+      "id": "Japan",
+      "label": "Japan",
+      "region": "Global North",
+      "in_degree": 0,
+      "out_degree": 3,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union/United Kingdom",
+      "label": "European Union/United Kingdom",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Antigua and Barbuda",
+      "label": "Antigua and Barbuda",
+      "region": "Global South",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France/European Court of Human Rights",
+      "label": "France/European Court of Human Rights",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Hong Kong (Special Administrative Region of China)",
+      "label": "Hong Kong (Special Administrative Region of China)",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "North Macedonia",
+      "label": "North Macedonia",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Taiwan",
+      "label": "Taiwan",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 9,
+      "total_degree": 9,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Mexico",
+      "label": "Mexico",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 18,
+      "total_degree": 21,
+      "lat": 23.6345,
+      "lon": -102.5528
+    },
+    {
+      "id": "Brazil",
+      "label": "Brazil",
+      "region": "Global South",
+      "in_degree": 12,
+      "out_degree": 136,
+      "total_degree": 148,
+      "lat": -14.235,
+      "lon": -51.9253
+    },
+    {
+      "id": "International Arbitration (Permanent Court of Arbitration)",
+      "label": "International Arbitration (Permanent Court of Arbitration)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
+      "label": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Uganda",
+      "label": "Uganda",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Belize",
+      "label": "Belize",
+      "region": "Global South",
+      "in_degree": 4,
+      "out_degree": 0,
+      "total_degree": 4,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "England and Wales (United Kingdom)",
+      "label": "England and Wales (United Kingdom)",
+      "region": "Global North",
+      "in_degree": 33,
+      "out_degree": 0,
+      "total_degree": 33,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Czech Republic",
+      "label": "Czech Republic",
+      "region": "Global North",
+      "in_degree": 52,
+      "out_degree": 0,
+      "total_degree": 52,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Nigeria",
+      "label": "Nigeria",
+      "region": "Global South",
+      "in_degree": 5,
+      "out_degree": 39,
+      "total_degree": 44,
+      "lat": 9.082,
+      "lon": 8.6753
+    },
+    {
+      "id": "Inter-American Court of Human Rights (International Tribunal)",
+      "label": "Inter-American Court of Human Rights (International Tribunal)",
+      "region": "International",
+      "in_degree": 18,
+      "out_degree": 0,
+      "total_degree": 18,
+      "lat": null,
+      "lon": null
+    }
+  ],
+  "links": [
+    {
+      "source": "International",
+      "target": "European Union",
+      "value": 1121,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "England and Wales",
+      "value": 262,
+      "type": "Unclassified"
+    },
+    {
+      "source": "International",
+      "target": "International (Inter-American System)",
+      "value": 169,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "United Kingdom",
+      "value": 162,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Council of Europe)",
+      "value": 161,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International Arbitration",
+      "value": 147,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Spain",
+      "value": 134,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "European Court of Human Rights (International)",
+      "value": 127,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Inter-American Court of Human Rights)",
+      "value": 123,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Unknown",
+      "value": 117,
+      "type": "Unclassified"
+    },
+    {
+      "source": "International",
+      "target": "International (WTO)",
+      "value": 98,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "International (Council of Europe)",
+      "value": 93,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (European Court of Human Rights)",
+      "value": 88,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "United Kingdom",
+      "value": 86,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Unknown",
+      "value": 83,
+      "type": "Unclassified"
+    },
+    {
+      "source": "International",
+      "target": "Sweden",
+      "value": 75,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "European Union",
+      "value": 74,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "International",
+      "target": "United Nations",
+      "value": 63,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "United Kingdom",
+      "value": 61,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Czech Republic",
+      "value": 50,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "United States",
+      "value": 48,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "European Court of Human Rights (International)",
+      "value": 47,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "International Court of Justice",
+      "value": 44,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Council of Europe",
+      "value": 44,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "Italy",
+      "value": 44,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "United Kingdom",
+      "value": 42,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "European Union",
+      "value": 42,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "International - Inter-American System",
+      "value": 40,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "United Kingdom",
+      "value": 40,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Italy",
+      "target": "European Union",
+      "value": 38,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "Unknown",
+      "value": 36,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Belgium",
+      "target": "European Union",
+      "value": 36,
+      "type": "International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Colombia",
+      "value": 33,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International - World Trade Organization",
+      "value": 32,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Netherlands",
+      "value": 32,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "International (Council of Europe)",
+      "value": 32,
+      "type": "International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Australia",
+      "value": 32,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Germany",
+      "value": 31,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Colombia",
+      "value": 29,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "International (European Court of Human Rights)",
+      "value": 29,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "International",
+      "value": 29,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "France",
+      "value": 26,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "European Union",
+      "value": 25,
+      "type": "International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Australia",
+      "value": 24,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "England and Wales",
+      "value": 23,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "England and Wales",
+      "value": 23,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Switzerland",
+      "value": 23,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "United States",
+      "value": 23,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "International (European Court of Human Rights)",
+      "value": 23,
+      "type": "International Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "International (European Court of Human Rights)",
+      "value": 22,
+      "type": "International Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "United States",
+      "value": 22,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Peru",
+      "target": "International (Inter-American Court of Human Rights)",
+      "value": 21,
+      "type": "International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Canada",
+      "value": 20,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Sweden",
+      "value": 19,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "European Court of Human Rights (International)",
+      "value": 19,
+      "type": "International Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "International (Council of Europe)",
+      "value": 19,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "Council of Europe",
+      "value": 19,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "Germany",
+      "value": 18,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Inter-American Court of Human Rights (International Tribunal)",
+      "value": 18,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "European Union",
+      "value": 18,
+      "type": "International Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Canada",
+      "value": 18,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Switzerland",
+      "value": 17,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "England and Wales (United Kingdom)",
+      "value": 17,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Canada",
+      "target": "Unknown",
+      "value": 17,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Australia",
+      "target": "Netherlands",
+      "value": 17,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "United Kingdom",
+      "value": 16,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "United States",
+      "value": 16,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Germany",
+      "value": 16,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Organization of American States",
+      "value": 15,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "European Union",
+      "value": 15,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "Netherlands",
+      "value": 15,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "South Korea",
+      "target": "Hungary",
+      "value": 14,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "New Zealand",
+      "value": 14,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "European Union",
+      "value": 14,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Netherlands",
+      "value": 13,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "Netherlands",
+      "value": 13,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "United States",
+      "value": 13,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Argentina",
+      "value": 13,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "India",
+      "value": 12,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Philippines",
+      "value": 12,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "United States",
+      "value": 12,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (United Nations)",
+      "value": 12,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Netherlands",
+      "value": 12,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "South Africa",
+      "value": 12,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "International (Inter-American System)",
+      "value": 11,
+      "type": "International Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "Germany",
+      "value": 11,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Brazil",
+      "value": 11,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Ecuador",
+      "value": 11,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "United Kingdom (Northern Ireland)",
+      "value": 10,
+      "type": "Unclassified"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Scotland",
+      "value": 10,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Colombia",
+      "target": "International (Inter-American System)",
+      "value": 10,
+      "type": "International Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "Council of Europe",
+      "value": 10,
+      "type": "International Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "Australia",
+      "value": 10,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "International (European Court of Human Rights)",
+      "value": 9,
+      "type": "International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "France/Council of Europe",
+      "value": 9,
+      "type": "International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "France",
+      "value": 9,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Arbitration)",
+      "value": 9,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Hungary",
+      "target": "European Court of Human Rights (International)",
+      "value": 9,
+      "type": "International Citation"
+    },
+    {
+      "source": "Colombia",
+      "target": "International (Inter-American Court of Human Rights)",
+      "value": 9,
+      "type": "International Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "European Union",
+      "value": 9,
+      "type": "International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "International (Inter-American Court of Human Rights)",
+      "value": 9,
+      "type": "International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "New Zealand",
+      "value": 9,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "European Court of Human Rights (International)",
+      "value": 9,
+      "type": "International Citation"
+    },
+    {
+      "source": "Taiwan",
+      "target": "Taiwan (Republic of China)",
+      "value": 9,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Nigeria",
+      "target": "India",
+      "value": 8,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Luxembourg",
+      "target": "Belgium",
+      "value": 8,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Finland",
+      "target": "European Court of Human Rights (International)",
+      "value": 8,
+      "type": "International Citation"
+    },
+    {
+      "source": "France",
+      "target": "European Union",
+      "value": 8,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "International (Council of Europe)",
+      "value": 8,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "Australia",
+      "value": 8,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Canada",
+      "value": 8,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "Netherlands",
+      "value": 8,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Ireland",
+      "value": 8,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Council of Europe",
+      "value": 8,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "England",
+      "value": 8,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "England and Wales",
+      "value": 8,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "International",
+      "value": 8,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "United Kingdom (Northern Ireland)",
+      "value": 8,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "France",
+      "target": "Netherlands",
+      "value": 7,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "European Court of Human Rights (International)",
+      "value": 7,
+      "type": "International Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "India",
+      "value": 7,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Council of Europe",
+      "value": 7,
+      "type": "International Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "European Court of Human Rights (International)",
+      "value": 7,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "Norway",
+      "value": 7,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Ireland",
+      "value": 7,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (World Trade Organization)",
+      "value": 7,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Pakistan",
+      "target": "India",
+      "value": 7,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "England and Wales (United Kingdom)",
+      "value": 7,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Germany",
+      "target": "European Union",
+      "value": 7,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "International (European Court of Human Rights)",
+      "value": 7,
+      "type": "International Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "European Court of Human Rights (International)",
+      "value": 7,
+      "type": "International Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "Chile",
+      "value": 6,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Netherlands",
+      "value": 6,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "International (European Court of Human Rights)",
+      "value": 6,
+      "type": "International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Council of Europe",
+      "value": 6,
+      "type": "International Citation"
+    },
+    {
+      "source": "Grenada",
+      "target": "United Kingdom",
+      "value": 6,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "International",
+      "value": 6,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "International",
+      "target": "Pakistan",
+      "value": 6,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "International (Inter-American System)",
+      "value": 6,
+      "type": "International Citation"
+    },
+    {
+      "source": "Colombia",
+      "target": "Spain",
+      "value": 6,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "International",
+      "value": 6,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Netherlands",
+      "value": 6,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Unknown",
+      "value": 6,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Romania",
+      "target": "International (European Court of Human Rights)",
+      "value": 6,
+      "type": "International Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "United States",
+      "value": 6,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Germany",
+      "value": 6,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International - Inter-American Court of Human Rights",
+      "value": 6,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "International (Council of Europe)",
+      "value": 5,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (ICSID)",
+      "value": 5,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "France",
+      "value": 5,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "European Court of Human Rights (International)",
+      "value": 5,
+      "type": "International Citation"
+    },
+    {
+      "source": "Poland",
+      "target": "European Union",
+      "value": 5,
+      "type": "International Citation"
+    },
+    {
+      "source": "Indonesia",
+      "target": "Netherlands",
+      "value": 5,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (European Union)",
+      "value": 5,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Belgium",
+      "value": 5,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Belgium",
+      "value": 5,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "International (Council of Europe)",
+      "value": 5,
+      "type": "International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "United Kingdom (Scotland)",
+      "value": 5,
+      "type": "Unclassified"
+    },
+    {
+      "source": "International",
+      "target": "International Tribunal",
+      "value": 5,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Portugal",
+      "value": 5,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Colombia",
+      "target": "European Union",
+      "value": 5,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Finland",
+      "target": "Switzerland",
+      "value": 5,
+      "type": "International Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "United States",
+      "value": 5,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "France",
+      "value": 5,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Scotland, United Kingdom",
+      "value": 5,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Ireland",
+      "target": "International (Council of Europe)",
+      "value": 5,
+      "type": "International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "France",
+      "value": 5,
+      "type": "International Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "Netherlands",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "International",
+      "value": 4,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "International (Council of Europe)",
+      "value": 4,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Netherlands",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "European Convention on Human Rights System (Council of Europe)",
+      "value": 4,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Pakistan",
+      "target": "United States",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "International - Inter-American System",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "International (European Court of Human Rights)",
+      "value": 4,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Germany",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "England and Wales",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "International (European Court of Human Rights)",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "International (European Court of Human Rights)",
+      "value": 4,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Finland",
+      "target": "Council of Europe",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "International (Council of Europe)",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "Ecuador",
+      "target": "International (Inter-American System)",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "International",
+      "target": "Turkey",
+      "value": 4,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "European Court of Human Rights (International)",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "Belize",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Netherlands",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "United Kingdom",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Philippines",
+      "value": 4,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Peru",
+      "target": "International (Inter-American System)",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "International Arbitration",
+      "value": 4,
+      "type": "International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Unknown",
+      "value": 3,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Australia",
+      "target": "Belgium",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Germany",
+      "target": "Netherlands",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Unknown",
+      "value": 3,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Grenada",
+      "target": "England and Wales (United Kingdom)",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Norway",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Guyana",
+      "value": 3,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Scotland/United Kingdom",
+      "value": 3,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Spain",
+      "target": "Norway",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Germany",
+      "target": "International",
+      "value": 3,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "Unknown",
+      "value": 3,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Brazil",
+      "target": "European Court of Human Rights (International)",
+      "value": 3,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "England and Wales (United Kingdom)",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "South Africa",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "International",
+      "value": 3,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Permanent Court of Arbitration)",
+      "value": 3,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Netherlands",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Mexico",
+      "value": 3,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Nepal",
+      "value": 3,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Namibia",
+      "target": "South Africa",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "New Zealand",
+      "value": 3,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "Unknown",
+      "value": 3,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Australia",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Peru",
+      "value": 3,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Philippines",
+      "value": 3,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "Not a legal case",
+      "value": 3,
+      "type": "Unclassified"
+    },
+    {
+      "source": "International",
+      "target": "United States",
+      "value": 3,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Nigeria",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "India",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "United States",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Inter-American Human Rights System",
+      "value": 3,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Türkiye",
+      "target": "Turkey",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Türkiye",
+      "target": "Turkey",
+      "value": 3,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "European Court of Human Rights (International)",
+      "value": 3,
+      "type": "International Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Germany",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "United Kingdom (Scotland)",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Chile",
+      "target": "Argentina",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International/Multiple Jurisdictions",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Colombia",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Colombia",
+      "target": "Andean Community",
+      "value": 2,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Ukraine",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Czech Republic",
+      "value": 2,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Sweden)",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Sweden as seat)",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Sweden - seat of arbitration)",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Norway",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "India",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (United States as arbitrator)",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Norway",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Ireland/European Union",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Canada",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Ireland",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Belgium",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Japan",
+      "target": "Netherlands",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "International (Council of Europe)",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Nigeria",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ecuador",
+      "target": "United States",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "United Nations",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "England and Wales (United Kingdom)",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "France",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Grenada",
+      "target": "Eastern Caribbean States",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Italy",
+      "target": "Netherlands",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "International",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "International Arbitration",
+      "value": 2,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "United States",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Council of Europe",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Pakistan",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "Switzerland",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "Netherlands",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "Netherlands",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "Spain (International Court)",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Germany or Austria",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "United States",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Australia",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "Indonesia",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Unknown",
+      "value": 2,
+      "type": "Unclassified"
+    },
+    {
+      "source": "New Zealand",
+      "target": "United States of America",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Grenada",
+      "target": "Antigua and Barbuda",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Italy",
+      "target": "France",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Portugal",
+      "target": "Switzerland/European Court of Human Rights",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "International (Council of Europe)",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Kenya",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "Germany",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Ireland/European Union",
+      "value": 2,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "European Court of Human Rights (International)",
+      "value": 2,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "France",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Luxembourg",
+      "target": "European Union",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Netherlands",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "Council of Europe",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Bermuda",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "Italy",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "Ghana",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Grenada",
+      "target": "Saint Lucia",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "Canada",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "United States",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "Germany",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Italy",
+      "target": "International (European Court of Human Rights)",
+      "value": 2,
+      "type": "International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "European Court of Human Rights (International)",
+      "value": 2,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "International",
+      "target": "France/European Union",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "Colombia",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "France",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Hungary",
+      "target": "Netherlands",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "International",
+      "target": "International/European",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Germany",
+      "target": "Austria",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "Unknown",
+      "value": 2,
+      "type": "Unclassified"
+    },
+    {
+      "source": "International",
+      "target": "France (case before European Court of Human Rights)",
+      "value": 2,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "International/Regional (African Union)",
+      "value": 2,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "United Kingdom",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Italy",
+      "target": "Germany",
+      "value": 2,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United States",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Argentina",
+      "target": "Ecuador",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "India",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Argentina",
+      "target": "United States",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Colombia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "European Court of Human Rights (International)",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Federated States of Micronesia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "France",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Australia",
+      "target": "Sierra Leone",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "European Patent Office",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "European Union/European Court of Justice",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "Finland",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "France",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "Germany",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "Ukraine",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Austria",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Belgium",
+      "target": "France",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Belgium",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Brazil",
+      "target": "Angola",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Australia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Council of Europe",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "European Union",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "International",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "International (Council of Europe)",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "International/Inter-American System",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Norway",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Norway (case heard by European Court of Human Rights)",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Organization of American States",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Pakistan",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Portugal",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Brazil",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Canada",
+      "target": "England and Wales (United Kingdom)",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "India",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "Pakistan",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "South Africa",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Canada",
+      "target": "United Kingdom, Canada, Australia, or New Zealand",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Canada",
+      "target": "United Kingdom or Canada",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Canada",
+      "target": "United Nations",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Chile",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Colombia",
+      "target": "Greece",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Colombia",
+      "target": "United States",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Belgium",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Canada",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Colombia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "European Court of Human Rights (International Court)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "European Union",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "International (Arbitration)",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "International (European Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Ireland",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Nepal",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Poland",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Sweden",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Sweden",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "United States",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Czechia",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Ecuador",
+      "target": "International (Inter-American Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Ecuador",
+      "target": "Panama",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Estonia",
+      "target": "European Union",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Estonia",
+      "target": "Poland",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "France",
+      "target": "China",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "France",
+      "target": "European Court of Human Rights (International)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Germany",
+      "target": "European Union (Germany)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Germany",
+      "target": "International (Council of Europe)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Germany",
+      "target": "Ireland",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Grenada",
+      "target": "Caribbean Commonwealth jurisdiction",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Grenada",
+      "target": "Saint Kitts and Nevis",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Hungary",
+      "target": "International (European Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Hungary",
+      "target": "United Nations",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "India",
+      "target": "International",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "India",
+      "target": "Netherlands",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "India",
+      "target": "New Zealand",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "India",
+      "target": "United Kingdom",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "India",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "International",
+      "target": "African Union",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Argentina",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Belgium",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Council of Europe (International Court)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Denmark",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "European Union (Belgium)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "European Union (European Court of Human Rights/European General Court)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "European Union (supranational)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "European Union/Supranational",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "France (but decided by European Court of Human Rights)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "France (European Court of Human Rights)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "France/European Court of Human Rights",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Germany",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Greece",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Inter-American Court of Human Rights (Regional International Court)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (African Commission on Human and Peoples' Rights)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International Arbitration (ICSID/NAFTA)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International Arbitration (NAFTA)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International Arbitration (Netherlands)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International Arbitration (Permanent Court of Arbitration)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International Arbitration (Sweden)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International - Council of Europe",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International/Council of Europe",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (ICSID/Investment Arbitration)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (Iran-United States Claims Tribunal)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (NAFTA)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (NAFTA/ICSID)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "International (NAFTA/ICSID Arbitration)",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Luxembourg",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Netherlands",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Poland",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Scotland",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Singapore",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "South Korea",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Spain",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Turkey",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "International",
+      "target": "Turkey",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "Turkey (case originated) / European Court of Human Rights",
+      "value": 1,
+      "type": "Inter-System Citation"
+    },
+    {
+      "source": "International",
+      "target": "United States of America",
+      "value": 1,
+      "type": "Non-Member Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Australia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Belgium",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Council of Europe",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "European Court of Human Rights (International Court)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "European Union/Council of Europe",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "France",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Germany",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "International",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Ireland",
+      "target": "Switzerland",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Italy",
+      "target": "International",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Japan",
+      "target": "Germany",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "Australia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "Belgium",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "Canada",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "East Africa (Kenya, Tanzania, or Uganda)",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Kenya",
+      "target": "Jamaica",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "Trinidad and Tobago",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "Uganda",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Kenya",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Luxembourg",
+      "target": "Netherlands",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "International (Inter-American Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "International (Inter-American System)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Mexico",
+      "target": "International/Inter-American System",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Namibia",
+      "target": "United Kingdom",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Brazil",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Canada",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Colombia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "France",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "International (United Nations)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Pakistan",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Turkey (case originated) / European Court of Human Rights (adjudicating court)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "United Kingdom",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Netherlands",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Council of Europe",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "England",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "European Union",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Germany",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Indonesia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "Ireland",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "South Africa",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "New Zealand",
+      "target": "South Korea",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "Australia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Nigeria",
+      "target": "Philippines",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "Australia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "European Court of Human Rights (International Court)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "European Union (Denmark)",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "France (via European Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "International",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "Turkey",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "Ukraine",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Norway",
+      "target": "United Kingdom",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Pakistan",
+      "target": "Bangladesh",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Pakistan",
+      "target": "Belgium",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Pakistan",
+      "target": "Colombia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Pakistan",
+      "target": "European Union",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Cameroon",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Ghana",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Papua New Guinea",
+      "target": "Zambia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Peru",
+      "target": "Chile",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Australia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Council of Europe",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "European Court of Human Rights (International)",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Germany",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "International",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Nepal",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Organization of American States",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Pakistan",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Philippines",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Portugal",
+      "target": "Netherlands",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Portugal",
+      "target": "Switzerland",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "International",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Kenya",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "North Macedonia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Romania (case before European Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Romania",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "South Africa",
+      "target": "Australia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "South Africa",
+      "target": "England and Wales",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "South Africa",
+      "target": "Namibia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "South Africa",
+      "target": "South West Africa/Namibia",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "South Africa",
+      "target": "United States",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "Council of Europe",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "European Court of Human Rights (International)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "France",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "Italy",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "Luxembourg",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Spain",
+      "target": "Unknown",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Benin",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Council of Europe (European Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Germany",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Spain",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Switzerland (case before European Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "Switzerland",
+      "target": "Switzerland (European Court of Human Rights)",
+      "value": 1,
+      "type": "International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "European Union (Court of Justice of the European Union)",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "European Union/United Kingdom",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Guernsey",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Hong Kong (Special Administrative Region of China)",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "India",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Papua New Guinea",
+      "value": 1,
+      "type": "Foreign Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Scotland (United Kingdom)",
+      "value": 1,
+      "type": "Unclassified"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Spain",
+      "value": 1,
+      "type": "Foreign International Citation"
+    },
+    {
+      "source": "United Kingdom",
+      "target": "Switzerland",
+      "value": 1,
+      "type": "International Citation"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "total_citations": 5974,
+  "total_decisions": 721,
+  "total_cases": 586,
+  "by_category": [
+    {
+      "citation_category": "Foreign Citation",
+      "direction": "National → National",
+      "total_citations": 1312,
+      "decisions": 242,
+      "cases": 193,
+      "pct_of_total": 21.96
+    },
+    {
+      "citation_category": "Unclassified",
+      "direction": "National → National",
+      "total_citations": 325,
+      "decisions": 62,
+      "cases": 50,
+      "pct_of_total": 5.44
+    },
+    {
+      "citation_category": "Foreign International Citation",
+      "direction": "National → International",
+      "total_citations": 188,
+      "decisions": 48,
+      "cases": 40,
+      "pct_of_total": 3.15
+    },
+    {
+      "citation_category": "International Citation",
+      "direction": "National → International",
+      "total_citations": 872,
+      "decisions": 128,
+      "cases": 93,
+      "pct_of_total": 14.6
+    },
+    {
+      "citation_category": "Inter-System Citation",
+      "direction": "International → International",
+      "total_citations": 2472,
+      "decisions": 101,
+      "cases": 84,
+      "pct_of_total": 41.38
+    },
+    {
+      "citation_category": "Non-Member Citation",
+      "direction": "International → National",
+      "total_citations": 515,
+      "decisions": 46,
+      "cases": 37,
+      "pct_of_total": 8.62
+    },
+    {
+      "citation_category": "Unclassified",
+      "direction": "Other",
+      "total_citations": 290,
+      "decisions": 94,
+      "cases": 89,
+      "pct_of_total": 4.85
+    }
+  ],
+  "generated_at": "2025-12-01T11:05:52.191173"
+}

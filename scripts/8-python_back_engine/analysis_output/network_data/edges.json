@@ -1,0 +1,5132 @@
+[
+  {
+    "source": "International",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1121,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "England and Wales",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 262,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "International",
+    "target": "International (Inter-American System)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 169,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 162,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 161,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International Arbitration",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 147,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Spain",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 134,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 127,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Inter-American Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 123,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 117,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "International",
+    "target": "International (WTO)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 98,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 93,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 88,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 86,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 83,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "International",
+    "target": "Sweden",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 75,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 74,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "International",
+    "target": "United Nations",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 63,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 61,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Czech Republic",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 50,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 48,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 47,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "International Court of Justice",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 44,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 44,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "Italy",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 44,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 42,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 42,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "International - Inter-American System",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 40,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 40,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Italy",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 38,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Unknown",
+    "weight": 36,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Belgium",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 36,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 33,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International - World Trade Organization",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 32,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 32,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 32,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 32,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 31,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 29,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 29,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 29,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 26,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 25,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 24,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "England and Wales",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 23,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "England and Wales",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 23,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Switzerland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 23,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 23,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 23,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 22,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 22,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Peru",
+    "target": "International (Inter-American Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 21,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 20,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Sweden",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 19,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 19,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 19,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 19,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 18,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Inter-American Court of Human Rights (International Tribunal)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 18,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 18,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 18,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Switzerland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 17,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "England and Wales (United Kingdom)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 17,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Canada",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 17,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Australia",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 17,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 16,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 16,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 16,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Organization of American States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 15,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 15,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 15,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "South Korea",
+    "target": "Hungary",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 14,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "New Zealand",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 14,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 14,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 13,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 13,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 13,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Argentina",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 13,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 12,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Philippines",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 12,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 12,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (United Nations)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 12,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 12,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "South Africa",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 12,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "International (Inter-American System)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 11,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 11,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Brazil",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 11,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Ecuador",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 11,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "United Kingdom (Northern Ireland)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 10,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Scotland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 10,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Colombia",
+    "target": "International (Inter-American System)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 10,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 10,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 10,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "France/Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 9,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Arbitration)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Hungary",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Colombia",
+    "target": "International (Inter-American Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "International (Inter-American Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "New Zealand",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 9,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 9,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Taiwan",
+    "target": "Taiwan (Republic of China)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 9,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Nigeria",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 8,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Luxembourg",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Finland",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 8,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "France",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 8,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 8,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Ireland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 8,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "England",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "England and Wales",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 8,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "United Kingdom (Northern Ireland)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 8,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "France",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 7,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 7,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 7,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 7,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 7,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "Norway",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 7,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Ireland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 7,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (World Trade Organization)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 7,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Pakistan",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 7,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "England and Wales (United Kingdom)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 7,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Germany",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 7,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 7,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 7,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "Chile",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 6,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 6,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 6,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 6,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Grenada",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 6,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 6,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "International",
+    "target": "Pakistan",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 6,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "International (Inter-American System)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 6,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Colombia",
+    "target": "Spain",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 6,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 6,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 6,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 6,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Romania",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 6,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 6,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 6,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International - Inter-American Court of Human Rights",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 6,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (ICSID)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Poland",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Indonesia",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 5,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (European Union)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 5,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 5,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "United Kingdom (Scotland)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 5,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "International",
+    "target": "International Tribunal",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Portugal",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 5,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Colombia",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Finland",
+    "target": "Switzerland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 5,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Scotland, United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 5,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Ireland",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 5,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "European Convention on Human Rights System (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Pakistan",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "International - Inter-American System",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "England and Wales",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Finland",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Ecuador",
+    "target": "International (Inter-American System)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "International",
+    "target": "Turkey",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "Belize",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Philippines",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 4,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Peru",
+    "target": "International (Inter-American System)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "International Arbitration",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 4,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 3,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Australia",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Germany",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 3,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Grenada",
+    "target": "England and Wales (United Kingdom)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Norway",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Guyana",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Scotland/United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Spain",
+    "target": "Norway",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Germany",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 3,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 3,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Brazil",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 3,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "England and Wales (United Kingdom)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "South Africa",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 3,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Permanent Court of Arbitration)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 3,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Mexico",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Nepal",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Namibia",
+    "target": "South Africa",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "New Zealand",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 3,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Peru",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Philippines",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "Not a legal case",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Not applicable",
+    "weight": 3,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "International",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 3,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Nigeria",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Inter-American Human Rights System",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 3,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Türkiye",
+    "target": "Turkey",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Türkiye",
+    "target": "Turkey",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 3,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 3,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "United Kingdom (Scotland)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Chile",
+    "target": "Argentina",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International/Multiple Jurisdictions",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Colombia",
+    "target": "Andean Community",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Ukraine",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Czech Republic",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Sweden)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Sweden as seat)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Sweden - seat of arbitration)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Norway",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (United States as arbitrator)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Norway",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Ireland/European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Ireland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Japan",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Nigeria",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ecuador",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "United Nations",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "England and Wales (United Kingdom)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Grenada",
+    "target": "Eastern Caribbean States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Italy",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "International Arbitration",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Pakistan",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "Switzerland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "Spain (International Court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Germany or Austria",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "Indonesia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 2,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "New Zealand",
+    "target": "United States of America",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Grenada",
+    "target": "Antigua and Barbuda",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Italy",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Portugal",
+    "target": "Switzerland/European Court of Human Rights",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Kenya",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Ireland/European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Luxembourg",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Bermuda",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "Italy",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "Ghana",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Grenada",
+    "target": "Saint Lucia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Italy",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "International",
+    "target": "France/European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Hungary",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "International",
+    "target": "International/European",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Germany",
+    "target": "Austria",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 2,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "International",
+    "target": "France (case before European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "International/Regional (African Union)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 2,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Italy",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 2,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United States",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Argentina",
+    "target": "Ecuador",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Argentina",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Federated States of Micronesia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Australia",
+    "target": "Sierra Leone",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "European Patent Office",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "European Union/European Court of Justice",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "Finland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "Ukraine",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Austria",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Belgium",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Belgium",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Brazil",
+    "target": "Angola",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "International/Inter-American System",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Norway",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Norway (case heard by European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Organization of American States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Pakistan",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Portugal",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Brazil",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Canada",
+    "target": "England and Wales (United Kingdom)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "Pakistan",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "South Africa",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Canada",
+    "target": "United Kingdom, Canada, Australia, or New Zealand",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Canada",
+    "target": "United Kingdom or Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Canada",
+    "target": "United Nations",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Chile",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Colombia",
+    "target": "Greece",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Colombia",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "European Court of Human Rights (International Court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "International (Arbitration)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Ireland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Nepal",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Poland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Sweden",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Sweden",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Czechia",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Ecuador",
+    "target": "International (Inter-American Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Ecuador",
+    "target": "Panama",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Estonia",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Estonia",
+    "target": "Poland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "France",
+    "target": "China",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "France",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Germany",
+    "target": "European Union (Germany)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Germany",
+    "target": "International (Council of Europe)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Germany",
+    "target": "Ireland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Grenada",
+    "target": "Caribbean Commonwealth jurisdiction",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Grenada",
+    "target": "Saint Kitts and Nevis",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Hungary",
+    "target": "International (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Hungary",
+    "target": "United Nations",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "India",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "India",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "India",
+    "target": "New Zealand",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "India",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "India",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "International",
+    "target": "African Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Argentina",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Council of Europe (International Court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Denmark",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "European Union (Belgium)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "European Union (European Court of Human Rights/European General Court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "European Union (supranational)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "European Union/Supranational",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "France (but decided by European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "France (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "France/European Court of Human Rights",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Greece",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Inter-American Court of Human Rights (Regional International Court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (African Commission on Human and Peoples' Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International Arbitration (ICSID/NAFTA)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International Arbitration (NAFTA)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International Arbitration (Netherlands)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International Arbitration (Permanent Court of Arbitration)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International Arbitration (Sweden)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International - Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International/Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (ICSID/Investment Arbitration)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (Iran-United States Claims Tribunal)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (NAFTA)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (NAFTA/ICSID)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "International (NAFTA/ICSID Arbitration)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Luxembourg",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Poland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Scotland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Singapore",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "South Korea",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Spain",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Turkey",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "International",
+    "target": "Turkey",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "Turkey (case originated) / European Court of Human Rights",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Inter-System Citation"
+  },
+  {
+    "source": "International",
+    "target": "United States of America",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "International",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Non-Member Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "European Court of Human Rights (International Court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "European Union/Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Ireland",
+    "target": "Switzerland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Italy",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Japan",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "East Africa (Kenya, Tanzania, or Uganda)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Kenya",
+    "target": "Jamaica",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "Trinidad and Tobago",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "Uganda",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Kenya",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Luxembourg",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "International (Inter-American Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "International (Inter-American System)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Mexico",
+    "target": "International/Inter-American System",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Namibia",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Brazil",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Canada",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "International (United Nations)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Pakistan",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Turkey (case originated) / European Court of Human Rights (adjudicating court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Netherlands",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "England",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Indonesia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "Ireland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "South Africa",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "New Zealand",
+    "target": "South Korea",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Nigeria",
+    "target": "Philippines",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "European Court of Human Rights (International Court)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "European Union (Denmark)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "France (via European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "Turkey",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "Ukraine",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Norway",
+    "target": "United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Pakistan",
+    "target": "Bangladesh",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Pakistan",
+    "target": "Belgium",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Pakistan",
+    "target": "Colombia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Pakistan",
+    "target": "European Union",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Cameroon",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Ghana",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Papua New Guinea",
+    "target": "Zambia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Peru",
+    "target": "Chile",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Nepal",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Organization of American States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Pakistan",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Philippines",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Portugal",
+    "target": "Netherlands",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Portugal",
+    "target": "Switzerland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "International",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Kenya",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "North Macedonia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Romania (case before European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Romania",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "South Africa",
+    "target": "Australia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "South Africa",
+    "target": "England and Wales",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "South Africa",
+    "target": "Namibia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "South Africa",
+    "target": "South West Africa/Namibia",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "South Africa",
+    "target": "United States",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global South",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "Council of Europe",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "European Court of Human Rights (International)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "France",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "Italy",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "Luxembourg",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Spain",
+    "target": "Unknown",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Unknown",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Benin",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Council of Europe (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Germany",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Spain",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Switzerland (case before European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "Switzerland",
+    "target": "Switzerland (European Court of Human Rights)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "European Union (Court of Justice of the European Union)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "European Union/United Kingdom",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Guernsey",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Hong Kong (Special Administrative Region of China)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "India",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Papua New Guinea",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global South",
+    "weight": 1,
+    "sixfold_type": "Foreign Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Scotland (United Kingdom)",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "Global North",
+    "weight": 1,
+    "sixfold_type": "Unclassified"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Spain",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "Foreign International Citation"
+  },
+  {
+    "source": "United Kingdom",
+    "target": "Switzerland",
+    "source_type": "jurisdiction",
+    "target_type": "jurisdiction",
+    "source_region": "Global North",
+    "target_region": "International",
+    "weight": 1,
+    "sixfold_type": "International Citation"
+  }
+]

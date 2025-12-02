@@ -52,6 +52,7 @@ pdfs/failed/*
 *.db
 *.sqlite
 *.sqlite3
+scripts/8-python_back_engine/db_backup/*
 
 # Logs
 logs/*.log
@@ -93,3 +94,6 @@ outputs/exports/*
 *.tmp
 temp/
 tmp/
+
+# Specific backup file
+scripts/8-python_back_engine/db_backup/climate_litigation_20251201_104018.sql
