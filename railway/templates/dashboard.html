@@ -809,7 +809,7 @@
          * @returns {Promise<object>} - Response data
          */
         async function apiRequest(endpoint, params = {}) {
-            const url = new URL(`${API_BASE}${endpoint}`);
+            const url = new URL(`${API_BASE}${endpoint}`, window.location.origin);
             Object.keys(params).forEach(key => {
                 if (params[key] !== null && params[key] !== '') {
                     url.searchParams.append(key, params[key]);
