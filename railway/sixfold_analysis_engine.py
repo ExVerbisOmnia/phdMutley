@@ -2098,6 +2098,97 @@ class SixfoldAnalysisEngine:
         
         return {}
     
+    # =========================================================================
+    # CUSTOM QUERY EXECUTION - Dashboard Support
+    # =========================================================================
+
+    def get_custom_citations_received(self, sixfold_type: str = None, region: str = None) -> List[Dict]:
+        """
+        Get citations received by jurisdiction, optionally filtered.
+        """
+        params = {}
+        where_clauses = []
+        
+        if sixfold_type:
+            where_clauses.append("sixfold_type = :sixfold_type")
+            params['sixfold_type'] = sixfold_type
+            
+        if region:
+            where_clauses.append("case_law_region = :region")
+            params['region'] = region
+            
+        where_sql = " AND ".join(where_clauses)
+        if where_sql:
+            where_sql = "WHERE " + where_sql
+            
+        sql = f"""
+            SELECT 
+                case_law_origin as label,
+                case_law_region as region,
+                COUNT(*) as citations_received
+            FROM citation_sixfold_classification
+            {where_sql}
+            GROUP BY case_law_origin, case_law_region
+            ORDER BY citations_received DESC
+        """
+        
+        return self._execute_query(sql, params)
+
+    def get_custom_flow(self) -> List[Dict]:
+        """
+        Get flow details (source -> target) with counts.
+        """
+        sql = """
+            SELECT 
+                source_jurisdiction as source,
+                case_law_origin as target,
+                sixfold_type as type,
+                COUNT(*) as count
+            FROM citation_sixfold_classification
+            GROUP BY source_jurisdiction, case_law_origin, sixfold_type
+            ORDER BY count DESC
+        """
+        return self._execute_query(sql)
+
+    def get_custom_citations_by_jurisdiction(self, source: str = None, target: str = None) -> List[Dict]:
+        """
+        Get detailed case list filtered by source or target jurisdiction.
+        """
+        params = {}
+        
+        # Start with base query joining with cases and raw extraction table
+        sql_parts = [
+            """
+            SELECT 
+                c.case_name,
+                c.case_url,
+                v.source_jurisdiction,
+                v.source_region,
+                cep.cited_year,
+                cep.cited_case_citation as cited_case_name,
+                v.case_law_origin,
+                v.sixfold_type as citation_type
+            FROM citation_sixfold_classification v
+            JOIN cases c ON v.case_id = c.case_id
+            JOIN citation_extraction_phased cep ON v.extraction_id = cep.extraction_id
+            WHERE 1=1
+            """
+        ]
+        
+        if source:
+            sql_parts.append("AND v.source_jurisdiction = :p_source")
+            params['p_source'] = source
+            
+        if target:
+            sql_parts.append("AND v.case_law_origin = :p_target")
+            params['p_target'] = target
+            
+        sql_parts.append("LIMIT 100")
+        
+        sql = "\n".join(sql_parts)
+        
+        return self._execute_query(sql, params)
+
     def get_network_data(self) -> Dict:
         """
         API method: Get network data for visualization.

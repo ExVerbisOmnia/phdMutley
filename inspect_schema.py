@@ -49,6 +49,18 @@ def inspect_schema():
         else:
             print("❌ Table 'extracted_text' does NOT exist.")
 
+        print("\n--- Inspecting citation_sixfold_classification ---")
+        try:
+            columns = inspector.get_columns('citation_sixfold_classification')
+            if columns:
+                print("✅ View 'citation_sixfold_classification' exists. Columns:")
+                for col in columns:
+                    print(f"  - {col['name']} ({col['type']})")
+            else:
+                print("❌ View 'citation_sixfold_classification' not found or has no columns.")
+        except Exception as e:
+            print(f"❌ Error inspecting view: {e}")
+
     except Exception as e:
         print(f"❌ Error inspecting schema: {e}")
 

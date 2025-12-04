@@ -640,6 +640,48 @@ def get_network_edges():
 
 
 # =============================================================================
+# API ENDPOINTS - Custom Dashboard Data
+# =============================================================================
+
+@app.route('/api/custom/citations-received', methods=['GET'])
+@handle_exceptions
+def custom_citations_received():
+    """
+    Get citations received by jurisdiction.
+    """
+    engine = get_engine()
+    sixfold_type = request.args.get('sixfold_type')
+    region = request.args.get('region')
+    return api_response(engine.get_custom_citations_received(sixfold_type, region))
+
+
+@app.route('/api/custom/flow', methods=['GET'])
+@handle_exceptions
+def custom_flow():
+    """
+    Get flow details.
+    """
+    engine = get_engine()
+    return api_response(engine.get_custom_flow())
+
+
+@app.route('/api/custom/citations-by-jurisdiction', methods=['GET'])
+@handle_exceptions
+def custom_citations_by_jurisdiction():
+    """
+    Get detailed case list by jurisdiction.
+    """
+    engine = get_engine()
+    source = request.args.get('source_jurisdiction')
+    target = request.args.get('target_jurisdiction')
+    
+    if not source and not target:
+        return error_response("Must provide source_jurisdiction or target_jurisdiction", 400)
+        
+    return api_response(engine.get_custom_citations_by_jurisdiction(source, target))
+
+
+# =============================================================================
 # API ENDPOINTS - Data Export
 # =============================================================================
 
