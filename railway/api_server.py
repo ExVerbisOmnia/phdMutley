@@ -209,6 +209,15 @@ def serve_dashboard():
     """Serve the dashboard HTML file."""
     return render_template('dashboard.html')
 
+@app.route('/health', methods=['GET'])
+def health_check_light():
+    """
+    Lightweight health check for load balancers.
+    Does not check database connectivity.
+    """
+    return "OK", 200
+
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """
