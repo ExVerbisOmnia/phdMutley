@@ -1,0 +1,23 @@
+# Railway Ignore File
+# Exclude large files and directories from deployment upload
+
+# Database backups (Large!)
+db_backup/
+*.sql
+*.dump
+
+# Analysis output (Generated at runtime or large)
+analysis_output/
+*.pdf
+
+# Python Environment
+venv/
+__pycache__/
+*.pyc
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store

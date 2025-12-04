@@ -1,0 +1,27 @@
+# =============================================================================
+# REQUIREMENTS.TXT - Railway Deployment Dependencies
+# =============================================================================
+# PhD Climate Litigation Project - Sixfold Citation Analysis API
+# Last Updated: December 01, 2025
+# =============================================================================
+
+# --- Web Framework ---
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# --- Database ---
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.9
+
+# --- Production Server ---
+gunicorn>=21.0.0
+
+# --- Data Processing ---
+pandas>=2.0.0
+
+# --- Environment ---
+python-dotenv>=1.0.0
+
+# --- Utilities ---
+# Note: These are used by sixfold_analysis_engine.py
+playwright>=1.40.0

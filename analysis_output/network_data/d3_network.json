@@ -1,28 +1,38 @@
 {
   "nodes": [
     {
-      "id": "Finland",
-      "label": "Finland",
+      "id": "Italy",
+      "label": "Italy",
       "region": "Global North",
-      "in_degree": 1,
-      "out_degree": 17,
-      "total_degree": 18,
-      "lat": 61.9241,
-      "lon": 25.7482
+      "in_degree": 47,
+      "out_degree": 47,
+      "total_degree": 94,
+      "lat": 41.8719,
+      "lon": 12.5674
     },
     {
-      "id": "European Court of Human Rights (International)",
-      "label": "European Court of Human Rights (International)",
-      "region": "International",
-      "in_degree": 263,
+      "id": "Antigua and Barbuda",
+      "label": "Antigua and Barbuda",
+      "region": "Global South",
+      "in_degree": 2,
       "out_degree": 0,
-      "total_degree": 263,
+      "total_degree": 2,
       "lat": null,
       "lon": null
     },
     {
-      "id": "International - Council of Europe",
-      "label": "International - Council of Europe",
+      "id": "Norway",
+      "label": "Norway",
+      "region": "Global North",
+      "in_degree": 18,
+      "out_degree": 64,
+      "total_degree": 82,
+      "lat": 60.472,
+      "lon": 8.4689
+    },
+    {
+      "id": "European Union/United Kingdom",
+      "label": "European Union/United Kingdom",
       "region": "International",
       "in_degree": 1,
       "out_degree": 0,
@@ -31,12 +41,42 @@
       "lon": null
     },
     {
-      "id": "International (United States as arbitrator)",
-      "label": "International (United States as arbitrator)",
-      "region": "International",
-      "in_degree": 2,
+      "id": "England and Wales",
+      "label": "England and Wales",
+      "region": "Global North",
+      "in_degree": 321,
       "out_degree": 0,
-      "total_degree": 2,
+      "total_degree": 321,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Canada",
+      "label": "Canada",
+      "region": "Global North",
+      "in_degree": 53,
+      "out_degree": 127,
+      "total_degree": 180,
+      "lat": 56.1304,
+      "lon": -106.3468
+    },
+    {
+      "id": "North Macedonia",
+      "label": "North Macedonia",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Norway (case heard by European Court of Human Rights)",
+      "label": "Norway (case heard by European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
       "lat": null,
       "lon": null
     },
@@ -51,9 +91,89 @@
       "lon": null
     },
     {
-      "id": "Saint Lucia",
-      "label": "Saint Lucia",
-      "region": "Global South",
+      "id": "Czech Republic",
+      "label": "Czech Republic",
+      "region": "Global North",
+      "in_degree": 52,
+      "out_degree": 0,
+      "total_degree": 52,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Luxembourg",
+      "label": "Luxembourg",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 11,
+      "total_degree": 13,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Portugal",
+      "label": "Portugal",
+      "region": "Global North",
+      "in_degree": 6,
+      "out_degree": 4,
+      "total_degree": 10,
+      "lat": 39.3999,
+      "lon": -8.2245
+    },
+    {
+      "id": "European Convention on Human Rights System (Council of Europe)",
+      "label": "European Convention on Human Rights System (Council of Europe)",
+      "region": "International",
+      "in_degree": 4,
+      "out_degree": 0,
+      "total_degree": 4,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Council of Europe)",
+      "label": "International (Council of Europe)",
+      "region": "International",
+      "in_degree": 342,
+      "out_degree": 0,
+      "total_degree": 342,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International - Council of Europe",
+      "label": "International - Council of Europe",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Germany or Austria",
+      "label": "Germany or Austria",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France/Council of Europe",
+      "label": "France/Council of Europe",
+      "region": "International",
+      "in_degree": 9,
+      "out_degree": 0,
+      "total_degree": 9,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International/Inter-American System",
+      "label": "International/Inter-American System",
+      "region": "International",
       "in_degree": 2,
       "out_degree": 0,
       "total_degree": 2,
@@ -71,68 +191,28 @@
       "lon": null
     },
     {
-      "id": "International (WTO)",
-      "label": "International (WTO)",
+      "id": "International (United States as arbitrator)",
+      "label": "International (United States as arbitrator)",
       "region": "International",
-      "in_degree": 98,
+      "in_degree": 2,
       "out_degree": 0,
-      "total_degree": 98,
-      "lat": 46.2206,
-      "lon": 6.143
-    },
-    {
-      "id": "Namibia",
-      "label": "Namibia",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 4,
-      "total_degree": 5,
+      "total_degree": 2,
       "lat": null,
       "lon": null
     },
     {
-      "id": "Council of Europe (International Court)",
-      "label": "Council of Europe (International Court)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "East Africa (Kenya, Tanzania, or Uganda)",
-      "label": "East Africa (Kenya, Tanzania, or Uganda)",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Philippines",
-      "label": "Philippines",
-      "region": "Global South",
-      "in_degree": 20,
-      "out_degree": 31,
+      "id": "Austria",
+      "label": "Austria",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 49,
       "total_degree": 51,
-      "lat": 12.8797,
-      "lon": 121.774
+      "lat": 47.5162,
+      "lon": 14.5501
     },
     {
-      "id": "International (Inter-American Court of Human Rights)",
-      "label": "International (Inter-American Court of Human Rights)",
-      "region": "International",
-      "in_degree": 164,
-      "out_degree": 0,
-      "total_degree": 164,
-      "lat": 9.9281,
-      "lon": -84.0907
-    },
-    {
-      "id": "France (European Court of Human Rights)",
-      "label": "France (European Court of Human Rights)",
+      "id": "European Union (Germany)",
+      "label": "European Union (Germany)",
       "region": "International",
       "in_degree": 1,
       "out_degree": 0,
@@ -141,142 +221,12 @@
       "lon": null
     },
     {
-      "id": "International (United Nations)",
-      "label": "International (United Nations)",
+      "id": "European Union",
+      "label": "European Union",
       "region": "International",
-      "in_degree": 13,
+      "in_degree": 1424,
       "out_degree": 0,
-      "total_degree": 13,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Netherlands",
-      "label": "Netherlands",
-      "region": "Global North",
-      "in_degree": 168,
-      "out_degree": 133,
-      "total_degree": 301,
-      "lat": 52.1326,
-      "lon": 5.2913
-    },
-    {
-      "id": "Switzerland",
-      "label": "Switzerland",
-      "region": "International",
-      "in_degree": 50,
-      "out_degree": 215,
-      "total_degree": 265,
-      "lat": 46.8182,
-      "lon": 8.2275
-    },
-    {
-      "id": "France (case before European Court of Human Rights)",
-      "label": "France (case before European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International/European",
-      "label": "International/European",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Canada",
-      "label": "Canada",
-      "region": "Global North",
-      "in_degree": 53,
-      "out_degree": 127,
-      "total_degree": 180,
-      "lat": 56.1304,
-      "lon": -106.3468
-    },
-    {
-      "id": "United States",
-      "label": "United States",
-      "region": "Global North",
-      "in_degree": 167,
-      "out_degree": 1,
-      "total_degree": 168,
-      "lat": 37.0902,
-      "lon": -95.7129
-    },
-    {
-      "id": "Argentina",
-      "label": "Argentina",
-      "region": "International",
-      "in_degree": 16,
-      "out_degree": 41,
-      "total_degree": 57,
-      "lat": -38.4161,
-      "lon": -63.6167
-    },
-    {
-      "id": "Switzerland (European Court of Human Rights)",
-      "label": "Switzerland (European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Grenada",
-      "label": "Grenada",
-      "region": "Global South",
-      "in_degree": 0,
-      "out_degree": 17,
-      "total_degree": 17,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Scotland, United Kingdom",
-      "label": "Scotland, United Kingdom",
-      "region": "Global North",
-      "in_degree": 5,
-      "out_degree": 0,
-      "total_degree": 5,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "France/European Union",
-      "label": "France/European Union",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "United Kingdom (Scotland)",
-      "label": "United Kingdom (Scotland)",
-      "region": "Global North",
-      "in_degree": 7,
-      "out_degree": 0,
-      "total_degree": 7,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Panama",
-      "label": "Panama",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
+      "total_degree": 1424,
       "lat": null,
       "lon": null
     },
@@ -291,39 +241,19 @@
       "lon": 69.3451
     },
     {
-      "id": "Belgium",
-      "label": "Belgium",
-      "region": "International",
-      "in_degree": 28,
-      "out_degree": 150,
-      "total_degree": 178,
-      "lat": 50.5039,
-      "lon": 4.4699
-    },
-    {
-      "id": "Norway",
-      "label": "Norway",
+      "id": "Denmark",
+      "label": "Denmark",
       "region": "Global North",
-      "in_degree": 18,
-      "out_degree": 64,
-      "total_degree": 82,
-      "lat": 60.472,
-      "lon": 8.4689
-    },
-    {
-      "id": "Papua New Guinea",
-      "label": "Papua New Guinea",
-      "region": "Global South",
       "in_degree": 1,
-      "out_degree": 29,
-      "total_degree": 30,
-      "lat": null,
-      "lon": null
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": 56.2639,
+      "lon": 9.5018
     },
     {
-      "id": "Hong Kong (Special Administrative Region of China)",
-      "label": "Hong Kong (Special Administrative Region of China)",
-      "region": "Global North",
+      "id": "Zambia",
+      "label": "Zambia",
+      "region": "Global South",
       "in_degree": 1,
       "out_degree": 0,
       "total_degree": 1,
@@ -331,19 +261,39 @@
       "lon": null
     },
     {
-      "id": "Chile",
-      "label": "Chile",
+      "id": "Benin",
+      "label": "Benin",
       "region": "Global South",
-      "in_degree": 7,
-      "out_degree": 3,
-      "total_degree": 10,
-      "lat": -35.6751,
-      "lon": -71.543
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
     },
     {
-      "id": "Trinidad and Tobago",
-      "label": "Trinidad and Tobago",
-      "region": "Global South",
+      "id": "Finland",
+      "label": "Finland",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 17,
+      "total_degree": 18,
+      "lat": 61.9241,
+      "lon": 25.7482
+    },
+    {
+      "id": "Germany",
+      "label": "Germany",
+      "region": "International",
+      "in_degree": 101,
+      "out_degree": 18,
+      "total_degree": 119,
+      "lat": 51.1657,
+      "lon": 10.4515
+    },
+    {
+      "id": "International Arbitration (Netherlands)",
+      "label": "International Arbitration (Netherlands)",
+      "region": "International",
       "in_degree": 1,
       "out_degree": 0,
       "total_degree": 1,
@@ -361,9 +311,289 @@
       "lon": 8.6753
     },
     {
-      "id": "Greece",
-      "label": "Greece",
+      "id": "European Union (Court of Justice of the European Union)",
+      "label": "European Union (Court of Justice of the European Union)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Inter-American Court of Human Rights)",
+      "label": "International (Inter-American Court of Human Rights)",
+      "region": "International",
+      "in_degree": 164,
+      "out_degree": 0,
+      "total_degree": 164,
+      "lat": 9.9281,
+      "lon": -84.0907
+    },
+    {
+      "id": "International (United Nations)",
+      "label": "International (United Nations)",
+      "region": "International",
+      "in_degree": 13,
+      "out_degree": 0,
+      "total_degree": 13,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (NAFTA)",
+      "label": "International Arbitration (NAFTA)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Bangladesh",
+      "label": "Bangladesh",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": 23.685,
+      "lon": 90.3563
+    },
+    {
+      "id": "Chile",
+      "label": "Chile",
+      "region": "Global South",
+      "in_degree": 7,
+      "out_degree": 3,
+      "total_degree": 10,
+      "lat": -35.6751,
+      "lon": -71.543
+    },
+    {
+      "id": "International (ICSID)",
+      "label": "International (ICSID)",
+      "region": "International",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Eastern Caribbean States",
+      "label": "Eastern Caribbean States",
+      "region": "Global South",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Council of Europe (European Court of Human Rights)",
+      "label": "Council of Europe (European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Court of Human Rights (International)",
+      "label": "European Court of Human Rights (International)",
+      "region": "International",
+      "in_degree": 263,
+      "out_degree": 0,
+      "total_degree": 263,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Sweden)",
+      "label": "International (Sweden)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France/European Union",
+      "label": "France/European Union",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Andean Community",
+      "label": "Andean Community",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Ireland",
+      "label": "Ireland",
       "region": "Global North",
+      "in_degree": 20,
+      "out_degree": 133,
+      "total_degree": 153,
+      "lat": 53.1424,
+      "lon": -7.6921
+    },
+    {
+      "id": "China",
+      "label": "China",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (Permanent Court of Arbitration)",
+      "label": "International Arbitration (Permanent Court of Arbitration)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Cameroon",
+      "label": "Cameroon",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Poland",
+      "label": "Poland",
+      "region": "Global North",
+      "in_degree": 3,
+      "out_degree": 5,
+      "total_degree": 8,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Peru",
+      "label": "Peru",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 26,
+      "total_degree": 29,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France (but decided by European Court of Human Rights)",
+      "label": "France (but decided by European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France (case before European Court of Human Rights)",
+      "label": "France (case before European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union (Denmark)",
+      "label": "European Union (Denmark)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Czechia",
+      "label": "Czechia",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 144,
+      "total_degree": 144,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United Nations",
+      "label": "United Nations",
+      "region": "International",
+      "in_degree": 67,
+      "out_degree": 0,
+      "total_degree": 67,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Belgium",
+      "label": "Belgium",
+      "region": "International",
+      "in_degree": 28,
+      "out_degree": 150,
+      "total_degree": 178,
+      "lat": 50.5039,
+      "lon": 4.4699
+    },
+    {
+      "id": "Belize",
+      "label": "Belize",
+      "region": "Global South",
+      "in_degree": 4,
+      "out_degree": 0,
+      "total_degree": 4,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Guernsey",
+      "label": "Guernsey",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Court of Human Rights (International Court)",
+      "label": "European Court of Human Rights (International Court)",
+      "region": "International",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": 48.6,
+      "lon": 7.75
+    },
+    {
+      "id": "International (Sweden - seat of arbitration)",
+      "label": "International (Sweden - seat of arbitration)",
+      "region": "International",
       "in_degree": 2,
       "out_degree": 0,
       "total_degree": 2,
@@ -381,22 +611,162 @@
       "lon": null
     },
     {
-      "id": "International Arbitration",
-      "label": "International Arbitration",
-      "region": "International",
-      "in_degree": 153,
+      "id": "United Kingdom, Canada, Australia, or New Zealand",
+      "label": "United Kingdom, Canada, Australia, or New Zealand",
+      "region": "Global North",
+      "in_degree": 1,
       "out_degree": 0,
-      "total_degree": 153,
+      "total_degree": 1,
       "lat": null,
       "lon": null
     },
     {
-      "id": "Czechia",
-      "label": "Czechia",
+      "id": "Singapore",
+      "label": "Singapore",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Council of Europe",
+      "label": "Council of Europe",
+      "region": "International",
+      "in_degree": 107,
+      "out_degree": 0,
+      "total_degree": 107,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Colombia",
+      "label": "Colombia",
+      "region": "Global South",
+      "in_degree": 70,
+      "out_degree": 34,
+      "total_degree": 104,
+      "lat": 4.5709,
+      "lon": -74.2973
+    },
+    {
+      "id": "Taiwan",
+      "label": "Taiwan",
       "region": "Global South",
       "in_degree": 0,
-      "out_degree": 144,
-      "total_degree": 144,
+      "out_degree": 9,
+      "total_degree": 9,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Tribunal",
+      "label": "International Tribunal",
+      "region": "International",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": 52.0866,
+      "lon": 4.2955
+    },
+    {
+      "id": "Kenya",
+      "label": "Kenya",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 29,
+      "total_degree": 32,
+      "lat": -0.0236,
+      "lon": 37.9062
+    },
+    {
+      "id": "Jamaica",
+      "label": "Jamaica",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (WTO)",
+      "label": "International (WTO)",
+      "region": "International",
+      "in_degree": 98,
+      "out_degree": 0,
+      "total_degree": 98,
+      "lat": 46.2206,
+      "lon": 6.143
+    },
+    {
+      "id": "European Union (supranational)",
+      "label": "European Union (supranational)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Inter-American System)",
+      "label": "International (Inter-American System)",
+      "region": "International",
+      "in_degree": 205,
+      "out_degree": 0,
+      "total_degree": 205,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United States of America",
+      "label": "United States of America",
+      "region": "Global North",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "East Africa (Kenya, Tanzania, or Uganda)",
+      "label": "East Africa (Kenya, Tanzania, or Uganda)",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
+      "label": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Philippines",
+      "label": "Philippines",
+      "region": "Global South",
+      "in_degree": 20,
+      "out_degree": 31,
+      "total_degree": 51,
+      "lat": 12.8797,
+      "lon": 121.774
+    },
+    {
+      "id": "Panama",
+      "label": "Panama",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
       "lat": null,
       "lon": null
     },
@@ -411,18 +781,358 @@
       "lon": null
     },
     {
-      "id": "Czech Republic",
-      "label": "Czech Republic",
-      "region": "Global North",
-      "in_degree": 52,
+      "id": "Switzerland/European Court of Human Rights",
+      "label": "Switzerland/European Court of Human Rights",
+      "region": "International",
+      "in_degree": 2,
       "out_degree": 0,
-      "total_degree": 52,
+      "total_degree": 2,
       "lat": null,
       "lon": null
     },
     {
-      "id": "International (Sweden)",
-      "label": "International (Sweden)",
+      "id": "Netherlands",
+      "label": "Netherlands",
+      "region": "Global North",
+      "in_degree": 168,
+      "out_degree": 133,
+      "total_degree": 301,
+      "lat": 52.1326,
+      "lon": 5.2913
+    },
+    {
+      "id": "Sweden",
+      "label": "Sweden",
+      "region": "International",
+      "in_degree": 96,
+      "out_degree": 0,
+      "total_degree": 96,
+      "lat": 60.1282,
+      "lon": 18.6435
+    },
+    {
+      "id": "Argentina",
+      "label": "Argentina",
+      "region": "International",
+      "in_degree": 16,
+      "out_degree": 41,
+      "total_degree": 57,
+      "lat": -38.4161,
+      "lon": -63.6167
+    },
+    {
+      "id": "Saint Kitts and Nevis",
+      "label": "Saint Kitts and Nevis",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Trinidad and Tobago",
+      "label": "Trinidad and Tobago",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International/Multiple Jurisdictions",
+      "label": "International/Multiple Jurisdictions",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (Sweden)",
+      "label": "International Arbitration (Sweden)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration (ICSID/NAFTA)",
+      "label": "International Arbitration (ICSID/NAFTA)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (NAFTA/ICSID Arbitration)",
+      "label": "International (NAFTA/ICSID Arbitration)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Hong Kong (Special Administrative Region of China)",
+      "label": "Hong Kong (Special Administrative Region of China)",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Indonesia",
+      "label": "Indonesia",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 5,
+      "total_degree": 8,
+      "lat": -0.7893,
+      "lon": 113.9213
+    },
+    {
+      "id": "Federated States of Micronesia",
+      "label": "Federated States of Micronesia",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Unknown",
+      "label": "Unknown",
+      "region": "Unknown",
+      "in_degree": 287,
+      "out_degree": 0,
+      "total_degree": 287,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Guyana",
+      "label": "Guyana",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Organization of American States",
+      "label": "Organization of American States",
+      "region": "International",
+      "in_degree": 17,
+      "out_degree": 0,
+      "total_degree": 17,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union/European Court of Justice",
+      "label": "European Union/European Court of Justice",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "African Union",
+      "label": "African Union",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France (European Court of Human Rights)",
+      "label": "France (European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United Kingdom (Northern Ireland)",
+      "label": "United Kingdom (Northern Ireland)",
+      "region": "Global North",
+      "in_degree": 18,
+      "out_degree": 0,
+      "total_degree": 18,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Sierra Leone",
+      "label": "Sierra Leone",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union/Supranational",
+      "label": "European Union/Supranational",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "England and Wales (United Kingdom)",
+      "label": "England and Wales (United Kingdom)",
+      "region": "Global North",
+      "in_degree": 33,
+      "out_degree": 0,
+      "total_degree": 33,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (European Union)",
+      "label": "International (European Union)",
+      "region": "International",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "India",
+      "label": "India",
+      "region": "Global South",
+      "in_degree": 42,
+      "out_degree": 5,
+      "total_degree": 47,
+      "lat": 20.5937,
+      "lon": 78.9629
+    },
+    {
+      "id": "United Kingdom",
+      "label": "United Kingdom",
+      "region": "Global North",
+      "in_degree": 423,
+      "out_degree": 568,
+      "total_degree": 991,
+      "lat": 55.3781,
+      "lon": -3.436
+    },
+    {
+      "id": "United Kingdom or Canada",
+      "label": "United Kingdom or Canada",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Scotland/United Kingdom",
+      "label": "Scotland/United Kingdom",
+      "region": "Global North",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "European Union (European Court of Human Rights/European General Court)",
+      "label": "European Union (European Court of Human Rights/European General Court)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Mexico",
+      "label": "Mexico",
+      "region": "Global South",
+      "in_degree": 3,
+      "out_degree": 18,
+      "total_degree": 21,
+      "lat": 23.6345,
+      "lon": -102.5528
+    },
+    {
+      "id": "Spain (International Court)",
+      "label": "Spain (International Court)",
+      "region": "International",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Scotland, United Kingdom",
+      "label": "Scotland, United Kingdom",
+      "region": "Global North",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Switzerland",
+      "label": "Switzerland",
+      "region": "International",
+      "in_degree": 50,
+      "out_degree": 215,
+      "total_degree": 265,
+      "lat": 46.8182,
+      "lon": 8.2275
+    },
+    {
+      "id": "South West Africa/Namibia",
+      "label": "South West Africa/Namibia",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Permanent Court of Arbitration)",
+      "label": "International (Permanent Court of Arbitration)",
+      "region": "International",
+      "in_degree": 3,
+      "out_degree": 0,
+      "total_degree": 3,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International/European",
+      "label": "International/European",
       "region": "International",
       "in_degree": 2,
       "out_degree": 0,
@@ -441,146 +1151,6 @@
       "lon": null
     },
     {
-      "id": "European Union",
-      "label": "European Union",
-      "region": "International",
-      "in_degree": 1424,
-      "out_degree": 0,
-      "total_degree": 1424,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Spain (International Court)",
-      "label": "Spain (International Court)",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (European Union)",
-      "label": "International (European Union)",
-      "region": "International",
-      "in_degree": 5,
-      "out_degree": 0,
-      "total_degree": 5,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Angola",
-      "label": "Angola",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Court of Human Rights (International Court)",
-      "label": "European Court of Human Rights (International Court)",
-      "region": "International",
-      "in_degree": 3,
-      "out_degree": 0,
-      "total_degree": 3,
-      "lat": 48.6,
-      "lon": 7.75
-    },
-    {
-      "id": "Ireland",
-      "label": "Ireland",
-      "region": "Global North",
-      "in_degree": 20,
-      "out_degree": 133,
-      "total_degree": 153,
-      "lat": 53.1424,
-      "lon": -7.6921
-    },
-    {
-      "id": "Bermuda",
-      "label": "Bermuda",
-      "region": "Global North",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union (Denmark)",
-      "label": "European Union (Denmark)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union (European Court of Human Rights/European General Court)",
-      "label": "European Union (European Court of Human Rights/European General Court)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Ghana",
-      "label": "Ghana",
-      "region": "Global South",
-      "in_degree": 3,
-      "out_degree": 0,
-      "total_degree": 3,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "South Africa",
-      "label": "South Africa",
-      "region": "Global South",
-      "in_degree": 20,
-      "out_degree": 5,
-      "total_degree": 25,
-      "lat": -30.5595,
-      "lon": 22.9375
-    },
-    {
-      "id": "Estonia",
-      "label": "Estonia",
-      "region": "Global South",
-      "in_degree": 0,
-      "out_degree": 2,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Switzerland (case before European Court of Human Rights)",
-      "label": "Switzerland (case before European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Portugal",
-      "label": "Portugal",
-      "region": "Global North",
-      "in_degree": 6,
-      "out_degree": 4,
-      "total_degree": 10,
-      "lat": 39.3999,
-      "lon": -8.2245
-    },
-    {
       "id": "Ecuador",
       "label": "Ecuador",
       "region": "Global South",
@@ -591,18 +1161,28 @@
       "lon": null
     },
     {
-      "id": "International (Inter-American System)",
-      "label": "International (Inter-American System)",
-      "region": "International",
-      "in_degree": 205,
+      "id": "Brazil",
+      "label": "Brazil",
+      "region": "Global South",
+      "in_degree": 12,
+      "out_degree": 136,
+      "total_degree": 148,
+      "lat": -14.235,
+      "lon": -51.9253
+    },
+    {
+      "id": "Saint Lucia",
+      "label": "Saint Lucia",
+      "region": "Global South",
+      "in_degree": 2,
       "out_degree": 0,
-      "total_degree": 205,
+      "total_degree": 2,
       "lat": null,
       "lon": null
     },
     {
-      "id": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
-      "label": "EFTA Court (supranational - primarily Norway, Iceland, Liechtenstein)",
+      "id": "European Union/Council of Europe",
+      "label": "European Union/Council of Europe",
       "region": "International",
       "in_degree": 1,
       "out_degree": 0,
@@ -621,34 +1201,24 @@
       "lon": null
     },
     {
-      "id": "International - Inter-American Court of Human Rights",
-      "label": "International - Inter-American Court of Human Rights",
-      "region": "International",
-      "in_degree": 6,
+      "id": "Scotland",
+      "label": "Scotland",
+      "region": "Global North",
+      "in_degree": 11,
       "out_degree": 0,
-      "total_degree": 6,
+      "total_degree": 11,
       "lat": null,
       "lon": null
     },
     {
-      "id": "Indonesia",
-      "label": "Indonesia",
+      "id": "Hungary",
+      "label": "Hungary",
       "region": "Global South",
-      "in_degree": 3,
-      "out_degree": 5,
-      "total_degree": 8,
-      "lat": -0.7893,
-      "lon": 113.9213
-    },
-    {
-      "id": "Sweden",
-      "label": "Sweden",
-      "region": "International",
-      "in_degree": 96,
-      "out_degree": 0,
-      "total_degree": 96,
-      "lat": 60.1282,
-      "lon": 18.6435
+      "in_degree": 14,
+      "out_degree": 13,
+      "total_degree": 27,
+      "lat": null,
+      "lon": null
     },
     {
       "id": "International - Inter-American System",
@@ -661,249 +1231,19 @@
       "lon": null
     },
     {
-      "id": "South West Africa/Namibia",
-      "label": "South West Africa/Namibia",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Convention on Human Rights System (Council of Europe)",
-      "label": "European Convention on Human Rights System (Council of Europe)",
-      "region": "International",
-      "in_degree": 4,
-      "out_degree": 0,
-      "total_degree": 4,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Germany or Austria",
-      "label": "Germany or Austria",
+      "id": "Australia",
+      "label": "Australia",
       "region": "Global North",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
+      "in_degree": 86,
+      "out_degree": 453,
+      "total_degree": 539,
+      "lat": -25.2744,
+      "lon": 133.7751
     },
     {
-      "id": "New Zealand",
-      "label": "New Zealand",
-      "region": "Global North",
-      "in_degree": 27,
-      "out_degree": 212,
-      "total_degree": 239,
-      "lat": -40.9006,
-      "lon": 174.886
-    },
-    {
-      "id": "Eastern Caribbean States",
-      "label": "Eastern Caribbean States",
-      "region": "Global South",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "United Kingdom, Canada, Australia, or New Zealand",
-      "label": "United Kingdom, Canada, Australia, or New Zealand",
-      "region": "Global North",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "England and Wales (United Kingdom)",
-      "label": "England and Wales (United Kingdom)",
-      "region": "Global North",
-      "in_degree": 33,
-      "out_degree": 0,
-      "total_degree": 33,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union/European Court of Justice",
-      "label": "European Union/European Court of Justice",
+      "id": "France (via European Court of Human Rights)",
+      "label": "France (via European Court of Human Rights)",
       "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Turkey",
-      "label": "Turkey",
-      "region": "International",
-      "in_degree": 13,
-      "out_degree": 0,
-      "total_degree": 13,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union (Germany)",
-      "label": "European Union (Germany)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Peru",
-      "label": "Peru",
-      "region": "Global South",
-      "in_degree": 3,
-      "out_degree": 26,
-      "total_degree": 29,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International Arbitration (NAFTA)",
-      "label": "International Arbitration (NAFTA)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Germany",
-      "label": "Germany",
-      "region": "International",
-      "in_degree": 101,
-      "out_degree": 18,
-      "total_degree": 119,
-      "lat": 51.1657,
-      "lon": 10.4515
-    },
-    {
-      "id": "Taiwan (Republic of China)",
-      "label": "Taiwan (Republic of China)",
-      "region": "Global North",
-      "in_degree": 9,
-      "out_degree": 0,
-      "total_degree": 9,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Kenya",
-      "label": "Kenya",
-      "region": "Global South",
-      "in_degree": 3,
-      "out_degree": 29,
-      "total_degree": 32,
-      "lat": -0.0236,
-      "lon": 37.9062
-    },
-    {
-      "id": "France/Council of Europe",
-      "label": "France/Council of Europe",
-      "region": "International",
-      "in_degree": 9,
-      "out_degree": 0,
-      "total_degree": 9,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "United Kingdom or Canada",
-      "label": "United Kingdom or Canada",
-      "region": "Global North",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Denmark",
-      "label": "Denmark",
-      "region": "Global North",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": 56.2639,
-      "lon": 9.5018
-    },
-    {
-      "id": "European Union (Court of Justice of the European Union)",
-      "label": "European Union (Court of Justice of the European Union)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "North Macedonia",
-      "label": "North Macedonia",
-      "region": "Global North",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Switzerland/European Court of Human Rights",
-      "label": "Switzerland/European Court of Human Rights",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "United Kingdom",
-      "label": "United Kingdom",
-      "region": "Global North",
-      "in_degree": 423,
-      "out_degree": 568,
-      "total_degree": 991,
-      "lat": 55.3781,
-      "lon": -3.436
-    },
-    {
-      "id": "United Kingdom (Northern Ireland)",
-      "label": "United Kingdom (Northern Ireland)",
-      "region": "Global North",
-      "in_degree": 18,
-      "out_degree": 0,
-      "total_degree": 18,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "France (but decided by European Court of Human Rights)",
-      "label": "France (but decided by European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Saint Kitts and Nevis",
-      "label": "Saint Kitts and Nevis",
-      "region": "Global South",
       "in_degree": 1,
       "out_degree": 0,
       "total_degree": 1,
@@ -921,72 +1261,52 @@
       "lon": null
     },
     {
-      "id": "Poland",
-      "label": "Poland",
+      "id": "United States",
+      "label": "United States",
       "region": "Global North",
+      "in_degree": 167,
+      "out_degree": 1,
+      "total_degree": 168,
+      "lat": 37.0902,
+      "lon": -95.7129
+    },
+    {
+      "id": "Taiwan (Republic of China)",
+      "label": "Taiwan (Republic of China)",
+      "region": "Global North",
+      "in_degree": 9,
+      "out_degree": 0,
+      "total_degree": 9,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Ghana",
+      "label": "Ghana",
+      "region": "Global South",
       "in_degree": 3,
-      "out_degree": 5,
-      "total_degree": 8,
+      "out_degree": 0,
+      "total_degree": 3,
       "lat": null,
       "lon": null
     },
     {
-      "id": "Colombia",
-      "label": "Colombia",
+      "id": "Grenada",
+      "label": "Grenada",
       "region": "Global South",
-      "in_degree": 70,
-      "out_degree": 34,
-      "total_degree": 104,
-      "lat": 4.5709,
-      "lon": -74.2973
+      "in_degree": 0,
+      "out_degree": 17,
+      "total_degree": 17,
+      "lat": null,
+      "lon": null
     },
     {
-      "id": "Belize",
-      "label": "Belize",
+      "id": "Türkiye",
+      "label": "Türkiye",
       "region": "Global South",
-      "in_degree": 4,
-      "out_degree": 0,
-      "total_degree": 4,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union/United Kingdom",
-      "label": "European Union/United Kingdom",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Council of Europe",
-      "label": "Council of Europe",
-      "region": "International",
-      "in_degree": 107,
-      "out_degree": 0,
-      "total_degree": 107,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union/Supranational",
-      "label": "European Union/Supranational",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (ICSID)",
-      "label": "International (ICSID)",
-      "region": "International",
-      "in_degree": 5,
-      "out_degree": 0,
-      "total_degree": 5,
+      "in_degree": 0,
+      "out_degree": 6,
+      "total_degree": 6,
       "lat": null,
       "lon": null
     },
@@ -1001,286 +1321,6 @@
       "lon": null
     },
     {
-      "id": "United Nations",
-      "label": "United Nations",
-      "region": "International",
-      "in_degree": 67,
-      "out_degree": 0,
-      "total_degree": 67,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International/Inter-American System",
-      "label": "International/Inter-American System",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Scotland/United Kingdom",
-      "label": "Scotland/United Kingdom",
-      "region": "Global North",
-      "in_degree": 3,
-      "out_degree": 0,
-      "total_degree": 3,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Nepal",
-      "label": "Nepal",
-      "region": "Global South",
-      "in_degree": 5,
-      "out_degree": 0,
-      "total_degree": 5,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union/Council of Europe",
-      "label": "European Union/Council of Europe",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (NAFTA)",
-      "label": "International (NAFTA)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Spain",
-      "label": "Spain",
-      "region": "International",
-      "in_degree": 143,
-      "out_degree": 38,
-      "total_degree": 181,
-      "lat": 40.4637,
-      "lon": -3.7492
-    },
-    {
-      "id": "England and Wales",
-      "label": "England and Wales",
-      "region": "Global North",
-      "in_degree": 321,
-      "out_degree": 0,
-      "total_degree": 321,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International Court of Justice",
-      "label": "International Court of Justice",
-      "region": "International",
-      "in_degree": 44,
-      "out_degree": 0,
-      "total_degree": 44,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Singapore",
-      "label": "Singapore",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (NAFTA/ICSID Arbitration)",
-      "label": "International (NAFTA/ICSID Arbitration)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International/Multiple Jurisdictions",
-      "label": "International/Multiple Jurisdictions",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "United States of America",
-      "label": "United States of America",
-      "region": "Global North",
-      "in_degree": 3,
-      "out_degree": 0,
-      "total_degree": 3,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (Arbitration)",
-      "label": "International (Arbitration)",
-      "region": "International",
-      "in_degree": 10,
-      "out_degree": 0,
-      "total_degree": 10,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Scotland (United Kingdom)",
-      "label": "Scotland (United Kingdom)",
-      "region": "Global North",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Sierra Leone",
-      "label": "Sierra Leone",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Taiwan",
-      "label": "Taiwan",
-      "region": "Global South",
-      "in_degree": 0,
-      "out_degree": 9,
-      "total_degree": 9,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International Arbitration (Sweden)",
-      "label": "International Arbitration (Sweden)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (Sweden - seat of arbitration)",
-      "label": "International (Sweden - seat of arbitration)",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Unknown",
-      "label": "Unknown",
-      "region": "Unknown",
-      "in_degree": 287,
-      "out_degree": 0,
-      "total_degree": 287,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Bangladesh",
-      "label": "Bangladesh",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": 23.685,
-      "lon": 90.3563
-    },
-    {
-      "id": "Australia",
-      "label": "Australia",
-      "region": "Global North",
-      "in_degree": 86,
-      "out_degree": 453,
-      "total_degree": 539,
-      "lat": -25.2744,
-      "lon": 133.7751
-    },
-    {
-      "id": "Brazil",
-      "label": "Brazil",
-      "region": "Global South",
-      "in_degree": 12,
-      "out_degree": 136,
-      "total_degree": 148,
-      "lat": -14.235,
-      "lon": -51.9253
-    },
-    {
-      "id": "Guernsey",
-      "label": "Guernsey",
-      "region": "Global North",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Austria",
-      "label": "Austria",
-      "region": "Global North",
-      "in_degree": 2,
-      "out_degree": 49,
-      "total_degree": 51,
-      "lat": 47.5162,
-      "lon": 14.5501
-    },
-    {
-      "id": "France (via European Court of Human Rights)",
-      "label": "France (via European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "European Union (Belgium)",
-      "label": "European Union (Belgium)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International - World Trade Organization",
-      "label": "International - World Trade Organization",
-      "region": "International",
-      "in_degree": 32,
-      "out_degree": 0,
-      "total_degree": 32,
-      "lat": null,
-      "lon": null
-    },
-    {
       "id": "International",
       "label": "International",
       "region": "International",
@@ -1291,9 +1331,9 @@
       "lon": null
     },
     {
-      "id": "China",
-      "label": "China",
-      "region": "Global South",
+      "id": "Romania (case before European Court of Human Rights)",
+      "label": "Romania (case before European Court of Human Rights)",
+      "region": "International",
       "in_degree": 1,
       "out_degree": 0,
       "total_degree": 1,
@@ -1311,86 +1351,6 @@
       "lon": null
     },
     {
-      "id": "Hungary",
-      "label": "Hungary",
-      "region": "Global South",
-      "in_degree": 14,
-      "out_degree": 13,
-      "total_degree": 27,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Mexico",
-      "label": "Mexico",
-      "region": "Global South",
-      "in_degree": 3,
-      "out_degree": 18,
-      "total_degree": 21,
-      "lat": 23.6345,
-      "lon": -102.5528
-    },
-    {
-      "id": "Norway (case heard by European Court of Human Rights)",
-      "label": "Norway (case heard by European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (Sweden as seat)",
-      "label": "International (Sweden as seat)",
-      "region": "International",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (African Commission on Human and Peoples' Rights)",
-      "label": "International (African Commission on Human and Peoples' Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (Council of Europe)",
-      "label": "International (Council of Europe)",
-      "region": "International",
-      "in_degree": 342,
-      "out_degree": 0,
-      "total_degree": 342,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International Tribunal",
-      "label": "International Tribunal",
-      "region": "International",
-      "in_degree": 5,
-      "out_degree": 0,
-      "total_degree": 5,
-      "lat": 52.0866,
-      "lon": 4.2955
-    },
-    {
-      "id": "International Arbitration (ICSID/NAFTA)",
-      "label": "International Arbitration (ICSID/NAFTA)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
       "id": "Turkey (case originated) / European Court of Human Rights",
       "label": "Turkey (case originated) / European Court of Human Rights",
       "region": "International",
@@ -1401,102 +1361,32 @@
       "lon": null
     },
     {
-      "id": "Luxembourg",
-      "label": "Luxembourg",
+      "id": "Papua New Guinea",
+      "label": "Papua New Guinea",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 29,
+      "total_degree": 30,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Nepal",
+      "label": "Nepal",
+      "region": "Global South",
+      "in_degree": 5,
+      "out_degree": 0,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "England",
+      "label": "England",
       "region": "Global North",
-      "in_degree": 2,
-      "out_degree": 11,
-      "total_degree": 13,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Cameroon",
-      "label": "Cameroon",
-      "region": "Global South",
-      "in_degree": 1,
+      "in_degree": 9,
       "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Zambia",
-      "label": "Zambia",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Antigua and Barbuda",
-      "label": "Antigua and Barbuda",
-      "region": "Global South",
-      "in_degree": 2,
-      "out_degree": 0,
-      "total_degree": 2,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Benin",
-      "label": "Benin",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Italy",
-      "label": "Italy",
-      "region": "Global North",
-      "in_degree": 47,
-      "out_degree": 47,
-      "total_degree": 94,
-      "lat": 41.8719,
-      "lon": 12.5674
-    },
-    {
-      "id": "Romania",
-      "label": "Romania",
-      "region": "Global South",
-      "in_degree": 0,
-      "out_degree": 53,
-      "total_degree": 53,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International Arbitration (Netherlands)",
-      "label": "International Arbitration (Netherlands)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Uganda",
-      "label": "Uganda",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Romania (case before European Court of Human Rights)",
-      "label": "Romania (case before European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
+      "total_degree": 9,
       "lat": null,
       "lon": null
     },
@@ -1511,12 +1401,22 @@
       "lon": null
     },
     {
-      "id": "European Union (supranational)",
-      "label": "European Union (supranational)",
-      "region": "International",
-      "in_degree": 1,
+      "id": "Bermuda",
+      "label": "Bermuda",
+      "region": "Global North",
+      "in_degree": 2,
       "out_degree": 0,
-      "total_degree": 1,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Estonia",
+      "label": "Estonia",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 2,
+      "total_degree": 2,
       "lat": null,
       "lon": null
     },
@@ -1524,36 +1424,6 @@
       "id": "International (Iran-United States Claims Tribunal)",
       "label": "International (Iran-United States Claims Tribunal)",
       "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "India",
-      "label": "India",
-      "region": "Global South",
-      "in_degree": 42,
-      "out_degree": 5,
-      "total_degree": 47,
-      "lat": 20.5937,
-      "lon": 78.9629
-    },
-    {
-      "id": "South Korea",
-      "label": "South Korea",
-      "region": "Global North",
-      "in_degree": 2,
-      "out_degree": 14,
-      "total_degree": 16,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Jamaica",
-      "label": "Jamaica",
-      "region": "Global South",
       "in_degree": 1,
       "out_degree": 0,
       "total_degree": 1,
@@ -1571,8 +1441,8 @@
       "lon": null
     },
     {
-      "id": "France/European Court of Human Rights",
-      "label": "France/European Court of Human Rights",
+      "id": "European Union (Belgium)",
+      "label": "European Union (Belgium)",
       "region": "International",
       "in_degree": 1,
       "out_degree": 0,
@@ -1591,6 +1461,236 @@
       "lon": null
     },
     {
+      "id": "International (African Commission on Human and Peoples' Rights)",
+      "label": "International (African Commission on Human and Peoples' Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "France/European Court of Human Rights",
+      "label": "France/European Court of Human Rights",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Inter-American Court of Human Rights (Regional International Court)",
+      "label": "Inter-American Court of Human Rights (Regional International Court)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Romania",
+      "label": "Romania",
+      "region": "Global South",
+      "in_degree": 0,
+      "out_degree": 53,
+      "total_degree": 53,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (Arbitration)",
+      "label": "International (Arbitration)",
+      "region": "International",
+      "in_degree": 10,
+      "out_degree": 0,
+      "total_degree": 10,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Turkey",
+      "label": "Turkey",
+      "region": "International",
+      "in_degree": 13,
+      "out_degree": 0,
+      "total_degree": 13,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Greece",
+      "label": "Greece",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 0,
+      "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "South Korea",
+      "label": "South Korea",
+      "region": "Global North",
+      "in_degree": 2,
+      "out_degree": 14,
+      "total_degree": 16,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Angola",
+      "label": "Angola",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Court of Justice",
+      "label": "International Court of Justice",
+      "region": "International",
+      "in_degree": 44,
+      "out_degree": 0,
+      "total_degree": 44,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International Arbitration",
+      "label": "International Arbitration",
+      "region": "International",
+      "in_degree": 153,
+      "out_degree": 0,
+      "total_degree": 153,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Council of Europe (International Court)",
+      "label": "Council of Europe (International Court)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International (NAFTA)",
+      "label": "International (NAFTA)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Caribbean Commonwealth jurisdiction",
+      "label": "Caribbean Commonwealth jurisdiction",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "South Africa",
+      "label": "South Africa",
+      "region": "Global South",
+      "in_degree": 20,
+      "out_degree": 5,
+      "total_degree": 25,
+      "lat": -30.5595,
+      "lon": 22.9375
+    },
+    {
+      "id": "International (World Trade Organization)",
+      "label": "International (World Trade Organization)",
+      "region": "International",
+      "in_degree": 7,
+      "out_degree": 0,
+      "total_degree": 7,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International - World Trade Organization",
+      "label": "International - World Trade Organization",
+      "region": "International",
+      "in_degree": 32,
+      "out_degree": 0,
+      "total_degree": 32,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "International - Inter-American Court of Human Rights",
+      "label": "International - Inter-American Court of Human Rights",
+      "region": "International",
+      "in_degree": 6,
+      "out_degree": 0,
+      "total_degree": 6,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "United Kingdom (Scotland)",
+      "label": "United Kingdom (Scotland)",
+      "region": "Global North",
+      "in_degree": 7,
+      "out_degree": 0,
+      "total_degree": 7,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Namibia",
+      "label": "Namibia",
+      "region": "Global South",
+      "in_degree": 1,
+      "out_degree": 4,
+      "total_degree": 5,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Scotland (United Kingdom)",
+      "label": "Scotland (United Kingdom)",
+      "region": "Global North",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Spain",
+      "label": "Spain",
+      "region": "International",
+      "in_degree": 143,
+      "out_degree": 38,
+      "total_degree": 181,
+      "lat": 40.4637,
+      "lon": -3.7492
+    },
+    {
+      "id": "New Zealand",
+      "label": "New Zealand",
+      "region": "Global North",
+      "in_degree": 27,
+      "out_degree": 212,
+      "total_degree": 239,
+      "lat": -40.9006,
+      "lon": 174.886
+    },
+    {
       "id": "European Patent Office",
       "label": "European Patent Office",
       "region": "International",
@@ -1601,48 +1701,8 @@
       "lon": null
     },
     {
-      "id": "England",
-      "label": "England",
-      "region": "Global North",
-      "in_degree": 9,
-      "out_degree": 0,
-      "total_degree": 9,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International Arbitration (Permanent Court of Arbitration)",
-      "label": "International Arbitration (Permanent Court of Arbitration)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Türkiye",
-      "label": "Türkiye",
-      "region": "Global South",
-      "in_degree": 0,
-      "out_degree": 6,
-      "total_degree": 6,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "African Union",
-      "label": "African Union",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Federated States of Micronesia",
-      "label": "Federated States of Micronesia",
+      "id": "Uganda",
+      "label": "Uganda",
       "region": "Global South",
       "in_degree": 1,
       "out_degree": 0,
@@ -1661,92 +1721,32 @@
       "lon": 2.2137
     },
     {
-      "id": "Inter-American Court of Human Rights (Regional International Court)",
-      "label": "Inter-American Court of Human Rights (Regional International Court)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Council of Europe (European Court of Human Rights)",
-      "label": "Council of Europe (European Court of Human Rights)",
-      "region": "International",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Scotland",
-      "label": "Scotland",
-      "region": "Global North",
-      "in_degree": 11,
-      "out_degree": 0,
-      "total_degree": 11,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (World Trade Organization)",
-      "label": "International (World Trade Organization)",
-      "region": "International",
-      "in_degree": 7,
-      "out_degree": 0,
-      "total_degree": 7,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "International (Permanent Court of Arbitration)",
-      "label": "International (Permanent Court of Arbitration)",
-      "region": "International",
-      "in_degree": 3,
-      "out_degree": 0,
-      "total_degree": 3,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Organization of American States",
-      "label": "Organization of American States",
-      "region": "International",
-      "in_degree": 17,
-      "out_degree": 0,
-      "total_degree": 17,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Guyana",
-      "label": "Guyana",
-      "region": "Global South",
-      "in_degree": 3,
-      "out_degree": 0,
-      "total_degree": 3,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Caribbean Commonwealth jurisdiction",
-      "label": "Caribbean Commonwealth jurisdiction",
-      "region": "Global South",
-      "in_degree": 1,
-      "out_degree": 0,
-      "total_degree": 1,
-      "lat": null,
-      "lon": null
-    },
-    {
-      "id": "Andean Community",
-      "label": "Andean Community",
+      "id": "International (Sweden as seat)",
+      "label": "International (Sweden as seat)",
       "region": "International",
       "in_degree": 2,
       "out_degree": 0,
       "total_degree": 2,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Switzerland (case before European Court of Human Rights)",
+      "label": "Switzerland (case before European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "Switzerland (European Court of Human Rights)",
+      "label": "Switzerland (European Court of Human Rights)",
+      "region": "International",
+      "in_degree": 1,
+      "out_degree": 0,
+      "total_degree": 1,
       "lat": null,
       "lon": null
     }

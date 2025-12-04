@@ -1,404 +1,1141 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sixfold Citation Analysis Dashboard</title>
-
-    <!-- D3.js for network visualization -->
+    <title>Climate Litigation Citation Analysis Dashboard</title>
+    
+    <!-- Google Fonts - Matching map styling -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- D3.js for visualizations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-
+    
     <!-- Chart.js for charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
+    
     <!-- TopoJSON for map -->
-    <script src="https://unpkg.com/topojson@3"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+    
     <style>
         /* ================================================================
-           GLOBAL STYLES
+           CSS CUSTOM PROPERTIES - Dark Theme from Map
            ================================================================ */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --bg-color: #ecf0f1;
-            --card-bg: #ffffff;
-            --text-color: #2c3e50;
-            --text-muted: #7f8c8d;
-            --border-color: #bdc3c7;
-
+            /* Background colors */
+            --bg-primary: #0a0f14;
+            --bg-secondary: #111820;
+            --bg-panel: #1a222d;
+            --bg-hover: #242d3a;
+            
+            /* Text colors */
+            --text-primary: #e8edf3;
+            --text-secondary: #8b9aad;
+            --text-muted: #5a6978;
+            
             /* Region colors */
-            --north-color: #3498db;
-            --south-color: #e74c3c;
-            --international-color: #9b59b6;
+            --north-primary: #3b82f6;
+            --north-glow: rgba(59, 130, 246, 0.4);
+            --south-primary: #10b981;
+            --south-glow: rgba(16, 185, 129, 0.4);
+            
+            /* Accent colors */
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-yellow: #eab308;
+            --accent-cyan: #06b6d4;
+            
+            /* Border colors */
+            --border-color: #2a3544;
+            --border-hover: #3d4f66;
+            
+            /* Chart category colors */
+            --chart-1: #3b82f6;
+            --chart-2: #10b981;
+            --chart-3: #f97316;
+            --chart-4: #8b5cf6;
+            --chart-5: #06b6d4;
+            --chart-6: #ef4444;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        
+        /* ================================================================
+           RESET & BASE STYLES
+           ================================================================ */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
         }
-
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
             line-height: 1.6;
         }
-
+        
         /* ================================================================
-           LAYOUT
+           HEADER
            ================================================================ */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
-            color: white;
-            padding: 30px 20px;
-            margin-bottom: 30px;
-            border-radius: 0 0 10px 10px;
-        }
-
-        header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .grid-2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .grid-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        /* ================================================================
-           CARDS
-           ================================================================ */
-        .card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
+        .header {
+            padding: 20px 32px;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--bg-color);
+            position: relative;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
         }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary-color);
+        
+        .title-block h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-
-        .card-badge {
+        
+        .title-block .subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        /* API Status Indicator */
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.connected {
+            background: var(--south-primary);
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Legend in header */
+        .legend {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .legend-dot.north {
+            background: var(--north-primary);
+            box-shadow: 0 0 10px var(--north-glow);
+        }
+        
+        .legend-dot.south {
+            background: var(--south-primary);
+            box-shadow: 0 0 10px var(--south-glow);
+        }
+        
+        /* ================================================================
+           MAIN NAVIGATION TABS
+           ================================================================ */
+        .main-nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 32px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+        }
+        
+        .nav-tab {
+            padding: 16px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .nav-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+        
+        .nav-tab.active {
+            color: var(--north-primary);
+            border-bottom-color: var(--north-primary);
+        }
+        
+        .nav-tab .tab-icon {
+            margin-right: 8px;
+        }
+        
+        /* ================================================================
+           MAIN CONTENT CONTAINER
+           ================================================================ */
+        .main-content {
+            padding: 24px 32px;
+            min-height: calc(100vh - 160px);
+        }
+        
+        .tab-page {
+            display: none;
+        }
+        
+        .tab-page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ================================================================
+           PANELS / CARDS
+           ================================================================ */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .panel:hover {
+            border-color: var(--border-hover);
+        }
+        
+        .panel-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 16px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .panel-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
             padding: 4px 8px;
-            border-radius: 12px;
-            background: var(--secondary-color);
+            border-radius: 4px;
+            background: var(--north-primary);
             color: white;
         }
-
+        
+        /* ================================================================
+           GRID LAYOUTS
+           ================================================================ */
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .grid-auto {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
         /* ================================================================
            STAT CARDS
            ================================================================ */
         .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 20px;
             text-align: center;
-            padding: 30px 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
         }
-
+        
+        .stat-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--secondary-color);
-            margin-bottom: 5px;
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 4px;
         }
-
+        
+        .stat-value.highlight { color: var(--accent-orange); }
+        .stat-value.north { color: var(--north-primary); }
+        .stat-value.south { color: var(--south-primary); }
+        .stat-value.purple { color: var(--accent-purple); }
+        
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.05em;
         }
-
+        
+        /* ================================================================
+           CHARTS
+           ================================================================ */
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+        
+        .chart-container canvas {
+            max-height: 100%;
+        }
+        
+        /* ================================================================
+           SUB-TABS (for Detailed Analysis)
+           ================================================================ */
+        .sub-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .sub-tab {
+            flex: 1;
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .sub-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+        
+        .sub-tab.active {
+            background: var(--north-primary);
+            color: white;
+            box-shadow: 0 2px 8px var(--north-glow);
+        }
+        
+        .sub-content {
+            display: none;
+        }
+        
+        .sub-content.active {
+            display: block;
+        }
+        
+        /* ================================================================
+           FILTER CONTROLS
+           ================================================================ */
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        select, input[type="text"], input[type="number"] {
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        select:hover, input:hover {
+            border-color: var(--border-hover);
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--north-primary);
+            box-shadow: 0 0 0 3px var(--north-glow);
+        }
+        
+        /* Toggle button group */
+        .toggle-group {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 3px;
+            gap: 3px;
+        }
+        
+        .toggle-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .toggle-btn:hover {
+            color: var(--text-primary);
+        }
+        
+        .toggle-btn.active {
+            background: var(--north-primary);
+            color: white;
+            box-shadow: 0 2px 8px var(--north-glow);
+        }
+        
+        .toggle-btn.active.south {
+            background: var(--south-primary);
+            box-shadow: 0 2px 8px var(--south-glow);
+        }
+        
+        /* Primary button */
+        .btn {
+            padding: 10px 20px;
+            background: var(--north-primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .btn.secondary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn.secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
+        }
+        
+        /* ================================================================
+           JURISDICTION LIST
+           ================================================================ */
+        .jurisdiction-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .jurisdiction-list::-webkit-scrollbar { width: 6px; }
+        .jurisdiction-list::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
+        .jurisdiction-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        
+        .jurisdiction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .jurisdiction-item:hover {
+            background: var(--bg-hover);
+            box-shadow: 0 0 20px var(--north-glow), 0 0 30px var(--north-glow);
+            transform: translateX(4px);
+        }
+        
+        .jurisdiction-item.north { border-left-color: var(--north-primary); }
+        .jurisdiction-item.south { border-left-color: var(--south-primary); }
+        
+        .jurisdiction-info {
+            flex: 1;
+        }
+        
+        .jurisdiction-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        
+        .jurisdiction-region {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .jurisdiction-stats {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .stat-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+        }
+        
+        .stat-badge.total {
+            background: var(--accent-orange);
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--accent-orange);
+        }
+        
+        /* Citation type breakdown */
+        .citation-breakdown {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .breakdown-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            color: var(--text-muted);
+        }
+        
         /* ================================================================
            TABLES
            ================================================================ */
         .table-container {
             overflow-x: auto;
         }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
-
-        th,
-        td {
-            padding: 12px 15px;
+        
+        th, td {
+            padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
-
+        
         th {
-            background: var(--bg-color);
+            background: var(--bg-secondary);
             font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        tr:hover {
-            background: rgba(52, 152, 219, 0.05);
-        }
-
-        .sortable-table th {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             cursor: pointer;
             user-select: none;
-            position: relative;
-        }
-
-        .sortable-table th:hover {
-            background: #dfe6e9;
-        }
-
-        .sort-icon::after {
-            content: '↕';
-            font-size: 0.8em;
-            margin-left: 5px;
-            opacity: 0.3;
-        }
-
-        .sort-asc .sort-icon::after {
-            content: '▲';
-            opacity: 1;
-        }
-
-        .sort-desc .sort-icon::after {
-            content: '▼';
-            opacity: 1;
-        }
-
-        .filter-row th {
-            padding: 5px;
-            background: #f8f9fa;
-        }
-
-        .filter-row input {
-            width: 100%;
-            padding: 4px 8px;
-            font-size: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        /* ================================================================
-           MAP VISUALIZATION
-           ================================================================ */
-        #map-container {
-            width: 100%;
-            height: 600px;
-            background: #aadaff;
-            /* Ocean color */
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .land {
-            fill: #d7c7ad;
-            stroke: #766951;
-            stroke-width: 0.5px;
-        }
-
-        .map-node {
-            fill: var(--primary-color);
-            stroke: #fff;
-            stroke-width: 1px;
-            cursor: pointer;
-            transition: r 0.3s;
-        }
-
-        .map-node:hover {
-            fill: var(--accent-color);
-        }
-
-        .map-link {
-            fill: none;
-            stroke-opacity: 0.4;
-            stroke-linecap: round;
-        }
-
-        .map-tooltip {
-            position: absolute;
-            padding: 8px 12px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 4px;
-            font-size: 12px;
-            pointer-events: none;
-            display: none;
-            z-index: 100;
-        }
-
-        /* ================================================================
-           NETWORK VISUALIZATION
-           ================================================================ */
-        #network-container {
-            width: 100%;
-            height: 500px;
-            background: #fafafa;
-            border-radius: 8px;
-            position: relative;
-        }
-
-        #network-svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .node {
-            cursor: pointer;
-        }
-
-        .node circle {
-            stroke: white;
-            stroke-width: 2px;
-        }
-
-        .node text {
-            font-size: 10px;
-            fill: var(--text-color);
-        }
-
-        .link {
-            fill: none;
-            stroke-opacity: 0.6;
-        }
-
-        /* ================================================================
-           CONTROLS
-           ================================================================ */
-        .controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .control-group label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        select,
-        input[type="number"] {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 0.9rem;
-            background: white;
-        }
-
-        button {
-            padding: 10px 20px;
-            background: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
             transition: background 0.2s;
         }
-
-        button:hover {
-            background: #2980b9;
+        
+        th:hover {
+            background: var(--bg-hover);
         }
-
-        button.secondary {
-            background: var(--text-muted);
+        
+        tr:hover td {
+            background: var(--bg-hover);
         }
-
-        button.secondary:hover {
-            background: #5d6d7e;
+        
+        .sort-icon::after {
+            content: '↕';
+            font-size: 0.7em;
+            margin-left: 6px;
+            opacity: 0.4;
         }
-
+        
+        th.sort-asc .sort-icon::after { content: '▲'; opacity: 1; }
+        th.sort-desc .sort-icon::after { content: '▼'; opacity: 1; }
+        
         /* ================================================================
-           LEGEND
+           MAP STYLES (from citation map)
            ================================================================ */
-        .legend {
-            display: flex;
+        .map-page-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            height: calc(100vh - 200px);
             gap: 20px;
-            flex-wrap: wrap;
-            padding: 10px;
-            background: var(--bg-color);
-            border-radius: 5px;
-            font-size: 0.85rem;
         }
-
-        .legend-item {
+        
+        .map-control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+        
+        .map-container {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #citation-map { width: 100%; height: 100%; }
+        
+        .country {
+            fill: var(--bg-secondary);
+            stroke: var(--border-color);
+            stroke-width: 0.5;
+            transition: fill 0.3s ease;
+        }
+        
+        .country:hover { fill: #2a3544; }
+        .country.highlighted { stroke: var(--text-primary); stroke-width: 1.5; }
+        .country.selected { fill: var(--accent-orange); stroke: var(--accent-orange); stroke-width: 2; }
+        .country.citing { fill: rgba(59, 130, 246, 0.6); }
+        .country.cited { fill: rgba(16, 185, 129, 0.6); }
+        
+        .flow-arc {
+            fill: none;
+            stroke-linecap: round;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        
+        .flow-arc:hover { opacity: 1; }
+        .flow-arc.incoming { stroke: var(--north-primary); }
+        .flow-arc.outgoing { stroke: var(--south-primary); }
+        
+        .map-tooltip {
+            position: absolute;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            max-width: 250px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .map-tooltip.visible { opacity: 1; }
+        .tooltip-title { font-weight: 600; margin-bottom: 3px; }
+        .tooltip-region { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; }
+        .tooltip-stat { font-family: 'Space Mono', monospace; }
+        
+        .zoom-controls {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            z-index: 100;
+        }
+        
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .zoom-btn:hover { 
+            background: var(--bg-secondary); 
+            border-color: var(--border-hover); 
+        }
+        
+        /* Map cases panel */
+        .cases-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow: hidden;
+        }
+        
+        .cases-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .case-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .case-search {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+        
+        .case-search::placeholder { color: var(--text-muted); }
+        .case-search:focus { outline: none; border-color: var(--north-primary); }
+        
+        .cases-list-container {
+            flex: 1;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cases-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .cases-list::-webkit-scrollbar { width: 6px; }
+        .cases-list::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
+        .cases-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        
+        .case-card {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 12px;
+            border-left: 3px solid var(--border-color);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .case-card:hover {
+            border-left-color: var(--accent-orange);
+            background: rgba(249, 115, 22, 0.05);
+        }
+        
+        .case-card.north { border-left-color: var(--north-primary); }
+        .case-card.south { border-left-color: var(--south-primary); }
+        
+        .case-source {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        
+        .case-source a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .case-source a:hover { color: var(--accent-orange); }
+        
+        .case-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        
+        .case-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+        }
+        
+        .case-tag.country { background: rgba(59, 130, 246, 0.2); color: var(--north-primary); }
+        .case-tag.country.south { background: rgba(16, 185, 129, 0.2); color: var(--south-primary); }
+        .case-tag.year { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        
+        .case-citation {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding-left: 10px;
+            border-left: 2px solid var(--border-color);
+            margin-top: 6px;
+        }
+        
+        .case-citation-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+        
+        .cases-empty, .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 20px;
+        }
+        
+        .cases-empty svg, .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+        
+        /* Direction toggle for map */
+        .direction-toggle {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 3px;
+            gap: 3px;
+        }
+        
+        .direction-btn {
+            flex: 1;
+            padding: 8px 10px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .direction-btn:hover { color: var(--text-primary); }
+        
+        .direction-btn.active {
+            background: var(--north-primary);
+            color: white;
+            box-shadow: 0 2px 8px var(--north-glow);
+        }
+        
+        .direction-btn.active.outgoing {
+            background: var(--south-primary);
+            box-shadow: 0 2px 8px var(--south-glow);
+        }
+        
+        /* Citation list (map panel) */
+        .citation-list {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
             gap: 6px;
         }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        
+        .citation-list::-webkit-scrollbar { width: 5px; }
+        .citation-list::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
+        .citation-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        
+        .citation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: var(--bg-secondary);
+            border-radius: 5px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-size: 0.85rem;
         }
-
-        .legend-color.north {
-            background: var(--north-color);
+        
+        .citation-item:hover { background: rgba(59, 130, 246, 0.1); }
+        .citation-item.north { border-left-color: var(--north-primary); }
+        .citation-item.south { border-left-color: var(--south-primary); }
+        
+        .citation-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 3px;
         }
-
-        .legend-color.south {
-            background: var(--south-color);
+        
+        /* Stats grid for map panel */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
-
-        .legend-color.international {
-            background: var(--international-color);
+        
+        .stats-grid .stat-card {
+            padding: 12px;
         }
-
+        
+        .stats-grid .stat-value {
+            font-size: 1.5rem;
+        }
+        
+        /* Select wrapper */
+        .select-wrapper { position: relative; }
+        
+        .country-select {
+            width: 100%;
+            padding: 10px 14px;
+            padding-right: 32px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            appearance: none;
+            transition: all 0.2s ease;
+        }
+        
+        .country-select:hover { border-color: var(--border-hover); }
+        
+        .country-select:focus {
+            outline: none;
+            border-color: var(--north-primary);
+            box-shadow: 0 0 0 3px var(--north-glow);
+        }
+        
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+        
         /* ================================================================
-           LOADING & STATUS
+           MODAL
+           ================================================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+        }
+        
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
+        .modal-body::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        
+        /* Modal case cards */
+        .modal-case-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-case-card:hover {
+            background: var(--bg-hover);
+            border-left-color: var(--accent-orange);
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
+        }
+        
+        .modal-case-card.north { border-left-color: var(--north-primary); }
+        .modal-case-card.south { border-left-color: var(--south-primary); }
+        
+        .modal-case-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .modal-case-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        
+        .modal-case-summary {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* ================================================================
+           LOADING STATE
            ================================================================ */
         .loading {
             display: flex;
@@ -407,419 +1144,512 @@
             padding: 40px;
             color: var(--text-muted);
         }
-
+        
         .spinner {
             width: 30px;
             height: 30px;
-            border: 3px solid var(--bg-color);
-            border-top-color: var(--secondary-color);
+            border: 3px solid var(--bg-secondary);
+            border-top-color: var(--north-primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-right: 10px;
+            margin-right: 12px;
         }
-
+        
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
-
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-
-        .status-indicator.connected {
-            background: var(--success-color);
-        }
-
-        .status-indicator.disconnected {
-            background: var(--accent-color);
-        }
-
-        /* ================================================================
-           TABS
-           ================================================================ */
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid var(--bg-color);
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
-        }
-
-        .tab:hover {
-            background: var(--bg-color);
-        }
-
-        .tab.active {
-            border-bottom-color: var(--secondary-color);
-            color: var(--secondary-color);
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
+        
         /* ================================================================
            RESPONSIVE
            ================================================================ */
+        @media (max-width: 1400px) {
+            .map-page-container {
+                grid-template-columns: 250px 1fr 320px;
+            }
+        }
+        
+        @media (max-width: 1100px) {
+            .map-page-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 400px auto;
+            }
+            
+            .map-control-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .map-control-panel .panel {
+                flex: 1;
+                min-width: 200px;
+            }
+            
+            .cases-list-container {
+                max-height: 300px;
+            }
+        }
+        
         @media (max-width: 768px) {
-
-            .grid-2,
-            .grid-3 {
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .header-right {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                padding: 12px 16px;
+                font-size: 0.8rem;
+            }
+            
+            .grid-2, .grid-3, .grid-4 {
                 grid-template-columns: 1fr;
             }
-
-            header h1 {
-                font-size: 1.5rem;
+            
+            .main-content {
+                padding: 16px;
             }
         }
     </style>
 </head>
-
 <body>
-    <header>
-        <div class="container">
-            <h1>🌍 Sixfold Citation Classification Dashboard</h1>
-            <p>Climate Litigation Transnational Judicial Dialogue Analysis</p>
-            <p style="margin-top: 10px; font-size: 0.85rem;">
-                <span class="status-indicator" id="api-status"></span>
-                <span id="api-status-text">Connecting to API...</span>
-            </p>
+    <!-- ================================================================
+         HEADER
+         ================================================================ -->
+    <header class="header">
+        <div class="title-block">
+            <h1>Climate Litigation Citation Analysis</h1>
+            <p class="subtitle">Transnational Judicial Dialogue in Climate Case Law</p>
+        </div>
+        <div class="header-right">
+            <div class="api-status">
+                <span class="status-dot" id="api-status"></span>
+                <span id="api-status-text">Connecting...</span>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-dot north"></span>
+                    <span>Global North</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot south"></span>
+                    <span>Global South</span>
+                </div>
+            </div>
         </div>
     </header>
-
-    <div class="container">
-        <!-- Map Section -->
-        <section id="map-section">
-            <h2 style="margin-bottom: 20px;">🌍 Citations' Map</h2>
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Global Citation Flows</span>
-                    <span class="card-badge">Interactive</span>
-                </div>
-
-                <div class="controls">
-                    <div class="control-group">
-                        <label>Filter Citations:</label>
-                        <select id="map-filter" onchange="updateMap()">
-                            <option value="">All Types</option>
-                            <option value="Cross-Border">Cross-Border (All)</option>
-                            <option value="Foreign Citation">Foreign Citation</option>
-                            <option value="International Citation">International Citation</option>
-                            <option value="Foreign International Citation">Foreign International</option>
-                            <option value="Inter-System Citation">Inter-System Citation</option>
-                            <option value="Member-State Citation">Member-State Citation</option>
-                            <option value="Non-Member Citation">Non-Member Citation</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label>Min Weight:</label>
-                        <input type="number" id="map-min-weight" value="1" min="1" max="100" onchange="updateMap()">
-                    </div>
-                </div>
-
-                <div id="map-container"></div>
-                <div id="map-tooltip" class="map-tooltip"></div>
+    
+    <!-- ================================================================
+         MAIN NAVIGATION
+         ================================================================ -->
+    <nav class="main-nav">
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="dashboard">
+                <span class="tab-icon">📊</span>Dashboard
             </div>
-        </section>
-
-        <!-- Summary Stats -->
-        <section id="summary-section" style="margin-top: 30px;">
-            <h2 style="margin-bottom: 20px;">📊 Summary Statistics</h2>
-            <div class="grid grid-3" id="summary-stats">
-                <div class="card stat-card">
-                    <div class="stat-value" id="total-citations">-</div>
-                    <div class="stat-label">Total Citations</div>
+            <div class="nav-tab" data-tab="map">
+                <span class="tab-icon">🌍</span>Citation Map
+            </div>
+            <div class="nav-tab" data-tab="analysis">
+                <span class="tab-icon">📋</span>Detailed Analysis
+            </div>
+        </div>
+    </nav>
+    
+    <!-- ================================================================
+         MAIN CONTENT
+         ================================================================ -->
+    <main class="main-content">
+        <!-- ============================================================
+             TAB 1: DASHBOARD (HOME)
+             ============================================================ -->
+        <div class="tab-page active" id="tab-dashboard">
+            <!-- Summary Statistics -->
+            <section style="margin-bottom: 30px;">
+                <h2 class="panel-title" style="margin-bottom: 16px;">Summary Statistics</h2>
+                <div class="grid grid-4" id="summary-stats">
+                    <div class="stat-card">
+                        <div class="stat-value highlight" id="total-citations">-</div>
+                        <div class="stat-label">Total Citations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value purple" id="total-decisions">-</div>
+                        <div class="stat-label">Decisions Analyzed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value north" id="total-cases">-</div>
+                        <div class="stat-label">Cases Covered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value south" id="total-jurisdictions">-</div>
+                        <div class="stat-label">Jurisdictions</div>
+                    </div>
                 </div>
-                <div class="card stat-card">
-                    <div class="stat-value" id="total-decisions">-</div>
-                    <div class="stat-label">Decisions Analyzed</div>
+            </section>
+            
+            <!-- Charts -->
+            <section>
+                <div class="grid grid-2">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Citations by Category</h3>
+                            <span class="panel-badge">Sixfold</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="category-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Regional Flow Matrix</h3>
+                            <span class="panel-badge">N/S Analysis</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="flow-chart"></canvas>
+                        </div>
+                    </div>
                 </div>
-                <div class="card stat-card">
-                    <div class="stat-value" id="total-cases">-</div>
-                    <div class="stat-label">Cases Covered</div>
+            </section>
+        </div>
+        
+        <!-- ============================================================
+             TAB 2: CITATION MAP
+             ============================================================ -->
+        <div class="tab-page" id="tab-map">
+            <div class="map-page-container">
+                <!-- Left: Controls -->
+                <aside class="map-control-panel">
+                    <div class="panel">
+                        <h2 class="panel-title">Select Country</h2>
+                        <div class="select-wrapper">
+                            <select id="map-country-select" class="country-select">
+                                <option value="">— Select a country —</option>
+                            </select>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h2 class="panel-title">Citation Direction</h2>
+                        <div class="direction-toggle">
+                            <button class="direction-btn active" data-direction="incoming">
+                                ← Cited by
+                            </button>
+                            <button class="direction-btn outgoing" data-direction="outgoing">
+                                Cites →
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h2 class="panel-title">Statistics</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value highlight" id="map-stat-total">0</div>
+                                <div class="stat-label">Citations</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="map-stat-countries">0</div>
+                                <div class="stat-label">Countries</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value north" id="map-stat-north">0</div>
+                                <div class="stat-label">North</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value south" id="map-stat-south">0</div>
+                                <div class="stat-label">South</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel" style="flex: 1;">
+                        <h2 class="panel-title" id="map-list-title">Connected Countries</h2>
+                        <div class="citation-list" id="map-citation-list">
+                            <div class="empty-state">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                </svg>
+                                <p>Select a country</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+                
+                <!-- Center: Map -->
+                <div class="map-container">
+                    <div id="citation-map"></div>
+                    <div class="map-tooltip" id="map-tooltip"></div>
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" id="zoom-in">+</button>
+                        <button class="zoom-btn" id="zoom-out">−</button>
+                        <button class="zoom-btn" id="zoom-reset">⟲</button>
+                    </div>
+                </div>
+                
+                <!-- Right: Cases -->
+                <aside class="cases-panel">
+                    <div class="panel cases-header">
+                        <h2 id="map-cases-title">Cases</h2>
+                        <div class="case-count" id="map-cases-count">Select a country to view cases</div>
+                        <input type="text" class="case-search" id="map-case-search" placeholder="Filter cases..." disabled>
+                    </div>
+                    
+                    <div class="cases-list-container">
+                        <div class="cases-list" id="map-cases-list">
+                            <div class="cases-empty">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p>Select a country to view<br>detailed case information</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+        
+        <!-- ============================================================
+             TAB 3: DETAILED ANALYSIS
+             ============================================================ -->
+        <div class="tab-page" id="tab-analysis">
+            <!-- Filter controls -->
+            <div class="controls" style="margin-bottom: 24px;">
+                <div class="control-group">
+                    <label>Citation Type:</label>
+                    <select id="analysis-type-filter">
+                        <option value="">All Types</option>
+                        <option value="Foreign Citation">Foreign Citation</option>
+                        <option value="International Citation">International Citation</option>
+                        <option value="Foreign International Citation">Foreign International</option>
+                        <option value="Inter-System Citation">Inter-System Citation</option>
+                        <option value="Member-State Citation">Member-State Citation</option>
+                        <option value="Non-Member Citation">Non-Member Citation</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Region:</label>
+                    <div class="toggle-group" id="region-filter">
+                        <button class="toggle-btn active" data-region="">All</button>
+                        <button class="toggle-btn" data-region="Global North">North</button>
+                        <button class="toggle-btn south" data-region="Global South">South</button>
+                    </div>
+                </div>
+                <button class="btn secondary" onclick="resetAnalysisFilters()">Reset Filters</button>
+            </div>
+            
+            <!-- Sub-tabs for detailed analysis -->
+            <div class="sub-tabs">
+                <button class="sub-tab active" data-subtab="top-cited">Top Cited Jurisdictions</button>
+                <button class="sub-tab" data-subtab="top-citing">Top Citing Jurisdictions</button>
+                <button class="sub-tab" data-subtab="flow-details">Flow Details</button>
+            </div>
+            
+            <!-- Sub-tab content: Top Cited Jurisdictions -->
+            <div class="sub-content active" id="subtab-top-cited">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">Jurisdictions Receiving Citations</h3>
+                        <span class="panel-badge" id="top-cited-count">0 results</span>
+                    </div>
+                    <div class="jurisdiction-list" id="top-cited-list">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading data...
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-
-        <!-- Category Breakdown -->
-        <section id="category-section">
-            <h2 style="margin-bottom: 20px;">📁 Citation Categories</h2>
-            <div class="grid grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Citations by Category</span>
+            
+            <!-- Sub-tab content: Top Citing Jurisdictions -->
+            <div class="sub-content" id="subtab-top-citing">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">Jurisdictions Making Citations</h3>
+                        <span class="panel-badge" id="top-citing-count">0 results</span>
                     </div>
-                    <canvas id="category-chart" height="300"></canvas>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Regional Flow Matrix</span>
+                    <div class="jurisdiction-list" id="top-citing-list">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading data...
+                        </div>
                     </div>
-                    <canvas id="flow-chart" height="300"></canvas>
                 </div>
             </div>
-        </section>
-
-        <!-- Network Visualization -->
-        <section id="network-section" style="margin-top: 30px;">
-            <h2 style="margin-bottom: 20px;">🔗 Citation Network</h2>
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Jurisdiction Citation Network</span>
-                    <span class="card-badge">Interactive</span>
-                </div>
-
-                <div class="controls">
-                    <div class="control-group">
-                        <label>Min Weight:</label>
-                        <input type="number" id="min-weight" value="1" min="1" max="100">
+            
+            <!-- Sub-tab content: Flow Details -->
+            <div class="sub-content" id="subtab-flow-details">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">Citation Flow Details</h3>
+                        <span class="panel-badge" id="flow-count">0 flows</span>
                     </div>
-                    <div class="control-group">
-                        <label>Classification:</label>
-                        <select id="sixfold-filter">
-                            <option value="">All Types</option>
-                            <option value="Foreign Citation">Foreign Citation</option>
-                            <option value="International Citation">International Citation</option>
-                            <option value="Foreign International Citation">Foreign International</option>
-                            <option value="Inter-System Citation">Inter-System Citation</option>
-                            <option value="Member-State Citation">Member-State Citation</option>
-                            <option value="Non-Member Citation">Non-Member Citation</option>
-                        </select>
-                    </div>
-                    <button onclick="loadNetwork()">Apply Filters</button>
-                    <button class="secondary" onclick="resetNetwork()">Reset</button>
-                </div>
-
-                <div class="legend">
-                    <div class="legend-item">
-                        <span class="legend-color north"></span>
-                        <span>Global North</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color south"></span>
-                        <span>Global South</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color international"></span>
-                        <span>International</span>
-                    </div>
-                </div>
-
-                <div id="network-container">
-                    <svg id="network-svg"></svg>
-                </div>
-            </div>
-        </section>
-
-        <!-- Detailed Tables -->
-        <section id="tables-section" style="margin-top: 30px;">
-            <h2 style="margin-bottom: 20px;">📋 Detailed Analysis</h2>
-
-            <div class="card">
-                <div class="controls" style="margin-bottom: 15px; padding: 0 20px;">
-                    <div class="control-group">
-                        <label>Filter Analysis:</label>
-                        <input type="text" id="analysis-filter" placeholder="Search text..."
-                            onkeyup="filterAnalysisTables()">
-                    </div>
-                </div>
-
-                <div class="tabs">
-                    <div class="tab active" data-tab="top-cases">Top Cited Cases</div>
-                    <div class="tab" data-tab="top-jurisdictions">Top Jurisdictions</div>
-                    <div class="tab" data-tab="flow-details">Flow Details</div>
-                </div>
-
-                <div class="tab-content active" id="top-cases">
                     <div class="table-container">
-                        <table id="top-cases-table" class="sortable-table">
+                        <table id="flow-details-table">
                             <thead>
                                 <tr>
-                                    <th onclick="sortTable('top-cases-table', 0)"># <span class="sort-icon"></span></th>
-                                    <th onclick="sortTable('top-cases-table', 1)">Case Name <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('top-cases-table', 2)">Origin <span class="sort-icon"></span>
-                                    </th>
-                                    <th onclick="sortTable('top-cases-table', 3)">Region <span class="sort-icon"></span>
-                                    </th>
-                                    <th onclick="sortTable('top-cases-table', 4)">Citations <span
-                                            class="sort-icon"></span></th>
-                                </tr>
-                                <tr class="filter-row">
-                                    <th></th>
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('top-cases-table', 1, this.value)"></th>
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('top-cases-table', 2, this.value)"></th>
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('top-cases-table', 3, this.value)"></th>
-                                    <th></th>
+                                    <th onclick="sortTable('flow-details-table', 0)">Source <span class="sort-icon"></span></th>
+                                    <th onclick="sortTable('flow-details-table', 1)">Target <span class="sort-icon"></span></th>
+                                    <th onclick="sortTable('flow-details-table', 2)">Type <span class="sort-icon"></span></th>
+                                    <th onclick="sortTable('flow-details-table', 3)">Count <span class="sort-icon"></span></th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
                     </div>
                 </div>
-
-                <div class="tab-content" id="top-jurisdictions">
-                    <div class="table-container">
-                        <table id="top-jurisdictions-table" class="sortable-table">
-                            <thead>
-                                <tr>
-                                    <th onclick="sortTable('top-jurisdictions-table', 0)"># <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('top-jurisdictions-table', 1)">Jurisdiction <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('top-jurisdictions-table', 2)">Region <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('top-jurisdictions-table', 3)">Citations Made <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('top-jurisdictions-table', 4)">Citations Received <span
-                                            class="sort-icon"></span></th>
-                                </tr>
-                                <tr class="filter-row">
-                                    <th></th>
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('top-jurisdictions-table', 1, this.value)"></th>
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('top-jurisdictions-table', 2, this.value)"></th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="tab-content" id="flow-details">
-                    <div class="table-container">
-                        <table id="flow-details-table" class="sortable-table">
-                            <thead>
-                                <tr>
-                                    <th onclick="sortTable('flow-details-table', 0)">Source <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('flow-details-table', 1)">Target <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('flow-details-table', 2)">Type <span
-                                            class="sort-icon"></span></th>
-                                    <th onclick="sortTable('flow-details-table', 3)">Count <span
-                                            class="sort-icon"></span></th>
-                                </tr>
-                                <tr class="filter-row">
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('flow-details-table', 0, this.value)"></th>
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('flow-details-table', 1, this.value)"></th>
-                                    <th><input type="text" placeholder="Filter..."
-                                            onkeyup="filterTableColumn('flow-details-table', 2, this.value)"></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
-        </section>
-
-        <!-- Export Section -->
-        <section id="export-section" style="margin-top: 30px;">
-            <h2 style="margin-bottom: 20px;">📥 Data Export</h2>
-            <div class="card">
-                <div class="controls">
-                    <button onclick="exportData('dashboard')">Export Dashboard (JSON)</button>
-                    <button onclick="exportData('network', 'json')">Export Network (JSON)</button>
-                    <button onclick="exportData('network', 'csv')">Export Network (CSV)</button>
-                    <button onclick="exportData('network', 'gephi')">Export for Gephi</button>
-                </div>
+        </div>
+    </main>
+    
+    <!-- ================================================================
+         MODAL FOR CASE DETAILS
+         ================================================================ -->
+    <div class="modal-overlay" id="case-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Cases</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
-        </section>
+            <div class="modal-body" id="modal-body">
+                <!-- Case cards will be inserted here -->
+            </div>
+        </div>
     </div>
-
+    
+    <!-- ================================================================
+         JAVASCRIPT
+         ================================================================ -->
     <script>
         // ================================================================
-        // CONFIGURATION
+        // API CONFIGURATION
         // ================================================================
-
-        // API base URL - adjust for your deployment
-        // ================================================================
-        // API CONFIGURATION - Auto-detect environment
-        // ================================================================
-
-        // Determine API base URL based on current environment
-        // Production: Use Railway API URL
-        // Development: Use localhost
+        
+        /**
+         * Determine API base URL based on current environment
+         * Production: Railway API at same domain
+         * Development: localhost:5000
+         */
         const API_BASE = (() => {
             const hostname = window.location.hostname;
-
-            // Production: If we're on Railway (*.up.railway.app)
-            if (hostname.includes('railway.app')) {
-                // Replace with your actual Railway API service URL
-                // This will be updated after deployment
-                return '/api';
-            }
-
-            // Production: If served from a custom domain or the same origin
+            
+            // Production environment detection
             if (hostname !== 'localhost' && hostname !== '127.0.0.1' && !hostname.includes('file://')) {
-                // Assume API is at same domain with /api path
                 return '/api';
             }
-
-            // Development: localhost
+            
+            // Development fallback
             return 'http://127.0.0.1:5000/api';
         })();
-
+        
         console.log('API Base URL:', API_BASE);
-
-        // Color mapping for regions
+        
+        // ================================================================
+        // GLOBAL STATE
+        // ================================================================
+        
+        // Region colors for visualizations
         const REGION_COLORS = {
-            'Global North': '#3498db',
-            'Global South': '#e74c3c',
-            'International': '#9b59b6',
-            'Unknown': '#95a5a6'
+            'Global North': '#3b82f6',
+            'Global South': '#10b981',
+            'International': '#8b5cf6',
+            'Unknown': '#5a6978'
         };
-
+        
+        // Sixfold category colors
+        const CATEGORY_COLORS = [
+            '#3b82f6', '#10b981', '#f97316', 
+            '#8b5cf6', '#06b6d4', '#ef4444'
+        ];
+        
+        // Map state
+        let mapData = { nodes: [], links: [], cases: [] };
+        let worldData = null;
+        let selectedCountry = null;
+        let mapDirection = 'incoming';
+        let currentMapCases = [];
+        
+        // Map D3 objects
+        let mapSvg, mapG, mapProjection, mapPath, mapZoom;
+        
+        // Country name to numeric ID mapping for TopoJSON
+        const countryToNumeric = {
+            'Afghanistan': '4', 'Albania': '8', 'Algeria': '12', 'Argentina': '32',
+            'Armenia': '51', 'Australia': '36', 'Austria': '40', 'Azerbaijan': '31',
+            'Bangladesh': '50', 'Belgium': '56', 'Belize': '84', 'Bolivia': '68',
+            'Bosnia and Herzegovina': '70', 'Brazil': '76', 'Bulgaria': '100',
+            'Cambodia': '116', 'Cameroon': '120', 'Canada': '124', 'Chile': '152',
+            'China': '156', 'Colombia': '170', 'Costa Rica': '188', 'Croatia': '191',
+            'Cyprus': '196', 'Czech Republic': '203', 'Czechia': '203',
+            'Denmark': '208', 'Dominican Republic': '214', 'Ecuador': '218',
+            'Egypt': '818', 'El Salvador': '222', 'Estonia': '233', 'Ethiopia': '231',
+            'Fiji': '242', 'Finland': '246', 'France': '250', 'Germany': '276',
+            'Ghana': '288', 'Greece': '300', 'Guatemala': '320', 'Honduras': '340',
+            'Hungary': '348', 'Iceland': '352', 'India': '356', 'Indonesia': '360',
+            'Iran': '364', 'Iraq': '368', 'Ireland': '372', 'Israel': '376',
+            'Italy': '380', 'Jamaica': '388', 'Japan': '392', 'Jordan': '400',
+            'Kazakhstan': '398', 'Kenya': '404', 'South Korea': '410', 'Korea': '410',
+            'Kuwait': '414', 'Latvia': '428', 'Lebanon': '422', 'Lithuania': '440',
+            'Luxembourg': '442', 'Malaysia': '458', 'Malta': '470', 'Mexico': '484',
+            'Morocco': '504', 'Myanmar': '104', 'Nepal': '524', 'Netherlands': '528',
+            'New Zealand': '554', 'Nicaragua': '558', 'Nigeria': '566', 'Norway': '578',
+            'Pakistan': '586', 'Panama': '591', 'Papua New Guinea': '598',
+            'Paraguay': '600', 'Peru': '604', 'Philippines': '608', 'Poland': '616',
+            'Portugal': '620', 'Romania': '642', 'Russia': '643', 'Saudi Arabia': '682',
+            'Senegal': '686', 'Serbia': '688', 'Singapore': '702', 'Slovakia': '703',
+            'Slovenia': '705', 'South Africa': '710', 'Spain': '724', 'Sri Lanka': '144',
+            'Sudan': '736', 'Sweden': '752', 'Switzerland': '756', 'Syria': '760',
+            'Taiwan': '158', 'Tanzania': '834', 'Thailand': '764', 'Trinidad and Tobago': '780',
+            'Tunisia': '788', 'Turkey': '792', 'Türkiye': '792', 'Uganda': '800',
+            'Ukraine': '804', 'United Arab Emirates': '784', 'UAE': '784',
+            'United Kingdom': '826', 'UK': '826', 'United States': '840', 'USA': '840',
+            'US': '840', 'Uruguay': '858', 'Venezuela': '862', 'Vietnam': '704',
+            'Zambia': '894', 'Zimbabwe': '716', 'European Union': 'EU', 'EU': 'EU'
+        };
+        
+        // Reverse mapping
+        const numericToCountry = {};
+        Object.entries(countryToNumeric).forEach(([name, id]) => {
+            numericToCountry[id] = name;
+        });
+        
+        // Analysis state
+        let analysisData = { nodes: [], flows: [] };
+        let currentTypeFilter = '';
+        let currentRegionFilter = '';
+        
         // ================================================================
         // API FUNCTIONS
         // ================================================================
-
+        
         /**
          * Make an API request with error handling
-         * 
          * @param {string} endpoint - API endpoint path
          * @param {object} params - Query parameters
          * @returns {Promise<object>} - Response data
          */
         async function apiRequest(endpoint, params = {}) {
             const url = new URL(`${API_BASE}${endpoint}`, window.location.origin);
+            
+            // Add query parameters
             Object.keys(params).forEach(key => {
                 if (params[key] !== null && params[key] !== '') {
                     url.searchParams.append(key, params[key]);
                 }
             });
-
+            
             try {
                 const response = await fetch(url);
                 const json = await response.json();
-
+                
                 if (json.status === 'success') {
                     return json.data;
                 } else {
@@ -830,49 +1660,99 @@
                 throw error;
             }
         }
-
+        
         /**
          * Check API health and update status indicator
          */
         async function checkApiHealth() {
             const statusEl = document.getElementById('api-status');
             const textEl = document.getElementById('api-status-text');
-
+            
             try {
                 const data = await apiRequest('/health');
-                statusEl.className = 'status-indicator connected';
-                textEl.textContent = `Connected to API (v${data.version || '1.0'})`;
+                statusEl.classList.add('connected');
+                textEl.textContent = `Connected (v${data.version || '1.0'})`;
                 return true;
             } catch (error) {
-                statusEl.className = 'status-indicator disconnected';
-                textEl.textContent = 'API Disconnected - Check server';
+                statusEl.classList.remove('connected');
+                textEl.textContent = 'Disconnected';
                 return false;
             }
         }
-
+        
         // ================================================================
-        // DASHBOARD LOADING
+        // MAIN NAVIGATION
         // ================================================================
-
+        
+        /**
+         * Initialize main tab navigation
+         */
+        function initMainTabs() {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update tab active state
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding page
+                    const tabId = tab.dataset.tab;
+                    document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
+                    document.getElementById(`tab-${tabId}`).classList.add('active');
+                    
+                    // Initialize map if switching to map tab
+                    if (tabId === 'map' && !mapSvg) {
+                        initCitationMap();
+                    }
+                });
+            });
+        }
+        
+        /**
+         * Initialize sub-tabs for detailed analysis
+         */
+        function initSubTabs() {
+            document.querySelectorAll('.sub-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update sub-tab active state
+                    document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    const subtabId = tab.dataset.subtab;
+                    document.querySelectorAll('.sub-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`subtab-${subtabId}`).classList.add('active');
+                });
+            });
+        }
+        
+        // ================================================================
+        // DASHBOARD TAB - SUMMARY STATS & CHARTS
+        // ================================================================
+        
         /**
          * Load and display summary statistics
          */
         async function loadSummaryStats() {
             try {
                 const data = await apiRequest('/dashboard/summary_stats');
-
-                document.getElementById('total-citations').textContent =
+                
+                document.getElementById('total-citations').textContent = 
                     data.total_citations?.toLocaleString() || '-';
-                document.getElementById('total-decisions').textContent =
+                document.getElementById('total-decisions').textContent = 
                     data.total_decisions?.toLocaleString() || '-';
-                document.getElementById('total-cases').textContent =
+                document.getElementById('total-cases').textContent = 
                     data.total_cases?.toLocaleString() || '-';
-
+                
+                // Calculate jurisdictions from nodes
+                const nodes = await apiRequest('/network/nodes', { limit: 1000 });
+                document.getElementById('total-jurisdictions').textContent = 
+                    nodes.length?.toLocaleString() || '-';
+                    
             } catch (error) {
                 console.error('Failed to load summary stats:', error);
             }
         }
-
+        
         /**
          * Load and render category breakdown chart
          */
@@ -880,9 +1760,13 @@
             try {
                 const data = await apiRequest('/dashboard/summary_stats');
                 const categories = data.by_category || [];
-
+                
                 const ctx = document.getElementById('category-chart').getContext('2d');
-
+                
+                // Configure Chart.js for dark theme
+                Chart.defaults.color = '#8b9aad';
+                Chart.defaults.borderColor = '#2a3544';
+                
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -890,19 +1774,31 @@
                         datasets: [{
                             label: 'Citations',
                             data: categories.map(c => c.total_citations),
-                            backgroundColor: [
-                                '#3498db', '#e74c3c', '#f39c12',
-                                '#9b59b6', '#1abc9c', '#34495e'
-                            ]
+                            backgroundColor: CATEGORY_COLORS,
+                            borderRadius: 4,
+                            borderSkipped: false,
                         }]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: { display: false }
                         },
                         scales: {
-                            y: { beginAtZero: true }
+                            y: { 
+                                beginAtZero: true,
+                                grid: { color: '#2a3544' },
+                                ticks: { color: '#8b9aad' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { 
+                                    color: '#8b9aad',
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
                         }
                     }
                 });
@@ -910,15 +1806,15 @@
                 console.error('Failed to load category chart:', error);
             }
         }
-
+        
         /**
-         * Load and render regional flow chart
+         * Load and render regional flow doughnut chart
          */
         async function loadFlowChart() {
             try {
                 const data = await apiRequest('/dashboard/regional_flows');
                 const asymmetry = data.asymmetry_data || [];
-
+                
                 // Aggregate flows
                 let flows = { 'N→N': 0, 'N→S': 0, 'S→N': 0, 'S→S': 0 };
                 asymmetry.forEach(row => {
@@ -927,22 +1823,33 @@
                     flows['S→N'] += row.s_to_n || 0;
                     flows['S→S'] += row.s_to_s || 0;
                 });
-
+                
                 const ctx = document.getElementById('flow-chart').getContext('2d');
-
+                
                 new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: Object.keys(flows),
                         datasets: [{
                             data: Object.values(flows),
-                            backgroundColor: ['#3498db', '#9b59b6', '#f39c12', '#e74c3c']
+                            backgroundColor: ['#3b82f6', '#8b5cf6', '#f97316', '#10b981'],
+                            borderWidth: 0,
+                            hoverOffset: 10
                         }]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
                         plugins: {
-                            legend: { position: 'right' }
+                            legend: { 
+                                position: 'right',
+                                labels: {
+                                    color: '#8b9aad',
+                                    padding: 16,
+                                    font: { family: "'Space Mono', monospace", size: 11 }
+                                }
+                            }
                         }
                     }
                 });
@@ -950,573 +1857,940 @@
                 console.error('Failed to load flow chart:', error);
             }
         }
-
-
-
+        
         // ================================================================
-        // MAP VISUALIZATION
+        // MAP TAB - INTERACTIVE CITATION MAP
         // ================================================================
-
-        let mapData = { nodes: [], links: [] };
-        let worldData = null;
-
-        async function loadMap() {
-            const container = document.getElementById('map-container');
-            container.innerHTML = ''; // Clear
-
-            // Create SVG
+        
+        /**
+         * Initialize the citation map
+         */
+        async function initCitationMap() {
+            const container = document.getElementById('citation-map');
             const width = container.clientWidth;
             const height = container.clientHeight;
-
-            const svg = d3.select('#map-container')
+            
+            // Create SVG
+            mapSvg = d3.select('#citation-map')
                 .append('svg')
                 .attr('width', width)
                 .attr('height', height);
-
-            // Projection
-            const projection = d3.geoNaturalEarth1()
+            
+            mapG = mapSvg.append('g');
+            
+            // Projection setup
+            mapProjection = d3.geoNaturalEarth1()
                 .scale(width / 5.5)
-                .translate([width / 2, height / 1.8]);
-
-            const path = d3.geoPath().projection(projection);
-
-            // Load world data if not loaded
-            if (!worldData) {
+                .translate([width / 2, height / 2]);
+            
+            mapPath = d3.geoPath().projection(mapProjection);
+            
+            // Zoom behavior
+            mapZoom = d3.zoom()
+                .scaleExtent([1, 8])
+                .on('zoom', (event) => mapG.attr('transform', event.transform));
+            
+            mapSvg.call(mapZoom);
+            
+            // Load world map data
+            try {
+                const response = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+                worldData = await response.json();
+                
+                const countries = topojson.feature(worldData, worldData.objects.countries);
+                
+                // Draw countries
+                mapG.selectAll('.country')
+                    .data(countries.features)
+                    .enter()
+                    .append('path')
+                    .attr('class', 'country')
+                    .attr('d', mapPath)
+                    .attr('data-id', d => d.id)
+                    .on('mouseover', handleMapCountryHover)
+                    .on('mouseout', handleMapCountryOut)
+                    .on('click', handleMapCountryClick);
+                
+                // Add graticule
+                const graticule = d3.geoGraticule();
+                mapG.append('path')
+                    .datum(graticule)
+                    .attr('class', 'graticule')
+                    .attr('d', mapPath)
+                    .attr('fill', 'none')
+                    .attr('stroke', 'rgba(255,255,255,0.05)')
+                    .attr('stroke-width', 0.5);
+                
+                // Groups for arcs and markers
+                mapG.append('g').attr('class', 'arcs');
+                mapG.append('g').attr('class', 'markers');
+                
+            } catch (error) {
+                console.error('Error loading map:', error);
+            }
+            
+            // Load citation data from API
+            await loadMapData();
+            
+            // Populate country selector
+            populateMapCountrySelector();
+            
+            // Setup event listeners
+            setupMapEventListeners();
+        }
+        
+        /**
+         * Load map data from API
+         */
+        async function loadMapData() {
+            try {
+                // Load network data
+                const networkData = await apiRequest('/network');
+                mapData.nodes = networkData.nodes || [];
+                mapData.links = networkData.links || [];
+                
+                // Load case-level citation data for the map
                 try {
-                    const response = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
-                    worldData = await response.json();
+                    const casesData = await apiRequest('/custom/map-citations');
+                    mapData.cases = casesData || [];
                 } catch (e) {
-                    console.error("Failed to load world map data", e);
-                    container.innerHTML = '<div class="loading">Failed to load map data</div>';
+                    console.warn('Map citations endpoint not available, using empty cases');
+                    mapData.cases = [];
+                }
+                
+                console.log('Map data loaded:', mapData.nodes.length, 'nodes,', mapData.links.length, 'links');
+            } catch (error) {
+                console.error('Failed to load map data:', error);
+            }
+        }
+        
+        /**
+         * Populate the country selector dropdown
+         */
+        function populateMapCountrySelector() {
+            const select = document.getElementById('map-country-select');
+            const countriesWithData = new Set();
+            
+            // Get countries from nodes
+            mapData.nodes.forEach(node => {
+                if (node.label) countriesWithData.add(node.label);
+            });
+            
+            // Sort and add options
+            Array.from(countriesWithData).sort().forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                select.appendChild(option);
+            });
+        }
+        
+        /**
+         * Setup map event listeners
+         */
+        function setupMapEventListeners() {
+            // Country selector change
+            document.getElementById('map-country-select').addEventListener('change', (e) => {
+                selectedCountry = e.target.value || null;
+                updateMapVisualization();
+            });
+            
+            // Direction toggle
+            document.querySelectorAll('.direction-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.direction-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    mapDirection = btn.dataset.direction;
+                    updateMapVisualization();
+                });
+            });
+            
+            // Zoom controls
+            document.getElementById('zoom-in').addEventListener('click', () => 
+                mapSvg.transition().call(mapZoom.scaleBy, 1.5));
+            document.getElementById('zoom-out').addEventListener('click', () => 
+                mapSvg.transition().call(mapZoom.scaleBy, 0.67));
+            document.getElementById('zoom-reset').addEventListener('click', () => 
+                mapSvg.transition().call(mapZoom.transform, d3.zoomIdentity));
+            
+            // Case search
+            document.getElementById('map-case-search').addEventListener('input', (e) => {
+                filterMapCases(e.target.value);
+            });
+            
+            // Window resize
+            window.addEventListener('resize', debounce(() => {
+                if (mapSvg) {
+                    const container = document.getElementById('citation-map');
+                    const width = container.clientWidth;
+                    const height = container.clientHeight;
+                    
+                    mapSvg.attr('width', width).attr('height', height);
+                    mapProjection.scale(width / 5.5).translate([width / 2, height / 2]);
+                    
+                    mapG.selectAll('.country').attr('d', mapPath);
+                    mapG.selectAll('.graticule').attr('d', mapPath);
+                    
+                    if (selectedCountry) updateMapVisualization();
+                }
+            }, 250));
+        }
+        
+        /**
+         * Update map visualization based on selected country and direction
+         */
+        function updateMapVisualization() {
+            // Reset country highlighting
+            mapG.selectAll('.country')
+                .classed('selected', false)
+                .classed('citing', false)
+                .classed('cited', false);
+            
+            // Clear arcs and markers
+            mapG.select('.arcs').selectAll('*').remove();
+            mapG.select('.markers').selectAll('*').remove();
+            
+            if (!selectedCountry) {
+                updateMapStats(0, 0, 0, 0);
+                updateMapCitationList([]);
+                updateMapCasesList([]);
+                return;
+            }
+            
+            // Find relevant flows
+            let relevantFlows;
+            if (mapDirection === 'incoming') {
+                // Citations received by selected country
+                relevantFlows = mapData.links.filter(l => l.target === selectedCountry || 
+                    mapData.nodes.find(n => n.id === l.target)?.label === selectedCountry);
+            } else {
+                // Citations made by selected country
+                relevantFlows = mapData.links.filter(l => l.source === selectedCountry ||
+                    mapData.nodes.find(n => n.id === l.source)?.label === selectedCountry);
+            }
+            
+            // Aggregate flows by country
+            const flowsByCountry = {};
+            relevantFlows.forEach(flow => {
+                const otherNodeId = mapDirection === 'incoming' ? flow.source : flow.target;
+                const otherNode = mapData.nodes.find(n => n.id === otherNodeId);
+                const otherCountry = otherNode?.label || otherNodeId;
+                
+                if (!flowsByCountry[otherCountry]) {
+                    flowsByCountry[otherCountry] = {
+                        country: otherCountry,
+                        region: otherNode?.region || 'Unknown',
+                        count: 0
+                    };
+                }
+                flowsByCountry[otherCountry].count += flow.value || 1;
+            });
+            
+            const flowsArray = Object.values(flowsByCountry).sort((a, b) => b.count - a.count);
+            
+            // Calculate statistics
+            const totalCitations = flowsArray.reduce((sum, f) => sum + f.count, 0);
+            const northCount = flowsArray.filter(f => f.region === 'Global North').reduce((sum, f) => sum + f.count, 0);
+            const southCount = flowsArray.filter(f => f.region === 'Global South').reduce((sum, f) => sum + f.count, 0);
+            
+            updateMapStats(totalCitations, flowsArray.length, northCount, southCount);
+            updateMapCitationList(flowsArray);
+            
+            // Highlight selected country
+            const selectedNumericId = countryToNumeric[selectedCountry];
+            mapG.selectAll('.country')
+                .classed('selected', d => d.id == selectedNumericId);
+            
+            // Highlight and draw arcs for related countries
+            drawMapArcs(flowsArray);
+            
+            // Update cases list
+            updateMapCasesForCountry();
+        }
+        
+        /**
+         * Draw arc connections on the map
+         */
+        function drawMapArcs(flows) {
+            const arcsG = mapG.select('.arcs');
+            const markersG = mapG.select('.markers');
+            
+            const selectedNode = mapData.nodes.find(n => n.label === selectedCountry);
+            if (!selectedNode || !selectedNode.lat || !selectedNode.lon) return;
+            
+            const selectedCoords = mapProjection([selectedNode.lon, selectedNode.lat]);
+            
+            flows.forEach(flow => {
+                const otherNode = mapData.nodes.find(n => n.label === flow.country);
+                if (!otherNode || !otherNode.lat || !otherNode.lon) return;
+                
+                const otherCoords = mapProjection([otherNode.lon, otherNode.lat]);
+                
+                // Highlight country
+                const numericId = countryToNumeric[flow.country];
+                mapG.selectAll('.country')
+                    .filter(d => d.id == numericId)
+                    .classed(mapDirection === 'incoming' ? 'citing' : 'cited', true);
+                
+                // Draw arc
+                const dx = otherCoords[0] - selectedCoords[0];
+                const dy = otherCoords[1] - selectedCoords[1];
+                const dr = Math.sqrt(dx * dx + dy * dy) * 1.5;
+                
+                const sourceCoords = mapDirection === 'incoming' ? otherCoords : selectedCoords;
+                const targetCoords = mapDirection === 'incoming' ? selectedCoords : otherCoords;
+                
+                arcsG.append('path')
+                    .attr('class', `flow-arc ${mapDirection}`)
+                    .attr('d', `M${sourceCoords[0]},${sourceCoords[1]}A${dr},${dr} 0 0,1 ${targetCoords[0]},${targetCoords[1]}`)
+                    .attr('stroke-width', Math.max(1, Math.min(flow.count / 2, 5)));
+                
+                // Draw marker
+                markersG.append('circle')
+                    .attr('cx', otherCoords[0])
+                    .attr('cy', otherCoords[1])
+                    .attr('r', Math.max(4, Math.min(flow.count, 12)))
+                    .attr('fill', flow.region === 'Global North' ? '#3b82f6' : '#10b981')
+                    .attr('stroke', '#fff')
+                    .attr('stroke-width', 1)
+                    .style('opacity', 0.8);
+            });
+        }
+        
+        /**
+         * Update map statistics display
+         */
+        function updateMapStats(total, countries, north, south) {
+            document.getElementById('map-stat-total').textContent = total;
+            document.getElementById('map-stat-countries').textContent = countries;
+            document.getElementById('map-stat-north').textContent = north;
+            document.getElementById('map-stat-south').textContent = south;
+        }
+        
+        /**
+         * Update map citation list panel
+         */
+        function updateMapCitationList(flows) {
+            const listContainer = document.getElementById('map-citation-list');
+            const titleEl = document.getElementById('map-list-title');
+            
+            if (!flows.length) {
+                titleEl.textContent = 'Connected Countries';
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        </svg>
+                        <p>Select a country</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            titleEl.textContent = mapDirection === 'incoming' 
+                ? `Countries Citing ${selectedCountry}` 
+                : `Countries Cited by ${selectedCountry}`;
+            
+            listContainer.innerHTML = flows.map(flow => `
+                <div class="citation-item ${flow.region === 'Global North' ? 'north' : 'south'}" 
+                     data-country="${flow.country}">
+                    <span>${flow.country}</span>
+                    <span class="citation-count">${flow.count}</span>
+                </div>
+            `).join('');
+            
+            // Add click handlers to switch to that country
+            listContainer.querySelectorAll('.citation-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.getElementById('map-country-select').value = item.dataset.country;
+                    selectedCountry = item.dataset.country;
+                    updateMapVisualization();
+                });
+            });
+        }
+        
+        /**
+         * Update cases list for selected country
+         */
+        async function updateMapCasesForCountry() {
+            const casesTitle = document.getElementById('map-cases-title');
+            const casesCount = document.getElementById('map-cases-count');
+            const searchInput = document.getElementById('map-case-search');
+            const casesList = document.getElementById('map-cases-list');
+            
+            if (!selectedCountry) {
+                casesTitle.textContent = 'Cases';
+                casesCount.textContent = 'Select a country to view cases';
+                searchInput.disabled = true;
+                searchInput.value = '';
+                casesList.innerHTML = `
+                    <div class="cases-empty">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <p>Select a country to view<br>detailed case information</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Fetch cases from API
+            try {
+                const params = mapDirection === 'incoming' 
+                    ? { target_jurisdiction: selectedCountry }
+                    : { source_jurisdiction: selectedCountry };
+                
+                const cases = await apiRequest('/custom/citations-by-jurisdiction', params);
+                currentMapCases = cases || [];
+                
+                searchInput.disabled = false;
+                
+                casesTitle.textContent = mapDirection === 'incoming'
+                    ? `Cases Citing ${selectedCountry}`
+                    : `${selectedCountry}'s Citations`;
+                
+                casesCount.textContent = `${currentMapCases.length} citation${currentMapCases.length !== 1 ? 's' : ''} found`;
+                
+                renderMapCases(currentMapCases);
+            } catch (error) {
+                console.error('Failed to load cases:', error);
+                casesCount.textContent = 'Failed to load cases';
+            }
+        }
+        
+        /**
+         * Render cases in the map panel
+         */
+        function renderMapCases(cases) {
+            const casesList = document.getElementById('map-cases-list');
+            
+            if (!cases.length) {
+                casesList.innerHTML = `
+                    <div class="cases-empty">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <p>No cases found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group cases by source case
+            const grouped = {};
+            cases.forEach(c => {
+                const key = c.case_id || c.case_name;
+                if (!grouped[key]) {
+                    grouped[key] = {
+                        case_name: c.case_name || 'Unknown Case',
+                        case_url: c.case_url,
+                        source_jurisdiction: c.source_jurisdiction,
+                        source_region: c.source_region,
+                        cited_year: c.cited_year,
+                        citations: []
+                    };
+                }
+                grouped[key].citations.push({
+                    cited_case: c.cited_case_name || c.case_name,
+                    target_jurisdiction: c.case_law_origin,
+                    citation_type: c.citation_type
+                });
+            });
+            
+            const casesArray = Object.values(grouped);
+            
+            casesList.innerHTML = casesArray.slice(0, 50).map(caseGroup => {
+                const regionClass = caseGroup.source_region === 'Global North' ? 'north' : 'south';
+                
+                return `
+                    <div class="case-card ${regionClass}" 
+                         onclick="window.open('${caseGroup.case_url || '#'}', '_blank')">
+                        <div class="case-source">${caseGroup.case_name}</div>
+                        <div class="case-meta">
+                            <span class="case-tag country ${regionClass}">${caseGroup.source_jurisdiction || 'Unknown'}</span>
+                            ${caseGroup.cited_year ? `<span class="case-tag year">${caseGroup.cited_year}</span>` : ''}
+                            <span class="case-tag">${caseGroup.citations.length} citation${caseGroup.citations.length > 1 ? 's' : ''}</span>
+                        </div>
+                        ${caseGroup.citations.slice(0, 2).map(c => `
+                            <div class="case-citation">
+                                <div class="case-citation-label">${c.citation_type || 'Cites'}</div>
+                                ${c.cited_case}
+                            </div>
+                        `).join('')}
+                        ${caseGroup.citations.length > 2 ? 
+                            `<div class="case-citation" style="color: var(--text-muted);">+ ${caseGroup.citations.length - 2} more</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        /**
+         * Filter map cases by search query
+         */
+        function filterMapCases(query) {
+            if (!query.trim()) {
+                renderMapCases(currentMapCases);
+                return;
+            }
+            
+            const lowerQuery = query.toLowerCase();
+            const filtered = currentMapCases.filter(c => 
+                (c.case_name && c.case_name.toLowerCase().includes(lowerQuery)) ||
+                (c.source_jurisdiction && c.source_jurisdiction.toLowerCase().includes(lowerQuery)) ||
+                (c.case_law_origin && c.case_law_origin.toLowerCase().includes(lowerQuery))
+            );
+            
+            renderMapCases(filtered);
+            document.getElementById('map-cases-count').textContent = 
+                `${filtered.length} of ${currentMapCases.length} citations`;
+        }
+        
+        /**
+         * Handle country hover on map
+         */
+        function handleMapCountryHover(event, d) {
+            const countryName = numericToCountry[d.id];
+            if (countryName) {
+                const node = mapData.nodes.find(n => n.label === countryName);
+                if (node) {
+                    const tooltip = document.getElementById('map-tooltip');
+                    tooltip.innerHTML = `
+                        <div class="tooltip-title">${countryName}</div>
+                        <div class="tooltip-region">${node.region || 'Unknown'}</div>
+                        <div class="tooltip-stat">In: ${node.in_degree || 0} | Out: ${node.out_degree || 0}</div>
+                    `;
+                    tooltip.style.left = (event.pageX + 15) + 'px';
+                    tooltip.style.top = (event.pageY - 10) + 'px';
+                    tooltip.classList.add('visible');
+                }
+            }
+            d3.select(event.target).classed('highlighted', true);
+        }
+        
+        /**
+         * Handle country mouse out on map
+         */
+        function handleMapCountryOut(event, d) {
+            document.getElementById('map-tooltip').classList.remove('visible');
+            d3.select(event.target).classed('highlighted', false);
+        }
+        
+        /**
+         * Handle country click on map
+         */
+        function handleMapCountryClick(event, d) {
+            const countryName = numericToCountry[d.id];
+            if (countryName) {
+                const hasData = mapData.nodes.some(n => n.label === countryName);
+                if (hasData) {
+                    document.getElementById('map-country-select').value = countryName;
+                    selectedCountry = countryName;
+                    updateMapVisualization();
+                }
+            }
+        }
+        
+        // ================================================================
+        // DETAILED ANALYSIS TAB
+        // ================================================================
+        
+        /**
+         * Load data for detailed analysis
+         */
+        async function loadAnalysisData() {
+            try {
+                // Load nodes with full details
+                const nodes = await apiRequest('/network/nodes', { 
+                    sort_by: 'total_degree', 
+                    limit: 500 
+                });
+                analysisData.nodes = nodes || [];
+                
+                // Load flow details
+                const flows = await apiRequest('/custom/flow', {});
+                analysisData.flows = flows || [];
+                
+                // Render initial views
+                renderTopCitedList();
+                renderTopCitingList();
+                renderFlowDetails();
+                
+            } catch (error) {
+                console.error('Failed to load analysis data:', error);
+            }
+        }
+        
+        /**
+         * Render top cited jurisdictions list
+         */
+        async function renderTopCitedList() {
+            const container = document.getElementById('top-cited-list');
+            const countEl = document.getElementById('top-cited-count');
+            
+            try {
+                // Get citations received by jurisdiction with type breakdown
+                const data = await apiRequest('/custom/citations-received', {
+                    sixfold_type: currentTypeFilter,
+                    region: currentRegionFilter
+                });
+                
+                // If endpoint doesn't exist, use nodes data
+                let jurisdictions = data || analysisData.nodes.filter(n => n.in_degree > 0);
+                
+                // Apply filters if using nodes
+                if (!data) {
+                    if (currentRegionFilter) {
+                        jurisdictions = jurisdictions.filter(j => j.region === currentRegionFilter);
+                    }
+                    jurisdictions = jurisdictions.sort((a, b) => (b.in_degree || 0) - (a.in_degree || 0));
+                }
+                
+                countEl.textContent = `${jurisdictions.length} results`;
+                
+                if (!jurisdictions.length) {
+                    container.innerHTML = '<div class="empty-state"><p>No data matching filters</p></div>';
                     return;
                 }
+                
+                container.innerHTML = jurisdictions.slice(0, 50).map(j => {
+                    const regionClass = (j.region === 'Global North') ? 'north' : 'south';
+                    return `
+                        <div class="jurisdiction-item ${regionClass}" 
+                             onclick="openJurisdictionModal('${j.node_id || j.label}', 'cited')"
+                             data-jurisdiction="${j.node_id || j.label}">
+                            <div class="jurisdiction-info">
+                                <div class="jurisdiction-name">${j.node_id || j.label}</div>
+                                <div class="jurisdiction-region">${j.region || 'Unknown'}</div>
+                            </div>
+                            <div class="jurisdiction-stats">
+                                <span class="stat-badge total">${j.in_degree || j.citations_received || 0}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Failed to render top cited:', error);
+                container.innerHTML = '<div class="empty-state"><p>Failed to load data</p></div>';
             }
-
-            // Draw countries
-            svg.append('g')
-                .selectAll('path')
-                .data(topojson.feature(worldData, worldData.objects.countries).features)
-                .enter().append('path')
-                .attr('class', 'land')
-                .attr('d', path);
-
-            // Load network data for map
+        }
+        
+        /**
+         * Render top citing jurisdictions list
+         */
+        async function renderTopCitingList() {
+            const container = document.getElementById('top-citing-list');
+            const countEl = document.getElementById('top-citing-count');
+            
             try {
-                const data = await apiRequest('/network');
-                console.log("Map Data Loaded:", data); // DEBUG
-                mapData = data;
-                updateMap();
-            } catch (e) {
-                console.error("Failed to load network data for map", e);
-            }
-        }
-
-        function updateMap() {
-            console.log("Updating Map..."); // DEBUG
-            const svg = d3.select('#map-container svg');
-            const width = svg.attr('width');
-            const height = svg.attr('height');
-            const projection = d3.geoNaturalEarth1()
-                .scale(width / 5.5)
-                .translate([width / 2, height / 1.8]);
-
-            // Clear previous layers
-            svg.selectAll('.map-link').remove();
-            svg.selectAll('.map-node').remove();
-
-            // Filter data
-            const typeFilter = document.getElementById('map-filter').value;
-            const minWeight = parseInt(document.getElementById('map-min-weight').value) || 1;
-
-            const filteredLinks = mapData.links.filter(d => {
-                // Check if nodes exist and have coordinates
-                const sourceNode = mapData.nodes.find(n => n.id === d.source);
-                const targetNode = mapData.nodes.find(n => n.id === d.target);
-                const hasCoords = sourceNode && targetNode && sourceNode.lat != null && sourceNode.lon != null && targetNode.lat != null && targetNode.lon != null;
-
-                if (!hasCoords) return false;
-
-                if (d.value < minWeight) return false;
-
-                if (!typeFilter) return true; // All types
-
-                if (typeFilter === 'Cross-Border') {
-                    // Include Foreign and International types
-                    return d.type.includes('Foreign') || d.type.includes('International');
+                // Get citations made by jurisdiction
+                let jurisdictions = analysisData.nodes.filter(n => n.out_degree > 0);
+                
+                // Apply filters
+                if (currentRegionFilter) {
+                    jurisdictions = jurisdictions.filter(j => j.region === currentRegionFilter);
                 }
-
-                return d.type === typeFilter;
-            });
-            console.log("Filtered Links:", filteredLinks.length); // DEBUG
-
-            // Get active nodes with coordinates
-            const activeNodeIds = new Set();
-            filteredLinks.forEach(l => {
-                activeNodeIds.add(l.source);
-                activeNodeIds.add(l.target);
-            });
-
-            const filteredNodes = mapData.nodes.filter(d =>
-                activeNodeIds.has(d.id)
-            );
-            console.log("Filtered Nodes (with coords):", filteredNodes.length); // DEBUG
-
-            if (filteredNodes.length === 0 && mapData.nodes.length > 0) {
-                console.warn("No nodes to display. This might be due to missing coordinates for the filtered links.");
+                
+                jurisdictions = jurisdictions.sort((a, b) => (b.out_degree || 0) - (a.out_degree || 0));
+                
+                countEl.textContent = `${jurisdictions.length} results`;
+                
+                if (!jurisdictions.length) {
+                    container.innerHTML = '<div class="empty-state"><p>No data matching filters</p></div>';
+                    return;
+                }
+                
+                container.innerHTML = jurisdictions.slice(0, 50).map(j => {
+                    const regionClass = (j.region === 'Global North') ? 'north' : 'south';
+                    return `
+                        <div class="jurisdiction-item ${regionClass}" 
+                             onclick="openJurisdictionModal('${j.node_id || j.label}', 'citing')"
+                             data-jurisdiction="${j.node_id || j.label}">
+                            <div class="jurisdiction-info">
+                                <div class="jurisdiction-name">${j.node_id || j.label}</div>
+                                <div class="jurisdiction-region">${j.region || 'Unknown'}</div>
+                            </div>
+                            <div class="jurisdiction-stats">
+                                <span class="stat-badge total">${j.out_degree || j.citations_made || 0}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Failed to render top citing:', error);
+                container.innerHTML = '<div class="empty-state"><p>Failed to load data</p></div>';
             }
-
-            // Draw links (curves)
-            svg.append('g')
-                .selectAll('path')
-                .data(filteredLinks)
-                .enter().append('path')
-                .attr('class', 'map-link')
-                .attr('stroke', d => {
-                    // Color based on type
-                    if (d.type.includes('Foreign')) return '#e74c3c';
-                    if (d.type.includes('International')) return '#9b59b6';
-                    return '#3498db';
-                })
-                .attr('stroke-width', d => Math.sqrt(d.value))
-                .attr('d', d => {
-                    const sourceNode = mapData.nodes.find(n => n.id === d.source);
-                    const targetNode = mapData.nodes.find(n => n.id === d.target);
-
-                    if (!sourceNode || !targetNode || !sourceNode.lat || !targetNode.lat) return null;
-
-                    const source = projection([sourceNode.lon, sourceNode.lat]);
-                    const target = projection([targetNode.lon, targetNode.lat]);
-
-                    if (!source || !target) return null;
-
-                    const dx = target[0] - source[0],
-                        dy = target[1] - source[1],
-                        dr = Math.sqrt(dx * dx + dy * dy);
-
-                    return `M${source[0]},${source[1]}A${dr},${dr} 0 0,1 ${target[0]},${target[1]}`;
-                });
-
-            // Draw nodes
-            const tooltip = d3.select('#map-tooltip');
-
-            svg.append('g')
-                .selectAll('circle')
-                .data(filteredNodes)
-                .enter().append('circle')
-                .attr('class', 'map-node')
-                .attr('cx', d => projection([d.lon, d.lat])[0])
-                .attr('cy', d => projection([d.lon, d.lat])[1])
-                .attr('r', d => Math.sqrt(d.total_degree) + 2)
-                .on('mouseover', (event, d) => {
-                    tooltip.style('display', 'block')
-                        .html(`<strong>${d.label}</strong><br>Total Citations: ${d.total_degree}`)
-                        .style('left', (event.pageX + 10) + 'px')
-                        .style('top', (event.pageY - 10) + 'px');
-                })
-                .on('mouseout', () => tooltip.style('display', 'none'));
         }
-
-        // ================================================================
-        // TABLE FILTERING & SORTING
-        // ================================================================
-
-        function filterAnalysisTables() {
-            const filter = document.getElementById('analysis-filter').value.toLowerCase();
-            const tables = ['top-cases-table', 'top-jurisdictions-table', 'flow-details-table'];
-
-            tables.forEach(tableId => {
-                const table = document.getElementById(tableId);
-                if (!table) return;
-
-                const rows = table.querySelectorAll('tbody tr');
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
+        
+        /**
+         * Render flow details table
+         */
+        function renderFlowDetails() {
+            const tbody = document.querySelector('#flow-details-table tbody');
+            const countEl = document.getElementById('flow-count');
+            
+            let flows = analysisData.flows;
+            
+            // Apply filters
+            if (currentTypeFilter) {
+                flows = flows.filter(f => f.sixfold_type === currentTypeFilter);
+            }
+            
+            countEl.textContent = `${flows.length} flows`;
+            
+            tbody.innerHTML = flows.slice(0, 100).map(row => `
+                <tr>
+                    <td>${row.source_jurisdiction || '-'}</td>
+                    <td>${row.case_law_origin || '-'}</td>
+                    <td>${row.sixfold_type || '-'}</td>
+                    <td>${row.citation_count || 0}</td>
+                </tr>
+            `).join('');
+        }
+        
+        /**
+         * Reset analysis filters
+         */
+        function resetAnalysisFilters() {
+            currentTypeFilter = '';
+            currentRegionFilter = '';
+            
+            document.getElementById('analysis-type-filter').value = '';
+            document.querySelectorAll('#region-filter .toggle-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.region === '');
+            });
+            
+            renderTopCitedList();
+            renderTopCitingList();
+            renderFlowDetails();
+        }
+        
+        /**
+         * Initialize analysis filter listeners
+         */
+        function initAnalysisFilters() {
+            // Type filter
+            document.getElementById('analysis-type-filter').addEventListener('change', (e) => {
+                currentTypeFilter = e.target.value;
+                renderTopCitedList();
+                renderTopCitingList();
+                renderFlowDetails();
+            });
+            
+            // Region toggle
+            document.querySelectorAll('#region-filter .toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#region-filter .toggle-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentRegionFilter = btn.dataset.region;
+                    renderTopCitedList();
+                    renderTopCitingList();
                 });
             });
         }
-
-        function filterTableColumn(tableId, colIndex, value) {
-            const table = document.getElementById(tableId);
-            const rows = table.querySelectorAll('tbody tr');
-            const filter = value.toLowerCase();
-
-            rows.forEach(row => {
-                const cell = row.cells[colIndex];
-                if (cell) {
-                    const text = cell.textContent.toLowerCase();
-                    // Check if row is already hidden by global filter or other column filters
-                    // For simplicity, we'll just check this column + global filter logic if needed
-                    // But to support multi-column filtering properly, we should check all inputs
-
-                    // Let's do a robust check:
-                    let show = true;
-
-                    // Check global filter
-                    const globalFilter = document.getElementById('analysis-filter').value.toLowerCase();
-                    if (globalFilter && !row.textContent.toLowerCase().includes(globalFilter)) {
-                        show = false;
-                    }
-
-                    // Check all column filters in this table
-                    if (show) {
-                        const inputs = table.querySelectorAll('.filter-row input');
-                        inputs.forEach((input, index) => {
-                            // Find which column this input corresponds to
-                            // The inputs are in ths, so index matches th index in filter-row
-                            // But filter-row might have empty ths.
-                            // Let's rely on the input's parent th index
-                            const th = input.parentElement;
-                            const inputColIndex = Array.from(th.parentElement.children).indexOf(th);
-
-                            if (input.value) {
-                                const colCell = row.cells[inputColIndex];
-                                if (colCell && !colCell.textContent.toLowerCase().includes(input.value.toLowerCase())) {
-                                    show = false;
-                                }
-                            }
-                        });
-                    }
-
-                    row.style.display = show ? '' : 'none';
+        
+        // ================================================================
+        // MODAL FUNCTIONS
+        // ================================================================
+        
+        /**
+         * Open modal showing cases for a jurisdiction
+         */
+        async function openJurisdictionModal(jurisdiction, type) {
+            const modal = document.getElementById('case-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = type === 'cited' 
+                ? `Cases Citing ${jurisdiction}`
+                : `Cases from ${jurisdiction}`;
+            
+            modalBody.innerHTML = '<div class="loading"><div class="spinner"></div>Loading cases...</div>';
+            modal.classList.add('active');
+            
+            try {
+                // Fetch cases for this jurisdiction
+                const params = type === 'cited'
+                    ? { target_jurisdiction: jurisdiction }
+                    : { source_jurisdiction: jurisdiction };
+                
+                if (currentTypeFilter) {
+                    params.sixfold_type = currentTypeFilter;
                 }
-            });
+                
+                const cases = await apiRequest('/custom/citations-by-jurisdiction', params);
+                
+                if (!cases || !cases.length) {
+                    modalBody.innerHTML = '<div class="empty-state"><p>No cases found</p></div>';
+                    return;
+                }
+                
+                // Group by case
+                const grouped = {};
+                cases.forEach(c => {
+                    const key = c.case_id || c.case_name;
+                    if (!grouped[key]) {
+                        grouped[key] = {
+                            case_name: c.case_name || 'Unknown Case',
+                            case_url: c.case_url,
+                            case_summary: c.case_summary,
+                            source_jurisdiction: c.source_jurisdiction,
+                            source_region: c.source_region,
+                            case_filing_year: c.case_filing_year,
+                            citations: []
+                        };
+                    }
+                    grouped[key].citations.push({
+                        cited_name: c.cited_case_name || c.case_name,
+                        citation_type: c.citation_type,
+                        target: c.case_law_origin
+                    });
+                });
+                
+                const casesArray = Object.values(grouped);
+                
+                modalBody.innerHTML = casesArray.map(c => {
+                    const regionClass = c.source_region === 'Global North' ? 'north' : 'south';
+                    return `
+                        <div class="modal-case-card ${regionClass}" 
+                             onclick="window.open('${c.case_url || '#'}', '_blank')">
+                            <div class="modal-case-title">${c.case_name}</div>
+                            <div class="modal-case-meta">
+                                <span class="case-tag country ${regionClass}">${c.source_jurisdiction || 'Unknown'}</span>
+                                ${c.case_filing_year ? `<span class="case-tag year">${Math.floor(c.case_filing_year)}</span>` : ''}
+                                <span class="case-tag">${c.citations.length} citation${c.citations.length > 1 ? 's' : ''}</span>
+                            </div>
+                            ${c.case_summary ? `<div class="modal-case-summary">${c.case_summary.substring(0, 200)}${c.case_summary.length > 200 ? '...' : ''}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Failed to load cases for modal:', error);
+                modalBody.innerHTML = '<div class="empty-state"><p>Failed to load cases</p></div>';
+            }
         }
-
+        
+        /**
+         * Close the modal
+         */
+        function closeModal() {
+            document.getElementById('case-modal').classList.remove('active');
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('case-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'case-modal') {
+                closeModal();
+            }
+        });
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // ================================================================
+        // TABLE SORTING
+        // ================================================================
+        
+        /**
+         * Sort table by column
+         */
         function sortTable(tableId, colIndex) {
             const table = document.getElementById(tableId);
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
             const th = table.querySelectorAll('thead tr:first-child th')[colIndex];
-
+            
             // Determine sort order
             let order = 'asc';
             if (th.classList.contains('sort-asc')) {
                 order = 'desc';
             }
-
+            
             // Reset all headers
             table.querySelectorAll('thead th').forEach(h => {
                 h.classList.remove('sort-asc', 'sort-desc');
             });
-
+            
             // Set new order
             th.classList.add(order === 'asc' ? 'sort-asc' : 'sort-desc');
-
+            
             // Sort rows
             rows.sort((a, b) => {
                 const cellA = a.cells[colIndex].textContent.trim();
                 const cellB = b.cells[colIndex].textContent.trim();
-
+                
                 // Try numeric sort
                 const numA = parseFloat(cellA.replace(/,/g, ''));
                 const numB = parseFloat(cellB.replace(/,/g, ''));
-
+                
                 if (!isNaN(numA) && !isNaN(numB)) {
                     return order === 'asc' ? numA - numB : numB - numA;
                 }
-
+                
                 // String sort
-                return order === 'asc'
-                    ? cellA.localeCompare(cellB)
+                return order === 'asc' 
+                    ? cellA.localeCompare(cellB) 
                     : cellB.localeCompare(cellA);
             });
-
+            
             // Re-append rows
             rows.forEach(row => tbody.appendChild(row));
         }
-
+        
         // ================================================================
-        // NETWORK VISUALIZATION
+        // UTILITY FUNCTIONS
         // ================================================================
-
-        let simulation = null;
-
+        
         /**
-         * Load and render citation network
+         * Debounce function for resize events
          */
-        async function loadNetwork() {
-            const container = document.getElementById('network-container');
-            const svg = d3.select('#network-svg');
-
-            // Clear existing
-            svg.selectAll('*').remove();
-
-            // Get filter values
-            const minWeight = document.getElementById('min-weight').value || 1;
-            const sixfoldType = document.getElementById('sixfold-filter').value;
-
-            try {
-                const data = await apiRequest('/network', {
-                    min_weight: minWeight,
-                    sixfold_type: sixfoldType
-                });
-
-                if (!data.nodes || data.nodes.length === 0) {
-                    svg.append('text')
-                        .attr('x', '50%')
-                        .attr('y', '50%')
-                        .attr('text-anchor', 'middle')
-                        .text('No data available. Run analysis first.');
-                    return;
-                }
-
-                renderNetwork(svg, data, container);
-
-            } catch (error) {
-                console.error('Failed to load network:', error);
-                svg.append('text')
-                    .attr('x', '50%')
-                    .attr('y', '50%')
-                    .attr('text-anchor', 'middle')
-                    .text('Failed to load network data');
-            }
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
         }
-
-        /**
-         * Render D3 force-directed network
-         */
-        function renderNetwork(svg, data, container) {
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-
-            // Create scales
-            const nodeScale = d3.scaleSqrt()
-                .domain([0, d3.max(data.nodes, d => d.total_degree)])
-                .range([5, 30]);
-
-            const linkScale = d3.scaleLinear()
-                .domain([1, d3.max(data.links, d => d.value)])
-                .range([1, 5]);
-
-            // Create simulation
-            simulation = d3.forceSimulation(data.nodes)
-                .force('link', d3.forceLink(data.links).id(d => d.id).distance(100))
-                .force('charge', d3.forceManyBody().strength(-200))
-                .force('center', d3.forceCenter(width / 2, height / 2))
-                .force('collision', d3.forceCollide().radius(d => nodeScale(d.total_degree) + 5));
-
-            // Draw links
-            const link = svg.append('g')
-                .selectAll('line')
-                .data(data.links)
-                .join('line')
-                .attr('class', 'link')
-                .attr('stroke', '#999')
-                .attr('stroke-width', d => linkScale(d.value));
-
-            // Draw nodes
-            const node = svg.append('g')
-                .selectAll('g')
-                .data(data.nodes)
-                .join('g')
-                .attr('class', 'node')
-                .call(d3.drag()
-                    .on('start', dragstarted)
-                    .on('drag', dragged)
-                    .on('end', dragended));
-
-            node.append('circle')
-                .attr('r', d => nodeScale(d.total_degree))
-                .attr('fill', d => REGION_COLORS[d.region] || REGION_COLORS['Unknown']);
-
-            node.append('text')
-                .attr('dx', d => nodeScale(d.total_degree) + 3)
-                .attr('dy', 4)
-                .text(d => d.label);
-
-            // Add tooltips
-            node.append('title')
-                .text(d => `${d.label}\nRegion: ${d.region}\nIn: ${d.in_degree} | Out: ${d.out_degree}`);
-
-            // Update positions on tick
-            simulation.on('tick', () => {
-                link
-                    .attr('x1', d => d.source.x)
-                    .attr('y1', d => d.source.y)
-                    .attr('x2', d => d.target.x)
-                    .attr('y2', d => d.target.y);
-
-                node.attr('transform', d => `translate(${d.x},${d.y})`);
-            });
-
-            // Drag functions
-            function dragstarted(event) {
-                if (!event.active) simulation.alphaTarget(0.3).restart();
-                event.subject.fx = event.subject.x;
-                event.subject.fy = event.subject.y;
-            }
-
-            function dragged(event) {
-                event.subject.fx = event.x;
-                event.subject.fy = event.y;
-            }
-
-            function dragended(event) {
-                if (!event.active) simulation.alphaTarget(0);
-                event.subject.fx = null;
-                event.subject.fy = null;
-            }
-        }
-
-        /**
-         * Reset network filters
-         */
-        function resetNetwork() {
-            document.getElementById('min-weight').value = 1;
-            document.getElementById('sixfold-filter').value = '';
-            loadNetwork();
-        }
-
-        // ================================================================
-        // TABLE LOADING
-        // ================================================================
-
-        /**
-         * Load top cited cases table
-         */
-        async function loadTopCases() {
-            try {
-                const data = await apiRequest('/custom/top-cases', { limit: 20 });
-
-                const tbody = document.querySelector('#top-cases-table tbody');
-                tbody.innerHTML = data.map((row, i) => `
-                    <tr>
-                        <td>${i + 1}</td>
-                        <td>${row.case_name || '-'}</td>
-                        <td>${row.case_law_origin || '-'}</td>
-                        <td>${row.case_law_region || '-'}</td>
-                        <td>${row.citation_count || 0}</td>
-                    </tr>
-                `).join('');
-
-            } catch (error) {
-                console.error('Failed to load top cases:', error);
-            }
-        }
-
-        /**
-         * Load top jurisdictions table
-         */
-        async function loadTopJurisdictions() {
-            try {
-                const nodes = await apiRequest('/network/nodes', {
-                    sort_by: 'total_degree',
-                    limit: 20
-                });
-
-                const tbody = document.querySelector('#top-jurisdictions-table tbody');
-                tbody.innerHTML = nodes.map((node, i) => `
-                    <tr>
-                        <td>${i + 1}</td>
-                        <td>${node.node_id || '-'}</td>
-                        <td>${node.region || '-'}</td>
-                        <td>${node.out_degree || 0}</td>
-                        <td>${node.in_degree || 0}</td>
-                    </tr>
-                `).join('');
-
-            } catch (error) {
-                console.error('Failed to load jurisdictions:', error);
-            }
-        }
-
-        /**
-         * Load flow details table
-         */
-        async function loadFlowDetails() {
-            try {
-                const data = await apiRequest('/custom/flow', {});
-
-                const tbody = document.querySelector('#flow-details-table tbody');
-                tbody.innerHTML = data.slice(0, 50).map(row => `
-                    <tr>
-                        <td>${row.source_jurisdiction || '-'}</td>
-                        <td>${row.case_law_origin || '-'}</td>
-                        <td>${row.sixfold_type || '-'}</td>
-                        <td>${row.citation_count || 0}</td>
-                    </tr>
-                `).join('');
-
-            } catch (error) {
-                console.error('Failed to load flow details:', error);
-            }
-        }
-
-        // ================================================================
-        // EXPORT FUNCTIONS
-        // ================================================================
-
-        /**
-         * Trigger data export
-         */
-        function exportData(type, format = 'json') {
-            let url;
-
-            switch (type) {
-                case 'dashboard':
-                    url = `${API_BASE}/export/dashboard`;
-                    break;
-                case 'network':
-                    url = `${API_BASE}/export/network/${format}`;
-                    break;
-                default:
-                    console.error('Unknown export type:', type);
-                    return;
-            }
-
-            // Trigger download
-            window.open(url, '_blank');
-        }
-
-        // ================================================================
-        // TAB HANDLING
-        // ================================================================
-
-        function initTabs() {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Update tab states
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-
-                    // Update content
-                    const tabId = tab.dataset.tab;
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-        }
-
+        
         // ================================================================
         // INITIALIZATION
         // ================================================================
-
+        
+        /**
+         * Main initialization function
+         */
         async function init() {
-            // Initialize tabs
-            initTabs();
-
-            // Check API health
+            console.log('Initializing Climate Litigation Dashboard...');
+            
+            // Initialize navigation
+            initMainTabs();
+            initSubTabs();
+            initAnalysisFilters();
+            
+            // Check API connection
             const isConnected = await checkApiHealth();
-
+            
             if (isConnected) {
-                // Load all data
+                // Load dashboard data
                 await Promise.all([
-                    loadMap(),
                     loadSummaryStats(),
                     loadCategoryChart(),
                     loadFlowChart(),
-                    loadNetwork(),
-                    loadTopCases(),
-                    loadTopJurisdictions(),
-                    loadFlowDetails()
+                    loadAnalysisData()
                 ]);
             }
+            
+            console.log('Dashboard initialized successfully');
         }
-
+        
         // Run initialization when DOM is ready
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-
 </html>

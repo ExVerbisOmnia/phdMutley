@@ -138,6 +138,14 @@ def export_database_to_excel(output_file: str = None, text_truncate_length: int 
                     # Clean sheet name (Excel has 31 char limit and doesn't allow certain chars)
                     sheet_name = table_name[:31].replace('/', '_').replace('\\', '_')
                     
+                    # Remove timezone information from datetime columns (Excel doesn't support it)
+                    for col in df.columns:
+                        if pd.api.types.is_datetime64_any_dtype(df[col]):
+                            try:
+                                df[col] = df[col].dt.tz_localize(None)
+                            except Exception:
+                                pass  # Already naive or other issue
+                    
                     # Write to Excel
                     df.to_excel(writer, sheet_name=sheet_name, index=False)
                     logger.info(f"  ✓ Exported to sheet: {sheet_name}")
