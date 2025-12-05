@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Climate Litigation Citation Analysis Dashboard</title>
-    
+
     <!-- Google Fonts - Matching map styling -->
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
     <!-- D3.js for visualizations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    
+
     <!-- Chart.js for charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    
+
     <!-- TopoJSON for map -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-    
+
     <style>
         /* ================================================================
            CSS CUSTOM PROPERTIES - Dark Theme from Map
@@ -27,29 +30,29 @@
             --bg-secondary: #111820;
             --bg-panel: #1a222d;
             --bg-hover: #242d3a;
-            
+
             /* Text colors */
             --text-primary: #e8edf3;
             --text-secondary: #8b9aad;
             --text-muted: #5a6978;
-            
+
             /* Region colors */
             --north-primary: #3b82f6;
             --north-glow: rgba(59, 130, 246, 0.4);
             --south-primary: #10b981;
             --south-glow: rgba(16, 185, 129, 0.4);
-            
+
             /* Accent colors */
             --accent-orange: #f97316;
             --accent-purple: #8b5cf6;
             --accent-red: #ef4444;
             --accent-yellow: #eab308;
             --accent-cyan: #06b6d4;
-            
+
             /* Border colors */
             --border-color: #2a3544;
             --border-hover: #3d4f66;
-            
+
             /* Chart category colors */
             --chart-1: #3b82f6;
             --chart-2: #10b981;
@@ -58,16 +61,16 @@
             --chart-5: #06b6d4;
             --chart-6: #ef4444;
         }
-        
+
         /* ================================================================
            RESET & BASE STYLES
            ================================================================ */
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
@@ -76,7 +79,7 @@
             overflow-x: hidden;
             line-height: 1.6;
         }
-        
+
         /* ================================================================
            HEADER
            ================================================================ */
@@ -90,7 +93,7 @@
             z-index: 100;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .title-block h1 {
             font-size: 1.5rem;
             font-weight: 700;
@@ -101,7 +104,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .title-block .subtitle {
             font-family: 'Space Mono', monospace;
             font-size: 0.7rem;
@@ -109,13 +112,13 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
-        
+
         .header-right {
             display: flex;
             align-items: center;
             gap: 24px;
         }
-        
+
         /* API Status Indicator */
         .api-status {
             display: flex;
@@ -124,7 +127,7 @@
             font-size: 0.75rem;
             color: var(--text-muted);
         }
-        
+
         .status-dot {
             width: 8px;
             height: 8px;
@@ -132,24 +135,31 @@
             background: var(--accent-red);
             animation: pulse 2s infinite;
         }
-        
+
         .status-dot.connected {
             background: var(--south-primary);
             animation: none;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
-        
+
         /* Legend in header */
         .legend {
             display: flex;
             gap: 20px;
             align-items: center;
         }
-        
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -157,23 +167,23 @@
             font-size: 0.8rem;
             color: var(--text-secondary);
         }
-        
+
         .legend-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
         }
-        
+
         .legend-dot.north {
             background: var(--north-primary);
             box-shadow: 0 0 10px var(--north-glow);
         }
-        
+
         .legend-dot.south {
             background: var(--south-primary);
             box-shadow: 0 0 10px var(--south-glow);
         }
-        
+
         /* ================================================================
            MAIN NAVIGATION TABS
            ================================================================ */
@@ -182,12 +192,12 @@
             border-bottom: 1px solid var(--border-color);
             padding: 0 32px;
         }
-        
+
         .nav-tabs {
             display: flex;
             gap: 0;
         }
-        
+
         .nav-tab {
             padding: 16px 24px;
             font-size: 0.9rem;
@@ -198,21 +208,21 @@
             transition: all 0.2s ease;
             position: relative;
         }
-        
+
         .nav-tab:hover {
             color: var(--text-primary);
             background: var(--bg-hover);
         }
-        
+
         .nav-tab.active {
             color: var(--north-primary);
             border-bottom-color: var(--north-primary);
         }
-        
+
         .nav-tab .tab-icon {
             margin-right: 8px;
         }
-        
+
         /* ================================================================
            MAIN CONTENT CONTAINER
            ================================================================ */
@@ -220,21 +230,28 @@
             padding: 24px 32px;
             min-height: calc(100vh - 160px);
         }
-        
+
         .tab-page {
             display: none;
         }
-        
+
         .tab-page.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         /* ================================================================
            PANELS / CARDS
            ================================================================ */
@@ -245,11 +262,11 @@
             padding: 20px;
             transition: border-color 0.2s ease;
         }
-        
+
         .panel:hover {
             border-color: var(--border-hover);
         }
-        
+
         .panel-title {
             font-family: 'Space Mono', monospace;
             font-size: 0.7rem;
@@ -258,14 +275,14 @@
             letter-spacing: 0.12em;
             margin-bottom: 16px;
         }
-        
+
         .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
         }
-        
+
         .panel-badge {
             font-family: 'Space Mono', monospace;
             font-size: 0.65rem;
@@ -274,7 +291,7 @@
             background: var(--north-primary);
             color: white;
         }
-        
+
         /* ================================================================
            GRID LAYOUTS
            ================================================================ */
@@ -282,23 +299,23 @@
             display: grid;
             gap: 20px;
         }
-        
+
         .grid-2 {
             grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .grid-3 {
             grid-template-columns: repeat(3, 1fr);
         }
-        
+
         .grid-4 {
             grid-template-columns: repeat(4, 1fr);
         }
-        
+
         .grid-auto {
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         }
-        
+
         /* ================================================================
            STAT CARDS
            ================================================================ */
@@ -310,31 +327,42 @@
             border: 1px solid var(--border-color);
             transition: all 0.2s ease;
         }
-        
+
         .stat-card:hover {
             border-color: var(--border-hover);
             transform: translateY(-2px);
         }
-        
+
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
             font-family: 'Space Mono', monospace;
             margin-bottom: 4px;
         }
-        
-        .stat-value.highlight { color: var(--accent-orange); }
-        .stat-value.north { color: var(--north-primary); }
-        .stat-value.south { color: var(--south-primary); }
-        .stat-value.purple { color: var(--accent-purple); }
-        
+
+        .stat-value.highlight {
+            color: var(--accent-orange);
+        }
+
+        .stat-value.north {
+            color: var(--north-primary);
+        }
+
+        .stat-value.south {
+            color: var(--south-primary);
+        }
+
+        .stat-value.purple {
+            color: var(--accent-purple);
+        }
+
         .stat-label {
             font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        
+
         /* ================================================================
            CHARTS
            ================================================================ */
@@ -342,11 +370,11 @@
             position: relative;
             height: 350px;
         }
-        
+
         .chart-container canvas {
             max-height: 100%;
         }
-        
+
         /* ================================================================
            SUB-TABS (for Detailed Analysis)
            ================================================================ */
@@ -358,7 +386,7 @@
             padding: 4px;
             margin-bottom: 20px;
         }
-        
+
         .sub-tab {
             flex: 1;
             padding: 12px 20px;
@@ -372,26 +400,26 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .sub-tab:hover {
             color: var(--text-primary);
             background: var(--bg-hover);
         }
-        
+
         .sub-tab.active {
             background: var(--north-primary);
             color: white;
             box-shadow: 0 2px 8px var(--north-glow);
         }
-        
+
         .sub-content {
             display: none;
         }
-        
+
         .sub-content.active {
             display: block;
         }
-        
+
         /* ================================================================
            FILTER CONTROLS
            ================================================================ */
@@ -402,19 +430,21 @@
             align-items: center;
             margin-bottom: 20px;
         }
-        
+
         .control-group {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .control-group label {
             font-size: 0.8rem;
             color: var(--text-muted);
         }
-        
-        select, input[type="text"], input[type="number"] {
+
+        select,
+        input[type="text"],
+        input[type="number"] {
             padding: 10px 14px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -425,17 +455,19 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
-        select:hover, input:hover {
+
+        select:hover,
+        input:hover {
             border-color: var(--border-hover);
         }
-        
-        select:focus, input:focus {
+
+        select:focus,
+        input:focus {
             outline: none;
             border-color: var(--north-primary);
             box-shadow: 0 0 0 3px var(--north-glow);
         }
-        
+
         /* Toggle button group */
         .toggle-group {
             display: flex;
@@ -444,7 +476,7 @@
             padding: 3px;
             gap: 3px;
         }
-        
+
         .toggle-btn {
             padding: 8px 16px;
             background: transparent;
@@ -457,22 +489,22 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .toggle-btn:hover {
             color: var(--text-primary);
         }
-        
+
         .toggle-btn.active {
             background: var(--north-primary);
             color: white;
             box-shadow: 0 2px 8px var(--north-glow);
         }
-        
+
         .toggle-btn.active.south {
             background: var(--south-primary);
             box-shadow: 0 2px 8px var(--south-glow);
         }
-        
+
         /* Primary button */
         .btn {
             padding: 10px 20px;
@@ -486,22 +518,22 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .btn:hover {
             background: #2563eb;
             transform: translateY(-1px);
         }
-        
+
         .btn.secondary {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
         }
-        
+
         .btn.secondary:hover {
             background: var(--bg-hover);
             border-color: var(--border-hover);
         }
-        
+
         /* ================================================================
            JURISDICTION LIST
            ================================================================ */
@@ -509,11 +541,21 @@
             max-height: 500px;
             overflow-y: auto;
         }
-        
-        .jurisdiction-list::-webkit-scrollbar { width: 6px; }
-        .jurisdiction-list::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
-        .jurisdiction-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        
+
+        .jurisdiction-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .jurisdiction-list::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 3px;
+        }
+
+        .jurisdiction-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
         .jurisdiction-item {
             display: flex;
             justify-content: space-between;
@@ -526,39 +568,44 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .jurisdiction-item:hover {
             background: var(--bg-hover);
             box-shadow: 0 0 20px var(--north-glow), 0 0 30px var(--north-glow);
             transform: translateX(4px);
         }
-        
-        .jurisdiction-item.north { border-left-color: var(--north-primary); }
-        .jurisdiction-item.south { border-left-color: var(--south-primary); }
-        
+
+        .jurisdiction-item.north {
+            border-left-color: var(--north-primary);
+        }
+
+        .jurisdiction-item.south {
+            border-left-color: var(--south-primary);
+        }
+
         .jurisdiction-info {
             flex: 1;
         }
-        
+
         .jurisdiction-name {
             font-weight: 600;
             font-size: 0.95rem;
             margin-bottom: 4px;
         }
-        
+
         .jurisdiction-region {
             font-size: 0.7rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        
+
         .jurisdiction-stats {
             display: flex;
             gap: 12px;
             align-items: center;
         }
-        
+
         .stat-badge {
             font-family: 'Space Mono', monospace;
             font-size: 0.75rem;
@@ -567,20 +614,20 @@
             background: var(--bg-primary);
             color: var(--text-secondary);
         }
-        
+
         .stat-badge.total {
             background: var(--accent-orange);
             background: rgba(249, 115, 22, 0.2);
             color: var(--accent-orange);
         }
-        
+
         /* Citation type breakdown */
         .citation-breakdown {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
         }
-        
+
         .breakdown-tag {
             font-family: 'Space Mono', monospace;
             font-size: 0.65rem;
@@ -589,26 +636,27 @@
             background: var(--bg-primary);
             color: var(--text-muted);
         }
-        
+
         /* ================================================================
            TABLES
            ================================================================ */
         .table-container {
             overflow-x: auto;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
         }
-        
-        th, td {
+
+        th,
+        td {
             padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         th {
             background: var(--bg-secondary);
             font-weight: 600;
@@ -620,25 +668,32 @@
             user-select: none;
             transition: background 0.2s;
         }
-        
+
         th:hover {
             background: var(--bg-hover);
         }
-        
+
         tr:hover td {
             background: var(--bg-hover);
         }
-        
+
         .sort-icon::after {
             content: '↕';
             font-size: 0.7em;
             margin-left: 6px;
             opacity: 0.4;
         }
-        
-        th.sort-asc .sort-icon::after { content: '▲'; opacity: 1; }
-        th.sort-desc .sort-icon::after { content: '▼'; opacity: 1; }
-        
+
+        th.sort-asc .sort-icon::after {
+            content: '▲';
+            opacity: 1;
+        }
+
+        th.sort-desc .sort-icon::after {
+            content: '▼';
+            opacity: 1;
+        }
+
         /* ================================================================
            MAP STYLES (from citation map)
            ================================================================ */
@@ -648,14 +703,14 @@
             height: calc(100vh - 200px);
             gap: 20px;
         }
-        
+
         .map-control-panel {
             display: flex;
             flex-direction: column;
             gap: 16px;
             overflow-y: auto;
         }
-        
+
         .map-container {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
@@ -663,35 +718,68 @@
             overflow: hidden;
             position: relative;
         }
-        
-        #citation-map { width: 100%; height: 100%; }
-        
+
+        #citation-map {
+            width: 100%;
+            height: 100%;
+        }
+
         .country {
             fill: var(--bg-secondary);
             stroke: var(--border-color);
             stroke-width: 0.5;
             transition: fill 0.3s ease;
         }
+
         
-        .country:hover { fill: #2a3544; }
-        .country.highlighted { stroke: var(--text-primary); stroke-width: 1.5; }
-        .country.selected { fill: var(--accent-orange); stroke: var(--accent-orange); stroke-width: 2; }
-        .country.citing { fill: rgba(59, 130, 246, 0.6); }
-        .country.cited { fill: rgba(16, 185, 129, 0.6); }
-        .country.has-data { cursor: pointer; }
-        .country { cursor: default; }
-        
+        .country {
+            cursor: default;
+        }
+        .country.has-data {
+            cursor: pointer;
+        }
+.country:hover {
+            fill: #2a3544;
+        }
+
+        .country.highlighted {
+            stroke: var(--text-primary);
+            stroke-width: 1.5;
+        }
+
+        .country.selected {
+            fill: var(--accent-orange);
+            stroke: var(--accent-orange);
+            stroke-width: 2;
+        }
+
+        .country.citing {
+            fill: rgba(59, 130, 246, 0.6);
+        }
+
+        .country.cited {
+            fill: rgba(16, 185, 129, 0.6);
+        }
+
         .flow-arc {
             fill: none;
             stroke-linecap: round;
             opacity: 0.7;
             transition: opacity 0.2s ease;
         }
-        
-        .flow-arc:hover { opacity: 1; }
-        .flow-arc.incoming { stroke: var(--north-primary); }
-        .flow-arc.outgoing { stroke: var(--south-primary); }
-        
+
+        .flow-arc:hover {
+            opacity: 1;
+        }
+
+        .flow-arc.incoming {
+            stroke: var(--north-primary);
+        }
+
+        .flow-arc.outgoing {
+            stroke: var(--south-primary);
+        }
+
         .map-tooltip {
             position: absolute;
             background: var(--bg-panel);
@@ -706,12 +794,26 @@
             max-width: 250px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
-        
-        .map-tooltip.visible { opacity: 1; }
-        .tooltip-title { font-weight: 600; margin-bottom: 3px; }
-        .tooltip-region { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; }
-        .tooltip-stat { font-family: 'Space Mono', monospace; }
-        
+
+        .map-tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .tooltip-region {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .tooltip-stat {
+            font-family: 'Space Mono', monospace;
+        }
+
         .zoom-controls {
             position: absolute;
             bottom: 16px;
@@ -721,7 +823,7 @@
             gap: 3px;
             z-index: 100;
         }
-        
+
         .zoom-btn {
             width: 32px;
             height: 32px;
@@ -736,12 +838,12 @@
             justify-content: center;
             transition: all 0.2s ease;
         }
-        
-        .zoom-btn:hover { 
-            background: var(--bg-secondary); 
-            border-color: var(--border-hover); 
+
+        .zoom-btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--border-hover);
         }
-        
+
         /* Map cases panel */
         .cases-panel {
             display: flex;
@@ -749,19 +851,19 @@
             gap: 16px;
             overflow: hidden;
         }
-        
+
         .cases-header h2 {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 4px;
         }
-        
+
         .case-count {
             font-family: 'Space Mono', monospace;
             font-size: 0.75rem;
             color: var(--text-muted);
         }
-        
+
         .case-search {
             width: 100%;
             padding: 8px 12px;
@@ -773,10 +875,16 @@
             font-size: 0.85rem;
             margin-top: 10px;
         }
-        
-        .case-search::placeholder { color: var(--text-muted); }
-        .case-search:focus { outline: none; border-color: var(--north-primary); }
-        
+
+        .case-search::placeholder {
+            color: var(--text-muted);
+        }
+
+        .case-search:focus {
+            outline: none;
+            border-color: var(--north-primary);
+        }
+
         .cases-list-container {
             flex: 1;
             background: var(--bg-panel);
@@ -787,7 +895,7 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .cases-list {
             flex: 1;
             overflow-y: auto;
@@ -795,11 +903,21 @@
             flex-direction: column;
             gap: 10px;
         }
-        
-        .cases-list::-webkit-scrollbar { width: 6px; }
-        .cases-list::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
-        .cases-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        
+
+        .cases-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cases-list::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 3px;
+        }
+
+        .cases-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
         .case-card {
             background: var(--bg-secondary);
             border-radius: 6px;
@@ -808,37 +926,44 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
-        
+
         .case-card:hover {
             border-left-color: var(--accent-orange);
             background: rgba(249, 115, 22, 0.05);
         }
-        
-        .case-card.north { border-left-color: var(--north-primary); }
-        .case-card.south { border-left-color: var(--south-primary); }
-        
+
+        .case-card.north {
+            border-left-color: var(--north-primary);
+        }
+
+        .case-card.south {
+            border-left-color: var(--south-primary);
+        }
+
         .case-source {
             font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 6px;
             line-height: 1.3;
         }
-        
+
         .case-source a {
             color: var(--text-primary);
             text-decoration: none;
             transition: color 0.2s;
         }
-        
-        .case-source a:hover { color: var(--accent-orange); }
-        
+
+        .case-source a:hover {
+            color: var(--accent-orange);
+        }
+
         .case-meta {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             margin-bottom: 8px;
         }
-        
+
         .case-tag {
             font-family: 'Space Mono', monospace;
             font-size: 0.65rem;
@@ -847,11 +972,22 @@
             background: var(--bg-primary);
             color: var(--text-secondary);
         }
-        
-        .case-tag.country { background: rgba(59, 130, 246, 0.2); color: var(--north-primary); }
-        .case-tag.country.south { background: rgba(16, 185, 129, 0.2); color: var(--south-primary); }
-        .case-tag.year { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
-        
+
+        .case-tag.country {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--north-primary);
+        }
+
+        .case-tag.country.south {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--south-primary);
+        }
+
+        .case-tag.year {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent-purple);
+        }
+
         .case-citation {
             font-size: 0.8rem;
             color: var(--text-secondary);
@@ -859,7 +995,7 @@
             border-left: 2px solid var(--border-color);
             margin-top: 6px;
         }
-        
+
         .case-citation-label {
             font-size: 0.65rem;
             color: var(--text-muted);
@@ -867,8 +1003,9 @@
             letter-spacing: 0.05em;
             margin-bottom: 2px;
         }
-        
-        .cases-empty, .empty-state {
+
+        .cases-empty,
+        .empty-state {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -878,14 +1015,15 @@
             color: var(--text-muted);
             padding: 40px 20px;
         }
-        
-        .cases-empty svg, .empty-state svg {
+
+        .cases-empty svg,
+        .empty-state svg {
             width: 48px;
             height: 48px;
             margin-bottom: 12px;
             opacity: 0.4;
         }
-        
+
         /* Direction toggle for map */
         .direction-toggle {
             display: flex;
@@ -894,7 +1032,7 @@
             padding: 3px;
             gap: 3px;
         }
-        
+
         .direction-btn {
             flex: 1;
             padding: 8px 10px;
@@ -908,20 +1046,22 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
-        .direction-btn:hover { color: var(--text-primary); }
-        
+
+        .direction-btn:hover {
+            color: var(--text-primary);
+        }
+
         .direction-btn.active {
             background: var(--north-primary);
             color: white;
             box-shadow: 0 2px 8px var(--north-glow);
         }
-        
+
         .direction-btn.active.outgoing {
             background: var(--south-primary);
             box-shadow: 0 2px 8px var(--south-glow);
         }
-        
+
         /* Citation list (map panel) */
         .citation-list {
             max-height: 200px;
@@ -930,11 +1070,21 @@
             flex-direction: column;
             gap: 6px;
         }
-        
-        .citation-list::-webkit-scrollbar { width: 5px; }
-        .citation-list::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
-        .citation-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        
+
+        .citation-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .citation-list::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 3px;
+        }
+
+        .citation-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
         .citation-item {
             display: flex;
             justify-content: space-between;
@@ -947,11 +1097,19 @@
             cursor: pointer;
             font-size: 0.85rem;
         }
-        
-        .citation-item:hover { background: rgba(59, 130, 246, 0.1); }
-        .citation-item.north { border-left-color: var(--north-primary); }
-        .citation-item.south { border-left-color: var(--south-primary); }
-        
+
+        .citation-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .citation-item.north {
+            border-left-color: var(--north-primary);
+        }
+
+        .citation-item.south {
+            border-left-color: var(--south-primary);
+        }
+
         .citation-count {
             font-family: 'Space Mono', monospace;
             font-size: 0.75rem;
@@ -960,25 +1118,27 @@
             padding: 2px 6px;
             border-radius: 3px;
         }
-        
+
         /* Stats grid for map panel */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-        
+
         .stats-grid .stat-card {
             padding: 12px;
         }
-        
+
         .stats-grid .stat-value {
             font-size: 1.5rem;
         }
-        
+
         /* Select wrapper */
-        .select-wrapper { position: relative; }
-        
+        .select-wrapper {
+            position: relative;
+        }
+
         .country-select {
             width: 100%;
             padding: 10px 14px;
@@ -993,15 +1153,17 @@
             appearance: none;
             transition: all 0.2s ease;
         }
-        
-        .country-select:hover { border-color: var(--border-hover); }
-        
+
+        .country-select:hover {
+            border-color: var(--border-hover);
+        }
+
         .country-select:focus {
             outline: none;
             border-color: var(--north-primary);
             box-shadow: 0 0 0 3px var(--north-glow);
         }
-        
+
         .select-arrow {
             position: absolute;
             right: 12px;
@@ -1011,7 +1173,7 @@
             color: var(--text-muted);
             font-size: 0.7rem;
         }
-        
+
         /* ================================================================
            MODAL
            ================================================================ */
@@ -1029,11 +1191,11 @@
             justify-content: center;
             animation: fadeIn 0.2s ease;
         }
-        
+
         .modal-overlay.active {
             display: flex;
         }
-        
+
         .modal {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
@@ -1046,12 +1208,19 @@
             flex-direction: column;
             animation: slideUp 0.3s ease;
         }
-        
+
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
-        
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -1059,12 +1228,12 @@
             padding: 20px 24px;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .modal-header h2 {
             font-size: 1.2rem;
             font-weight: 600;
         }
-        
+
         .modal-close {
             width: 32px;
             height: 32px;
@@ -1079,23 +1248,33 @@
             justify-content: center;
             transition: all 0.2s ease;
         }
-        
+
         .modal-close:hover {
             background: var(--bg-hover);
             color: var(--text-primary);
             border-color: var(--border-hover);
         }
-        
+
         .modal-body {
             flex: 1;
             overflow-y: auto;
             padding: 24px;
         }
-        
-        .modal-body::-webkit-scrollbar { width: 6px; }
-        .modal-body::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
-        .modal-body::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        
+
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 3px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
         /* Modal case cards */
         .modal-case-card {
             background: var(--bg-secondary);
@@ -1106,36 +1285,41 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .modal-case-card:hover {
             background: var(--bg-hover);
             border-left-color: var(--accent-orange);
             box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
         }
-        
-        .modal-case-card.north { border-left-color: var(--north-primary); }
-        .modal-case-card.south { border-left-color: var(--south-primary); }
-        
+
+        .modal-case-card.north {
+            border-left-color: var(--north-primary);
+        }
+
+        .modal-case-card.south {
+            border-left-color: var(--south-primary);
+        }
+
         .modal-case-title {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 8px;
             line-height: 1.4;
         }
-        
+
         .modal-case-meta {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             margin-bottom: 12px;
         }
-        
+
         .modal-case-summary {
             font-size: 0.85rem;
             color: var(--text-secondary);
             line-height: 1.5;
         }
-        
+
         /* ================================================================
            LOADING STATE
            ================================================================ */
@@ -1146,7 +1330,7 @@
             padding: 40px;
             color: var(--text-muted);
         }
-        
+
         .spinner {
             width: 30px;
             height: 30px;
@@ -1156,11 +1340,13 @@
             animation: spin 1s linear infinite;
             margin-right: 12px;
         }
-        
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* ================================================================
            RESPONSIVE
            ================================================================ */
@@ -1169,59 +1355,62 @@
                 grid-template-columns: 250px 1fr 320px;
             }
         }
-        
+
         @media (max-width: 1100px) {
             .map-page-container {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto 400px auto;
             }
-            
+
             .map-control-panel {
                 flex-direction: row;
                 flex-wrap: wrap;
             }
-            
+
             .map-control-panel .panel {
                 flex: 1;
                 min-width: 200px;
             }
-            
+
             .cases-list-container {
                 max-height: 300px;
             }
         }
-        
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
                 gap: 16px;
                 text-align: center;
             }
-            
+
             .header-right {
                 flex-direction: column;
                 gap: 12px;
             }
-            
+
             .nav-tabs {
                 flex-wrap: wrap;
             }
-            
+
             .nav-tab {
                 padding: 12px 16px;
                 font-size: 0.8rem;
             }
-            
-            .grid-2, .grid-3, .grid-4 {
+
+            .grid-2,
+            .grid-3,
+            .grid-4 {
                 grid-template-columns: 1fr;
             }
-            
+
             .main-content {
                 padding: 16px;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- ================================================================
          HEADER
@@ -1248,7 +1437,7 @@
             </div>
         </div>
     </header>
-    
+
     <!-- ================================================================
          MAIN NAVIGATION
          ================================================================ -->
@@ -1265,7 +1454,7 @@
             </div>
         </div>
     </nav>
-    
+
     <!-- ================================================================
          MAIN CONTENT
          ================================================================ -->
@@ -1296,7 +1485,7 @@
                     </div>
                 </div>
             </section>
-            
+
             <!-- Charts -->
             <section>
                 <div class="grid grid-2">
@@ -1321,7 +1510,7 @@
                 </div>
             </section>
         </div>
-        
+
         <!-- ============================================================
              TAB 2: CITATION MAP
              ============================================================ -->
@@ -1338,7 +1527,7 @@
                             <span class="select-arrow">▼</span>
                         </div>
                     </div>
-                    
+
                     <div class="panel">
                         <h2 class="panel-title">Citation Direction</h2>
                         <div class="direction-toggle">
@@ -1350,7 +1539,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="panel">
                         <h2 class="panel-title">Statistics</h2>
                         <div class="stats-grid">
@@ -1372,20 +1561,22 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="panel" style="flex: 1;">
                         <h2 class="panel-title" id="map-list-title">Connected Countries</h2>
                         <div class="citation-list" id="map-citation-list">
                             <div class="empty-state">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path
+                                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                 </svg>
                                 <p>Select a country</p>
                             </div>
                         </div>
                     </div>
                 </aside>
-                
+
                 <!-- Center: Map -->
                 <div class="map-container">
                     <div id="citation-map"></div>
@@ -1396,20 +1587,23 @@
                         <button class="zoom-btn" id="zoom-reset">⟲</button>
                     </div>
                 </div>
-                
+
                 <!-- Right: Cases -->
                 <aside class="cases-panel">
                     <div class="panel cases-header">
                         <h2 id="map-cases-title">Cases</h2>
                         <div class="case-count" id="map-cases-count">Select a country to view cases</div>
-                        <input type="text" class="case-search" id="map-case-search" placeholder="Filter cases..." disabled>
+                        <input type="text" class="case-search" id="map-case-search" placeholder="Filter cases..."
+                            disabled>
                     </div>
-                    
+
                     <div class="cases-list-container">
                         <div class="cases-list" id="map-cases-list">
                             <div class="cases-empty">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5">
+                                    <path
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                                 <p>Select a country to view<br>detailed case information</p>
                             </div>
@@ -1418,7 +1612,7 @@
                 </aside>
             </div>
         </div>
-        
+
         <!-- ============================================================
              TAB 3: DETAILED ANALYSIS
              ============================================================ -->
@@ -1447,14 +1641,14 @@
                 </div>
                 <button class="btn secondary" onclick="resetAnalysisFilters()">Reset Filters</button>
             </div>
-            
+
             <!-- Sub-tabs for detailed analysis -->
             <div class="sub-tabs">
                 <button class="sub-tab active" data-subtab="top-cited">Top Cited Jurisdictions</button>
                 <button class="sub-tab" data-subtab="top-citing">Top Citing Jurisdictions</button>
                 <button class="sub-tab" data-subtab="flow-details">Flow Details</button>
             </div>
-            
+
             <!-- Sub-tab content: Top Cited Jurisdictions -->
             <div class="sub-content active" id="subtab-top-cited">
                 <div class="panel">
@@ -1470,7 +1664,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Sub-tab content: Top Citing Jurisdictions -->
             <div class="sub-content" id="subtab-top-citing">
                 <div class="panel">
@@ -1486,7 +1680,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Sub-tab content: Flow Details -->
             <div class="sub-content" id="subtab-flow-details">
                 <div class="panel">
@@ -1498,10 +1692,14 @@
                         <table id="flow-details-table">
                             <thead>
                                 <tr>
-                                    <th onclick="sortTable('flow-details-table', 0)">Source <span class="sort-icon"></span></th>
-                                    <th onclick="sortTable('flow-details-table', 1)">Target <span class="sort-icon"></span></th>
-                                    <th onclick="sortTable('flow-details-table', 2)">Type <span class="sort-icon"></span></th>
-                                    <th onclick="sortTable('flow-details-table', 3)">Count <span class="sort-icon"></span></th>
+                                    <th onclick="sortTable('flow-details-table', 0)">Source <span
+                                            class="sort-icon"></span></th>
+                                    <th onclick="sortTable('flow-details-table', 1)">Target <span
+                                            class="sort-icon"></span></th>
+                                    <th onclick="sortTable('flow-details-table', 2)">Type <span
+                                            class="sort-icon"></span></th>
+                                    <th onclick="sortTable('flow-details-table', 3)">Count <span
+                                            class="sort-icon"></span></th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -1511,7 +1709,7 @@
             </div>
         </div>
     </main>
-    
+
     <!-- ================================================================
          MODAL FOR CASE DETAILS
          ================================================================ -->
@@ -1526,7 +1724,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- ================================================================
          JAVASCRIPT
          ================================================================ -->
@@ -1534,7 +1732,7 @@
         // ================================================================
         // API CONFIGURATION
         // ================================================================
-        
+
         /**
          * Determine API base URL based on current environment
          * Production: Railway API at same domain
@@ -1542,22 +1740,28 @@
          */
         const API_BASE = (() => {
             const hostname = window.location.hostname;
-            
-            // Production environment detection
-            if (hostname !== 'localhost' && hostname !== '127.0.0.1' && !hostname.includes('file://')) {
-                return '/api';
+            const protocol = window.location.protocol;
+
+            // If served from file system (e.g. opening dashboard_local.html directly)
+            if (protocol === 'file:' || hostname === '') {
+                return 'http://127.0.0.1:5000/api';
             }
-            
-            // Development fallback
-            return 'http://127.0.0.1:5000/api';
+
+            // If served from localhost (development server)
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://127.0.0.1:5000/api';
+            }
+
+            // Production / Railway (relative path)
+            return '/api';
         })();
-        
+
         console.log('API Base URL:', API_BASE);
-        
+
         // ================================================================
         // GLOBAL STATE
         // ================================================================
-        
+
         // Region colors for visualizations
         const REGION_COLORS = {
             'Global North': '#3b82f6',
@@ -1565,34 +1769,34 @@
             'International': '#8b5cf6',
             'Unknown': '#5a6978'
         };
-        
+
         // Sixfold category colors
         const CATEGORY_COLORS = [
-            '#3b82f6', '#10b981', '#f97316', 
+            '#3b82f6', '#10b981', '#f97316',
             '#8b5cf6', '#06b6d4', '#ef4444'
         ];
-        
+
         // Map state
         let mapData = { nodes: [], links: [], cases: [] };
         let worldData = null;
         let selectedCountry = null;
         let mapDirection = 'incoming';
         let currentMapCases = [];
-        
+
         // Map D3 objects
         let mapSvg, mapG, mapProjection, mapPath, mapZoom;
-        
+
         // Country name to numeric ID mapping for TopoJSON
-                const countryToNumeric = {
+        const countryToNumeric = {
             'Afghanistan': '4', 'Albania': '8', 'Algeria': '12', 'Argentina': '32',
             'Armenia': '51', 'Australia': '36', 'Austria': '40', 'Azerbaijan': '31',
             'Bangladesh': '50', 'Belgium': '56', 'Belize': '84', 'Bolivia': '68',
             'Bosnia and Herzegovina': '70', 'Brazil': '76', 'Bulgaria': '100',
             'Cambodia': '116', 'Cameroon': '120', 'Canada': '124', 'Chile': '152',
             'China': '156', 'Colombia': '170', 'Costa Rica': '188', 'Croatia': '191',
-            'Cyprus': '196', 'Czech Republic': '203', 'Denmark': '208',
-            'Dominican Republic': '214', 'Ecuador': '218', 'Egypt': '818',
-            'El Salvador': '222', 'Estonia': '233', 'Ethiopia': '231',
+            'Cyprus': '196', 'Czech Republic': '203',
+            'Denmark': '208', 'Dominican Republic': '214', 'Ecuador': '218',
+            'Egypt': '818', 'El Salvador': '222', 'Estonia': '233', 'Ethiopia': '231',
             'Fiji': '242', 'Finland': '246', 'France': '250', 'Germany': '276',
             'Ghana': '288', 'Greece': '300', 'Guatemala': '320', 'Honduras': '340',
             'Hungary': '348', 'Iceland': '352', 'India': '356', 'Indonesia': '360',
@@ -1609,29 +1813,29 @@
             'Senegal': '686', 'Serbia': '688', 'Singapore': '702', 'Slovakia': '703',
             'Slovenia': '705', 'South Africa': '710', 'Spain': '724', 'Sri Lanka': '144',
             'Sudan': '736', 'Sweden': '752', 'Switzerland': '756', 'Syria': '760',
-            'Taiwan': '158', 'Tanzania': '834', 'Thailand': '764',
-            'Trinidad and Tobago': '780', 'Tunisia': '788', 'Turkey': '792',
+            'Taiwan': '158', 'Tanzania': '834', 'Thailand': '764', 'Trinidad and Tobago': '780',
+            'Tunisia': '788', 'Turkey': '792',
             'Uganda': '800', 'Ukraine': '804', 'United Arab Emirates': '784',
             'United Kingdom': '826', 'United States': '840',
             'Uruguay': '858', 'Venezuela': '862', 'Vietnam': '704',
             'Zambia': '894', 'Zimbabwe': '716', 'European Union': 'EU'
         };
-        
+
         // Reverse mapping
         const numericToCountry = {};
         Object.entries(countryToNumeric).forEach(([name, id]) => {
             numericToCountry[id] = name;
         });
-        
+
         // Analysis state
         let analysisData = { nodes: [], flows: [] };
         let currentTypeFilter = '';
         let currentRegionFilter = '';
-        
+
         // ================================================================
         // API FUNCTIONS
         // ================================================================
-        
+
         /**
          * Make an API request with error handling
          * @param {string} endpoint - API endpoint path
@@ -1640,18 +1844,18 @@
          */
         async function apiRequest(endpoint, params = {}) {
             const url = new URL(`${API_BASE}${endpoint}`, window.location.origin);
-            
+
             // Add query parameters
             Object.keys(params).forEach(key => {
                 if (params[key] !== null && params[key] !== '') {
                     url.searchParams.append(key, params[key]);
                 }
             });
-            
+
             try {
                 const response = await fetch(url);
                 const json = await response.json();
-                
+
                 if (json.status === 'success') {
                     return json.data;
                 } else {
@@ -1662,14 +1866,14 @@
                 throw error;
             }
         }
-        
+
         /**
          * Check API health and update status indicator
          */
         async function checkApiHealth() {
             const statusEl = document.getElementById('api-status');
             const textEl = document.getElementById('api-status-text');
-            
+
             try {
                 const data = await apiRequest('/health');
                 statusEl.classList.add('connected');
@@ -1681,11 +1885,11 @@
                 return false;
             }
         }
-        
+
         // ================================================================
         // MAIN NAVIGATION
         // ================================================================
-        
+
         /**
          * Initialize main tab navigation
          */
@@ -1695,12 +1899,12 @@
                     // Update tab active state
                     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    
+
                     // Show corresponding page
                     const tabId = tab.dataset.tab;
                     document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
                     document.getElementById(`tab-${tabId}`).classList.add('active');
-                    
+
                     // Initialize map if switching to map tab
                     if (tabId === 'map' && !mapSvg) {
                         initCitationMap();
@@ -1708,7 +1912,7 @@
                 });
             });
         }
-        
+
         /**
          * Initialize sub-tabs for detailed analysis
          */
@@ -1718,7 +1922,7 @@
                     // Update sub-tab active state
                     document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    
+
                     // Show corresponding content
                     const subtabId = tab.dataset.subtab;
                     document.querySelectorAll('.sub-content').forEach(c => c.classList.remove('active'));
@@ -1726,35 +1930,35 @@
                 });
             });
         }
-        
+
         // ================================================================
         // DASHBOARD TAB - SUMMARY STATS & CHARTS
         // ================================================================
-        
+
         /**
          * Load and display summary statistics
          */
         async function loadSummaryStats() {
             try {
                 const data = await apiRequest('/dashboard/summary_stats');
-                
-                document.getElementById('total-citations').textContent = 
+
+                document.getElementById('total-citations').textContent =
                     data.total_citations?.toLocaleString() || '-';
-                document.getElementById('total-decisions').textContent = 
+                document.getElementById('total-decisions').textContent =
                     data.total_decisions?.toLocaleString() || '-';
-                document.getElementById('total-cases').textContent = 
+                document.getElementById('total-cases').textContent =
                     data.total_cases?.toLocaleString() || '-';
-                
+
                 // Calculate jurisdictions from nodes
                 const nodes = await apiRequest('/network/nodes', { limit: 1000 });
-                document.getElementById('total-jurisdictions').textContent = 
+                document.getElementById('total-jurisdictions').textContent =
                     nodes.length?.toLocaleString() || '-';
-                    
+
             } catch (error) {
                 console.error('Failed to load summary stats:', error);
             }
         }
-        
+
         /**
          * Load and render category breakdown chart
          */
@@ -1762,13 +1966,13 @@
             try {
                 const data = await apiRequest('/dashboard/summary_stats');
                 const categories = data.by_category || [];
-                
+
                 const ctx = document.getElementById('category-chart').getContext('2d');
-                
+
                 // Configure Chart.js for dark theme
                 Chart.defaults.color = '#8b9aad';
                 Chart.defaults.borderColor = '#2a3544';
-                
+
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -1788,14 +1992,14 @@
                             legend: { display: false }
                         },
                         scales: {
-                            y: { 
+                            y: {
                                 beginAtZero: true,
                                 grid: { color: '#2a3544' },
                                 ticks: { color: '#8b9aad' }
                             },
                             x: {
                                 grid: { display: false },
-                                ticks: { 
+                                ticks: {
                                     color: '#8b9aad',
                                     maxRotation: 45,
                                     minRotation: 45
@@ -1808,7 +2012,7 @@
                 console.error('Failed to load category chart:', error);
             }
         }
-        
+
         /**
          * Load and render regional flow doughnut chart
          */
@@ -1816,7 +2020,7 @@
             try {
                 const data = await apiRequest('/dashboard/regional_flows');
                 const asymmetry = data.asymmetry_data || [];
-                
+
                 // Aggregate flows
                 let flows = { 'N→N': 0, 'N→S': 0, 'S→N': 0, 'S→S': 0 };
                 asymmetry.forEach(row => {
@@ -1825,9 +2029,9 @@
                     flows['S→N'] += row.s_to_n || 0;
                     flows['S→S'] += row.s_to_s || 0;
                 });
-                
+
                 const ctx = document.getElementById('flow-chart').getContext('2d');
-                
+
                 new Chart(ctx, {
                     type: 'doughnut',
                     data: {
@@ -1844,7 +2048,7 @@
                         maintainAspectRatio: false,
                         cutout: '60%',
                         plugins: {
-                            legend: { 
+                            legend: {
                                 position: 'right',
                                 labels: {
                                     color: '#8b9aad',
@@ -1859,11 +2063,11 @@
                 console.error('Failed to load flow chart:', error);
             }
         }
-        
+
         // ================================================================
         // MAP TAB - INTERACTIVE CITATION MAP
         // ================================================================
-        
+
         /**
          * Initialize the citation map
          */
@@ -1871,36 +2075,36 @@
             const container = document.getElementById('citation-map');
             const width = container.clientWidth;
             const height = container.clientHeight;
-            
+
             // Create SVG
             mapSvg = d3.select('#citation-map')
                 .append('svg')
                 .attr('width', width)
                 .attr('height', height);
-            
+
             mapG = mapSvg.append('g');
-            
+
             // Projection setup
             mapProjection = d3.geoNaturalEarth1()
                 .scale(width / 5.5)
                 .translate([width / 2, height / 2]);
-            
+
             mapPath = d3.geoPath().projection(mapProjection);
-            
+
             // Zoom behavior
             mapZoom = d3.zoom()
                 .scaleExtent([1, 8])
                 .on('zoom', (event) => mapG.attr('transform', event.transform));
-            
+
             mapSvg.call(mapZoom);
-            
+
             // Load world map data
             try {
                 const response = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
                 worldData = await response.json();
-                
+
                 const countries = topojson.feature(worldData, worldData.objects.countries);
-                
+
                 // Draw countries
                 mapG.selectAll('.country')
                     .data(countries.features)
@@ -1912,7 +2116,7 @@
                     .on('mouseover', handleMapCountryHover)
                     .on('mouseout', handleMapCountryOut)
                     .on('click', handleMapCountryClick);
-                
+
                 // Add graticule
                 const graticule = d3.geoGraticule();
                 mapG.append('path')
@@ -1922,15 +2126,15 @@
                     .attr('fill', 'none')
                     .attr('stroke', 'rgba(255,255,255,0.05)')
                     .attr('stroke-width', 0.5);
-                
+
                 // Groups for arcs and markers
                 mapG.append('g').attr('class', 'arcs');
                 mapG.append('g').attr('class', 'markers');
-                
+
             } catch (error) {
                 console.error('Error loading map:', error);
             }
-            
+
             // Load citation data from API
             await loadMapData();
             // Mark countries with data
@@ -1940,14 +2144,15 @@
                    return mapData.nodes.some(n => n.label === name);
                });
             }
-            
+
+
             // Populate country selector
             populateMapCountrySelector();
-            
+
             // Setup event listeners
             setupMapEventListeners();
         }
-        
+
         /**
          * Load map data from API
          */
@@ -1957,28 +2162,28 @@
                 const networkData = await apiRequest('/network');
                 mapData.nodes = networkData.nodes || [];
                 mapData.links = networkData.links || [];
-                
+
                 // Case data loaded lazily via search
                 mapData.cases = [];
-                
+
                 console.log('Map data loaded:', mapData.nodes.length, 'nodes,', mapData.links.length, 'links');
             } catch (error) {
                 console.error('Failed to load map data:', error);
             }
         }
-        
+
         /**
          * Populate the country selector dropdown
          */
         function populateMapCountrySelector() {
             const select = document.getElementById('map-country-select');
             const countriesWithData = new Set();
-            
+
             // Get countries from nodes
             mapData.nodes.forEach(node => {
                 if (node.label) countriesWithData.add(node.label);
             });
-            
+
             // Sort and add options
             Array.from(countriesWithData).sort().forEach(country => {
                 const option = document.createElement('option');
@@ -1987,7 +2192,7 @@
                 select.appendChild(option);
             });
         }
-        
+
         /**
          * Setup map event listeners
          */
@@ -1997,7 +2202,7 @@
                 selectedCountry = e.target.value || null;
                 updateMapVisualization();
             });
-            
+
             // Direction toggle
             document.querySelectorAll('.direction-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2007,38 +2212,38 @@
                     updateMapVisualization();
                 });
             });
-            
+
             // Zoom controls
-            document.getElementById('zoom-in').addEventListener('click', () => 
+            document.getElementById('zoom-in').addEventListener('click', () =>
                 mapSvg.transition().call(mapZoom.scaleBy, 1.5));
-            document.getElementById('zoom-out').addEventListener('click', () => 
+            document.getElementById('zoom-out').addEventListener('click', () =>
                 mapSvg.transition().call(mapZoom.scaleBy, 0.67));
-            document.getElementById('zoom-reset').addEventListener('click', () => 
+            document.getElementById('zoom-reset').addEventListener('click', () =>
                 mapSvg.transition().call(mapZoom.transform, d3.zoomIdentity));
-            
+
             // Case search
             document.getElementById('map-case-search').addEventListener('input', (e) => {
                 filterMapCases(e.target.value);
             });
-            
+
             // Window resize
             window.addEventListener('resize', debounce(() => {
                 if (mapSvg) {
                     const container = document.getElementById('citation-map');
                     const width = container.clientWidth;
                     const height = container.clientHeight;
-                    
+
                     mapSvg.attr('width', width).attr('height', height);
                     mapProjection.scale(width / 5.5).translate([width / 2, height / 2]);
-                    
+
                     mapG.selectAll('.country').attr('d', mapPath);
                     mapG.selectAll('.graticule').attr('d', mapPath);
-                    
+
                     if (selectedCountry) updateMapVisualization();
                 }
             }, 250));
         }
-        
+
         /**
          * Update map visualization based on selected country and direction
          */
@@ -2048,37 +2253,37 @@
                 .classed('selected', false)
                 .classed('citing', false)
                 .classed('cited', false);
-            
+
             // Clear arcs and markers
             mapG.select('.arcs').selectAll('*').remove();
             mapG.select('.markers').selectAll('*').remove();
-            
+
             if (!selectedCountry) {
                 updateMapStats(0, 0, 0, 0);
                 updateMapCitationList([]);
                 updateMapCasesList([]);
                 return;
             }
-            
+
             // Find relevant flows
             let relevantFlows;
             if (mapDirection === 'incoming') {
                 // Citations received by selected country
-                relevantFlows = mapData.links.filter(l => l.target === selectedCountry || 
+                relevantFlows = mapData.links.filter(l => l.target === selectedCountry ||
                     mapData.nodes.find(n => n.id === l.target)?.label === selectedCountry);
             } else {
                 // Citations made by selected country
                 relevantFlows = mapData.links.filter(l => l.source === selectedCountry ||
                     mapData.nodes.find(n => n.id === l.source)?.label === selectedCountry);
             }
-            
+
             // Aggregate flows by country
             const flowsByCountry = {};
             relevantFlows.forEach(flow => {
                 const otherNodeId = mapDirection === 'incoming' ? flow.source : flow.target;
                 const otherNode = mapData.nodes.find(n => n.id === otherNodeId);
                 const otherCountry = otherNode?.label || otherNodeId;
-                
+
                 if (!flowsByCountry[otherCountry]) {
                     flowsByCountry[otherCountry] = {
                         country: otherCountry,
@@ -2088,66 +2293,66 @@
                 }
                 flowsByCountry[otherCountry].count += flow.value || 1;
             });
-            
+
             const flowsArray = Object.values(flowsByCountry).sort((a, b) => b.count - a.count);
-            
+
             // Calculate statistics
             const totalCitations = flowsArray.reduce((sum, f) => sum + f.count, 0);
             const northCount = flowsArray.filter(f => f.region === 'Global North').reduce((sum, f) => sum + f.count, 0);
             const southCount = flowsArray.filter(f => f.region === 'Global South').reduce((sum, f) => sum + f.count, 0);
-            
+
             updateMapStats(totalCitations, flowsArray.length, northCount, southCount);
             updateMapCitationList(flowsArray);
-            
+
             // Highlight selected country
             const selectedNumericId = countryToNumeric[selectedCountry];
             mapG.selectAll('.country')
                 .classed('selected', d => d.id == selectedNumericId);
-            
+
             // Highlight and draw arcs for related countries
             drawMapArcs(flowsArray);
-            
+
             // Update cases list
             updateMapCasesForCountry();
         }
-        
+
         /**
          * Draw arc connections on the map
          */
         function drawMapArcs(flows) {
             const arcsG = mapG.select('.arcs');
             const markersG = mapG.select('.markers');
-            
+
             const selectedNode = mapData.nodes.find(n => n.label === selectedCountry);
             if (!selectedNode || !selectedNode.lat || !selectedNode.lon) return;
-            
+
             const selectedCoords = mapProjection([selectedNode.lon, selectedNode.lat]);
-            
+
             flows.forEach(flow => {
                 const otherNode = mapData.nodes.find(n => n.label === flow.country);
                 if (!otherNode || !otherNode.lat || !otherNode.lon) return;
-                
+
                 const otherCoords = mapProjection([otherNode.lon, otherNode.lat]);
-                
+
                 // Highlight country
                 const numericId = countryToNumeric[flow.country];
                 mapG.selectAll('.country')
                     .filter(d => d.id == numericId)
                     .classed(mapDirection === 'incoming' ? 'citing' : 'cited', true);
-                
+
                 // Draw arc
                 const dx = otherCoords[0] - selectedCoords[0];
                 const dy = otherCoords[1] - selectedCoords[1];
                 const dr = Math.sqrt(dx * dx + dy * dy) * 1.5;
-                
+
                 const sourceCoords = mapDirection === 'incoming' ? otherCoords : selectedCoords;
                 const targetCoords = mapDirection === 'incoming' ? selectedCoords : otherCoords;
-                
+
                 arcsG.append('path')
                     .attr('class', `flow-arc ${mapDirection}`)
                     .attr('d', `M${sourceCoords[0]},${sourceCoords[1]}A${dr},${dr} 0 0,1 ${targetCoords[0]},${targetCoords[1]}`)
                     .attr('stroke-width', Math.max(1, Math.min(flow.count / 2, 5)));
-                
+
                 // Draw marker
                 markersG.append('circle')
                     .attr('cx', otherCoords[0])
@@ -2159,7 +2364,7 @@
                     .style('opacity', 0.8);
             });
         }
-        
+
         /**
          * Update map statistics display
          */
@@ -2169,14 +2374,14 @@
             document.getElementById('map-stat-north').textContent = north;
             document.getElementById('map-stat-south').textContent = south;
         }
-        
+
         /**
          * Update map citation list panel
          */
         function updateMapCitationList(flows) {
             const listContainer = document.getElementById('map-citation-list');
             const titleEl = document.getElementById('map-list-title');
-            
+
             if (!flows.length) {
                 titleEl.textContent = 'Connected Countries';
                 listContainer.innerHTML = `
@@ -2189,11 +2394,11 @@
                 `;
                 return;
             }
-            
-            titleEl.textContent = mapDirection === 'incoming' 
-                ? `Countries Citing ${selectedCountry}` 
+
+            titleEl.textContent = mapDirection === 'incoming'
+                ? `Countries Citing ${selectedCountry}`
                 : `Countries Cited by ${selectedCountry}`;
-            
+
             listContainer.innerHTML = flows.map(flow => `
                 <div class="citation-item ${flow.region === 'Global North' ? 'north' : 'south'}" 
                      data-country="${flow.country}">
@@ -2201,7 +2406,7 @@
                     <span class="citation-count">${flow.count}</span>
                 </div>
             `).join('');
-            
+
             // Add click handlers to switch to that country
             listContainer.querySelectorAll('.citation-item').forEach(item => {
                 item.addEventListener('click', () => {
@@ -2211,7 +2416,7 @@
                 });
             });
         }
-        
+
         /**
          * Update cases list for selected country
          */
@@ -2220,7 +2425,7 @@
             const casesCount = document.getElementById('map-cases-count');
             const searchInput = document.getElementById('map-case-search');
             const casesList = document.getElementById('map-cases-list');
-            
+
             if (!selectedCountry) {
                 casesTitle.textContent = 'Cases';
                 casesCount.textContent = 'Select a country to view cases';
@@ -2236,37 +2441,37 @@
                 `;
                 return;
             }
-            
+
             // Fetch cases from API
             try {
-                const params = mapDirection === 'incoming' 
+                const params = mapDirection === 'incoming'
                     ? { target_jurisdiction: selectedCountry }
                     : { source_jurisdiction: selectedCountry };
-                
+
                 const cases = await apiRequest('/custom/citations-by-jurisdiction', params);
                 currentMapCases = cases || [];
-                
+
                 searchInput.disabled = false;
-                
+
                 casesTitle.textContent = mapDirection === 'incoming'
                     ? `Cases Citing ${selectedCountry}`
                     : `${selectedCountry}'s Citations`;
-                
+
                 casesCount.textContent = `${currentMapCases.length} citation${currentMapCases.length !== 1 ? 's' : ''} found`;
-                
+
                 renderMapCases(currentMapCases);
             } catch (error) {
                 console.error('Failed to load cases:', error);
                 casesCount.textContent = 'Failed to load cases';
             }
         }
-        
+
         /**
          * Render cases in the map panel
          */
         function renderMapCases(cases) {
             const casesList = document.getElementById('map-cases-list');
-            
+
             if (!cases.length) {
                 casesList.innerHTML = `
                     <div class="cases-empty">
@@ -2278,7 +2483,7 @@
                 `;
                 return;
             }
-            
+
             // Group cases by source case
             const grouped = {};
             cases.forEach(c => {
@@ -2299,12 +2504,12 @@
                     citation_type: c.citation_type
                 });
             });
-            
+
             const casesArray = Object.values(grouped);
-            
+
             casesList.innerHTML = casesArray.slice(0, 50).map(caseGroup => {
                 const regionClass = caseGroup.source_region === 'Global North' ? 'north' : 'south';
-                
+
                 return `
                     <div class="case-card ${regionClass}" 
                          onclick="window.open('${caseGroup.case_url || '#'}', '_blank')">
@@ -2320,13 +2525,13 @@
                                 ${c.cited_case}
                             </div>
                         `).join('')}
-                        ${caseGroup.citations.length > 2 ? 
-                            `<div class="case-citation" style="color: var(--text-muted);">+ ${caseGroup.citations.length - 2} more</div>` : ''}
+                        ${caseGroup.citations.length > 2 ?
+                        `<div class="case-citation" style="color: var(--text-muted);">+ ${caseGroup.citations.length - 2} more</div>` : ''}
                     </div>
                 `;
             }).join('');
         }
-        
+
         /**
          * Filter map cases by search query
          */
@@ -2335,19 +2540,19 @@
                 renderMapCases(currentMapCases);
                 return;
             }
-            
+
             const lowerQuery = query.toLowerCase();
-            const filtered = currentMapCases.filter(c => 
+            const filtered = currentMapCases.filter(c =>
                 (c.case_name && c.case_name.toLowerCase().includes(lowerQuery)) ||
                 (c.source_jurisdiction && c.source_jurisdiction.toLowerCase().includes(lowerQuery)) ||
                 (c.case_law_origin && c.case_law_origin.toLowerCase().includes(lowerQuery))
             );
-            
+
             renderMapCases(filtered);
-            document.getElementById('map-cases-count').textContent = 
+            document.getElementById('map-cases-count').textContent =
                 `${filtered.length} of ${currentMapCases.length} citations`;
         }
-        
+
         /**
          * Handle country hover on map
          */
@@ -2369,7 +2574,7 @@
             }
             d3.select(event.target).classed('highlighted', true);
         }
-        
+
         /**
          * Handle country mouse out on map
          */
@@ -2377,14 +2582,14 @@
             document.getElementById('map-tooltip').classList.remove('visible');
             d3.select(event.target).classed('highlighted', false);
         }
-        
+
         /**
          * Handle country click on map
          */
-                function handleMapCountryClick(event, d) {
+        function handleMapCountryClick(event, d) {
             const countryName = numericToCountry[d.id];
             if (countryName) {
-                // Check if user clicked the already selected country (toggle off)
+                // Toggle selection if clicking already selected country
                 if (selectedCountry === countryName) {
                     document.getElementById('map-country-select').value = "";
                     selectedCountry = null;
@@ -2392,6 +2597,7 @@
                     return;
                 }
 
+                // Check for citation data
                 const hasData = mapData.nodes.some(n => n.label === countryName);
                 if (hasData) {
                     document.getElementById('map-country-select').value = countryName;
@@ -2400,56 +2606,54 @@
                 }
             }
         }
-            }
-        }
-        
+
         // ================================================================
         // DETAILED ANALYSIS TAB
         // ================================================================
-        
+
         /**
          * Load data for detailed analysis
          */
         async function loadAnalysisData() {
             try {
                 // Load nodes with full details
-                const nodes = await apiRequest('/network/nodes', { 
-                    sort_by: 'total_degree', 
-                    limit: 500 
+                const nodes = await apiRequest('/network/nodes', {
+                    sort_by: 'total_degree',
+                    limit: 500
                 });
                 analysisData.nodes = nodes || [];
-                
+
                 // Load flow details
                 const flows = await apiRequest('/custom/flow', {});
                 analysisData.flows = flows || [];
-                
+
                 // Render initial views
                 renderTopCitedList();
                 renderTopCitingList();
                 renderFlowDetails();
-                
+
             } catch (error) {
                 console.error('Failed to load analysis data:', error);
             }
         }
-        
+
         /**
          * Render top cited jurisdictions list
          */
         async function renderTopCitedList() {
             const container = document.getElementById('top-cited-list');
             const countEl = document.getElementById('top-cited-count');
-            
+
             try {
                 // Get citations received by jurisdiction with type breakdown
                 const data = await apiRequest('/custom/citations-received', {
                     sixfold_type: currentTypeFilter,
                     region: currentRegionFilter
                 });
-                
+
                 // If endpoint doesn't exist, use nodes data
                 let jurisdictions = data || analysisData.nodes.filter(n => n.in_degree > 0);
-                
+
                 // Apply filters if using nodes
                 if (!data) {
                     if (currentRegionFilter) {
@@ -2457,14 +2661,14 @@
                     }
                     jurisdictions = jurisdictions.sort((a, b) => (b.in_degree || 0) - (a.in_degree || 0));
                 }
-                
+
                 countEl.textContent = `${jurisdictions.length} results`;
-                
+
                 if (!jurisdictions.length) {
                     container.innerHTML = '<div class="empty-state"><p>No data matching filters</p></div>';
                     return;
                 }
-                
+
                 container.innerHTML = jurisdictions.slice(0, 50).map(j => {
                     const regionClass = (j.region === 'Global North') ? 'north' : 'south';
                     return `
@@ -2481,38 +2685,38 @@
                         </div>
                     `;
                 }).join('');
-                
+
             } catch (error) {
                 console.error('Failed to render top cited:', error);
                 container.innerHTML = '<div class="empty-state"><p>Failed to load data</p></div>';
             }
         }
-        
+
         /**
          * Render top citing jurisdictions list
          */
         async function renderTopCitingList() {
             const container = document.getElementById('top-citing-list');
             const countEl = document.getElementById('top-citing-count');
-            
+
             try {
                 // Get citations made by jurisdiction
                 let jurisdictions = analysisData.nodes.filter(n => n.out_degree > 0);
-                
+
                 // Apply filters
                 if (currentRegionFilter) {
                     jurisdictions = jurisdictions.filter(j => j.region === currentRegionFilter);
                 }
-                
+
                 jurisdictions = jurisdictions.sort((a, b) => (b.out_degree || 0) - (a.out_degree || 0));
-                
+
                 countEl.textContent = `${jurisdictions.length} results`;
-                
+
                 if (!jurisdictions.length) {
                     container.innerHTML = '<div class="empty-state"><p>No data matching filters</p></div>';
                     return;
                 }
-                
+
                 container.innerHTML = jurisdictions.slice(0, 50).map(j => {
                     const regionClass = (j.region === 'Global North') ? 'north' : 'south';
                     return `
@@ -2529,29 +2733,29 @@
                         </div>
                     `;
                 }).join('');
-                
+
             } catch (error) {
                 console.error('Failed to render top citing:', error);
                 container.innerHTML = '<div class="empty-state"><p>Failed to load data</p></div>';
             }
         }
-        
+
         /**
          * Render flow details table
          */
         function renderFlowDetails() {
             const tbody = document.querySelector('#flow-details-table tbody');
             const countEl = document.getElementById('flow-count');
-            
+
             let flows = analysisData.flows;
-            
+
             // Apply filters
             if (currentTypeFilter) {
                 flows = flows.filter(f => f.sixfold_type === currentTypeFilter);
             }
-            
+
             countEl.textContent = `${flows.length} flows`;
-            
+
             tbody.innerHTML = flows.slice(0, 100).map(row => `
                 <tr>
                     <td>${row.source_jurisdiction || '-'}</td>
@@ -2561,24 +2765,24 @@
                 </tr>
             `).join('');
         }
-        
+
         /**
          * Reset analysis filters
          */
         function resetAnalysisFilters() {
             currentTypeFilter = '';
             currentRegionFilter = '';
-            
+
             document.getElementById('analysis-type-filter').value = '';
             document.querySelectorAll('#region-filter .toggle-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.region === '');
             });
-            
+
             renderTopCitedList();
             renderTopCitingList();
             renderFlowDetails();
         }
-        
+
         /**
          * Initialize analysis filter listeners
          */
@@ -2590,7 +2794,7 @@
                 renderTopCitingList();
                 renderFlowDetails();
             });
-            
+
             // Region toggle
             document.querySelectorAll('#region-filter .toggle-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2602,11 +2806,11 @@
                 });
             });
         }
-        
+
         // ================================================================
         // MODAL FUNCTIONS
         // ================================================================
-        
+
         /**
          * Open modal showing cases for a jurisdiction
          */
@@ -2614,31 +2818,31 @@
             const modal = document.getElementById('case-modal');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
-            
-            modalTitle.textContent = type === 'cited' 
+
+            modalTitle.textContent = type === 'cited'
                 ? `Cases Citing ${jurisdiction}`
                 : `Cases from ${jurisdiction}`;
-            
+
             modalBody.innerHTML = '<div class="loading"><div class="spinner"></div>Loading cases...</div>';
             modal.classList.add('active');
-            
+
             try {
                 // Fetch cases for this jurisdiction
                 const params = type === 'cited'
                     ? { target_jurisdiction: jurisdiction }
                     : { source_jurisdiction: jurisdiction };
-                
+
                 if (currentTypeFilter) {
                     params.sixfold_type = currentTypeFilter;
                 }
-                
+
                 const cases = await apiRequest('/custom/citations-by-jurisdiction', params);
-                
+
                 if (!cases || !cases.length) {
                     modalBody.innerHTML = '<div class="empty-state"><p>No cases found</p></div>';
                     return;
                 }
-                
+
                 // Group by case
                 const grouped = {};
                 cases.forEach(c => {
@@ -2660,9 +2864,9 @@
                         target: c.case_law_origin
                     });
                 });
-                
+
                 const casesArray = Object.values(grouped);
-                
+
                 modalBody.innerHTML = casesArray.map(c => {
                     const regionClass = c.source_region === 'Global North' ? 'north' : 'south';
                     return `
@@ -2678,38 +2882,38 @@
                         </div>
                     `;
                 }).join('');
-                
+
             } catch (error) {
                 console.error('Failed to load cases for modal:', error);
                 modalBody.innerHTML = '<div class="empty-state"><p>Failed to load cases</p></div>';
             }
         }
-        
+
         /**
          * Close the modal
          */
         function closeModal() {
             document.getElementById('case-modal').classList.remove('active');
         }
-        
+
         // Close modal on overlay click
         document.getElementById('case-modal').addEventListener('click', (e) => {
             if (e.target.id === 'case-modal') {
                 closeModal();
             }
         });
-        
+
         // Close modal on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
             }
         });
-        
+
         // ================================================================
         // TABLE SORTING
         // ================================================================
-        
+
         /**
          * Sort table by column
          */
@@ -2718,77 +2922,77 @@
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
             const th = table.querySelectorAll('thead tr:first-child th')[colIndex];
-            
+
             // Determine sort order
             let order = 'asc';
             if (th.classList.contains('sort-asc')) {
                 order = 'desc';
             }
-            
+
             // Reset all headers
             table.querySelectorAll('thead th').forEach(h => {
                 h.classList.remove('sort-asc', 'sort-desc');
             });
-            
+
             // Set new order
             th.classList.add(order === 'asc' ? 'sort-asc' : 'sort-desc');
-            
+
             // Sort rows
             rows.sort((a, b) => {
                 const cellA = a.cells[colIndex].textContent.trim();
                 const cellB = b.cells[colIndex].textContent.trim();
-                
+
                 // Try numeric sort
                 const numA = parseFloat(cellA.replace(/,/g, ''));
                 const numB = parseFloat(cellB.replace(/,/g, ''));
-                
+
                 if (!isNaN(numA) && !isNaN(numB)) {
                     return order === 'asc' ? numA - numB : numB - numA;
                 }
-                
+
                 // String sort
-                return order === 'asc' 
-                    ? cellA.localeCompare(cellB) 
+                return order === 'asc'
+                    ? cellA.localeCompare(cellB)
                     : cellB.localeCompare(cellA);
             });
-            
+
             // Re-append rows
             rows.forEach(row => tbody.appendChild(row));
         }
-        
+
         // ================================================================
         // UTILITY FUNCTIONS
         // ================================================================
-        
+
         /**
          * Debounce function for resize events
          */
         function debounce(func, wait) {
             let timeout;
-            return function(...args) {
+            return function (...args) {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func(...args), wait);
             };
         }
-        
+
         // ================================================================
         // INITIALIZATION
         // ================================================================
-        
+
         /**
          * Main initialization function
          */
         async function init() {
             console.log('Initializing Climate Litigation Dashboard...');
-            
+
             // Initialize navigation
             initMainTabs();
             initSubTabs();
             initAnalysisFilters();
-            
+
             // Check API connection
             const isConnected = await checkApiHealth();
-            
+
             if (isConnected) {
                 // Load dashboard data
                 await Promise.all([
@@ -2798,12 +3002,13 @@
                     loadAnalysisData()
                 ]);
             }
-            
+
             console.log('Dashboard initialized successfully');
         }
-        
+
         // Run initialization when DOM is ready
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
+
 </html>
