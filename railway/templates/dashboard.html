@@ -2381,7 +2381,7 @@
         /**
          * Handle country click on map
          */
-                function handleMapCountryClick(event, d) {
+        function handleMapCountryClick(event, d) {
             const countryName = numericToCountry[d.id];
             if (countryName) {
                 // Check if user clicked the already selected country (toggle off)
@@ -2398,8 +2398,6 @@
                     selectedCountry = countryName;
                     updateMapVisualization();
                 }
-            }
-        }
             }
         }
         

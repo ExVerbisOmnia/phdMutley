@@ -655,16 +655,6 @@ def custom_citations_received():
     return api_response(engine.get_custom_citations_received(sixfold_type, region))
 
 
-@app.route('/api/custom/flow', methods=['GET'])
-@handle_exceptions
-def custom_flow():
-    """
-    Get flow details.
-    """
-    engine = get_engine()
-    return api_response(engine.get_custom_flow())
-
-
 @app.route('/api/custom/citations-by-jurisdiction', methods=['GET'])
 @handle_exceptions
 def custom_citations_by_jurisdiction():
