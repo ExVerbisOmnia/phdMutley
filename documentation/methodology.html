@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhD Climate Litigation Research | Complete Methodology Pipeline v5.3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================================================
+           CSS VARIABLES - Academic research aesthetic with modern touch
+           ======================================================================== */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #1c2128;
+            --bg-card: #21262d;
+            --bg-hover: #2a3140;
+            --bg-code: #0d1117;
+            
+            --accent-primary: #58a6ff;
+            --accent-secondary: #79c0ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-orange: #db6d28;
+            --accent-red: #f85149;
+            --accent-purple: #a371f7;
+            --accent-pink: #db61a2;
+            --accent-cyan: #39d353;
+            
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --text-link: #58a6ff;
+            
+            --border-default: #30363d;
+            --border-subtle: #21262d;
+            
+            --font-serif: 'Crimson Pro', Georgia, serif;
+            --font-sans: 'Source Sans 3', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 20px rgba(88,166,255,0.2);
+        }
+        
+        /* ========================================================================
+           RESET & BASE STYLES
+           ======================================================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+        
+        /* ========================================================================
+           HEADER
+           ======================================================================== */
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-bottom: 1px solid var(--border-default);
+            padding: 48px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(88,166,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(163,113,247,0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(88,166,255,0.1);
+            border: 1px solid rgba(88,166,255,0.3);
+            border-radius: 24px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent-primary);
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+        }
+        
+        .header h1 {
+            font-family: var(--font-serif);
+            font-size: 2.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        
+        .header-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 720px;
+        }
+        
+        .header-meta {
+            display: flex;
+            gap: 28px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+        
+        .meta-item .icon {
+            color: var(--accent-primary);
+            font-size: 1rem;
+        }
+        
+        /* ========================================================================
+           NAVIGATION
+           ======================================================================== */
+        .nav-container {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-default);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-tabs {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 14px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .nav-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .nav-tab.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+        
+        /* ========================================================================
+           MAIN CONTENT
+           ======================================================================== */
+        .main-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ========================================================================
+           PIPELINE OVERVIEW
+           ======================================================================== */
+        .pipeline-overview {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+        
+        .pipeline-title {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pipeline-title .icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-purple) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .pipeline-flow {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            min-width: max-content;
+        }
+        
+        .pipeline-stage {
+            flex: 1;
+            min-width: 160px;
+            position: relative;
+        }
+        
+        .stage-box {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 18px 16px;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            height: 100%;
+        }
+        
+        .stage-box:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+        
+        .stage-number {
+            width: 26px;
+            height: 26px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 0 auto 10px;
+            font-family: var(--font-mono);
+        }
+        
+        .stage-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .stage-desc {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        
+        .pipeline-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            color: var(--accent-primary);
+            font-size: 1.1rem;
+            opacity: 0.6;
+        }
+        
+        /* ========================================================================
+           SECTION CARDS (Collapsible)
+           ======================================================================== */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        
+        .section-card:hover {
+            border-color: rgba(88,166,255,0.3);
+        }
+        
+        .section-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .section-header:hover {
+            background: var(--bg-hover);
+        }
+        
+        .section-card.expanded .section-header {
+            border-bottom-color: var(--border-default);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+        }
+        
+        .section-icon.blue { background: rgba(88,166,255,0.12); color: var(--accent-primary); }
+        .section-icon.green { background: rgba(63,185,80,0.12); color: var(--accent-green); }
+        .section-icon.yellow { background: rgba(210,153,34,0.12); color: var(--accent-yellow); }
+        .section-icon.purple { background: rgba(163,113,247,0.12); color: var(--accent-purple); }
+        .section-icon.orange { background: rgba(219,109,40,0.12); color: var(--accent-orange); }
+        .section-icon.pink { background: rgba(219,97,162,0.12); color: var(--accent-pink); }
+        .section-icon.cyan { background: rgba(57,211,83,0.12); color: var(--accent-cyan); }
+        
+        .section-name {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .section-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            margin-top: 2px;
+        }
+        
+        .section-toggle {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+        }
+        
+        .section-card.expanded .section-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        
+        .section-card.expanded .section-content {
+            max-height: 15000px;
+        }
+        
+        .section-body {
+            padding: 24px;
+        }
+        
+        /* ========================================================================
+           CONTENT ELEMENTS
+           ======================================================================== */
+        .content-block {
+            margin-bottom: 28px;
+        }
+        
+        .content-block:last-child {
+            margin-bottom: 0;
+        }
+        
+        .block-title {
+            font-family: var(--font-serif);
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .block-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        
+        .block-text p {
+            margin-bottom: 12px;
+        }
+        
+        .block-text p:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+        
+        .info-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        
+        .info-value {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        
+        /* Code Block */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            margin: 16px 0;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background: var(--bg-tertiary);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-default);
+        }
+        
+        .code-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .code-title .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+        
+        .code-content {
+            padding: 20px;
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .code-content pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .code-content .keyword {
+            color: var(--accent-purple);
+        }
+        
+        .code-content .string {
+            color: var(--accent-green);
+        }
+        
+        .code-content .comment {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        .code-content .tag {
+            color: var(--accent-primary);
+        }
+        
+        .code-content .attr {
+            color: var(--accent-yellow);
+        }
+        
+        /* Prompt Block */
+        .prompt-block {
+            background: linear-gradient(135deg, rgba(88,166,255,0.05) 0%, rgba(163,113,247,0.05) 100%);
+            border: 1px solid rgba(88,166,255,0.2);
+            border-left: 4px solid var(--accent-primary);
+            border-radius: var(--radius-lg);
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .prompt-header {
+            background: rgba(88,166,255,0.08);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(88,166,255,0.15);
+        }
+        
+        .prompt-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .prompt-model {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            background: var(--bg-tertiary);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+        
+        .prompt-content {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .prompt-content pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        /* Expand button for prompts */
+        .prompt-expand {
+            display: none;
+            padding: 12px;
+            text-align: center;
+            background: rgba(88,166,255,0.05);
+            border-top: 1px solid rgba(88,166,255,0.15);
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .prompt-expand:hover {
+            background: rgba(88,166,255,0.1);
+        }
+        
+        .prompt-block.collapsed .prompt-content {
+            max-height: 200px;
+        }
+        
+        .prompt-block.collapsed .prompt-expand {
+            display: block;
+        }
+        
+        .prompt-block.expanded .prompt-content {
+            max-height: none;
+        }
+        
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+        
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list .check {
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .feature-list strong {
+            color: var(--text-primary);
+        }
+        
+        /* Process Flow */
+        .process-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 20px 0;
+        }
+        
+        .process-step {
+            display: flex;
+            gap: 18px;
+            padding: 16px 0;
+            position: relative;
+        }
+        
+        .process-step::before {
+            content: '';
+            position: absolute;
+            left: 22px;
+            top: 52px;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-default);
+        }
+        
+        .process-step:last-child::before {
+            display: none;
+        }
+        
+        .step-indicator {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-content {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+        }
+        
+        .step-title {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Classification Cards */
+        .classification-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+            margin: 20px 0;
+        }
+        
+        .classification-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .classification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .classification-card.cat-1::before { background: var(--accent-primary); }
+        .classification-card.cat-2::before { background: var(--accent-cyan); }
+        .classification-card.cat-3::before { background: var(--accent-green); }
+        .classification-card.cat-4::before { background: var(--accent-purple); }
+        .classification-card.cat-5::before { background: var(--accent-yellow); }
+        .classification-card.cat-6::before { background: var(--accent-orange); }
+        
+        .class-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            margin-bottom: 12px;
+        }
+        
+        .cat-1 .class-number { background: rgba(88,166,255,0.2); color: var(--accent-primary); }
+        .cat-2 .class-number { background: rgba(57,211,83,0.2); color: var(--accent-cyan); }
+        .cat-3 .class-number { background: rgba(63,185,80,0.2); color: var(--accent-green); }
+        .cat-4 .class-number { background: rgba(163,113,247,0.2); color: var(--accent-purple); }
+        .cat-5 .class-number { background: rgba(210,153,34,0.2); color: var(--accent-yellow); }
+        .cat-6 .class-number { background: rgba(219,109,40,0.2); color: var(--accent-orange); }
+        
+        .class-name {
+            font-family: var(--font-serif);
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .class-definition {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+        
+        .class-example {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+        
+        .class-example strong {
+            color: var(--text-secondary);
+        }
+        
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.88rem;
+        }
+        
+        .data-table th {
+            background: var(--bg-tertiary);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-default);
+        }
+        
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-default);
+            color: var(--text-secondary);
+        }
+        
+        .data-table tr:hover td {
+            background: rgba(88,166,255,0.03);
+        }
+        
+        .data-table code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            font-family: var(--font-mono);
+        }
+        
+        .badge-blue { background: rgba(88,166,255,0.15); color: var(--accent-primary); }
+        .badge-green { background: rgba(63,185,80,0.15); color: var(--accent-green); }
+        .badge-yellow { background: rgba(210,153,34,0.15); color: var(--accent-yellow); }
+        .badge-red { background: rgba(248,81,73,0.15); color: var(--accent-red); }
+        .badge-purple { background: rgba(163,113,247,0.15); color: var(--accent-purple); }
+        
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(88,166,255,0.08) 0%, rgba(163,113,247,0.05) 100%);
+            border: 1px solid rgba(88,166,255,0.2);
+            border-left: 4px solid var(--accent-primary);
+            border-radius: var(--radius-lg);
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+        
+        .highlight-box.success {
+            background: linear-gradient(135deg, rgba(63,185,80,0.08) 0%, rgba(57,211,83,0.04) 100%);
+            border-color: rgba(63,185,80,0.2);
+            border-left-color: var(--accent-green);
+        }
+        
+        .highlight-box.warning {
+            background: linear-gradient(135deg, rgba(210,153,34,0.08) 0%, rgba(219,109,40,0.04) 100%);
+            border-color: rgba(210,153,34,0.2);
+            border-left-color: var(--accent-yellow);
+        }
+        
+        .highlight-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .highlight-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-default);
+            padding: 32px 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+            
+            .pipeline-flow {
+                flex-direction: column;
+            }
+            
+            .pipeline-arrow {
+                transform: rotate(90deg);
+                padding: 8px 0;
+            }
+            
+            .classification-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ====================================================================
+         HEADER
+         ==================================================================== -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-badge">
+                <span>📊</span>
+                <span>Version 5.3 • Full Text Processing</span>
+            </div>
+            <h1>Complete Methodology Pipeline</h1>
+            <p class="header-subtitle">
+                AI-Powered Citation Extraction for Transnational Climate Litigation Analysis —
+                A comprehensive 7-phase methodology for identifying and classifying cross-jurisdictional 
+                judicial citations with reproducible algorithms and transparent documentation.
+            </p>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <span class="icon">🎓</span>
+                    <span>University of São Paulo Law School</span>
+                </div>
+                <div class="meta-item">
+                    <span class="icon">📅</span>
+                    <span>December 2025</span>
+                </div>
+                <div class="meta-item">
+                    <span class="icon">🤖</span>
+                    <span>Claude Sonnet 4.5 + Haiku 4.5</span>
+                </div>
+                <div class="meta-item">
+                    <span class="icon">📈</span>
+                    <span>2,924 Judicial Decisions</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- ====================================================================
+         NAVIGATION
+         ==================================================================== -->
+    <nav class="nav-container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">Overview</button>
+            <button class="nav-tab" data-tab="phase0">Phase 0: Classification</button>
+            <button class="nav-tab" data-tab="phase1">Phase 1: Source ID</button>
+            <button class="nav-tab" data-tab="phase2">Phase 2: Extraction</button>
+            <button class="nav-tab" data-tab="phase3">Phase 3: Origin ID</button>
+            <button class="nav-tab" data-tab="phase4">Phase 4: Classification</button>
+            <button class="nav-tab" data-tab="sixfold">Sixfold Schema</button>
+            <button class="nav-tab" data-tab="database">Database</button>
+        </div>
+    </nav>
+    
+    <!-- ====================================================================
+         MAIN CONTENT
+         ==================================================================== -->
+    <main class="main-content">
+        <!-- ================================================================
+             OVERVIEW TAB
+             ================================================================ -->
+        <div id="overview" class="tab-content active">
+            <div class="pipeline-overview">
+                <div class="pipeline-title">
+                    <div class="icon">🔄</div>
+                    <span>Citation Extraction Pipeline Architecture</span>
+                </div>
+                <div class="pipeline-flow">
+                    <div class="pipeline-stage">
+                        <div class="stage-box">
+                            <div class="stage-number">0</div>
+                            <div class="stage-label">Classification</div>
+                            <div class="stage-desc">Decision Filter</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage">
+                        <div class="stage-box">
+                            <div class="stage-number">1</div>
+                            <div class="stage-label">Source ID</div>
+                            <div class="stage-desc">Jurisdiction</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage">
+                        <div class="stage-box">
+                            <div class="stage-number">2A</div>
+                            <div class="stage-label">Extraction</div>
+                            <div class="stage-desc">12 Patterns</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage">
+                        <div class="stage-box">
+                            <div class="stage-number">2B</div>
+                            <div class="stage-label">Functional</div>
+                            <div class="stage-desc">Use Analysis</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage">
+                        <div class="stage-box">
+                            <div class="stage-number">3</div>
+                            <div class="stage-label">Origin ID</div>
+                            <div class="stage-desc">3-Tier System</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage">
+                        <div class="stage-box">
+                            <div class="stage-number">4</div>
+                            <div class="stage-label">Classify</div>
+                            <div class="stage-desc">Sixfold</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Research Context -->
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon blue">🎯</div>
+                        <div>
+                            <div class="section-name">Research Context & Objectives</div>
+                            <div class="section-status">PhD Climate Litigation Analysis</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Research Question</div>
+                            <div class="block-text">
+                                <p>How do courts cite foreign and international decisions in climate cases, and what are the patterns of cross-jurisdictional citation flows between Global North and Global South?</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Data Source</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Database</div>
+                                    <div class="info-value">Climate Case Chart (Columbia/LSE)</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Total Decisions</div>
+                                    <div class="info-value">2,924 Judicial Decisions</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">North/South Ratio</div>
+                                    <div class="info-value">29:1 (96% vs 4%)</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Jurisdictions</div>
+                                    <div class="info-value">102 Countries</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Global South Definition</div>
+                            <div class="highlight-box">
+                                <div class="highlight-text">
+                                    "The phrase 'Global South' refers broadly to the regions of Latin America and the Caribbean, Asia, Africa and Oceania, and denotes regions that are mostly low-income and often politically or culturally marginalized. However, it must be noted that the Global South is not a homogeneous group of countries, and that legal development and legal capacity vary by country."
+                                    <br><br>
+                                    <strong>Source:</strong> Maria Antonia Tigre, Global Climate Litigation Report: 2023 Status Review (UNEP)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">5,974</div>
+                                <div class="stat-label">Total Citations</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">2,355</div>
+                                <div class="stat-label">Foreign Citations</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">75-85%</div>
+                                <div class="stat-label">Target Recall</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">~$44</div>
+                                <div class="stat-label">Processing Cost</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Innovations -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon green">💡</div>
+                        <div>
+                            <div class="section-name">Key Methodological Innovations</div>
+                            <div class="section-status">Version 5.3 Improvements</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <ul class="feature-list">
+                            <li>
+                                <span class="check">✓</span>
+                                <div><strong>Full Text Processing:</strong> Entire document analyzed without truncation, using dynamic chunking only for documents exceeding 600K characters (~150K tokens)</div>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <div><strong>Separation of Concerns:</strong> Extraction (Phase 2A) and functional classification (Phase 2B) are performed in separate passes to maximize both recall and analytical accuracy</div>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <div><strong>12 Citation Patterns:</strong> Comprehensive extraction covering traditional citations, narrative references, shorthand mentions, scholarly citations, and more</div>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <div><strong>3-Tier Origin Identification:</strong> Dictionary lookup → LLM analysis → Web search fallback, balancing cost, speed, and accuracy</div>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <div><strong>Sixfold Classification:</strong> Nuanced categorization distinguishing member-state vs. non-member citations for international tribunals</div>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <div><strong>Dual-Model Architecture:</strong> Claude Sonnet 4.5 for complex reasoning, optimized prompts following Anthropic best practices</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================================
+             PHASE 0: DOCUMENT CLASSIFICATION
+             ================================================================ -->
+        <div id="phase0" class="tab-content">
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon purple">🔍</div>
+                        <div>
+                            <div class="section-name">Phase 0: Document Classification</div>
+                            <div class="section-status">classify_decisions.py • Claude Sonnet 4.5</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Purpose</div>
+                            <div class="block-text">
+                                <p>Before extracting citations, each document must be classified as a judicial decision or non-decision. The Climate Case Chart database includes various document types (pleadings, motions, administrative documents), but only judicial decisions are relevant for citation analysis.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Two-Stage Classification Strategy</div>
+                            <div class="process-flow">
+                                <div class="process-step">
+                                    <div class="step-indicator">1</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Document Title Heuristic (Fast Path)</div>
+                                        <div class="step-desc">
+                                            Check if the last word of the Document Title is "judgment" or "decision". If matched, classify as decision with 100% confidence. No API cost. This provides immediate classification for clearly-labeled documents.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-indicator">2</div>
+                                    <div class="step-content">
+                                        <div class="step-title">LLM Classification (Fallback)</div>
+                                        <div class="step-desc">
+                                            For documents where the title is inconclusive, send to Claude Sonnet 4.5 for intelligent classification. Uses structured XML prompt with explicit inclusion/exclusion criteria. Cost: ~$0.003 per document.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">🤖 Complete LLM Classification Prompt</div>
+                            <div class="prompt-block collapsed">
+                                <div class="prompt-header">
+                                    <div class="prompt-title">
+                                        <span>📝</span>
+                                        <span>Document Classification Prompt</span>
+                                    </div>
+                                    <div class="prompt-model">claude-sonnet-4-5-20250929</div>
+                                </div>
+                                <div class="prompt-content">
+<pre>You are an expert legal document classifier specializing in judicial decisions worldwide.
+
+&lt;task&gt;
+Analyze the provided document excerpt and determine whether it constitutes a JUDICIAL DECISION.
+A judicial decision is a formal ruling, judgment, or order issued by a court or tribunal.
+&lt;/task&gt;
+
+&lt;document_metadata&gt;
+&lt;document_type&gt;{doc_type}&lt;/document_type&gt;
+&lt;document_title&gt;{doc_title}&lt;/document_title&gt;
+&lt;/document_metadata&gt;
+
+&lt;classification_criteria&gt;
+&lt;must_include&gt;
+- Issued by a court, tribunal, or judicial authority
+- Contains legal reasoning and analysis
+- Represents a binding determination on legal matters
+- Authored or issued under judicial authority
+&lt;/must_include&gt;
+
+&lt;judicial_decision_indicators&gt;
+- Final or interim rulings on legal matters
+- Appellate decisions reviewing lower court rulings
+- Orders with legal reasoning (not purely procedural)
+- Judgments resolving disputes
+- Advisory opinions from judicial bodies
+&lt;/judicial_decision_indicators&gt;
+
+&lt;explicit_exclusions&gt;
+- Motions, petitions, or complaints filed by parties
+- Legal briefs or memoranda submitted by counsel
+- Administrative notices or regulatory announcements
+- Press releases or media statements
+- Settlement agreements
+- Procedural orders without substantive legal analysis
+- Legislative or executive branch documents
+&lt;/explicit_exclusions&gt;
+&lt;/classification_criteria&gt;
+
+&lt;instructions&gt;
+1. Carefully analyze the document excerpt below
+2. Apply the classification criteria systematically
+3. Provide clear reasoning for your determination
+4. Assign a confidence score (0.0-1.0) based on the strength of evidence
+5. Return your response ONLY as valid JSON in the exact format specified
+&lt;/instructions&gt;
+
+&lt;output_format&gt;
+Return ONLY valid JSON with no additional text or markdown:
+{
+  "is_judicial_decision": true,
+  "confidence_score": 0.95
+}
+
+CRITICAL: Output ONLY the JSON object. No markdown, no code blocks, no explanatory text.
+&lt;/output_format&gt;
+
+&lt;document_excerpt&gt;
+{text_sample}
+&lt;/document_excerpt&gt;</pre>
+                                </div>
+                                <div class="prompt-expand" onclick="togglePrompt(this)">▼ Click to expand full prompt</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">97-99%</div>
+                                <div class="stat-label">Accuracy</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">$0.003</div>
+                                <div class="stat-label">Cost per Doc</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">8,000</div>
+                                <div class="stat-label">Chars Analyzed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================================
+             PHASE 1: SOURCE JURISDICTION
+             ================================================================ -->
+        <div id="phase1" class="tab-content">
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon blue">🌍</div>
+                        <div>
+                            <div class="section-name">Phase 1: Source Jurisdiction Identification</div>
+                            <div class="section-status">extract_citations.py • Database Lookup</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Purpose</div>
+                            <div class="block-text">
+                                <p>Identify the jurisdiction (country/region) of the citing court. This is essential for determining whether a citation is domestic or cross-jurisdictional. The source jurisdiction is extracted from the Case.geographies field in the database.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Algorithm</div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">
+                                        <span class="dot"></span>
+                                        <span>get_source_jurisdiction()</span>
+                                    </div>
+                                </div>
+                                <div class="code-content">
+<pre><span class="keyword">def</span> get_source_jurisdiction(geographies_string: str) -> str:
+    <span class="comment">"""
+    Extract primary jurisdiction from Geographies field.
+    
+    INPUT: "United States; California; Washington, D.C."
+    ALGORITHM:
+        1. Split by semicolon
+        2. Take first value (country level)
+        3. Handle international tribunals
+    OUTPUT: Primary country string
+    """</span>
+    <span class="keyword">if not</span> geographies_string:
+        <span class="keyword">return</span> <span class="string">"Unknown"</span>
+    
+    parts = [p.strip() <span class="keyword">for</span> p <span class="keyword">in</span> geographies_string.split(<span class="string">';'</span>)]
+    primary = parts[<span class="string">0</span>]  <span class="comment"># Country level only</span>
+    
+    <span class="comment"># Check if international</span>
+    <span class="keyword">if</span> primary <span class="keyword">in</span> [<span class="string">'International'</span>, <span class="string">'INTL'</span>, <span class="string">'World'</span>]:
+        <span class="keyword">return</span> <span class="string">"International"</span>
+    
+    <span class="comment"># Normalize jurisdiction</span>
+    <span class="keyword">return</span> normalize_jurisdiction(primary)</pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Region Classification</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Global North</div>
+                                    <div class="info-value">US, UK, Canada, Australia, EU, Japan, etc.</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Global South</div>
+                                    <div class="info-value">Latin America, Africa, Asia (non-Japan/Korea), Oceania</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">International</div>
+                                    <div class="info-value">ICJ, ECtHR, IACtHR, CJEU, WTO, etc.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="highlight-box success">
+                            <div class="highlight-title">Zero API Cost</div>
+                            <div class="highlight-text">
+                                Phase 1 uses only database lookups and rule-based logic. No LLM calls required, making it instant and free.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================================
+             PHASE 2: EXTRACTION
+             ================================================================ -->
+        <div id="phase2" class="tab-content">
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon green">📚</div>
+                        <div>
+                            <div class="section-name">Phase 2A: Pure Citation Extraction</div>
+                            <div class="section-status">extract_citations.py • Claude Sonnet 4.5</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Purpose</div>
+                            <div class="block-text">
+                                <p>Extract ALL case law references from the full document text. The key principle is <strong>maximum recall</strong> — capture every possible citation without filtering or classification at this stage.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">12 Citation Format Patterns</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">1. Traditional Citations</div>
+                                    <div class="info-value">"Brown v. Board of Education, 347 U.S. 483 (1954)"</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">2. Narrative References</div>
+                                    <div class="info-value">"The Norwegian Supreme Court held in 2020..."</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">3. Shorthand References</div>
+                                    <div class="info-value">"the Urgenda case", "following Abraham"</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">4. Scholarly Citations</div>
+                                    <div class="info-value">"Professor X's analysis of the Urgenda case"</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">5. Procedural References</div>
+                                    <div class="info-value">"On appeal from...", "Affirmed by..."</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">6. Comparative References</div>
+                                    <div class="info-value">"Unlike the approach in...", "Similar to..."</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">7. Signal Citations</div>
+                                    <div class="info-value">"See also...", "Cf...", "Compare with..."</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">8. Footnote/Endnote</div>
+                                    <div class="info-value">Citations in footnotes, "supra", "infra"</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">9. Dissenting/Concurring</div>
+                                    <div class="info-value">Citations in minority opinions</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">10. Doctrine References</div>
+                                    <div class="info-value">"European precautionary principle jurisprudence"</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">11. Advisory Opinions</div>
+                                    <div class="info-value">ICJ Advisory Opinions, tribunal opinions</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">12. Pending Cases</div>
+                                    <div class="info-value">"pending before...", "currently before..."</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">🤖 Complete Extraction Prompt</div>
+                            <div class="prompt-block collapsed">
+                                <div class="prompt-header">
+                                    <div class="prompt-title">
+                                        <span>📝</span>
+                                        <span>Phase 2A Extraction Prompt</span>
+                                    </div>
+                                    <div class="prompt-model">claude-sonnet-4-5-20250929</div>
+                                </div>
+                                <div class="prompt-content">
+<pre>You are extracting ALL judicial decision references from a legal document.
+Your ONLY task is EXTRACTION - identify and extract every reference to case law.
+
+SOURCE COURT INFORMATION:
+- Jurisdiction: {source_jurisdiction}
+- Region: {source_region}
+
+============================================================
+CRITICAL INSTRUCTIONS:
+============================================================
+1. Extract EVERY reference to case law, regardless of domestic or foreign origin
+2. Do NOT filter by jurisdiction - extract everything
+3. Do NOT classify how citations are used - just extract them
+4. Be EXHAUSTIVE - capture every mention of any case, court ruling, or judicial decision
+5. Read the ENTIRE text carefully - do not skip any sections
+
+============================================================
+EXTRACTION PATTERNS - CAPTURE ALL OF THESE:
+============================================================
+
+1. TRADITIONAL CITATIONS (formal legal citations)
+   - "Brown v. Board of Education, 347 U.S. 483 (1954)"
+   - "R (Miller) v Secretary of State [2017] UKSC 5"
+   - "Case C-473/14 Dimos Kropias Attikis"
+   - Include ALL citation formats and parallel citations
+
+2. NARRATIVE REFERENCES (descriptive mentions)
+   - "The Norwegian Supreme Court held in 2020..."
+   - "Following the Dutch court's approach in..."
+   - "The Oslo District Court ruled..."
+   - "The European Court of Human Rights stated..."
+
+3. SHORTHAND REFERENCES (abbreviated mentions)
+   - "the Urgenda case"
+   - "following Abraham"
+   - "the landmark Dutch climate decision"
+   - "as established in Öneryıldız"
+
+4. SCHOLARLY CITATIONS (academic references to cases)
+   - "Professor X's analysis of the Urgenda case"
+   - "As noted by UNEP regarding the Norwegian ruling"
+   - "Commentary on the ECtHR jurisprudence"
+
+5. PROCEDURAL REFERENCES (case history)
+   - "On appeal from..."
+   - "Affirmed by..."
+   - "Following reversal by..."
+   - "Remanded to..."
+
+6. COMPARATIVE REFERENCES (comparing to other cases)
+   - "Unlike the approach in..."
+   - "Similar to..."
+   - "Distinguishing..."
+   - "Consistent with..."
+
+7. SIGNAL CITATIONS (legal signals)
+   - "See also..."
+   - "Cf..."
+   - "Compare with..."
+   - "But see..."
+   - "Accord..."
+
+8. FOOTNOTE/ENDNOTE CITATIONS
+   - Include ALL citations appearing in footnotes
+   - Include "supra" and "infra" references
+   - Include ibid. and id. references that refer to cases
+
+9. DISSENTING/CONCURRING OPINION CITATIONS
+   - Citations in dissenting opinions
+   - Citations in concurring opinions
+   - Note which type of opinion contains the citation
+
+10. DOCTRINE REFERENCES (legal principle attributions)
+    - "European precautionary principle jurisprudence"
+    - "Following the approach developed in..."
+    - "The doctrine established by..."
+
+11. ADVISORY OPINIONS
+    - ICJ Advisory Opinions
+    - Other international tribunal advisory opinions
+    - "Advisory Opinion on..."
+
+12. PENDING/ONGOING CASE REFERENCES
+    - "pending before..."
+    - "currently before..."
+    - "the ongoing case of..."
+
+============================================================
+OUTPUT FORMAT (JSON):
+============================================================
+{
+  "case_law_references": [
+    {
+      "case_name": "extracted case name (e.g., 'Urgenda Foundation v. State of the Netherlands')",
+      "raw_text": "complete citation text exactly as it appears",
+      "confidence": 0.0-1.0
+    }
+  ],
+  "total_references_found": number,
+  "extraction_notes": "any notes about the extraction process"
+}
+
+============================================================
+IMPORTANT REMINDERS:
+============================================================
+- Extract EVERYTHING that looks like a case reference
+- Do NOT skip any sections of the document
+- Include citations even if you're uncertain about the format
+- Better to over-extract than to miss citations
+- Your job is ONLY extraction - classification comes later
+
+Document text:
+{text}</pre>
+                                </div>
+                                <div class="prompt-expand" onclick="togglePrompt(this)">▼ Click to expand full prompt</div>
+                            </div>
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <div class="highlight-title">Dynamic Chunking</div>
+                            <div class="highlight-text">
+                                Documents exceeding 600,000 characters (~150K tokens) are automatically split into overlapping chunks with 5,000 character overlap to avoid missing citations at boundaries. Results are deduplicated after processing.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phase 2B -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon yellow">⚖️</div>
+                        <div>
+                            <div class="section-name">Phase 2B: Functional Classification</div>
+                            <div class="section-status">Separate Pass Analysis</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Purpose</div>
+                            <div class="block-text">
+                                <p>After extraction, a separate pass analyzes HOW each citation was used by the court. This separation of concerns improves both recall (extraction) and analytical accuracy (classification).</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Classification Categories</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">parties_argument</div>
+                                    <div class="info-value">Court recounting what a party argued</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">dismissed</div>
+                                    <div class="info-value">Court rejects or distinguishes the citation</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">contributed</div>
+                                    <div class="info-value">Citation supports the court's reasoning</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">🤖 Functional Classification Prompt</div>
+                            <div class="prompt-block collapsed">
+                                <div class="prompt-header">
+                                    <div class="prompt-title">
+                                        <span>📝</span>
+                                        <span>Phase 2B Functional Classification</span>
+                                    </div>
+                                    <div class="prompt-model">claude-sonnet-4-5-20250929</div>
+                                </div>
+                                <div class="prompt-content">
+<pre>You are classifying HOW a court used each citation in its judgment.
+
+SOURCE COURT: {source_jurisdiction}
+
+For each citation below, determine:
+
+1. FUNCTIONAL USE:
+   - "parties_argument": The court is recounting what a party argued
+   - "dismissed": The court REJECTS or distinguishes this citation
+   - "contributed": The citation supports the court's own reasoning
+
+2. OPINION TYPE:
+   - "majority": Main/majority opinion
+   - "dissent": Dissenting opinion
+   - "concurrence": Concurring opinion
+   - "unclear": Cannot determine
+
+KEY SIGNALS:
+- "parties_argument": "submitted", "argued", "contended", "relied on", "appellant/respondent"
+- "dismissed": "distinguish", "not applicable", "unlike", "differs from", "little transfer value"
+- "contributed": "following", "applying", "as held in", "consistent with", "we adopt"
+
+CITATIONS TO CLASSIFY:
+{citations_list}
+
+OUTPUT FORMAT (JSON):
+{
+  "classifications": [
+    {
+      "citation_index": 1,
+      "functional_use": "parties_argument|dismissed|contributed",
+      "opinion_type": "majority|dissent|concurrence|unclear",
+      "key_signals": ["list", "of", "signals"]
+    }
+  ]
+}
+
+If uncertain, use "contributed" with low confidence.</pre>
+                                </div>
+                                <div class="prompt-expand" onclick="togglePrompt(this)">▼ Click to expand full prompt</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================================
+             PHASE 3: ORIGIN IDENTIFICATION
+             ================================================================ -->
+        <div id="phase3" class="tab-content">
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon orange">🔎</div>
+                        <div>
+                            <div class="section-name">Phase 3: Origin Identification</div>
+                            <div class="section-status">3-Tier Approach • Dictionary + LLM + Search</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Purpose</div>
+                            <div class="block-text">
+                                <p>Identify the country/jurisdiction of origin for each extracted citation. Uses a tiered approach to balance cost, speed, and accuracy.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">3-Tier Architecture</div>
+                            <div class="process-flow">
+                                <div class="process-step">
+                                    <div class="step-indicator">T1</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Tier 1: Dictionary Lookup (Fastest, Free)</div>
+                                        <div class="step-desc">
+                                            Check cached results first. Then search KNOWN_FOREIGN_COURTS (80+ courts) and LANDMARK_CLIMATE_CASES (20+ cases) dictionaries. If found, return with 95% confidence. Zero API cost.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-indicator">T2</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Tier 2: Claude Sonnet Analysis</div>
+                                        <div class="step-desc">
+                                            For citations not found in dictionaries, use Claude Sonnet 4.5 to analyze court name, citation format, case name patterns, and legal system indicators. Cost: ~$0.01 per citation.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-indicator">T3</div>
+                                    <div class="step-content">
+                                        <div class="step-title">Tier 3: Web Search (Fallback)</div>
+                                        <div class="step-desc">
+                                            For obscure or uncertain cases, web search can be used as a final fallback. Currently placeholder for future implementation.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">🤖 Tier 2 Origin Identification Prompt</div>
+                            <div class="prompt-block collapsed">
+                                <div class="prompt-header">
+                                    <div class="prompt-title">
+                                        <span>📝</span>
+                                        <span>Phase 3 Tier 2 Origin Analysis</span>
+                                    </div>
+                                    <div class="prompt-model">claude-sonnet-4-5-20250929</div>
+                                </div>
+                                <div class="prompt-content">
+<pre>Identify the jurisdiction/country of origin for this legal case citation.
+
+CASE NAME: {case_name}
+RAW CITATION: {raw_text}
+
+Analyze ALL available signals:
+1. Court name in citation
+2. Citation format (e.g., "U.S." suggests United States, "UKSC" suggests UK)
+3. Case name patterns
+4. Legal system indicators
+
+Respond in JSON:
+{
+  "origin_country": "country name",
+  "region": "Global North|Global South|International",
+  "court": "court name if identifiable",
+  "year": year if mentioned,
+  "confidence": 0.0-1.0,
+  "reasoning": "brief explanation of how you determined the origin"
+}
+
+If you cannot determine the origin with reasonable confidence (>0.5), return confidence 0.0.</pre>
+                                </div>
+                                <div class="prompt-expand" onclick="togglePrompt(this)">▼ Click to expand full prompt</div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Sample Dictionary Entries</div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Court/Case Pattern</th>
+                                        <th>Country</th>
+                                        <th>Region</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>UK Supreme Court</code></td>
+                                        <td>United Kingdom</td>
+                                        <td>Global North</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Urgenda</code></td>
+                                        <td>Netherlands</td>
+                                        <td>Global North</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>ECtHR</code></td>
+                                        <td>Council of Europe</td>
+                                        <td>International</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Future Generations</code></td>
+                                        <td>Colombia</td>
+                                        <td>Global South</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Ashgar Leghari</code></td>
+                                        <td>Pakistan</td>
+                                        <td>Global South</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================================
+             PHASE 4: CLASSIFICATION
+             ================================================================ -->
+        <div id="phase4" class="tab-content">
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon pink">🏷️</div>
+                        <div>
+                            <div class="section-name">Phase 4: Citation Type Classification</div>
+                            <div class="section-status">Rule-Based Classification</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Purpose</div>
+                            <div class="block-text">
+                                <p>Classify each citation based on the relationship between source jurisdiction and cited jurisdiction. This uses deterministic rule-based logic, requiring no LLM calls.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Classification Logic</div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">
+                                        <span class="dot"></span>
+                                        <span>classify_citation_type()</span>
+                                    </div>
+                                </div>
+                                <div class="code-content">
+<pre><span class="keyword">def</span> classify_citation_type(source_jurisdiction, source_region,
+                          case_origin, case_region):
+    <span class="comment">"""
+    Phase 4: Classify citation type based on source and origin.
+    
+    OUTPUT: (citation_type, is_cross_jurisdictional)
+    """</span>
+    <span class="comment"># Normalize jurisdictions</span>
+    source_norm = normalize_jurisdiction(source_jurisdiction)
+    case_norm = normalize_jurisdiction(case_origin)
+    
+    <span class="comment"># Handle unknowns</span>
+    <span class="keyword">if</span> case_origin == <span class="string">'Unknown'</span> <span class="keyword">or</span> case_region == <span class="string">'Unknown'</span>:
+        <span class="keyword">return</span> <span class="string">'Unknown'</span>, <span class="keyword">False</span>
+    
+    <span class="comment"># Same jurisdiction = Domestic (NOT cross-jurisdictional)</span>
+    <span class="keyword">if</span> source_norm == case_norm:
+        <span class="keyword">return</span> <span class="string">'Domestic'</span>, <span class="keyword">False</span>
+    
+    <span class="comment"># Different jurisdictions = Cross-jurisdictional</span>
+    is_cross_jurisdictional = <span class="keyword">True</span>
+    
+    <span class="comment"># Classification logic</span>
+    <span class="keyword">if</span> source_region == <span class="string">'International'</span> <span class="keyword">or</span> case_region == <span class="string">'International'</span>:
+        <span class="keyword">if</span> source_region == <span class="string">'International'</span> <span class="keyword">and</span> case_region == <span class="string">'International'</span>:
+            <span class="keyword">return</span> <span class="string">'International Citation'</span>, <span class="keyword">True</span>
+        <span class="keyword">elif</span> source_region == <span class="string">'International'</span>:
+            <span class="keyword">return</span> <span class="string">'Foreign Citation'</span>, <span class="keyword">True</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">'International Citation'</span>, <span class="keyword">True</span>
+    
+    <span class="comment"># Both are national courts (different countries)</span>
+    <span class="keyword">return</span> <span class="string">'Foreign Citation'</span>, <span class="keyword">True</span></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="highlight-box success">
+                            <div class="highlight-title">Zero API Cost</div>
+                            <div class="highlight-text">
+                                Phase 4 uses purely deterministic rules based on the origin data from Phase 3. No LLM calls required, making classification instant and free.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================================
+             SIXFOLD SCHEMA
+             ================================================================ -->
+        <div id="sixfold" class="tab-content">
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon cyan">📊</div>
+                        <div>
+                            <div class="section-name">Sixfold Citation Classification Schema</div>
+                            <div class="section-status">sixfold_classification_complete.sql</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Overview</div>
+                            <div class="block-text">
+                                <p>The sixfold classification schema provides nuanced categorization of cross-jurisdictional citations by considering both the direction of citation (national vs. international) and the membership relationship between source and cited jurisdictions in international court systems.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="classification-grid">
+                            <div class="classification-card cat-1">
+                                <div class="class-number">1</div>
+                                <div class="class-name">Foreign Citation</div>
+                                <div class="class-definition">
+                                    National court citing another national court from a different country. The most common form of transnational judicial dialogue.
+                                </div>
+                                <div class="class-example">
+                                    <strong>Direction:</strong> National → National<br>
+                                    <strong>Example:</strong> UK court citing Dutch Urgenda case
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card cat-2">
+                                <div class="class-number">2</div>
+                                <div class="class-name">International Citation</div>
+                                <div class="class-definition">
+                                    National court citing an international tribunal where the citing country is a member state with binding jurisdiction.
+                                </div>
+                                <div class="class-example">
+                                    <strong>Direction:</strong> National → International (Member)<br>
+                                    <strong>Example:</strong> UK court citing ECtHR case
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card cat-3">
+                                <div class="class-number">3</div>
+                                <div class="class-name">Foreign International Citation</div>
+                                <div class="class-definition">
+                                    National court citing an international tribunal where the citing country is NOT a member state (persuasive only).
+                                </div>
+                                <div class="class-example">
+                                    <strong>Direction:</strong> National → International (Non-Member)<br>
+                                    <strong>Example:</strong> US court citing IACtHR case
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card cat-4">
+                                <div class="class-number">4</div>
+                                <div class="class-name">Inter-System Citation</div>
+                                <div class="class-definition">
+                                    International tribunal citing another international tribunal. Represents dialogue between international legal systems.
+                                </div>
+                                <div class="class-example">
+                                    <strong>Direction:</strong> International → International<br>
+                                    <strong>Example:</strong> ECtHR citing ICJ advisory opinion
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card cat-5">
+                                <div class="class-number">5</div>
+                                <div class="class-name">Member-State Citation</div>
+                                <div class="class-definition">
+                                    International tribunal citing a national court from one of its member states.
+                                </div>
+                                <div class="class-example">
+                                    <strong>Direction:</strong> International → National (Member)<br>
+                                    <strong>Example:</strong> ECtHR citing German Constitutional Court
+                                </div>
+                            </div>
+                            
+                            <div class="classification-card cat-6">
+                                <div class="class-number">6</div>
+                                <div class="class-name">Non-Member Citation</div>
+                                <div class="class-definition">
+                                    International tribunal citing a national court from a non-member state.
+                                </div>
+                                <div class="class-example">
+                                    <strong>Direction:</strong> International → National (Non-Member)<br>
+                                    <strong>Example:</strong> IACtHR citing Indian Supreme Court
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">International Court Membership</div>
+                            <div class="block-text">
+                                <p>The sixfold classification requires mapping international courts to their member states. This is implemented in the <code>international_court_jurisdiction</code> support table.</p>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Court</th>
+                                        <th>System</th>
+                                        <th>Member States</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ECtHR</td>
+                                        <td>Council of Europe</td>
+                                        <td>46 states (including UK pre-Brexit)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>CJEU/ECJ</td>
+                                        <td>European Union</td>
+                                        <td>27 EU member states</td>
+                                    </tr>
+                                    <tr>
+                                        <td>IACtHR</td>
+                                        <td>Organization of American States</td>
+                                        <td>20 states with contentious jurisdiction</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ACtHPR</td>
+                                        <td>African Union</td>
+                                        <td>34 states ratified protocol</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ICJ</td>
+                                        <td>United Nations</td>
+                                        <td>All 193 UN members (*ALL*)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================================
+             DATABASE TAB
+             ================================================================ -->
+        <div id="database" class="tab-content">
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title">
+                        <div class="section-icon purple">🗄️</div>
+                        <div>
+                            <div class="section-name">Database Schema</div>
+                            <div class="section-status">PostgreSQL 18 • init_database.py</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="section-body">
+                        <div class="content-block">
+                            <div class="block-title">Core Tables</div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Table</th>
+                                        <th>Purpose</th>
+                                        <th>Key Fields</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>cases</code></td>
+                                        <td>Case-level metadata from Climate Case Chart</td>
+                                        <td>case_id, case_name, jurisdiction, geographies, region</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>documents</code></td>
+                                        <td>Individual PDF documents linked to cases</td>
+                                        <td>document_id (UUID), case_id, is_decision, pdf_file_path</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>extracted_text</code></td>
+                                        <td>Extracted text content from PDFs</td>
+                                        <td>text_id, document_id, raw_text, extraction_quality</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>citation_extraction_phased</code></td>
+                                        <td>Individual citation records (v5)</td>
+                                        <td>extraction_id, source_jurisdiction, case_law_origin, citation_type</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>citation_extraction_phased_summary</code></td>
+                                        <td>Document-level extraction summaries</td>
+                                        <td>document_id, total_references, total_cost_usd</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>international_court_jurisdiction</code></td>
+                                        <td>Court membership mapping for sixfold classification</td>
+                                        <td>court_name, court_abbreviation, member_jurisdictions[]</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="content-block">
+                            <div class="block-title">Citation Record Fields</div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">
+                                        <span class="dot"></span>
+                                        <span>CitationExtractionPhased Model</span>
+                                    </div>
+                                </div>
+                                <div class="code-content">
+<pre><span class="comment"># Primary Key</span>
+extraction_id = UUID
+
+<span class="comment"># Phase 1: Source Jurisdiction</span>
+source_jurisdiction = <span class="string">"United Kingdom"</span>
+source_region = <span class="string">"Global North"</span>
+
+<span class="comment"># Phase 2: Extraction Results</span>
+case_name = <span class="string">"Urgenda Foundation v. State of the Netherlands"</span>
+raw_citation_text = <span class="string">"[complete citation as appears in document]"</span>
+location_in_document = <span class="string">"majority"</span>  <span class="comment"># majority/dissent/concurrence</span>
+
+<span class="comment"># Phase 3: Origin Identification</span>
+case_law_origin = <span class="string">"Netherlands"</span>
+case_law_region = <span class="string">"Global North"</span>
+origin_identification_tier = <span class="string">1</span>  <span class="comment"># 1=dictionary, 2=LLM, 3=search</span>
+origin_confidence = <span class="string">0.95</span>
+
+<span class="comment"># Phase 4: Classification</span>
+citation_type = <span class="string">"Foreign Citation"</span>
+is_cross_jurisdictional = <span class="keyword">True</span>
+
+<span class="comment"># Extended Metadata</span>
+cited_court = <span class="string">"Dutch Supreme Court"</span>
+cited_year = <span class="string">2019</span>
+
+<span class="comment"># Quality Control</span>
+requires_manual_review = <span class="keyword">False</span>
+manual_review_reason = <span class="string">"FUNC: {...functional metadata...}"</span></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">UUIDv7</div>
+                                <div class="stat-label">Primary Keys</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">JSONB</div>
+                                <div class="stat-label">Flexible Metadata</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">6</div>
+                                <div class="stat-label">Core Tables</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- ====================================================================
+         FOOTER
+         ==================================================================== -->
+    <footer class="footer">
+        <p><strong>PhD Climate Litigation Research Project</strong></p>
+        <p>University of São Paulo Law School • Gustavo Rodrigues & Lucas Biasetton</p>
+        <p style="margin-top: 12px; opacity: 0.7;">
+            Complete Methodology Pipeline Documentation • Version 5.3 • December 2025
+        </p>
+    </footer>
+    
+    <!-- ====================================================================
+         JAVASCRIPT
+         ==================================================================== -->
+    <script>
+        /* ================================================================
+           Tab Navigation
+           ================================================================ */
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate corresponding nav tab
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 200, behavior: 'smooth' });
+        }
+        
+        // Add click handlers to nav tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                showTab(tab.dataset.tab);
+            });
+        });
+        
+        /* ================================================================
+           Section Toggle
+           ================================================================ */
+        function toggleSection(header) {
+            const card = header.closest('.section-card');
+            card.classList.toggle('expanded');
+        }
+        
+        /* ================================================================
+           Prompt Toggle
+           ================================================================ */
+        function togglePrompt(button) {
+            const block = button.closest('.prompt-block');
+            if (block.classList.contains('collapsed')) {
+                block.classList.remove('collapsed');
+                block.classList.add('expanded');
+                button.textContent = '▲ Click to collapse';
+            } else {
+                block.classList.remove('expanded');
+                block.classList.add('collapsed');
+                button.textContent = '▼ Click to expand full prompt';
+            }
+        }
+        
+        /* ================================================================
+           Initialize
+           ================================================================ */
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            const firstSection = tab.querySelector('.section-card');
+            if (firstSection) {
+                firstSection.classList.add('expanded');
+            }
+        });
+    </script>
+</body>
+</html>

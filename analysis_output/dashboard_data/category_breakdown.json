@@ -1,25 +1,30 @@
 {
   "Foreign Citation": {
     "overview": {
-      "total_citations": 1312,
-      "decisions_with_foreign": 242,
-      "cases_with_foreign": 193
+      "total_citations": 1637,
+      "decisions_with_foreign": 273,
+      "cases_with_foreign": 218
     },
     "flow_matrix": [
       {
         "source": "Global North",
-        "to_global_north": 868,
+        "to_global_north": 1183,
         "to_global_south": 24,
-        "total": 892
+        "total": 1207
       },
       {
         "source": "Global South",
-        "to_global_north": 273,
-        "to_global_south": 147,
-        "total": 420
+        "to_global_north": 282,
+        "to_global_south": 148,
+        "total": 430
       }
     ],
     "top_sources": [
+      {
+        "source_jurisdiction": "United Kingdom",
+        "source_region": "Global North",
+        "citations_made": 396
+      },
       {
         "source_jurisdiction": "Australia",
         "source_region": "Global North",
@@ -33,17 +38,12 @@
       {
         "source_jurisdiction": "Canada",
         "source_region": "Global North",
-        "citations_made": 105
+        "citations_made": 107
       },
       {
         "source_jurisdiction": "Brazil",
         "source_region": "Global South",
         "citations_made": 98
-      },
-      {
-        "source_jurisdiction": "United Kingdom",
-        "source_region": "Global North",
-        "citations_made": 83
       },
       {
         "source_jurisdiction": "Czechia",
@@ -68,7 +68,7 @@
       {
         "source_jurisdiction": "Kenya",
         "source_region": "Global South",
-        "citations_made": 27
+        "citations_made": 28
       }
     ],
     "top_cited": [
@@ -76,6 +76,11 @@
         "case_law_origin": "United Kingdom",
         "case_law_region": "Global North",
         "times_cited": 383
+      },
+      {
+        "case_law_origin": "England and Wales",
+        "case_law_region": "Global North",
+        "times_cited": 321
       },
       {
         "case_law_origin": "United States",
@@ -98,11 +103,6 @@
         "times_cited": 66
       },
       {
-        "case_law_origin": "England and Wales",
-        "case_law_region": "Global North",
-        "times_cited": 59
-      },
-      {
         "case_law_origin": "Czech Republic",
         "case_law_region": "Global North",
         "times_cited": 50
@@ -118,9 +118,9 @@
         "times_cited": 41
       },
       {
-        "case_law_origin": "India",
-        "case_law_region": "Global South",
-        "times_cited": 30
+        "case_law_origin": "England and Wales (United Kingdom)",
+        "case_law_region": "Global North",
+        "times_cited": 33
       }
     ],
     "top_cases": [
@@ -149,6 +149,12 @@
         "citation_count": 9
       },
       {
+        "case_name": "R (Mott) v Environment Agency",
+        "case_law_origin": "England and Wales",
+        "case_law_region": "Global North",
+        "citation_count": 9
+      },
+      {
         "case_name": "Donoghue v Stevenson",
         "case_law_origin": "United Kingdom",
         "case_law_region": "Global North",
@@ -156,6 +162,12 @@
       },
       {
         "case_name": "LL 148 p. 692, 29.625-S",
+        "case_law_origin": "Germany",
+        "case_law_region": "Global North",
+        "citation_count": 6
+      },
+      {
+        "case_name": "LL 145 p. 346",
         "case_law_origin": "Germany",
         "case_law_region": "Global North",
         "citation_count": 6
@@ -171,18 +183,6 @@
         "case_law_origin": "Germany",
         "case_law_region": "Global North",
         "citation_count": 6
-      },
-      {
-        "case_name": "LL 145 p. 346",
-        "case_law_origin": "Germany",
-        "case_law_region": "Global North",
-        "citation_count": 6
-      },
-      {
-        "case_name": "Brown v. Board of Education",
-        "case_law_origin": "United States",
-        "case_law_region": "Global North",
-        "citation_count": 5
       }
     ]
   },

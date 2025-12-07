@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 5 Most Influential Climate Cases | Foreign Citation Analysis</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    
+    <style>
+        /* ================================================================
+           CSS CUSTOM PROPERTIES - Dark Scholarly Theme
+           ================================================================ */
+        :root {
+            /* Background colors */
+            --bg-primary: #0a0f14;
+            --bg-secondary: #111820;
+            --bg-panel: #1a222d;
+            --bg-card: #1e2836;
+            --bg-hover: #242d3a;
+            --bg-active: #2a3647;
+            
+            /* Text colors */
+            --text-primary: #e8edf3;
+            --text-secondary: #8b9aad;
+            --text-muted: #5a6978;
+            --text-accent: #f0f4f8;
+            
+            /* Region colors */
+            --north-primary: #3b82f6;
+            --north-secondary: #60a5fa;
+            --north-glow: rgba(59, 130, 246, 0.3);
+            --south-primary: #10b981;
+            --south-secondary: #34d399;
+            --south-glow: rgba(16, 185, 129, 0.3);
+            
+            /* Case colors (for individual case cards) */
+            --case-1: #f59e0b;  /* Urgenda - Gold */
+            --case-2: #ef4444;  /* Neubauer - Red */
+            --case-3: #8b5cf6;  /* Massachusetts - Purple */
+            --case-4: #06b6d4;  /* FIE Ireland - Cyan */
+            --case-5: #ec4899;  /* Shell - Pink */
+            
+            /* Accent colors */
+            --accent-gold: #f59e0b;
+            --accent-red: #ef4444;
+            
+            /* Border colors */
+            --border-color: #2a3544;
+            --border-hover: #3d4f66;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* ================================================================
+           RESET & BASE STYLES
+           ================================================================ */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* ================================================================
+           HEADER
+           ================================================================ */
+        .header {
+            padding: 24px 40px;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--case-1), var(--case-2), var(--case-3), var(--case-4), var(--case-5));
+        }
+        
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .title-block h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .title-block .subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 32px;
+            margin-top: 16px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* ================================================================
+           MAIN CONTENT
+           ================================================================ */
+        .main-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 32px 40px;
+        }
+        
+        /* ================================================================
+           CASE CARDS ROW
+           ================================================================ */
+        .cards-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 16px;
+        }
+        
+        .case-cards-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+        
+        .case-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            transition: height 0.3s ease;
+        }
+        
+        .case-card[data-index="0"]::before { background: var(--case-1); }
+        .case-card[data-index="1"]::before { background: var(--case-2); }
+        .case-card[data-index="2"]::before { background: var(--case-3); }
+        .case-card[data-index="3"]::before { background: var(--case-4); }
+        .case-card[data-index="4"]::before { background: var(--case-5); }
+        
+        .case-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .case-card:hover::before {
+            height: 6px;
+        }
+        
+        .case-card.active {
+            border-color: var(--accent-gold);
+            background: var(--bg-active);
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+        
+        .case-card.active::before {
+            height: 6px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .card-rank {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Link button on card */
+        .card-link-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+        }
+        
+        .card-link-btn:hover {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            color: #000;
+            transform: scale(1.1);
+        }
+        
+        .card-link-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .card-country {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--north-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .card-country.south {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--south-secondary);
+        }
+        
+        .card-country .flag {
+            font-size: 1rem;
+        }
+        
+        .card-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: 12px;
+            min-height: 50px;
+        }
+        
+        .card-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        
+        .card-citations {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        
+        .citation-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .case-card[data-index="0"] .citation-count { color: var(--case-1); }
+        .case-card[data-index="1"] .citation-count { color: var(--case-2); }
+        .case-card[data-index="2"] .citation-count { color: var(--case-3); }
+        .case-card[data-index="3"] .citation-count { color: var(--case-4); }
+        .case-card[data-index="4"] .citation-count { color: var(--case-5); }
+        
+        .citation-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        /* ================================================================
+           TWO COLUMN LAYOUT
+           ================================================================ */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+        
+        /* ================================================================
+           BAR CHART SECTION
+           ================================================================ */
+        .chart-container {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .chart-header {
+            margin-bottom: 24px;
+        }
+        
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .chart-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
+        }
+        
+        /* ================================================================
+           DYNAMIC DETAIL CARD
+           ================================================================ */
+        .detail-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .detail-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--case-1);
+            transition: background 0.3s ease;
+        }
+        
+        .detail-card[data-case="0"]::before { background: var(--case-1); }
+        .detail-card[data-case="1"]::before { background: var(--case-2); }
+        .detail-card[data-case="2"]::before { background: var(--case-3); }
+        .detail-card[data-case="3"]::before { background: var(--case-4); }
+        .detail-card[data-case="4"]::before { background: var(--case-5); }
+        
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        
+        .detail-country-year {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .detail-country {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--north-secondary);
+        }
+        
+        .detail-country.south {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--south-secondary);
+        }
+        
+        .detail-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            background: var(--bg-card);
+            border-radius: 8px;
+        }
+        
+        .detail-citation-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .detail-citation-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--case-1);
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+        
+        .detail-citation-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .detail-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+        
+        .detail-summary {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Region Stats */
+        .region-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .region-stat {
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .region-stat.north {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .region-stat.south {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .region-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        
+        .region-stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .region-stat.north .region-stat-value {
+            color: var(--north-primary);
+        }
+        
+        .region-stat.south .region-stat-value {
+            color: var(--south-primary);
+        }
+        
+        .region-stat-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        /* ================================================================
+           CITING JURISDICTIONS SECTION
+           ================================================================ */
+        .jurisdictions-section {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 40px;
+        }
+        
+        .jurisdictions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .jurisdictions-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .jurisdictions-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .legend-dot.north {
+            background: var(--north-primary);
+            box-shadow: 0 0 8px var(--north-glow);
+        }
+        
+        .legend-dot.south {
+            background: var(--south-primary);
+            box-shadow: 0 0 8px var(--south-glow);
+        }
+        
+        .legend-dot.international {
+            background: #9ca3af;
+        }
+        
+        .jurisdictions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .jurisdiction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .jurisdiction-item:hover {
+            border-color: var(--border-hover);
+            transform: translateX(4px);
+        }
+        
+        .jurisdiction-item.north {
+            border-left: 3px solid var(--north-primary);
+        }
+        
+        .jurisdiction-item.south {
+            border-left: 3px solid var(--south-primary);
+        }
+        
+        .jurisdiction-item.international {
+            border-left: 3px solid #9ca3af;
+        }
+        
+        .jurisdiction-name {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        
+        .jurisdiction-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--bg-hover);
+        }
+        
+        .jurisdiction-item.north .jurisdiction-count {
+            color: var(--north-primary);
+        }
+        
+        .jurisdiction-item.south .jurisdiction-count {
+            color: var(--south-primary);
+        }
+        
+        .jurisdiction-item.international .jurisdiction-count {
+            color: #9ca3af;
+        }
+        
+        /* ================================================================
+           CITING CASES SECTION (NEW)
+           ================================================================ */
+        .citing-cases-section {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 40px;
+        }
+        
+        .citing-cases-header {
+            margin-bottom: 24px;
+        }
+        
+        .citing-cases-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .citing-cases-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .citing-cases-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .citing-cases-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .citing-cases-list::-webkit-scrollbar-track {
+            background: var(--bg-card);
+            border-radius: 4px;
+        }
+        
+        .citing-cases-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .citing-cases-list::-webkit-scrollbar-thumb:hover {
+            background: var(--border-hover);
+        }
+        
+        .citing-case-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .citing-case-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
+            transform: translateX(8px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .citing-case-item.north {
+            border-left: 3px solid var(--north-primary);
+        }
+        
+        .citing-case-item.south {
+            border-left: 3px solid var(--south-primary);
+        }
+        
+        .citing-case-item.international {
+            border-left: 3px solid #9ca3af;
+        }
+        
+        .citing-case-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .citing-case-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .citing-case-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .citing-case-jurisdiction {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .citing-case-year {
+            font-family: 'Space Mono', monospace;
+        }
+        
+        .citing-case-link-icon {
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .citing-case-item:hover .citing-case-link-icon {
+            color: var(--accent-gold);
+        }
+        
+        /* ================================================================
+           FOOTER
+           ================================================================ */
+        .footer {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px 40px 40px;
+            text-align: center;
+        }
+        
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .footer-text a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+        
+        /* ================================================================
+           RESPONSIVE
+           ================================================================ */
+        @media (max-width: 1200px) {
+            .case-cards-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .case-cards-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .title-block h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-stats {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .case-cards-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .region-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ================================================================
+           ANIMATIONS
+           ================================================================ */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .case-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .case-card:nth-child(1) { animation-delay: 0.1s; }
+        .case-card:nth-child(2) { animation-delay: 0.2s; }
+        .case-card:nth-child(3) { animation-delay: 0.3s; }
+        .case-card:nth-child(4) { animation-delay: 0.4s; }
+        .case-card:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- ================================================================
+         HEADER
+         ================================================================ -->
+    <header class="header">
+        <div class="header-content">
+            <div class="title-block">
+                <h1>Top 5 Most Influential Climate Cases</h1>
+                <p class="subtitle">Foreign Citation Analysis • Transnational Judicial Dialogue</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="total-citations">127</span>
+                    <span class="stat-label">Total Citing Decisions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Influential Cases</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label">Global North Origin</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- ================================================================
+         MAIN CONTENT
+         ================================================================ -->
+    <main class="main-content">
+        <!-- Case Cards Section -->
+        <section class="cards-section">
+            <p class="section-title">Click a case to explore details</p>
+            <div class="case-cards-row" id="case-cards">
+                <!-- Cards will be dynamically generated -->
+            </div>
+        </section>
+        
+        <!-- Two Column Layout: Chart + Detail Card -->
+        <section class="two-columns">
+            <!-- Bar Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2 class="chart-title">Citation Comparison</h2>
+                    <p class="chart-subtitle">Number of unique decisions citing each influential case</p>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="citationsChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Dynamic Detail Card -->
+            <div class="detail-card" id="detail-card" data-case="0">
+                <!-- Content will be dynamically updated -->
+            </div>
+        </section>
+        
+        <!-- Citing Jurisdictions Section -->
+        <section class="jurisdictions-section">
+            <div class="jurisdictions-header">
+                <div>
+                    <h2 class="jurisdictions-title" id="jurisdictions-title">Citing Jurisdictions</h2>
+                    <p class="jurisdictions-subtitle" id="jurisdictions-subtitle">Jurisdictions that have cited this case</p>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-dot north"></span>
+                        Global North
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot south"></span>
+                        Global South
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot international"></span>
+                        International
+                    </div>
+                </div>
+            </div>
+            <div class="jurisdictions-grid" id="jurisdictions-grid">
+                <!-- Jurisdictions will be dynamically generated -->
+            </div>
+        </section>
+        
+        <!-- Citing Cases Section (NEW) -->
+        <section class="citing-cases-section">
+            <div class="citing-cases-header">
+                <h2 class="citing-cases-title" id="citing-cases-title">Cases Citing Urgenda Foundation v. State of the Netherlands</h2>
+                <p class="citing-cases-subtitle" id="citing-cases-subtitle">Click on a case to view it on Climate Case Chart</p>
+            </div>
+            <div class="citing-cases-list" id="citing-cases-list">
+                <!-- Cases will be dynamically generated -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- ================================================================
+         FOOTER
+         ================================================================ -->
+    <footer class="footer">
+        <p class="footer-text">
+            Climate Litigation Citation Analysis • PhD Research Project • 
+            Data source: <a href="https://climatecasechart.com" target="_blank">Climate Case Chart</a>
+        </p>
+    </footer>
+    
+    <!-- ================================================================
+         JAVASCRIPT
+         ================================================================ -->
+    <script>
+        // ================================================================
+        // DATA - Top 5 Most Influential Cases
+        // ================================================================
+        const casesData = [
+            {
+                "name": "Urgenda Foundation v. State of the Netherlands",
+                "shortName": "Urgenda",
+                "country": "Netherlands",
+                "flag": "🇳🇱",
+                "region": "Global North",
+                "year": 2019,
+                "caseUrl": "https://www.climatecasechart.com/document/urgenda-foundation-v-state-of-the-netherlands_3297",
+                "summary": "Landmark Dutch Supreme Court decision ordering the government to reduce greenhouse gas emissions by at least 25% by the end of 2020 compared to 1990 levels. The court held that the government has a duty of care to protect citizens from climate change under the European Convention on Human Rights.",
+                "total_citing_decisions": 69,
+                "north_citing_count": 39,
+                "south_citing_count": 12,
+                "citing_jurisdictions": [
+                    {"name": "International", "count": 18, "region": "International"},
+                    {"name": "United Kingdom", "count": 7, "region": "Global North"},
+                    {"name": "New Zealand", "count": 5, "region": "Global North"},
+                    {"name": "Australia", "count": 5, "region": "Global North"},
+                    {"name": "Norway", "count": 4, "region": "Global North"},
+                    {"name": "Brazil", "count": 4, "region": "Global South"},
+                    {"name": "Canada", "count": 3, "region": "Global North"},
+                    {"name": "Belgium", "count": 3, "region": "Global North"},
+                    {"name": "Ireland", "count": 2, "region": "Global North"},
+                    {"name": "Czechia", "count": 2, "region": "Global North"},
+                    {"name": "France", "count": 2, "region": "Global North"},
+                    {"name": "Romania", "count": 2, "region": "Global South"},
+                    {"name": "Italy", "count": 2, "region": "Global North"},
+                    {"name": "Mexico", "count": 2, "region": "Global South"},
+                    {"name": "Germany", "count": 1, "region": "Global North"},
+                    {"name": "Spain", "count": 1, "region": "Global North"},
+                    {"name": "Hungary", "count": 1, "region": "Global South"},
+                    {"name": "Luxembourg", "count": 1, "region": "Global North"},
+                    {"name": "Philippines", "count": 1, "region": "Global South"},
+                    {"name": "India", "count": 1, "region": "Global South"},
+                    {"name": "Papua New Guinea", "count": 1, "region": "Global South"},
+                    {"name": "Austria", "count": 1, "region": "Global North"}
+                ],
+                "citing_cases": [
+                    {"name": "Youth Verdict v. Waratah Coal", "url": "https://www.climatecasechart.com/document/youth-verdict-v-waratah-coal_7679", "jurisdiction": "Australia", "region": "Global North", "year": 2020},
+                    {"name": "Gloucester Resources Limited v. Minister for Planning", "url": "https://www.climatecasechart.com/document/gloucester-resources-limited-v-minister-for-planning_745d", "jurisdiction": "Australia", "region": "Global North", "year": 2017},
+                    {"name": "Pabai Pabai and Guy Paul Kabai v. Commonwealth of Australia", "url": "https://www.climatecasechart.com/document/pabai-pabai-and-guy-paul-kabai-v-commonwealth-of-australia_2b10", "jurisdiction": "Australia", "region": "Global North", "year": 2021},
+                    {"name": "Oakey Coal Action Alliance Inc. v. New Acland Coal Pty Ltd", "url": "https://www.climatecasechart.com/document/oakey-coal-action-alliance-inc-v-new-acland-coal-pty-ltd_b42e", "jurisdiction": "Australia", "region": "Global North", "year": 2017},
+                    {"name": "O'Donnell v. Commonwealth", "url": "https://www.climatecasechart.com/document/odonnell-v-commonwealth_d14f", "jurisdiction": "Australia", "region": "Global North", "year": 2020},
+                    {"name": "Fliegenschnee et al. v. Federal Ministry (Austria)", "url": "https://www.climatecasechart.com/document/fliegenschnee-et-al-v-federal-ministry-for-digitalisation-and-business-location-austria_2eba", "jurisdiction": "Austria", "region": "Global North", "year": 2021},
+                    {"name": "VZW Klimaatzaak v. Kingdom of Belgium & Others", "url": "https://www.climatecasechart.com/document/vzw-klimaatzaak-v-kingdom-of-belgium-others_da42", "jurisdiction": "Belgium", "region": "Global North", "year": 2014},
+                    {"name": "PSB et al. v. Brazil (Amazon Fund)", "url": "https://www.climatecasechart.com/document/psb-et-al-v-brazil-on-amazon-fund_f10a", "jurisdiction": "Brazil", "region": "Global South", "year": 2020},
+                    {"name": "Instituto Preservar et al. v. Copelmi Mineração", "url": "https://www.climatecasechart.com/document/instituto-preservar-et-al-v-copelmi-mineracao-ltda-and-ibama_99f9", "jurisdiction": "Brazil", "region": "Global South", "year": 2021},
+                    {"name": "ADO 54 (Amazon Deforestation)", "url": "https://www.climatecasechart.com/document/ado-54-amazon-deforestation_bec3", "jurisdiction": "Brazil", "region": "Global South", "year": 2019},
+                    {"name": "ADPF 857 (Pantanal Wildfires)", "url": "https://www.climatecasechart.com/document/adpf-857-pantanal-wildfires_c3e6", "jurisdiction": "Brazil", "region": "Global South", "year": 2021},
+                    {"name": "Saskatchewan et al. v. Canada (GHG Pricing Act)", "url": "https://www.climatecasechart.com/document/saskatchewan-et-al-v-canada-re-greenhouse-gas-pollution-pricing-act_511c", "jurisdiction": "Canada", "region": "Global North", "year": 2018},
+                    {"name": "Mathur et al. v. His Majesty the King (Ontario)", "url": "https://www.climatecasechart.com/document/mathur-et-al-v-his-majesty-the-king-in-right-of-ontario_edc5", "jurisdiction": "Canada", "region": "Global North", "year": 2019},
+                    {"name": "Klimatická žaloba ČR v. Czech Republic", "url": "https://www.climatecasechart.com/document/klimaticka-zaloba-cr-v-czech-republic_d4c0", "jurisdiction": "Czechia", "region": "Global North", "year": 2021},
+                    {"name": "Notre Affaire à Tous and Others v. France", "url": "https://www.climatecasechart.com/document/notre-affaire-a-tous-and-others-v-france_7e7d", "jurisdiction": "France", "region": "Global North", "year": 2018},
+                    {"name": "Family Farmers and Greenpeace Germany v. Germany", "url": "https://www.climatecasechart.com/document/family-farmers-and-greenpeace-germany-v-germany_6d4d", "jurisdiction": "Germany", "region": "Global North", "year": 2018},
+                    {"name": "Hungarian Constitutional Court (Climate Protection Act)", "url": "https://www.climatecasechart.com/document/decision-of-the-hungarian-constitutional-court-in-case-ii-3536-2021-on-the-constitutionality-of-article-3-1-of-the-climate-protection-act_0a7e", "jurisdiction": "Hungary", "region": "Global South", "year": 2021},
+                    {"name": "M.K. Ranjitsinh et al. v. Union of India", "url": "https://www.climatecasechart.com/document/mk-ranjitsinh-et-al-v-union-of-india-et-al_91a4", "jurisdiction": "India", "region": "Global South", "year": 2022},
+                    {"name": "Carême v. France (ECtHR)", "url": "https://www.climatecasechart.com/document/careme-v-france_0b01", "jurisdiction": "International", "region": "International", "year": 2021},
+                    {"name": "Duarte Agostinho v. Portugal and 32 Other States", "url": "https://www.climatecasechart.com/document/duarte-agostinho-and-others-v-portugal-and-32-other-states_e05d", "jurisdiction": "International", "region": "International", "year": 2020},
+                    {"name": "KlimaSeniorinnen v. Switzerland (ECtHR)", "url": "https://www.climatecasechart.com/document/verein-klimaseniorinnen-schweiz-and-others-v-switzerland_6852", "jurisdiction": "International", "region": "International", "year": 2020},
+                    {"name": "IACtHR Advisory Opinion Request (Climate Emergency)", "url": "https://www.climatecasechart.com/document/request-for-an-advisory-opinion-on-the-scope-of-the-state-obligations-for-responding-to-the-climate-emergency_fbcd", "jurisdiction": "International", "region": "International", "year": 2023},
+                    {"name": "Sacchi et al. v. Argentina et al.", "url": "https://www.climatecasechart.com/document/sacchi-et-al-v-argentina-et-al_f10c", "jurisdiction": "International", "region": "International", "year": 2019},
+                    {"name": "Friends of the Irish Environment v. Ireland", "url": "https://www.climatecasechart.com/document/friends-of-the-irish-environment-v-ireland_c37f", "jurisdiction": "Ireland", "region": "Global North", "year": 2017},
+                    {"name": "Friends of the Irish Environment v. Government of Ireland", "url": "https://www.climatecasechart.com/document/friends-of-the-irish-environment-v-government-of-ireland_ade0", "jurisdiction": "Ireland", "region": "Global North", "year": 2023},
+                    {"name": "Greenpeace Italy et al. v. ENI S.p.A.", "url": "https://www.climatecasechart.com/document/greenpeace-italy-et-al-v-eni-s-p-a-the-italian-ministry-of-economy-and-finance-and-cassa-depositi-e-prestiti-s-p-a_d341", "jurisdiction": "Italy", "region": "Global North", "year": 2023},
+                    {"name": "A Sud et al. v. Italy", "url": "https://www.climatecasechart.com/document/a-sud-et-al-v-italy_004c", "jurisdiction": "Italy", "region": "Global North", "year": 2021},
+                    {"name": "Greenpeace Luxembourg v. Schneider", "url": "https://www.climatecasechart.com/document/greenpeace-luxembourg-v-schneider_fb6f", "jurisdiction": "Luxembourg", "region": "Global North", "year": 2019},
+                    {"name": "Nuestros Derechos al Futuro v. Mexico (Electric Industry Law)", "url": "https://www.climatecasechart.com/document/nuestros-derechos-al-futuro-y-medio-ambiente-sano-et-al-v-mexico-unconstitutionality-of-the-reform-to-the-electric-industry-law_8828", "jurisdiction": "Mexico", "region": "Global South", "year": 2021},
+                    {"name": "Greenpeace v. Ministry of Energy (Mexico)", "url": "https://www.climatecasechart.com/document/greenpeace-v-ministry-of-energy-and-others-on-the-energy-sector-program-2020-and-electric-industry-law_63e0", "jurisdiction": "Mexico", "region": "Global South", "year": 2021},
+                    {"name": "All Aboard Aotearoa v. Auckland Transport", "url": "https://www.climatecasechart.com/document/all-aboard-aotearoa-v-auckland-transport_0aa5", "jurisdiction": "New Zealand", "region": "Global North", "year": 2021},
+                    {"name": "Smith v. Attorney-General (NZ)", "url": "https://www.climatecasechart.com/document/smith-v-attorney-general_82a8", "jurisdiction": "New Zealand", "region": "Global North", "year": 2022},
+                    {"name": "Lawyers for Climate Action v. Climate Change Commission", "url": "https://www.climatecasechart.com/document/lawyers-for-climate-action-nz-incorporated-v-the-climate-change-commission_0940", "jurisdiction": "New Zealand", "region": "Global North", "year": 2021},
+                    {"name": "Thomson v. Minister for Climate Change Issues", "url": "https://www.climatecasechart.com/document/thomson-v-minister-for-climate-change-issues_35b8", "jurisdiction": "New Zealand", "region": "Global North", "year": 2015},
+                    {"name": "Greenpeace Nordic v. Norway (North Sea Fields)", "url": "https://www.climatecasechart.com/document/greenpeace-nordic-and-nature-youth-v-energy-ministry-the-north-sea-fields-case_52a4", "jurisdiction": "Norway", "region": "Global North", "year": 2023},
+                    {"name": "Greenpeace Nordic v. Ministry of Petroleum (Arctic Oil)", "url": "https://www.climatecasechart.com/document/greenpeace-nordic-assn-v-ministry-of-petroleum-and-energy-people-v-arctic-oil_508f", "jurisdiction": "Norway", "region": "Global North", "year": 2016},
+                    {"name": "Buni Morua v. China Harbour Engineering (PNG)", "url": "https://www.climatecasechart.com/document/buni-morua-v-china-harbour-engineering-company-png-limited-ors_1902", "jurisdiction": "Papua New Guinea", "region": "Global South", "year": 2019},
+                    {"name": "In re Greenpeace Southeast Asia (Carbon Majors)", "url": "https://www.climatecasechart.com/document/in-re-greenpeace-southeast-asia-and-others_a98d", "jurisdiction": "Philippines", "region": "Global South", "year": 2015},
+                    {"name": "Declic et al. v. Romanian Government", "url": "https://www.climatecasechart.com/document/declic-et-al-v-the-romanian-government_2585", "jurisdiction": "Romania", "region": "Global South", "year": 2023},
+                    {"name": "Declic v. Hunedoara EPA (Samax Romania)", "url": "https://www.climatecasechart.com/document/declic-v-hunedoara-environmental-protection-agency-and-samax-romania_ead4", "jurisdiction": "Romania", "region": "Global South", "year": 2022},
+                    {"name": "R (Friends of the Earth) v. Secretary of State (UK)", "url": "https://www.climatecasechart.com/document/r-oao-friends-of-the-earth-v-secretary-of-state-for-business-energy-and-industrial-strategy_0458", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2022},
+                    {"name": "Friends of the Earth v. UK Export Finance", "url": "https://www.climatecasechart.com/document/friends-of-the-earth-v-uk-export-finance_6030", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2020},
+                    {"name": "Plan B Earth v. Prime Minister", "url": "https://www.climatecasechart.com/document/plan-b-earth-and-others-v-prime-minister_1b1e", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2021},
+                    {"name": "Butler-Sloss v. Charity Commission", "url": "https://www.climatecasechart.com/document/butler-sloss-others-v-the-charity-commission-for-england-and-wales-another_1aba", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2021}
+                ]
+            },
+            {
+                "name": "Neubauer et al. v. Germany",
+                "shortName": "Neubauer",
+                "country": "Germany",
+                "flag": "🇩🇪",
+                "region": "Global North",
+                "year": 2021,
+                "caseUrl": "https://www.climatecasechart.com/non-us-case/neubauer-et-al-v-germany/",
+                "summary": "The German Constitutional Court ruled that the Federal Climate Change Act was partially unconstitutional for failing to adequately protect future generations. The court required lawmakers to set clear emissions reduction targets beyond 2030.",
+                "total_citing_decisions": 23,
+                "north_citing_count": 8,
+                "south_citing_count": 8,
+                "citing_jurisdictions": [
+                    {"name": "International", "count": 7, "region": "International"},
+                    {"name": "Brazil", "count": 6, "region": "Global South"},
+                    {"name": "Mexico", "count": 2, "region": "Global South"},
+                    {"name": "Austria", "count": 2, "region": "Global North"},
+                    {"name": "Belgium", "count": 2, "region": "Global North"},
+                    {"name": "Australia", "count": 1, "region": "Global North"},
+                    {"name": "Czechia", "count": 1, "region": "Global North"},
+                    {"name": "Italy", "count": 1, "region": "Global North"},
+                    {"name": "New Zealand", "count": 1, "region": "Global North"}
+                ],
+                "citing_cases": [
+                    {"name": "Youth Verdict v. Waratah Coal", "url": "https://www.climatecasechart.com/document/youth-verdict-v-waratah-coal_7679", "jurisdiction": "Australia", "region": "Global North", "year": 2020},
+                    {"name": "Fliegenschnee et al. v. Federal Ministry (Austria)", "url": "https://www.climatecasechart.com/document/fliegenschnee-et-al-v-federal-ministry-for-digitalisation-and-business-location-austria_2eba", "jurisdiction": "Austria", "region": "Global North", "year": 2021},
+                    {"name": "Children of Austria v. Austria", "url": "https://www.climatecasechart.com/document/children-of-austria-v-austria_5b44", "jurisdiction": "Austria", "region": "Global North", "year": 2023},
+                    {"name": "VZW Klimaatzaak v. Kingdom of Belgium & Others", "url": "https://www.climatecasechart.com/document/vzw-klimaatzaak-v-kingdom-of-belgium-others_da42", "jurisdiction": "Belgium", "region": "Global North", "year": 2014},
+                    {"name": "ADPF 857 (Pantanal Wildfires)", "url": "https://www.climatecasechart.com/document/adpf-857-pantanal-wildfires_c3e6", "jurisdiction": "Brazil", "region": "Global South", "year": 2021},
+                    {"name": "ADPF 746 (Fires in Pantanal and Amazon)", "url": "https://www.climatecasechart.com/document/adpf-746-fires-in-the-pantanal-and-the-amazon-forest_5747", "jurisdiction": "Brazil", "region": "Global South", "year": 2020},
+                    {"name": "Instituto Preservar et al. v. Copelmi Mineração", "url": "https://www.climatecasechart.com/document/instituto-preservar-et-al-v-copelmi-mineracao-ltda-and-ibama_99f9", "jurisdiction": "Brazil", "region": "Global South", "year": 2021},
+                    {"name": "PSB et al. v. Brazil (Climate Fund)", "url": "https://www.climatecasechart.com/document/psb-et-al-v-brazil-on-climate-fund_890b", "jurisdiction": "Brazil", "region": "Global South", "year": 2020},
+                    {"name": "ADO 54 (Amazon Deforestation)", "url": "https://www.climatecasechart.com/document/ado-54-amazon-deforestation_bec3", "jurisdiction": "Brazil", "region": "Global South", "year": 2019},
+                    {"name": "Klimatická žaloba ČR v. Czech Republic", "url": "https://www.climatecasechart.com/document/klimaticka-zaloba-cr-v-czech-republic_d4c0", "jurisdiction": "Czechia", "region": "Global North", "year": 2021},
+                    {"name": "IACtHR Advisory Opinion Request (Climate Emergency)", "url": "https://www.climatecasechart.com/document/request-for-an-advisory-opinion-on-the-scope-of-the-state-obligations-for-responding-to-the-climate-emergency_fbcd", "jurisdiction": "International", "region": "International", "year": 2023},
+                    {"name": "KlimaSeniorinnen v. Switzerland (ECtHR)", "url": "https://www.climatecasechart.com/document/verein-klimaseniorinnen-schweiz-and-others-v-switzerland_6852", "jurisdiction": "International", "region": "International", "year": 2020},
+                    {"name": "Engels and Others v. Germany", "url": "https://www.climatecasechart.com/document/engels-and-others-v-germany_e794", "jurisdiction": "International", "region": "International", "year": 2022},
+                    {"name": "Duarte Agostinho v. Portugal and 32 Other States", "url": "https://www.climatecasechart.com/document/duarte-agostinho-and-others-v-portugal-and-32-other-states_e05d", "jurisdiction": "International", "region": "International", "year": 2020},
+                    {"name": "Sacchi et al. v. Argentina et al.", "url": "https://www.climatecasechart.com/document/sacchi-et-al-v-argentina-et-al_f10c", "jurisdiction": "International", "region": "International", "year": 2019},
+                    {"name": "Greenpeace Italy et al. v. ENI S.p.A.", "url": "https://www.climatecasechart.com/document/greenpeace-italy-et-al-v-eni-s-p-a-the-italian-ministry-of-economy-and-finance-and-cassa-depositi-e-prestiti-s-p-a_d341", "jurisdiction": "Italy", "region": "Global North", "year": 2023},
+                    {"name": "Nuestros Derechos al Futuro v. Mexico (Electric Industry Law)", "url": "https://www.climatecasechart.com/document/nuestros-derechos-al-futuro-y-medio-ambiente-sano-et-al-v-mexico-unconstitutionality-of-the-reform-to-the-electric-industry-law_8828", "jurisdiction": "Mexico", "region": "Global South", "year": 2021},
+                    {"name": "Greenpeace v. Ministry of Energy (Mexico)", "url": "https://www.climatecasechart.com/document/greenpeace-v-ministry-of-energy-and-others-on-the-energy-sector-program-2020-and-electric-industry-law_63e0", "jurisdiction": "Mexico", "region": "Global South", "year": 2021},
+                    {"name": "Lawyers for Climate Action v. Climate Change Commission", "url": "https://www.climatecasechart.com/document/lawyers-for-climate-action-nz-incorporated-v-the-climate-change-commission_0940", "jurisdiction": "New Zealand", "region": "Global North", "year": 2021}
+                ]
+            },
+            {
+                "name": "Massachusetts v. EPA",
+                "shortName": "Mass. v. EPA",
+                "country": "United States",
+                "flag": "🇺🇸",
+                "region": "Global North",
+                "year": 2007,
+                "caseUrl": "https://www.climatecasechart.com/case/massachusetts-v-epa/",
+                "summary": "US Supreme Court held that the EPA has the authority to regulate greenhouse gas emissions under the Clean Air Act and that states have standing to sue the federal government over climate change.",
+                "total_citing_decisions": 13,
+                "north_citing_count": 8,
+                "south_citing_count": 5,
+                "citing_jurisdictions": [
+                    {"name": "Brazil", "count": 4, "region": "Global South"},
+                    {"name": "Canada", "count": 3, "region": "Global North"},
+                    {"name": "Netherlands", "count": 2, "region": "Global North"},
+                    {"name": "New Zealand", "count": 1, "region": "Global North"},
+                    {"name": "Philippines", "count": 1, "region": "Global South"},
+                    {"name": "Australia", "count": 1, "region": "Global North"},
+                    {"name": "Czechia", "count": 1, "region": "Global North"}
+                ],
+                "citing_cases": [
+                    {"name": "Gloucester Resources Limited v. Minister for Planning", "url": "https://www.climatecasechart.com/document/gloucester-resources-limited-v-minister-for-planning_745d", "jurisdiction": "Australia", "region": "Global North", "year": 2017},
+                    {"name": "Federal Public Prosecutors v. Daniel Matias (Deforestation)", "url": "https://www.climatecasechart.com/document/federal-public-prosecutors-office-v-daniel-matias-deforestation-and-climate-damage-in-the-pae-antimary_b542", "jurisdiction": "Brazil", "region": "Global South", "year": 2021},
+                    {"name": "IBAMA v. Dirceu Kruger (Illegal Deforestation)", "url": "https://www.climatecasechart.com/document/ibama-v-dirceu-kruger-illegal-deforestation-in-the-amazon-and-climate-damage_f629", "jurisdiction": "Brazil", "region": "Global South", "year": 2023},
+                    {"name": "Federal Public Prosecutors v. Jose Silva (Deforestation)", "url": "https://www.climatecasechart.com/document/federal-public-prosecutors-office-v-jose-silva-deforestation-and-climate-damage-in-the-antimary-pae_caa5", "jurisdiction": "Brazil", "region": "Global South", "year": 2021},
+                    {"name": "Federal Public Prosecutors v. Joel de Souza (Deforestation)", "url": "https://www.climatecasechart.com/document/federal-public-prosecutors-office-v-joel-de-souza-deforestation-and-climate-damage-in-the-pae-antimary_ea8b", "jurisdiction": "Brazil", "region": "Global South", "year": 2021},
+                    {"name": "Trans Mountain Pipeline v. Mivasair", "url": "https://www.climatecasechart.com/document/trans-mountain-pipeline-ulc-v-mivasair_647d", "jurisdiction": "Canada", "region": "Global North", "year": 2018},
+                    {"name": "Mathur et al. v. His Majesty the King (Ontario)", "url": "https://www.climatecasechart.com/document/mathur-et-al-v-his-majesty-the-king-in-right-of-ontario_edc5", "jurisdiction": "Canada", "region": "Global North", "year": 2019},
+                    {"name": "Saskatchewan et al. v. Canada (GHG Pricing Act)", "url": "https://www.climatecasechart.com/document/saskatchewan-et-al-v-canada-re-greenhouse-gas-pollution-pricing-act_511c", "jurisdiction": "Canada", "region": "Global North", "year": 2018},
+                    {"name": "Klimatická žaloba ČR v. Czech Republic", "url": "https://www.climatecasechart.com/document/klimaticka-zaloba-cr-v-czech-republic_d4c0", "jurisdiction": "Czechia", "region": "Global North", "year": 2021},
+                    {"name": "Urgenda Foundation v. State of the Netherlands", "url": "https://www.climatecasechart.com/document/urgenda-foundation-v-state-of-the-netherlands_3297", "jurisdiction": "Netherlands", "region": "Global North", "year": 2015},
+                    {"name": "Thomson v. Minister for Climate Change Issues", "url": "https://www.climatecasechart.com/document/thomson-v-minister-for-climate-change-issues_35b8", "jurisdiction": "New Zealand", "region": "Global North", "year": 2015},
+                    {"name": "In re Greenpeace Southeast Asia (Carbon Majors)", "url": "https://www.climatecasechart.com/document/in-re-greenpeace-southeast-asia-and-others_a98d", "jurisdiction": "Philippines", "region": "Global South", "year": 2015}
+                ]
+            },
+            {
+                "name": "Friends of the Irish Environment v. Government of Ireland",
+                "shortName": "FIE v. Ireland",
+                "country": "Ireland",
+                "flag": "🇮🇪",
+                "region": "Global North",
+                "year": 2020,
+                "caseUrl": "https://www.climatecasechart.com/document/friends-of-the-irish-environment-v-government-of-ireland_ade0",
+                "summary": "Irish Supreme Court quashed the National Mitigation Plan for failing to comply with statutory requirements and being insufficiently specific about how Ireland would achieve its climate targets.",
+                "total_citing_decisions": 11,
+                "north_citing_count": 6,
+                "south_citing_count": 1,
+                "citing_jurisdictions": [
+                    {"name": "International", "count": 4, "region": "International"},
+                    {"name": "United Kingdom", "count": 3, "region": "Global North"},
+                    {"name": "Germany", "count": 1, "region": "Global North"},
+                    {"name": "New Zealand", "count": 1, "region": "Global North"},
+                    {"name": "Romania", "count": 1, "region": "Global South"},
+                    {"name": "Czechia", "count": 1, "region": "Global North"}
+                ],
+                "citing_cases": [
+                    {"name": "Klimatická žaloba ČR v. Czech Republic", "url": "https://www.climatecasechart.com/document/klimaticka-zaloba-cr-v-czech-republic_d4c0", "jurisdiction": "Czechia", "region": "Global North", "year": 2021},
+                    {"name": "Family Farmers and Greenpeace Germany v. Germany", "url": "https://www.climatecasechart.com/document/family-farmers-and-greenpeace-germany-v-germany_6d4d", "jurisdiction": "Germany", "region": "Global North", "year": 2018},
+                    {"name": "KlimaSeniorinnen v. Switzerland (ECtHR)", "url": "https://www.climatecasechart.com/document/verein-klimaseniorinnen-schweiz-and-others-v-switzerland_6852", "jurisdiction": "International", "region": "International", "year": 2020},
+                    {"name": "IACtHR Advisory Opinion Request (Climate Emergency)", "url": "https://www.climatecasechart.com/document/request-for-an-advisory-opinion-on-the-scope-of-the-state-obligations-for-responding-to-the-climate-emergency_fbcd", "jurisdiction": "International", "region": "International", "year": 2023},
+                    {"name": "Smith v. Attorney-General (NZ)", "url": "https://www.climatecasechart.com/document/smith-v-attorney-general_82a8", "jurisdiction": "New Zealand", "region": "Global North", "year": 2022},
+                    {"name": "Mihaileni Dam Project (Romania)", "url": "https://www.climatecasechart.com/document/mihaileni-dam-project_ce7b", "jurisdiction": "Romania", "region": "Global South", "year": 2022},
+                    {"name": "R (Friends of the Earth) v. Secretary of State (UK)", "url": "https://www.climatecasechart.com/document/r-oao-friends-of-the-earth-v-secretary-of-state-for-business-energy-and-industrial-strategy_0458", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2022},
+                    {"name": "R (Friends of the Earth) v. SSESNZ (Carbon Budget)", "url": "https://www.climatecasechart.com/document/r-friends-of-the-earth-ltd-v-secretary-of-state-for-energy-security-and-net-zero-clientearth-v-ssesnz-good-law-project-v-ssesnz-challenges-to-the-carbon-budget-delivery-plan_7cd5", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2023},
+                    {"name": "Plan B Earth v. Prime Minister", "url": "https://www.climatecasechart.com/document/plan-b-earth-and-others-v-prime-minister_1b1e", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2021}
+                ]
+            },
+            {
+                "name": "Milieudefensie v. Royal Dutch Shell",
+                "shortName": "Shell Case",
+                "country": "Netherlands",
+                "flag": "🇳🇱",
+                "region": "Global North",
+                "year": 2021,
+                "caseUrl": "https://www.climatecasechart.com/document/milieudefensie-et-al-v-royal-dutch-shell-plc_c3e4",
+                "summary": "Dutch court ordered Shell to reduce its global CO2 emissions by 45% by 2030 compared to 2019 levels. This was the first time a court held a major oil company responsible for its contribution to climate change.",
+                "total_citing_decisions": 11,
+                "north_citing_count": 8,
+                "south_citing_count": 0,
+                "citing_jurisdictions": [
+                    {"name": "United Kingdom", "count": 4, "region": "Global North"},
+                    {"name": "International", "count": 3, "region": "International"},
+                    {"name": "Australia", "count": 3, "region": "Global North"},
+                    {"name": "New Zealand", "count": 1, "region": "Global North"}
+                ],
+                "citing_cases": [
+                    {"name": "Complaint over Shell's Net Zero Claims (Australia)", "url": "https://www.climatecasechart.com/document/complaint-over-shells-net-zero-by-2050-claims_1e80", "jurisdiction": "Australia", "region": "Global North", "year": 2022},
+                    {"name": "Pabai Pabai and Guy Paul Kabai v. Commonwealth of Australia", "url": "https://www.climatecasechart.com/document/pabai-pabai-and-guy-paul-kabai-v-commonwealth-of-australia_2b10", "jurisdiction": "Australia", "region": "Global North", "year": 2021},
+                    {"name": "Complaint over Ampol's Carbon Neutral Fuel Claims", "url": "https://www.climatecasechart.com/document/complaint-over-ampols-carbon-neutral-fuel-claims_9862", "jurisdiction": "Australia", "region": "Global North", "year": 2022},
+                    {"name": "IACtHR Advisory Opinion Request (Climate Emergency)", "url": "https://www.climatecasechart.com/document/request-for-an-advisory-opinion-on-the-scope-of-the-state-obligations-for-responding-to-the-climate-emergency_fbcd", "jurisdiction": "International", "region": "International", "year": 2023},
+                    {"name": "Smith v. Fonterra Co-operative Group Limited", "url": "https://www.climatecasechart.com/document/smith-v-fonterra-co-operative-group-limited_33b2", "jurisdiction": "New Zealand", "region": "Global North", "year": 2020},
+                    {"name": "ClientEarth v. Shell's Board of Directors", "url": "https://www.climatecasechart.com/document/clientearth-v-shells-board-of-directors_9377", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2023},
+                    {"name": "R (Finch) v. Surrey County Council (Supreme Court)", "url": "https://www.climatecasechart.com/document/r-finch-on-behalf-of-the-weald-action-group-others-v-surrey-county-council-others_e6d3", "jurisdiction": "United Kingdom", "region": "Global North", "year": 2019}
+                ]
+            }
+        ];
+        
+        // Case colors matching CSS
+        const caseColors = ['#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
+        
+        // Currently selected case index
+        let selectedCaseIndex = 0;
+        
+        // Chart instance
+        let citationsChart = null;
+        
+        // ================================================================
+        // RENDER CASE CARDS
+        // ================================================================
+        function renderCaseCards() {
+            const container = document.getElementById('case-cards');
+            container.innerHTML = casesData.map((caseItem, index) => `
+                <div class="case-card ${index === selectedCaseIndex ? 'active' : ''}" 
+                     data-index="${index}">
+                    <div class="card-header">
+                        <div class="card-rank">#${index + 1} Most Cited</div>
+                        <a href="${caseItem.caseUrl}" target="_blank" class="card-link-btn" 
+                           onclick="event.stopPropagation();" title="View case on Climate Case Chart">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="card-country">
+                        <span class="flag">${caseItem.flag}</span>
+                        ${caseItem.country}
+                    </div>
+                    <div class="card-name">${caseItem.shortName || caseItem.name}</div>
+                    <div class="card-year">Decision Year: ${caseItem.year}</div>
+                    <div class="card-citations">
+                        <span class="citation-count">${caseItem.total_citing_decisions}</span>
+                        <span class="citation-label">decisions citing</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add click handlers (excluding the link button)
+            document.querySelectorAll('.case-card').forEach((card, index) => {
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('.card-link-btn')) {
+                        selectCase(index);
+                    }
+                });
+            });
+        }
+        
+        // ================================================================
+        // RENDER DETAIL CARD
+        // ================================================================
+        function renderDetailCard(index) {
+            const caseItem = casesData[index];
+            const detailCard = document.getElementById('detail-card');
+            
+            // Update accent color via data attribute
+            detailCard.setAttribute('data-case', index);
+            
+            detailCard.innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-country-year">
+                        <div class="detail-country ${caseItem.region === 'Global South' ? 'south' : ''}">
+                            <span>${caseItem.flag}</span>
+                            ${caseItem.country}
+                        </div>
+                        <div class="detail-year">${caseItem.year}</div>
+                    </div>
+                    <div class="detail-citation-badge">
+                        <span class="detail-citation-count" style="color: ${caseColors[index]}">${caseItem.total_citing_decisions}</span>
+                        <span class="detail-citation-label">Citing Decisions</span>
+                    </div>
+                </div>
+                <h3 class="detail-name">${caseItem.name}</h3>
+                <p class="detail-summary">${caseItem.summary}</p>
+                <div class="region-stats">
+                    <div class="region-stat north">
+                        <div class="region-stat-label">Global North</div>
+                        <div class="region-stat-value">${caseItem.north_citing_count}</div>
+                        <div class="region-stat-desc">citing decisions</div>
+                    </div>
+                    <div class="region-stat south">
+                        <div class="region-stat-label">Global South</div>
+                        <div class="region-stat-value">${caseItem.south_citing_count}</div>
+                        <div class="region-stat-desc">citing decisions</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ================================================================
+        // RENDER JURISDICTIONS
+        // ================================================================
+        function renderJurisdictions(index) {
+            const caseItem = casesData[index];
+            const grid = document.getElementById('jurisdictions-grid');
+            const title = document.getElementById('jurisdictions-title');
+            const subtitle = document.getElementById('jurisdictions-subtitle');
+            
+            title.textContent = `Citing Jurisdictions for ${caseItem.shortName || caseItem.name}`;
+            subtitle.textContent = `${caseItem.citing_jurisdictions.length} jurisdictions have cited this case`;
+            
+            grid.innerHTML = caseItem.citing_jurisdictions.map(jur => {
+                const regionClass = jur.region === 'Global North' ? 'north' : 
+                                   jur.region === 'Global South' ? 'south' : 'international';
+                return `
+                    <div class="jurisdiction-item ${regionClass}">
+                        <span class="jurisdiction-name">${jur.name}</span>
+                        <span class="jurisdiction-count">${jur.count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // ================================================================
+        // RENDER CITING CASES (NEW)
+        // ================================================================
+        function renderCitingCases(index) {
+            const caseItem = casesData[index];
+            const list = document.getElementById('citing-cases-list');
+            const title = document.getElementById('citing-cases-title');
+            const subtitle = document.getElementById('citing-cases-subtitle');
+            
+            title.textContent = `Cases Citing ${caseItem.shortName || caseItem.name}`;
+            subtitle.textContent = `${caseItem.citing_cases.length} cases • Click on a case to view it on Climate Case Chart`;
+            
+            list.innerHTML = caseItem.citing_cases.map(citingCase => {
+                const regionClass = citingCase.region === 'Global North' ? 'north' : 
+                                   citingCase.region === 'Global South' ? 'south' : 'international';
+                return `
+                    <a href="${citingCase.url}" target="_blank" class="citing-case-item ${regionClass}">
+                        <div class="citing-case-info">
+                            <div class="citing-case-name">${citingCase.name}</div>
+                            <div class="citing-case-meta">
+                                <span class="citing-case-jurisdiction">${citingCase.jurisdiction}</span>
+                                ${citingCase.year ? `<span class="citing-case-year">${citingCase.year}</span>` : ''}
+                            </div>
+                        </div>
+                        <svg class="citing-case-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                `;
+            }).join('');
+        }
+        
+        // ================================================================
+        // SELECT CASE
+        // ================================================================
+        function selectCase(index) {
+            selectedCaseIndex = index;
+            
+            // Update card active states
+            document.querySelectorAll('.case-card').forEach((card, i) => {
+                card.classList.toggle('active', i === index);
+            });
+            
+            // Update detail card
+            renderDetailCard(index);
+            
+            // Update jurisdictions
+            renderJurisdictions(index);
+            
+            // Update citing cases list
+            renderCitingCases(index);
+            
+            // Highlight bar in chart
+            if (citationsChart) {
+                const backgroundColors = casesData.map((_, i) => 
+                    i === index ? caseColors[i] : caseColors[i] + '40'
+                );
+                citationsChart.data.datasets[0].backgroundColor = backgroundColors;
+                citationsChart.update();
+            }
+        }
+        
+        // ================================================================
+        // RENDER CHART
+        // ================================================================
+        function renderChart() {
+            const canvas = document.getElementById('citationsChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart if any
+            if (citationsChart) {
+                citationsChart.destroy();
+            }
+            
+            citationsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: casesData.map(c => c.shortName || c.name.split(' v.')[0]),
+                    datasets: [{
+                        label: 'Citing Decisions',
+                        data: casesData.map(c => c.total_citing_decisions),
+                        backgroundColor: casesData.map((_, i) => 
+                            i === selectedCaseIndex ? caseColors[i] : caseColors[i] + '40'
+                        ),
+                        borderColor: caseColors,
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1a222d',
+                            titleColor: '#e8edf3',
+                            bodyColor: '#8b9aad',
+                            borderColor: '#2a3544',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => `${context.raw} citing decisions`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#2a3544',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#8b9aad',
+                                font: {
+                                    family: "'Space Mono', monospace",
+                                    size: 11
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#e8edf3',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 12,
+                                    weight: 500
+                                }
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            selectCase(elements[0].index);
+                        }
+                    }
+                }
+            });
+        }
+        
+        // ================================================================
+        // INITIALIZE
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Render all components
+            renderCaseCards();
+            renderDetailCard(0);
+            renderJurisdictions(0);
+            renderCitingCases(0);
+            renderChart();
+            
+            // Update header total stat
+            const totalCitations = casesData.reduce((sum, c) => sum + c.total_citing_decisions, 0);
+            document.getElementById('total-citations').textContent = totalCitations;
+        });
+    </script>
+</body>
+</html>

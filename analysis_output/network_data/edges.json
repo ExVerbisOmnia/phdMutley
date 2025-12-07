@@ -17,7 +17,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 262,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "International",
@@ -627,7 +627,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 17,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Canada",
@@ -887,7 +887,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 10,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "United Kingdom",
@@ -897,7 +897,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 10,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Colombia",
@@ -1037,7 +1037,7 @@
     "source_region": "Global South",
     "target_region": "Global North",
     "weight": 9,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Nigeria",
@@ -1577,7 +1577,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 5,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "International",
@@ -1647,7 +1647,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 5,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Ireland",
@@ -1977,7 +1977,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 3,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Spain",
@@ -3347,7 +3347,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 1,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Canada",
@@ -3357,7 +3357,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 1,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Canada",
@@ -4257,7 +4257,7 @@
     "source_region": "Global South",
     "target_region": "Global South",
     "weight": 1,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "Kenya",
@@ -5107,7 +5107,7 @@
     "source_region": "Global North",
     "target_region": "Global North",
     "weight": 1,
-    "sixfold_type": "Unclassified"
+    "sixfold_type": "Foreign Citation"
   },
   {
     "source": "United Kingdom",

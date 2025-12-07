@@ -138,6 +138,17 @@ def export_database_to_excel(output_file: str = None, text_truncate_length: int 
                     # Clean sheet name (Excel has 31 char limit and doesn't allow certain chars)
                     sheet_name = table_name[:31].replace('/', '_').replace('\\', '_')
                     
+                    # Handle list/array columns (convert to comma-separated strings)
+                    for col in df.columns:
+                        # Check if column contains lists (some rows might be None/NaN, so dropna first to check type)
+                        non_null_values = df[col].dropna()
+                        if not non_null_values.empty and isinstance(non_null_values.iloc[0], (list, tuple)):
+                            try:
+                                logger.info(f"  ℹ Formatting array column: {col}")
+                                df[col] = df[col].apply(lambda x: ', '.join(map(str, x)) if isinstance(x, (list, tuple)) else x)
+                            except Exception as e:
+                                logger.warning(f"  ⚠ Failed to format array column {col}: {e}")
+
                     # Remove timezone information from datetime columns (Excel doesn't support it)
                     for col in df.columns:
                         if pd.api.types.is_datetime64_any_dtype(df[col]):

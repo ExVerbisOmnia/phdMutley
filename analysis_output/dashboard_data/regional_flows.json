@@ -2,11 +2,11 @@
   "asymmetry_data": [
     {
       "sixfold_type": "Foreign Citation",
-      "n_to_n": 868,
+      "n_to_n": 1183,
       "n_to_s": 24,
-      "s_to_n": 273,
-      "s_to_s": 147,
-      "total": 1312
+      "s_to_n": 282,
+      "s_to_s": 148,
+      "total": 1637
     },
     {
       "sixfold_type": "Non-Member Citation",
@@ -20,9 +20,9 @@
   "global_south_engagement": [
     {
       "sixfold_type": "Foreign Citation",
-      "citations_from_south": 420,
-      "citations_to_south": 171,
-      "total_citations": 1312
+      "citations_from_south": 430,
+      "citations_to_south": 172,
+      "total_citations": 1637
     },
     {
       "sixfold_type": "International Citation",
@@ -38,9 +38,9 @@
     },
     {
       "sixfold_type": "Unclassified",
-      "citations_from_south": 28,
-      "citations_to_south": 1,
-      "total_citations": 615
+      "citations_from_south": 18,
+      "citations_to_south": 0,
+      "total_citations": 290
     },
     {
       "sixfold_type": "Inter-System Citation",
