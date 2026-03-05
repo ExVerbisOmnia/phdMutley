@@ -1,0 +1,32 @@
+[project]
+name = "phdmutley"
+version = "0.1.0"
+description = "PhD Climate Litigation Citation Analysis"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = ["web-deployment-old/", "venv/"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+ignore = [
+    "E501",   # line length handled by formatter
+    "E402",   # module-import-not-at-top — intentional sys.path.insert before imports
+    "E741",   # ambiguous variable name (e.g. `l` in loops) — acceptable in data scripts
+    "N802",   # SQLAlchemy conventions (e.g. SessionLocal)
+    "N806",   # SQLAlchemy conventions (e.g. Base)
+    "UP035",  # keep typing.Dict etc. for py311 compat
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "gcp_secrets", "gemini_client", "pipeline_models", "test_run"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [
+    "scripts",
+    "scripts/0-initialize-database",
+    "scripts/5-extract-citations/citation_extraction_pipeline",
+]

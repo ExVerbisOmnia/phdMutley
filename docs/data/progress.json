@@ -1,0 +1,920 @@
+{
+  "phases": [
+    {
+      "id": 100,
+      "name": "v1.0 (1st Run)",
+      "description": "Full pipeline: 2,924 decisions processed, deployed on Railway",
+      "status": "completed",
+      "start_date": "2025-11-01",
+      "due_date": "2025-11-30",
+      "completed_date": "2025-11-30",
+      "sort_order": -5,
+      "tasks": [],
+      "decisions": []
+    },
+    {
+      "id": 101,
+      "name": "Phase A: Data Integrity",
+      "description": "Duplicate columns, hardcoded paths, bare excepts, tests",
+      "status": "completed",
+      "start_date": "2026-03-01",
+      "due_date": "2026-03-02",
+      "completed_date": "2026-03-02",
+      "sort_order": -4,
+      "tasks": [],
+      "decisions": []
+    },
+    {
+      "id": 102,
+      "name": "Phase B: Gemini Migration",
+      "description": "Anthropic SDK to google-genai for all LLM calls",
+      "status": "completed",
+      "start_date": "2026-03-02",
+      "due_date": "2026-03-02",
+      "completed_date": "2026-03-02",
+      "sort_order": -3,
+      "tasks": [],
+      "decisions": []
+    },
+    {
+      "id": 103,
+      "name": "Phase B+: Reproducibility",
+      "description": "Ruff, Pydantic config, pinned deps, Alembic, pipeline models",
+      "status": "completed",
+      "start_date": "2026-03-02",
+      "due_date": "2026-03-03",
+      "completed_date": "2026-03-03",
+      "sort_order": -2,
+      "tasks": [],
+      "decisions": []
+    },
+    {
+      "id": 104,
+      "name": "Phase C: Docker Integration",
+      "description": "Dockerfile, docker-compose, run-pipeline.sh, Docker secrets",
+      "status": "completed",
+      "start_date": "2026-03-03",
+      "due_date": "2026-03-03",
+      "completed_date": "2026-03-03",
+      "sort_order": -1,
+      "tasks": [],
+      "decisions": []
+    },
+    {
+      "id": 105,
+      "name": "Phase D: GitHub Pages Migration",
+      "description": "Railway decommissioned, static site at docs, export script",
+      "status": "completed",
+      "start_date": "2026-03-04",
+      "due_date": "2026-03-04",
+      "completed_date": "2026-03-04",
+      "sort_order": 0,
+      "tasks": [],
+      "decisions": []
+    },
+    {
+      "id": 1,
+      "name": "Phase 1: DB Schema Evolution",
+      "description": "Add Sabin Case/Document IDs, Alembic migration",
+      "status": "completed",
+      "start_date": "2026-03-04",
+      "due_date": "2026-03-04",
+      "completed_date": "2026-03-04",
+      "sort_order": 1,
+      "tasks": [
+        {
+          "id": 1,
+          "phase_id": 1,
+          "subject": "Add sabin_case_id / sabin_document_id columns",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-04",
+          "completed_date": "2026-03-04T15:44:08.741808",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:44:08"
+        },
+        {
+          "id": 2,
+          "phase_id": 1,
+          "subject": "Create Alembic migration for new columns",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-04",
+          "completed_date": "2026-03-04T15:44:09.116766",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:44:09"
+        },
+        {
+          "id": 3,
+          "phase_id": 1,
+          "subject": "Update init_database.py for new schema",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-04",
+          "completed_date": "2026-03-04T15:44:10.890140",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:44:10"
+        },
+        {
+          "id": 4,
+          "phase_id": 1,
+          "subject": "Update populate_metadata.py to store Sabin IDs",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-04",
+          "completed_date": "2026-03-04T15:44:11.117460",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:44:11"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D4",
+          "title": "Use Sabin Case/Document IDs",
+          "rationale": "Sabin DB already provides both IDs",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 1,
+          "created_at": "2026-03-04 18:10:18"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Phase 2: Seed Data & Download",
+      "description": "Load updated Excel, --test-run flag, download pipeline",
+      "status": "completed",
+      "start_date": "2026-03-04",
+      "due_date": "2026-03-04",
+      "completed_date": "2026-03-04",
+      "sort_order": 2,
+      "tasks": [
+        {
+          "id": 5,
+          "phase_id": 2,
+          "subject": "Implement --test-run N CLI flag across pipeline scripts",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-04",
+          "completed_date": "2026-03-04T15:44:15.944155",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:44:15"
+        },
+        {
+          "id": 6,
+          "phase_id": 2,
+          "subject": "Add TestRunSettings to config.py",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-04",
+          "completed_date": "2026-03-04T15:44:16.187046",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:44:16"
+        },
+        {
+          "id": 7,
+          "phase_id": 2,
+          "subject": "Adapt populate_metadata.py for new Excel structure",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-04",
+          "completed_date": "2026-03-04T15:54:21.107772",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:54:21"
+        },
+        {
+          "id": 8,
+          "phase_id": 2,
+          "subject": "Acquire updated Columbia/Sabin Excel",
+          "description": null,
+          "owner": "Lucas",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-04T15:54:19.644070",
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:54:19"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 3,
+      "name": "Phase 3: Markdown Extraction",
+      "description": "PDF to Markdown instead of plain text",
+      "status": "pending",
+      "start_date": null,
+      "due_date": "2026-03-05",
+      "completed_date": null,
+      "sort_order": 3,
+      "tasks": [
+        {
+          "id": 9,
+          "phase_id": 3,
+          "subject": "Evaluate Markdown conversion libraries",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 10,
+          "phase_id": 3,
+          "subject": "Modify extract_texts.py for Markdown output",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 11,
+          "phase_id": 3,
+          "subject": "Add text_md column to extracted_text table",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D3",
+          "title": "Markdown text extraction",
+          "rationale": "Better optimized for LLM processing",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 3,
+          "created_at": "2026-03-04 18:10:18"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Phase 4: Knowledge Base",
+      "description": "Build case metadata index from Sabin/Columbia data",
+      "status": "pending",
+      "start_date": null,
+      "due_date": "2026-03-05",
+      "completed_date": null,
+      "sort_order": 4,
+      "tasks": [
+        {
+          "id": 12,
+          "phase_id": 4,
+          "subject": "Create build_knowledge_base.py",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 13,
+          "phase_id": 4,
+          "subject": "Design batching strategy for context windows",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 14,
+          "phase_id": 4,
+          "subject": "Export knowledge base as JSON for validation",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D6",
+          "title": "Build Knowledge step before extraction",
+          "rationale": "Dramatically improved recall in corporate-cases project",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 4,
+          "created_at": "2026-03-04 18:10:18"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Phase 5: Citation Extraction v6",
+      "description": "Sabin-filtered extraction with knowledge base",
+      "status": "pending",
+      "start_date": null,
+      "due_date": "2026-03-06",
+      "completed_date": null,
+      "sort_order": 5,
+      "tasks": [
+        {
+          "id": 15,
+          "phase_id": 5,
+          "subject": "Design v6 extraction prompt with knowledge base",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-06",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 16,
+          "phase_id": 5,
+          "subject": "Implement Sabin filter (citation → Sabin case matching)",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-06",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 17,
+          "phase_id": 5,
+          "subject": "Implement snippet extraction with char-count anchoring",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-06",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 18,
+          "phase_id": 5,
+          "subject": "Generate validation Excel for Lucas review",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-06",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 19,
+          "phase_id": 5,
+          "subject": "Cost estimation: tokens × docs × price",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "title": "Sabin-only citation filter",
+          "rationale": "Australia data noise from non-climate citations",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 5,
+          "created_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": "D7",
+          "title": "Snippets after filter only",
+          "rationale": "Don't waste tokens on discarded citations",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 5,
+          "created_at": "2026-03-04 18:10:18"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Phase 6: Analysis & Export v2",
+      "description": "Updated engine, top-5, static maps, disclaimer",
+      "status": "pending",
+      "start_date": null,
+      "due_date": "2026-03-07",
+      "completed_date": null,
+      "sort_order": 6,
+      "tasks": [
+        {
+          "id": 20,
+          "phase_id": 6,
+          "subject": "Update analysis engine for v2.0 citation data",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 21,
+          "phase_id": 6,
+          "subject": "Add top-5 jurisdiction queries",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 22,
+          "phase_id": 6,
+          "subject": "Generate static maps (top-5 + US aesthetic)",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 23,
+          "phase_id": 6,
+          "subject": "Add error margin disclaimer",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D10",
+          "title": "Error margin disclaimer",
+          "rationale": "Transparency about LLM limitations",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 6,
+          "created_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": "D9",
+          "title": "Top-5 format for deliverable",
+          "rationale": "Comfortable with ranked format given data imperfections",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 6,
+          "created_at": "2026-03-04 18:10:18"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Phase 7: Trial Run (100 docs)",
+      "description": "Validate full v2.0 pipeline on sample",
+      "status": "pending",
+      "start_date": null,
+      "due_date": "2026-03-07",
+      "completed_date": null,
+      "sort_order": 7,
+      "tasks": [
+        {
+          "id": 24,
+          "phase_id": 7,
+          "subject": "Execute --test-run 100 through full pipeline",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 25,
+          "phase_id": 7,
+          "subject": "Monitor cost, errors, processing time",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 26,
+          "phase_id": 7,
+          "subject": "Lucas validates sample of results",
+          "description": null,
+          "owner": "Lucas",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D11",
+          "title": "Trial run: 100 random documents",
+          "rationale": "Validate before full-scale execution",
+          "source": "Session 4 Mar",
+          "status": "pending",
+          "phase_id": 7,
+          "created_at": "2026-03-04 18:10:18"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Phase 8: Full Run & Deliverable",
+      "description": "Process all documents, generate maps + text for Joana",
+      "status": "pending",
+      "start_date": null,
+      "due_date": "2026-03-09",
+      "completed_date": null,
+      "sort_order": 8,
+      "tasks": [
+        {
+          "id": 27,
+          "phase_id": 8,
+          "subject": "Full pipeline run on all documents",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 28,
+          "phase_id": 8,
+          "subject": "Generate final static maps for Joana",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 29,
+          "phase_id": 8,
+          "subject": "Write 2-3 descriptive paragraphs",
+          "description": null,
+          "owner": "Lucas",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-09",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        },
+        {
+          "id": 30,
+          "phase_id": 8,
+          "subject": "Package and deliver to Joana/Kate",
+          "description": null,
+          "owner": "Both",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-09",
+          "completed_date": null,
+          "created_at": "2026-03-04 18:10:18",
+          "updated_at": "2026-03-04 18:10:18"
+        }
+      ],
+      "decisions": []
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D1",
+      "title": "Sabin-only citation filter",
+      "rationale": "Australia data noise from non-climate citations",
+      "source": "Meeting 3 Mar",
+      "status": "pending",
+      "phase_id": 5,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D10",
+      "title": "Error margin disclaimer",
+      "rationale": "Transparency about LLM limitations",
+      "source": "Meeting 3 Mar",
+      "status": "pending",
+      "phase_id": 6,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D11",
+      "title": "Trial run: 100 random documents",
+      "rationale": "Validate before full-scale execution",
+      "source": "Session 4 Mar",
+      "status": "pending",
+      "phase_id": 7,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D2",
+      "title": "Gemini as primary LLM",
+      "rationale": "Cheaper, matches benchmarks, Lucas has credits",
+      "source": "Meeting 3 Mar",
+      "status": "implemented",
+      "phase_id": null,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D3",
+      "title": "Markdown text extraction",
+      "rationale": "Better optimized for LLM processing",
+      "source": "Meeting 3 Mar",
+      "status": "pending",
+      "phase_id": 3,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D4",
+      "title": "Use Sabin Case/Document IDs",
+      "rationale": "Sabin DB already provides both IDs",
+      "source": "Meeting 3 Mar",
+      "status": "pending",
+      "phase_id": 1,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D5",
+      "title": "No wholesale reclassification",
+      "rationale": "Too expensive; trust Sabin scope",
+      "source": "Meeting 3 Mar",
+      "status": "active",
+      "phase_id": null,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D6",
+      "title": "Build Knowledge step before extraction",
+      "rationale": "Dramatically improved recall in corporate-cases project",
+      "source": "Meeting 3 Mar",
+      "status": "pending",
+      "phase_id": 4,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D7",
+      "title": "Snippets after filter only",
+      "rationale": "Don't waste tokens on discarded citations",
+      "source": "Meeting 3 Mar",
+      "status": "pending",
+      "phase_id": 5,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D8",
+      "title": "Gustavo handles all pipeline work",
+      "rationale": "Iterative work, dividing creates overhead",
+      "source": "Meeting 3 Mar",
+      "status": "active",
+      "phase_id": null,
+      "created_at": "2026-03-04 18:10:18"
+    },
+    {
+      "id": "D9",
+      "title": "Top-5 format for deliverable",
+      "rationale": "Comfortable with ranked format given data imperfections",
+      "source": "Meeting 3 Mar",
+      "status": "pending",
+      "phase_id": 6,
+      "created_at": "2026-03-04 18:10:18"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": 1,
+      "task_id": 7,
+      "depends_on": 8,
+      "dep_type": "blocks",
+      "task_subject": "Adapt populate_metadata.py for new Excel structure",
+      "depends_on_subject": "Acquire updated Columbia/Sabin Excel"
+    },
+    {
+      "id": 2,
+      "task_id": 5,
+      "depends_on": 8,
+      "dep_type": "blocks",
+      "task_subject": "Implement --test-run N CLI flag across pipeline scripts",
+      "depends_on_subject": "Acquire updated Columbia/Sabin Excel"
+    },
+    {
+      "id": 3,
+      "task_id": 12,
+      "depends_on": 4,
+      "dep_type": "blocks",
+      "task_subject": "Create build_knowledge_base.py",
+      "depends_on_subject": "Update populate_metadata.py to store Sabin IDs"
+    },
+    {
+      "id": 4,
+      "task_id": 15,
+      "depends_on": 10,
+      "dep_type": "blocks",
+      "task_subject": "Design v6 extraction prompt with knowledge base",
+      "depends_on_subject": "Modify extract_texts.py for Markdown output"
+    },
+    {
+      "id": 5,
+      "task_id": 15,
+      "depends_on": 12,
+      "dep_type": "blocks",
+      "task_subject": "Design v6 extraction prompt with knowledge base",
+      "depends_on_subject": "Create build_knowledge_base.py"
+    },
+    {
+      "id": 6,
+      "task_id": 16,
+      "depends_on": 12,
+      "dep_type": "blocks",
+      "task_subject": "Implement Sabin filter (citation → Sabin case matching)",
+      "depends_on_subject": "Create build_knowledge_base.py"
+    },
+    {
+      "id": 7,
+      "task_id": 20,
+      "depends_on": 16,
+      "dep_type": "blocks",
+      "task_subject": "Update analysis engine for v2.0 citation data",
+      "depends_on_subject": "Implement Sabin filter (citation → Sabin case matching)"
+    },
+    {
+      "id": 8,
+      "task_id": 24,
+      "depends_on": 20,
+      "dep_type": "blocks",
+      "task_subject": "Execute --test-run 100 through full pipeline",
+      "depends_on_subject": "Update analysis engine for v2.0 citation data"
+    },
+    {
+      "id": 9,
+      "task_id": 24,
+      "depends_on": 5,
+      "dep_type": "blocks",
+      "task_subject": "Execute --test-run 100 through full pipeline",
+      "depends_on_subject": "Implement --test-run N CLI flag across pipeline scripts"
+    },
+    {
+      "id": 10,
+      "task_id": 27,
+      "depends_on": 24,
+      "dep_type": "blocks",
+      "task_subject": "Full pipeline run on all documents",
+      "depends_on_subject": "Execute --test-run 100 through full pipeline"
+    },
+    {
+      "id": 11,
+      "task_id": 29,
+      "depends_on": 28,
+      "dep_type": "blocks",
+      "task_subject": "Write 2-3 descriptive paragraphs",
+      "depends_on_subject": "Generate final static maps for Joana"
+    }
+  ],
+  "action_items": [
+    {
+      "id": "A1",
+      "owner": "Lucas",
+      "description": "Acquire updated Columbia/Sabin Excel with latest cases",
+      "deadline": null,
+      "status": "pending",
+      "source": "Meeting 3 Mar"
+    },
+    {
+      "id": "A2",
+      "owner": "Gustavo",
+      "description": "Pipeline v2.0 development and execution (all phases)",
+      "deadline": "2026-03-08",
+      "status": "in_progress",
+      "source": "Meeting 3 Mar"
+    },
+    {
+      "id": "A3",
+      "owner": "Lucas",
+      "description": "Develop map presentation (text, colors, aesthetics)",
+      "deadline": "2026-03-08",
+      "status": "pending",
+      "source": "Meeting 3 Mar"
+    },
+    {
+      "id": "A4",
+      "owner": "Lucas",
+      "description": "Write descriptive/reflective paragraphs (pending data)",
+      "deadline": "2026-03-09",
+      "status": "pending",
+      "source": "Meeting 3 Mar"
+    },
+    {
+      "id": "A5",
+      "owner": "Both",
+      "description": "Daily touchpoints (morning sync + end-of-day review)",
+      "deadline": null,
+      "status": "in_progress",
+      "source": "Meeting 3 Mar"
+    },
+    {
+      "id": "A6",
+      "owner": "Lucas",
+      "description": "Create Discord/Teams room for always-on communication",
+      "deadline": "2026-03-04",
+      "status": "pending",
+      "source": "Meeting 3 Mar"
+    },
+    {
+      "id": "A7",
+      "owner": "Gustavo",
+      "description": "Estimate token costs for full pipeline run",
+      "deadline": "2026-03-05",
+      "status": "pending",
+      "source": "Meeting 3 Mar"
+    },
+    {
+      "id": "A8",
+      "owner": "Both",
+      "description": "Consider Columbia Junior Scholars submission (15 Mar)",
+      "deadline": "2026-03-10",
+      "status": "pending",
+      "source": "Meeting 3 Mar"
+    }
+  ],
+  "summary": {
+    "total_tasks": 30,
+    "tasks_by_status": {
+      "completed": 8,
+      "pending": 22
+    },
+    "total_phases": 14,
+    "phases_by_status": {
+      "completed": 8,
+      "pending": 6
+    },
+    "exported_at": "2026-03-04T15:54:45.677577",
+    "deliverable_deadline": "2026-03-09",
+    "article_deadline": "2026-03-15"
+  }
+}

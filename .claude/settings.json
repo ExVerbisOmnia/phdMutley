@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(pip:*)",
+      "Bash(psql:*)",
+      "Bash(pg_dump:*)",
+      "Bash(source venv/bin/activate:*)",
+      "Bash(cd railway:*)",
+      "Bash(cd scripts:*)",
+      "Bash(gunicorn:*)",
+      "Bash(git:*)"
+    ]
+  }
+}

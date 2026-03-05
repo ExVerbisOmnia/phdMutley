@@ -1,0 +1,23 @@
+# =============================================================================
+# REQUIREMENTS-DEV.TXT - Local Development Dependencies
+# =============================================================================
+# Includes all production deps plus dev/test tools
+# =============================================================================
+
+-r requirements.txt
+
+# --- Pipeline utilities ---
+tqdm==4.67.3
+openpyxl==3.1.5
+
+# --- Testing ---
+pytest==9.0.2
+pytest-cov==7.0.0
+
+# --- Linting ---
+ruff==0.15.1
+
+# --- PDF extraction (install manually if needed) ---
+# pdfplumber>=0.10.0
+# PyMuPDF>=1.23.0
+# PyPDF2>=3.0.0

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>phdMutley - Progress Tracker</title>
+<style>
+:root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --orange: #db6d28;
+    --purple: #bc8cff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+h1 { color: #fff; margin-bottom: 4px; font-size: 1.6rem; }
+.subtitle { color: var(--text-muted); margin-bottom: 24px; font-size: 0.9rem; }
+.deadline-banner {
+    background: linear-gradient(135deg, #1a1e2e, #1e2a3a);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.deadline-banner .label { color: var(--text-muted); font-size: 0.85rem; }
+.deadline-banner .value { color: #fff; font-weight: 600; }
+.countdown { color: var(--yellow); font-weight: 700; font-size: 1.1rem; }
+
+/* Summary cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+.card .number { font-size: 2rem; font-weight: 700; }
+.card .label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Progress bar */
+.progress-section { margin-bottom: 24px; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.progress-bar-bg {
+    background: var(--border);
+    border-radius: 6px;
+    height: 12px;
+    overflow: hidden;
+    display: flex;
+}
+.progress-bar-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+.fill-completed { background: var(--green); }
+.fill-in-progress { background: var(--yellow); }
+.fill-blocked { background: var(--red); }
+
+/* Phase list */
+.phase-section { margin-bottom: 24px; }
+.phase-section h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+.phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+.phase-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+.phase-header:hover { background: rgba(255,255,255,0.03); }
+.phase-toggle { color: var(--text-muted); font-size: 0.8rem; width: 16px; transition: transform 0.2s; }
+.phase-toggle.open { transform: rotate(90deg); }
+.phase-name { flex: 1; font-weight: 600; }
+.phase-due { color: var(--text-muted); font-size: 0.85rem; }
+.phase-tasks { padding: 0 16px 12px; display: none; }
+.phase-tasks.visible { display: block; }
+
+/* Status badges */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.badge-completed { background: rgba(63,185,80,0.15); color: var(--green); }
+.badge-in_progress { background: rgba(210,153,34,0.15); color: var(--yellow); }
+.badge-pending { background: rgba(139,148,158,0.15); color: var(--text-muted); }
+.badge-blocked { background: rgba(248,81,73,0.15); color: var(--red); }
+.badge-deferred { background: rgba(188,140,255,0.15); color: var(--purple); }
+.badge-active { background: rgba(88,166,255,0.15); color: var(--accent); }
+.badge-implemented { background: rgba(63,185,80,0.15); color: var(--green); }
+
+/* Priority badges */
+.priority-critical { color: var(--red); }
+.priority-high { color: var(--orange); }
+.priority-medium { color: var(--text-muted); }
+.priority-low { color: var(--text-muted); opacity: 0.6; }
+
+/* Task list */
+.task {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-size: 0.9rem;
+}
+.task:last-child { border-bottom: none; }
+.task-id { color: var(--text-muted); font-size: 0.8rem; min-width: 30px; }
+.task-subject { flex: 1; }
+.task-owner { color: var(--text-muted); font-size: 0.8rem; }
+.task-due { color: var(--text-muted); font-size: 0.8rem; min-width: 80px; text-align: right; }
+.task.overdue .task-due { color: var(--red); font-weight: 600; }
+
+/* Decisions table */
+.decisions-section { margin-bottom: 24px; }
+.decisions-section h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+.decision {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+.decision-id { color: var(--accent); font-weight: 700; min-width: 32px; }
+.decision-title { flex: 1; }
+.decision-source { color: var(--text-muted); font-size: 0.8rem; }
+
+/* Action items */
+.actions-section { margin-bottom: 24px; }
+.actions-section h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+.action-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+.action-id { color: var(--purple); font-weight: 700; min-width: 28px; }
+.action-desc { flex: 1; }
+.action-owner { color: var(--text-muted); font-size: 0.8rem; }
+
+/* Dependencies graph */
+.deps-section { margin-bottom: 24px; }
+.deps-section h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+.dep-item {
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    color: var(--text-muted);
+}
+.dep-arrow { color: var(--red); margin: 0 6px; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.tab {
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<h1>phdMutley Progress Tracker</h1>
+<p class="subtitle">Pipeline v2.0 — Transnational Judicial Citation Analysis</p>
+
+<div class="deadline-banner">
+    <div>
+        <span class="label">Deliverable deadline:</span>
+        <span class="value">9 March 2026</span>
+    </div>
+    <div>
+        <span class="label">Article deadline:</span>
+        <span class="value">15 March 2026</span>
+    </div>
+    <div id="countdown" class="countdown"></div>
+</div>
+
+<div class="cards" id="summary-cards"></div>
+
+<div class="progress-section">
+    <div class="progress-header">
+        <span>Overall Progress</span>
+        <span id="progress-pct"></span>
+    </div>
+    <div class="progress-bar-bg" id="progress-bar"></div>
+</div>
+
+<div class="tabs">
+    <div class="tab active" data-tab="phases">Phases & Tasks</div>
+    <div class="tab" data-tab="decisions">Decisions</div>
+    <div class="tab" data-tab="actions">Action Items</div>
+    <div class="tab" data-tab="deps">Dependencies</div>
+</div>
+
+<div class="tab-content active" id="tab-phases">
+    <div class="phase-section" id="completed-phases">
+        <h2>Completed</h2>
+    </div>
+    <div class="phase-section" id="active-phases">
+        <h2>v2.0 Pipeline</h2>
+    </div>
+</div>
+
+<div class="tab-content" id="tab-decisions">
+    <div class="decisions-section" id="decisions-list">
+        <h2>Key Decisions (D1-D11)</h2>
+    </div>
+</div>
+
+<div class="tab-content" id="tab-actions">
+    <div class="actions-section" id="actions-list">
+        <h2>Action Items</h2>
+    </div>
+</div>
+
+<div class="tab-content" id="tab-deps">
+    <div class="deps-section" id="deps-list">
+        <h2>Task Dependencies (blocked by)</h2>
+    </div>
+</div>
+
+<footer>
+    <div>Generated from <code>progress.db</code> via <code>scripts/progress_tracker.py export</code></div>
+    <div id="export-time"></div>
+</footer>
+
+<script>
+let DATA = null;
+
+async function loadData() {
+    const resp = await fetch('data/progress.json');
+    DATA = await resp.json();
+    render();
+}
+
+function render() {
+    renderCountdown();
+    renderSummary();
+    renderProgress();
+    renderPhases();
+    renderDecisions();
+    renderActions();
+    renderDeps();
+    document.getElementById('export-time').textContent =
+        'Last export: ' + (DATA.summary.exported_at || 'unknown');
+}
+
+function renderCountdown() {
+    const deadline = new Date('2026-03-09T23:59:59');
+    const now = new Date();
+    const diff = deadline - now;
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const el = document.getElementById('countdown');
+    if (days < 0) {
+        el.textContent = 'DEADLINE PASSED';
+        el.style.color = 'var(--red)';
+    } else {
+        el.textContent = days + 'd ' + hours + 'h remaining';
+    }
+}
+
+function renderSummary() {
+    const s = DATA.summary;
+    const ts = s.tasks_by_status;
+    const ps = s.phases_by_status;
+    const cards = [
+        { number: s.total_phases, label: 'Total Phases', color: 'var(--accent)' },
+        { number: ps.completed || 0, label: 'Phases Done', color: 'var(--green)' },
+        { number: s.total_tasks, label: 'Total Tasks', color: 'var(--accent)' },
+        { number: ts.completed || 0, label: 'Tasks Done', color: 'var(--green)' },
+        { number: ts.in_progress || 0, label: 'In Progress', color: 'var(--yellow)' },
+        { number: ts.blocked || 0, label: 'Blocked', color: 'var(--red)' },
+    ];
+    const container = document.getElementById('summary-cards');
+    container.innerHTML = cards.map(c =>
+        '<div class="card"><div class="number" style="color:' + c.color + '">' + c.number +
+        '</div><div class="label">' + c.label + '</div></div>'
+    ).join('');
+}
+
+function renderProgress() {
+    const ts = DATA.summary.tasks_by_status;
+    const total = DATA.summary.total_tasks;
+    const completed = ts.completed || 0;
+    const inProgress = ts.in_progress || 0;
+    const blocked = ts.blocked || 0;
+    const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    document.getElementById('progress-pct').textContent = pct + '% (' + completed + '/' + total + ')';
+    const bar = document.getElementById('progress-bar');
+    bar.innerHTML =
+        '<div class="progress-bar-fill fill-completed" style="width:' + (completed/total*100) + '%"></div>' +
+        '<div class="progress-bar-fill fill-in-progress" style="width:' + (inProgress/total*100) + '%"></div>' +
+        '<div class="progress-bar-fill fill-blocked" style="width:' + (blocked/total*100) + '%"></div>';
+}
+
+function renderPhases() {
+    const completedEl = document.getElementById('completed-phases');
+    const activeEl = document.getElementById('active-phases');
+
+    DATA.phases.forEach(phase => {
+        const isCompleted = phase.status === 'completed';
+        const container = isCompleted ? completedEl : activeEl;
+
+        const phaseDiv = document.createElement('div');
+        phaseDiv.className = 'phase';
+
+        const tasks = phase.tasks || [];
+        const tasksDone = tasks.filter(t => t.status === 'completed').length;
+
+        let header = '<div class="phase-header" onclick="togglePhase(this)">';
+        header += '<span class="phase-toggle">&#9654;</span>';
+        header += '<span class="phase-name">' + escHtml(phase.name) + '</span>';
+        if (tasks.length > 0) {
+            header += '<span style="color:var(--text-muted);font-size:0.8rem">' + tasksDone + '/' + tasks.length + '</span>';
+        }
+        header += '<span class="badge badge-' + phase.status + '">' + phase.status.replace('_', ' ') + '</span>';
+        if (phase.due_date) {
+            header += '<span class="phase-due">' + phase.due_date + '</span>';
+        }
+        header += '</div>';
+
+        let tasksHtml = '<div class="phase-tasks">';
+        if (phase.description) {
+            tasksHtml += '<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:8px">' + escHtml(phase.description) + '</div>';
+        }
+        tasks.forEach(task => {
+            const today = new Date().toISOString().slice(0, 10);
+            const overdue = task.due_date && task.due_date < today && task.status !== 'completed';
+            tasksHtml += '<div class="task' + (overdue ? ' overdue' : '') + '">';
+            tasksHtml += '<span class="task-id">#' + task.id + '</span>';
+            tasksHtml += '<span class="badge badge-' + task.status + '">' + task.status.replace('_',' ') + '</span>';
+            tasksHtml += '<span class="priority-' + task.priority + '" title="Priority: ' + task.priority + '">';
+            tasksHtml += priorityIcon(task.priority) + '</span>';
+            tasksHtml += '<span class="task-subject">' + escHtml(task.subject) + '</span>';
+            tasksHtml += '<span class="task-owner">@' + (task.owner || '?') + '</span>';
+            tasksHtml += '<span class="task-due">' + (task.due_date || '') + '</span>';
+            tasksHtml += '</div>';
+        });
+        tasksHtml += '</div>';
+
+        phaseDiv.innerHTML = header + tasksHtml;
+        container.appendChild(phaseDiv);
+    });
+}
+
+function renderDecisions() {
+    const container = document.getElementById('decisions-list');
+    DATA.decisions.forEach(d => {
+        const div = document.createElement('div');
+        div.className = 'decision';
+        div.innerHTML =
+            '<span class="decision-id">' + d.id + '</span>' +
+            '<span class="decision-title">' + escHtml(d.title) + '</span>' +
+            '<span class="badge badge-' + d.status + '">' + d.status + '</span>' +
+            '<span class="decision-source">' + escHtml(d.source || '') + '</span>';
+        container.appendChild(div);
+    });
+}
+
+function renderActions() {
+    const container = document.getElementById('actions-list');
+    DATA.action_items.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'action-item';
+        div.innerHTML =
+            '<span class="action-id">' + a.id + '</span>' +
+            '<span class="badge badge-' + a.status + '">' + a.status.replace('_',' ') + '</span>' +
+            '<span class="action-desc">' + escHtml(a.description) + '</span>' +
+            '<span class="action-owner">@' + escHtml(a.owner) + '</span>' +
+            '<span class="task-due">' + (a.deadline || '') + '</span>';
+        container.appendChild(div);
+    });
+}
+
+function renderDeps() {
+    const container = document.getElementById('deps-list');
+    if (!DATA.dependencies || DATA.dependencies.length === 0) {
+        container.innerHTML += '<p style="color:var(--text-muted)">No dependencies found.</p>';
+        return;
+    }
+    DATA.dependencies.forEach(d => {
+        const div = document.createElement('div');
+        div.className = 'dep-item';
+        div.innerHTML =
+            '#' + d.task_id + ' ' + escHtml(d.task_subject) +
+            '<span class="dep-arrow">&larr; blocked by &larr;</span>' +
+            '#' + d.depends_on + ' ' + escHtml(d.depends_on_subject);
+        container.appendChild(div);
+    });
+}
+
+function togglePhase(headerEl) {
+    const tasks = headerEl.nextElementSibling;
+    const toggle = headerEl.querySelector('.phase-toggle');
+    tasks.classList.toggle('visible');
+    toggle.classList.toggle('open');
+}
+
+function priorityIcon(p) {
+    if (p === 'critical') return '!!';
+    if (p === 'high') return '!';
+    return '';
+}
+
+function escHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+});
+
+loadData();
+</script>
+</body>
+</html>
