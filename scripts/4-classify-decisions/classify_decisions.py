@@ -40,8 +40,6 @@ import re
 import sys
 import time
 from datetime import datetime
-from uuid import uuid5
-
 import pandas as pd
 
 # Database
@@ -54,10 +52,10 @@ from tqdm import tqdm
 
 _SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _SCRIPTS_DIR)
-from config import CONFIG, DATABASE_FILE, LOGS_DIR, TRIAL_BATCH_CONFIG, UUID_NAMESPACE
+from config import CONFIG, DATABASE_FILE, LOGS_DIR, TRIAL_BATCH_CONFIG
 from gcp_secrets import get_engine
 from gemini_client import call_gemini
-from test_run import add_test_run_arg, get_sampled_document_uuids
+from test_run import add_test_run_arg, get_sampled_document_ids
 
 sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "0-initialize-database"))
 from init_database import Document, ExtractedText
@@ -86,14 +84,14 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 # ============================================================================
 
 
-def get_trial_batch_document_uuids(df=None):
+def get_trial_batch_document_ids(df=None):
     """
-    Return set of Document UUIDs that are in the trial batch.
+    Return set of Document IDs (sabin_document_id strings) in the trial batch.
     Returns None if trial batch mode is disabled or if there's an error.
 
     INPUT:
         - df: Pre-loaded DataFrame (optional, avoids duplicate Excel read)
-    OUTPUT: Set of UUIDs or None
+    OUTPUT: Set of string IDs or None
     """
     if not TRIAL_BATCH_CONFIG["ENABLED"]:
         logging.info("ℹ️  Trial batch mode DISABLED - will process all documents")
@@ -113,22 +111,17 @@ def get_trial_batch_document_uuids(df=None):
         true_values = TRIAL_BATCH_CONFIG["TRUE_VALUES"]
         trial_batch_df = df[df[col_name].isin(true_values)]
 
-        # Convert Document IDs to UUIDs using same method as populate_metadata
-        def generate_document_uuid(document_id_str):
-            clean_id = str(document_id_str).strip().lower()
-            return uuid5(UUID_NAMESPACE, f"document_{clean_id}")
-
-        doc_uuids = set(trial_batch_df["Document ID"].apply(generate_document_uuid))
+        doc_ids = set(trial_batch_df["Document ID"].astype(str))
 
         logging.info("=" * 70)
         logging.info("TRIAL BATCH FILTERING FOR DECISION CLASSIFICATION")
         logging.info("=" * 70)
         logging.info(f"Total documents in database:  {len(df)}")
-        logging.info(f"Trial batch documents:        {len(doc_uuids)}")
-        logging.info(f"Will only classify these {len(doc_uuids)} documents")
+        logging.info(f"Trial batch documents:        {len(doc_ids)}")
+        logging.info(f"Will only classify these {len(doc_ids)} documents")
         logging.info("=" * 70)
 
-        return doc_uuids, trial_batch_df
+        return doc_ids, trial_batch_df
 
     except Exception as e:
         logging.error(f"❌ Error loading trial batch filter: {e}")
@@ -147,7 +140,7 @@ def load_document_titles_mapping(df=None):
 
     INPUT:
         - df: Pre-loaded DataFrame (optional, avoids duplicate Excel read)
-    OUTPUT: Dictionary mapping UUID to Document Title string
+    OUTPUT: Dictionary mapping sabin_document_id string to Document Title string
     """
     try:
         if df is None:
@@ -157,16 +150,11 @@ def load_document_titles_mapping(df=None):
             logging.error("❌ Required columns not found in Excel!")
             return {}
 
-        # Create UUID mapping
-        def generate_document_uuid(document_id_str):
-            clean_id = str(document_id_str).strip().lower()
-            return uuid5(UUID_NAMESPACE, f"document_{clean_id}")
-
         mapping = {}
         for _, row in df.iterrows():
-            doc_uuid = generate_document_uuid(row["Document ID"])
+            doc_id = str(row["Document ID"])
             doc_title = str(row["Document Title"]) if pd.notna(row["Document Title"]) else ""
-            mapping[doc_uuid] = doc_title
+            mapping[doc_id] = doc_title
 
         logging.info(f"✓ Loaded {len(mapping)} document titles from Excel")
         return mapping
@@ -381,7 +369,7 @@ def classify_single_document(doc_uuid, extracted_text, document_titles, session,
             return True
 
         # Get document title from Excel
-        doc_title = document_titles.get(doc_uuid, "")
+        doc_title = document_titles.get(document.sabin_document_id, "")
 
         # STRATEGY 1: Check Document Title last word (POSITIVE IDENTIFICATION ONLY)
         title_result, last_word = check_title_last_word(doc_title)
@@ -478,11 +466,11 @@ def main(test_run=None, seed=42):
     logging.info(f"Loaded {len(df_excel)} rows from Excel")
 
     # Load trial batch filter
-    trial_batch_result = get_trial_batch_document_uuids(df=df_excel)
+    trial_batch_result = get_trial_batch_document_ids(df=df_excel)
     if trial_batch_result:
-        trial_batch_uuids, trial_batch_df = trial_batch_result
+        trial_batch_ids, trial_batch_df = trial_batch_result
     else:
-        trial_batch_uuids = None
+        trial_batch_ids = None
 
     # Load document titles
     logging.info("Loading document titles from Excel...")
@@ -507,9 +495,9 @@ def main(test_run=None, seed=42):
         )
 
         # Filter by trial batch if enabled
-        if trial_batch_uuids is not None:
-            query = query.filter(Document.document_id.in_(trial_batch_uuids))
-            logging.info(f"Applied trial batch filter: {len(trial_batch_uuids)} documents")
+        if trial_batch_ids is not None:
+            query = query.filter(Document.sabin_document_id.in_(trial_batch_ids))
+            logging.info(f"Applied trial batch filter: {len(trial_batch_ids)} documents")
 
         # Exclude already classified (optional - comment out to re-classify)
         # query = query.filter(Document.is_decision == None)
@@ -517,10 +505,10 @@ def main(test_run=None, seed=42):
         # Apply test-run sampling before materializing
         if test_run is not None:
             df_test = pd.read_excel(DATABASE_FILE)
-            test_run_uuids = get_sampled_document_uuids(df_test, test_run, seed)
+            test_run_ids = get_sampled_document_ids(df_test, test_run, seed)
             del df_test
-            if test_run_uuids is not None:
-                query = query.filter(Document.document_id.in_(test_run_uuids))
+            if test_run_ids is not None:
+                query = query.filter(Document.sabin_document_id.in_(test_run_ids))
                 logging.info(f"After test-run filter: {query.count()} documents")
 
         total_to_classify = query.count()

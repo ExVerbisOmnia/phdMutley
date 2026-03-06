@@ -42,7 +42,7 @@ from test_run import add_test_run_arg, sample_dataframe
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(LOGS_DIR / "download_log_async.txt"), logging.StreamHandler()],
+    handlers=[logging.FileHandler(LOGS_DIR / "download_log_async.txt", encoding="utf-8"), logging.StreamHandler()],
 )
 
 # ============================================================================

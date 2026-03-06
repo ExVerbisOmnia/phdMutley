@@ -1,11 +1,16 @@
 """
 Centralized Secrets Management via Google Cloud Secret Manager
 ===============================================================
-All credentials for the phdMutley project are stored in GCP Secret Manager
-(project: extreme-hull-489213-p9). No .env files are used.
+All credentials are stored in GCP Secret Manager. No .env files — ever.
+
+Local dev:  project extreme-hull-489213-p9, PostgreSQL on localhost:5433.
+GCP VM:     project gen-lang-client-0764097936, PostgreSQL on localhost:5432.
+            Set GCP_SECRET_PROJECT and DB_PORT env vars; password resolves
+            from Secret Manager automatically (same secret, both projects).
 
 Authentication: IAM via Application Default Credentials (ADC).
-Run `gcloud auth application-default login` once to set up.
+  - Local: `gcloud auth application-default login`
+  - VM:    default Compute Engine service account (scopes=cloud-platform)
 
 Usage:
     from gcp_secrets import get_secret, get_db_config, get_database_url
@@ -16,13 +21,12 @@ Secret naming convention: phdmutley-<kebab-case-name>
 import functools
 import logging
 import os
-from pathlib import Path
 
 from google.cloud import secretmanager
 
 logger = logging.getLogger(__name__)
 
-GCP_PROJECT = "extreme-hull-489213-p9"
+GCP_PROJECT = os.environ.get("GCP_SECRET_PROJECT", "extreme-hull-489213-p9")
 
 _client = None
 
@@ -52,14 +56,11 @@ def get_secret(secret_id: str, version: str = "latest") -> str:
 
 def get_db_password() -> str:
     """
-    Resolve DB password: Docker secret file -> GCP Secret Manager.
+    Resolve DB password from GCP Secret Manager.
 
-    INPUT: None (reads POSTGRES_PASSWORD_FILE env var, then falls back to GCP)
+    INPUT: None
     OUTPUT: Password string
     """
-    secret_file = os.environ.get("POSTGRES_PASSWORD_FILE")
-    if secret_file and os.path.isfile(secret_file):
-        return Path(secret_file).read_text().strip()
     try:
         return get_secret("phdmutley-db-password")
     except Exception:
@@ -69,29 +70,27 @@ def get_db_password() -> str:
 
 def get_gemini_api_key() -> str:
     """
-    Resolve Gemini API key: env var -> Docker secret file -> GCP Secret Manager.
+    Resolve Gemini API key: env var override -> GCP Secret Manager.
 
-    INPUT: None (checks GEMINI_API_KEY, GEMINI_API_KEY_FILE env vars, then GCP)
+    INPUT: None (checks GEMINI_API_KEY env var, then GCP)
     OUTPUT: API key string
     """
     env_key = os.environ.get("GEMINI_API_KEY")
     if env_key:
         return env_key
-    secret_file = os.environ.get("GEMINI_API_KEY_FILE")
-    if secret_file and os.path.isfile(secret_file):
-        return Path(secret_file).read_text().strip()
     return get_secret("phdmutley-gemini-api-key")
 
 
 def get_db_config() -> dict:
     """
     Returns the DB_CONFIG dict used by SQLAlchemy throughout the pipeline.
-    Non-secret values use sensible defaults; password comes from Secret Manager.
+    Env var overrides for non-secret connection params (DB_HOST, DB_PORT).
+    Password always from Secret Manager — no .env files.
     """
     return {
         "drivername": "postgresql+psycopg2",
-        "host": "localhost",
-        "port": "5432",
+        "host": os.environ.get("DB_HOST", "localhost"),
+        "port": os.environ.get("DB_PORT", "5433"),
         "database": "climate_litigation",
         "username": "phdmutley",
         "password": get_db_password(),
@@ -109,30 +108,13 @@ def get_database_url() -> str:
     )
 
 
-def get_database_url_auto() -> str:
-    """
-    Auto-resolve database URL: Railway DATABASE_URL -> Secret Manager -> localhost fallback.
-
-    INPUT: None (reads from environment and Secret Manager)
-    OUTPUT: PostgreSQL connection URL string
-    """
-    import os
-
-    railway_url = os.getenv("DATABASE_URL")
-    if railway_url:
-        # SQLAlchemy 2.0+ requires postgresql://, Railway gives postgres://
-        if railway_url.startswith("postgres://"):
-            railway_url = railway_url.replace("postgres://", "postgresql://", 1)
-        return railway_url
-    try:
-        return get_database_url()
-    except Exception:
-        return "postgresql://phdmutley:@localhost:5432/climate_litigation"
+# Backward compatibility alias (was Railway/Docker auto-resolver, now just get_database_url)
+get_database_url_auto = get_database_url
 
 
 def get_engine(**kwargs):
     """
-    Return a configured SQLAlchemy engine using auto-resolved URL.
+    Return a configured SQLAlchemy engine.
 
     INPUT: **kwargs passed to create_engine (e.g. echo=True, pool_size=5)
     OUTPUT: SQLAlchemy Engine instance
@@ -141,4 +123,4 @@ def get_engine(**kwargs):
 
     defaults = {"pool_pre_ping": True}
     defaults.update(kwargs)
-    return create_engine(get_database_url_auto(), **defaults)
+    return create_engine(get_database_url(), **defaults)

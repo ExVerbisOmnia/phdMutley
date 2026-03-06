@@ -101,10 +101,7 @@ scripts/8-python_back_engine/db_backup/climate_litigation_20251201_104018.sql
 # Analysis output (intermediate build artifacts — exported to docs/data/)
 analysis_output/
 
-# Docker
-docker/secrets/
-!docker/secrets/.gitkeep
-docker/.env
+# Docker (removed — project uses native PostgreSQL + GitHub Pages)
 
 # Backups
 data/bakcups/

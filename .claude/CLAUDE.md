@@ -16,7 +16,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Activate venv (required before any Python command)
 source venv/bin/activate    # or: ./activate.sh
 
-# Local database: PostgreSQL 18 on localhost:5432, db=climate_litigation, user=phdmutley
+# Local database: PostgreSQL 18 NATIVE (Windows service) on localhost:5433, db=climate_litigation, user=phdmutley
+# Port 5433 to avoid conflict with Aegis's Docker PostgreSQL on 5432
 # Credentials via GCP Secret Manager (DB password, Gemini API key)
 ```
 
@@ -32,9 +33,9 @@ python scripts/export_static_site.py
 # Preview dashboard locally
 cd docs && python -m http.server 8080
 
-# Database
-psql -U phdmutley -d climate_litigation                                    # interactive shell
-pg_dump -U phdmutley -d climate_litigation > backup_$(date +%Y%m%d).dump   # backup
+# Database (native PG on port 5433)
+psql -U phdmutley -p 5433 -d climate_litigation                                    # interactive shell
+pg_dump -U phdmutley -p 5433 -d climate_litigation > backup_$(date +%Y%m%d).dump   # backup
 
 # Pipeline phases (run in sequence, each from project root)
 cd scripts/0-initialize-database && python init_database.py     # schema creation
@@ -185,42 +186,35 @@ Enable in repo settings: Settings → Pages → Source: "Deploy from a branch" �
 
 Dependencies: `requirements.txt` at project root (SQLAlchemy, pandas, google-genai — no Flask/gunicorn).
 
-## Docker Development
+## Database Setup (Native PostgreSQL)
+
+PostgreSQL 18 runs as a native Windows service on port **5433** (not Docker).
+Port 5433 avoids conflict with Aegis's Docker PostgreSQL on 5432.
 
 ```bash
-# First-time setup
-cp docker/.env.template docker/.env  # edit with real DB_PASSWORD
-echo "password" > docker/secrets/db_password.txt
-echo "api-key" > docker/secrets/gemini_api_key.txt
+# Service management (Windows)
+# Auto-starts on boot as "postgresql-x64-18" service
 
-# Start DB
-docker compose -f docker/docker-compose.yml up -d
+# Connection
+psql -U phdmutley -p 5433 -d climate_litigation
 
-# Run pipeline phases
-./docker/run-pipeline.sh all    # all phases (0-5, 8)
-./docker/run-pipeline.sh 0      # single phase
+# Backup
+pg_dump -U phdmutley -p 5433 -d climate_litigation -Fc > backup.dump
 
-# Export static site data
-./docker/run-pipeline.sh export  # generates docs/data/ JSON files
-
-# Run tests in container
-docker compose -f docker/docker-compose.yml --profile pipeline run --rm pipeline \
-    -m pytest /app/tests/ -v
-
-# Full reset (delete DB data)
-docker compose -f docker/docker-compose.yml down -v
+# Restore
+pg_restore -U phdmutley -h 127.0.0.1 -p 5433 -d climate_litigation --no-owner backup.dump
 ```
 
-Note: Docker is for local development only.
+Docker is not used for this project. The `docker/` directory was removed on 5 Mar 2026. All infrastructure is native PostgreSQL + GitHub Pages static site.
 
 ## Troubleshooting
 
 ```bash
 # DB connection test
-psql -U phdmutley -d climate_litigation -c "SELECT COUNT(*) FROM cases;"
+psql -U phdmutley -p 5433 -d climate_litigation -c "SELECT COUNT(*) FROM cases;"
 
 # Verify analysis data exists
-psql -U phdmutley -d climate_litigation -c "SELECT COUNT(*) FROM citation_sixfold_classification;"
+psql -U phdmutley -p 5433 -d climate_litigation -c "SELECT COUNT(*) FROM citation_sixfold_classification;"
 
 # Test analysis engine imports
 cd scripts/8-python_back_engine && python -c "from sixfold_analysis_engine import SixfoldAnalysisEngine"

@@ -11,33 +11,19 @@ VERSION 5.3 - FULL TEXT PROCESSING WITH SEPARATION OF CONCERNS
 ==============================================================
 
 CHANGES FROM v5.2:
-- FULL TEXT PROCESSING: Passes entire document to LLM (no arbitrary text window)
-- RESTORED ALL 12 EXTRACTION PATTERNS (v5.2 accidentally removed 6)
+- FULL TEXT PROCESSING: Passes entire document to LLM (1M token context, no chunking)
+- ALL 12 EXTRACTION PATTERNS
 - TWO-PASS APPROACH: Extraction and Functional Classification are separated
   - Pass 1: Pure extraction (maximize recall)
   - Pass 2: Functional classification (applied to extracted citations)
-- DYNAMIC CHUNKING: Only if document exceeds safe token threshold (~150K tokens)
-- NO OUTPUT TOKEN LIMIT: Set to model maximum (16,384 for Sonnet 4.5)
-- DEDUPLICATION: Removes duplicate citations when using chunked processing
+- No output token limit, no response_mime_type — model finishes naturally
 
 ARCHITECTURE:
 Phase 1: Source Jurisdiction Identification (from Case.geographies)
-Phase 2A: Extract ALL case law references - FULL DOCUMENT (Sonnet 4.5)
-Phase 2B: Functional Classification of extracted citations (Sonnet 4.5)
-Phase 3: Identify case origin (3-tier: Dictionary → Sonnet → Web Search)
+Phase 2A: Extract ALL case law references - FULL DOCUMENT (Gemini 3.1 Flash-Lite)
+Phase 2B: Functional Classification of extracted citations (Gemini 3.1 Pro)
+Phase 3: Identify case origin (3-tier: Dictionary → Gemini → Web Search)
 Phase 4: Classify citation type (Geographic + Functional)
-
-KEY IMPROVEMENTS (v5.3):
-- 100% document coverage (no text truncation)
-- All 12 extraction patterns restored
-- Separation of concerns: extraction vs. classification
-- Dynamic chunking for very long documents (>300 pages)
-- Improved recall targeting 85-95%
-
-EXPECTED PERFORMANCE:
-- Recall: 85-95% (major improvement from full document processing)
-- Precision: 90-95%
-- Cost: ~$0.10-0.25 per document (higher but necessary for quality)
 
 REQUIREMENTS:
 - Documents must be classified first (is_decision = True)
@@ -57,7 +43,7 @@ import re
 import sys
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pandas as pd
 
@@ -71,13 +57,18 @@ from tqdm import tqdm
 
 _SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _SCRIPTS_DIR)
-from config import CONFIG, DATABASE_FILE, LOGS_DIR, TRIAL_BATCH_CONFIG, UUID_NAMESPACE
+from config import CONFIG, DATABASE_FILE, LOGS_DIR, TRIAL_BATCH_CONFIG
 from gcp_secrets import get_engine
 from gemini_client import call_gemini
-from test_run import add_test_run_arg, get_sampled_document_uuids
+from test_run import add_test_run_arg, get_sampled_document_ids
+
+# v6 Knowledge Base modules
+from build_knowledge_base import load_knowledge_base
+from extraction_prompt_v6 import generate_v6_extraction_prompt
+from sabin_filter import SabinFilter
+from snippet_extractor import extract_snippets_batch
 
 sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "0-initialize-database"))
-from uuid import uuid5
 
 # ============================================================================
 # SQLALCHEMY MODELS FOR NEW TABLES
@@ -86,6 +77,7 @@ from uuid import uuid5
 from init_database import (
     Base,
     Case,
+    CitationExtractionDiscarded,
     CitationExtractionPhased,
     CitationExtractionPhasedSummary,
     Document,
@@ -96,19 +88,24 @@ from init_database import (
 # LOGGING CONFIGURATION
 # ============================================================================
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(LOGS_DIR / "citation_extraction_v5_3.log"),
-        logging.StreamHandler(),
-    ],
+_log_format = "%(asctime)s - %(levelname)s - %(message)s"
+_file_handler = logging.FileHandler(LOGS_DIR / "citation_extraction_v5_3.log", encoding="utf-8")
+_file_handler.setFormatter(logging.Formatter(_log_format))
+_stream_handler = logging.StreamHandler(
+    open(sys.stdout.fileno(), mode="w", encoding="utf-8", errors="replace", closefd=False)  # noqa: SIM115
 )
+_stream_handler.setFormatter(logging.Formatter(_log_format))
+logging.basicConfig(level=logging.INFO, handlers=[_file_handler, _stream_handler], force=True)
 logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("google.genai").setLevel(logging.WARNING)
 
 # ============================================================================
-# API CLIENT SETUP (Gemini via google-genai)
+# v6 KNOWLEDGE BASE STATE (initialized in main())
 # ============================================================================
+
+_kb_cases: list[dict] | None = None  # Loaded once in main()
+_sabin_filter: SabinFilter | None = None  # Initialized once in main()
+_extraction_run_id: str | None = None  # Set once per run in main()
 
 # ============================================================================
 # PROCESSING CONFIGURATION
@@ -117,16 +114,12 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 # Token estimation: ~1 token per 4 characters (conservative estimate for legal text)
 CHARS_PER_TOKEN = 4
 
-# Sonnet 4.5 has 200K context window - we use 150K as safe threshold for input
-# to leave room for system prompt and output
-SAFE_TOKEN_THRESHOLD = 150000
-SAFE_CHAR_THRESHOLD = SAFE_TOKEN_THRESHOLD * CHARS_PER_TOKEN  # ~600K chars
-
-# Model maximum output tokens (Sonnet 4.5 supports up to 16,384)
-MAX_OUTPUT_TOKENS = 16384
-
-# Overlap for chunking (to avoid missing citations at chunk boundaries)
-CHUNK_OVERLAP_CHARS = 5000
+# Chunking: documents above this token threshold are split into chunks for extraction.
+# Each chunk gets its own LLM call; results are merged and deduplicated.
+# 40K tokens ≈ 160K chars. Documents below this are sent as a single prompt.
+CHUNK_TOKEN_THRESHOLD = 40_000
+CHUNK_TARGET_TOKENS = 30_000  # target size per chunk (with ~1K token prompt overhead)
+CHUNK_OVERLAP_TOKENS = 2_000  # overlap between chunks to catch citations at boundaries
 
 # ============================================================================
 # ENHANCED DICTIONARIES - KNOWN FOREIGN COURTS
@@ -299,6 +292,63 @@ KNOWN_FOREIGN_COURTS = {
         "type": "Constitutional",
     },
     "Conseil d'État": {"country": "France", "region": "Global North", "type": "Administrative"},
+    # AUSTRALIA
+    "Federal Court of Australia": {
+        "country": "Australia",
+        "region": "Global North",
+        "type": "Federal",
+    },
+    "FCA": {"country": "Australia", "region": "Global North", "type": "Federal", "ambiguous_for": ["Canada"]},
+    "Full Federal Court": {"country": "Australia", "region": "Global North", "type": "Federal"},
+    "Land and Environment Court": {
+        "country": "Australia",
+        "region": "Global North",
+        "type": "Specialist",
+    },
+    # LATIN AMERICA (native-language names)
+    "Corte Constitucional": {
+        "country": "Colombia",
+        "region": "Global South",
+        "type": "Constitutional",
+    },
+    "Corte Suprema de Justicia": {
+        "country": "Colombia",
+        "region": "Global South",
+        "type": "Supreme",
+    },
+    "Consejo de Estado": {
+        "country": "Colombia",
+        "region": "Global South",
+        "type": "Administrative",
+    },
+    "Supremo Tribunal Federal": {
+        "country": "Brazil",
+        "region": "Global South",
+        "type": "Supreme",
+    },
+    "STF": {"country": "Brazil", "region": "Global South", "type": "Supreme"},
+    "Superior Tribunal de Justica": {
+        "country": "Brazil",
+        "region": "Global South",
+        "type": "Superior",
+    },
+    "STJ": {"country": "Brazil", "region": "Global South", "type": "Superior"},
+    "Tribunal Regional Federal": {
+        "country": "Brazil",
+        "region": "Global South",
+        "type": "Federal Regional",
+    },
+    "TRF": {"country": "Brazil", "region": "Global South", "type": "Federal Regional"},
+    "Corte Suprema de Justicia de la Nacion": {
+        "country": "Argentina",
+        "region": "Global South",
+        "type": "Supreme",
+    },
+    "Tribunal Constitucional": {
+        "country": "Chile",
+        "region": "Global South",
+        "type": "Constitutional",
+    },
     # INTERNATIONAL TRIBUNALS
     "International Court of Justice": {
         "country": "United Nations",
@@ -330,151 +380,6 @@ KNOWN_FOREIGN_COURTS = {
 }
 
 # ============================================================================
-# ENHANCED DICTIONARIES - LANDMARK CLIMATE CASES
-# ============================================================================
-
-LANDMARK_CLIMATE_CASES = {
-    # NETHERLANDS
-    "Urgenda": {
-        "full_name": "Urgenda Foundation v. State of the Netherlands",
-        "country": "Netherlands",
-        "region": "Global North",
-        "year": 2019,
-        "court": "Dutch Supreme Court",
-    },
-    "Urgenda Foundation": {
-        "full_name": "Urgenda Foundation v. State of the Netherlands",
-        "country": "Netherlands",
-        "region": "Global North",
-        "year": 2019,
-        "court": "Dutch Supreme Court",
-    },
-    # UNITED STATES
-    "Massachusetts v. EPA": {
-        "full_name": "Massachusetts v. Environmental Protection Agency",
-        "country": "United States",
-        "region": "Global North",
-        "year": 2007,
-        "court": "Supreme Court of the United States",
-    },
-    "Juliana v. United States": {
-        "full_name": "Juliana v. United States",
-        "country": "United States",
-        "region": "Global North",
-        "year": 2015,
-        "court": "District Court of Oregon",
-    },
-    # UNITED KINGDOM
-    "Plan B Earth": {
-        "full_name": "R (Plan B Earth) v Secretary of State",
-        "country": "United Kingdom",
-        "region": "Global North",
-        "year": 2020,
-        "court": "UK Supreme Court",
-    },
-    "ClientEarth": {
-        "full_name": "R (ClientEarth) v Secretary of State",
-        "country": "United Kingdom",
-        "region": "Global North",
-        "year": 2015,
-        "court": "UK Supreme Court",
-    },
-    # CANADA
-    "Mathur v. Ontario": {
-        "full_name": "Mathur et al. v. Her Majesty the Queen in Right of Ontario",
-        "country": "Canada",
-        "region": "Global North",
-        "year": 2020,
-        "court": "Ontario Superior Court of Justice",
-    },
-    # NEW ZEALAND
-    "Thomson v Minister": {
-        "full_name": "Thomson v Minister for Climate Change Issues",
-        "country": "New Zealand",
-        "region": "Global North",
-        "year": 2017,
-        "court": "High Court of New Zealand",
-    },
-    # IRELAND
-    "Friends of the Irish Environment": {
-        "full_name": "Friends of the Irish Environment CLG v. Ireland",
-        "country": "Ireland",
-        "region": "Global North",
-        "year": 2020,
-        "court": "Supreme Court of Ireland",
-    },
-    # NORWAY
-    "Greenpeace Nordic": {
-        "full_name": "Greenpeace Nordic Ass'n v. Ministry of Petroleum and Energy",
-        "country": "Norway",
-        "region": "Global North",
-        "year": 2020,
-        "court": "Norwegian Supreme Court",
-    },
-    "People v. Arctic Oil": {
-        "full_name": "People v. Arctic Oil",
-        "country": "Norway",
-        "region": "Global North",
-        "year": 2020,
-        "court": "Norwegian Supreme Court",
-    },
-    # FRANCE
-    "Grande Synthe": {
-        "full_name": "Commune de Grande-Synthe v. France",
-        "country": "France",
-        "region": "Global North",
-        "year": 2021,
-        "court": "Conseil d'État",
-    },
-    "L'Affaire du Siècle": {
-        "full_name": "L'Affaire du Siècle",
-        "country": "France",
-        "region": "Global North",
-        "year": 2021,
-        "court": "Administrative Court of Paris",
-    },
-    # GERMANY
-    "Neubauer": {
-        "full_name": "Neubauer et al. v. Germany",
-        "country": "Germany",
-        "region": "Global North",
-        "year": 2021,
-        "court": "Federal Constitutional Court of Germany",
-    },
-    # BELGIUM
-    "Klimaatzaak": {
-        "full_name": "VZW Klimaatzaak v. Kingdom of Belgium",
-        "country": "Belgium",
-        "region": "Global North",
-        "year": 2021,
-        "court": "Brussels Court of First Instance",
-    },
-    # COLOMBIA
-    "Future Generations": {
-        "full_name": "Future Generations v. Ministry of Environment",
-        "country": "Colombia",
-        "region": "Global South",
-        "year": 2018,
-        "court": "Supreme Court of Colombia",
-    },
-    # PAKISTAN
-    "Ashgar Leghari": {
-        "full_name": "Ashgar Leghari v. Federation of Pakistan",
-        "country": "Pakistan",
-        "region": "Global South",
-        "year": 2015,
-        "court": "Lahore High Court",
-    },
-    # SOUTH AFRICA
-    "Earthlife Africa": {
-        "full_name": "Earthlife Africa Johannesburg v. Minister of Environmental Affairs",
-        "country": "South Africa",
-        "region": "Global South",
-        "year": 2017,
-        "court": "High Court of South Africa",
-    },
-}
-
 # ============================================================================
 # JURISDICTION ALIASES FOR NORMALIZATION
 # ============================================================================
@@ -493,6 +398,8 @@ JURISDICTION_ALIASES = {
     "New Zealand": "New Zealand",
     "NZ": "New Zealand",
     "Aotearoa": "New Zealand",
+    "Turkey": "T\u00fcrkiye",
+    "Turkiye": "T\u00fcrkiye",
 }
 
 # ============================================================================
@@ -717,18 +624,17 @@ CITATION_ORIGIN_CACHE: dict[str, dict] = {}
 # ============================================================================
 
 
-def get_trial_batch_document_uuids() -> set[uuid.UUID] | None:
+def get_trial_batch_document_ids() -> set[str] | None:
     """
-    Load Excel file and return set of Document UUIDs in trial batch.
+    Load Excel file and return set of Document IDs (sabin_document_id) in trial batch.
 
     INPUT: None (reads from config)
     ALGORITHM:
         1. Check if trial batch mode enabled
         2. Load Excel database
         3. Filter rows with TRUE in trial batch column
-        4. Convert Document IDs to UUIDs
-        5. Return set of UUIDs
-    OUTPUT: Set of UUIDs or None
+        4. Return set of string Document IDs
+    OUTPUT: Set of string IDs or None
     """
     if not TRIAL_BATCH_CONFIG["ENABLED"]:
         logging.info("ℹ️  Trial batch mode DISABLED - will process all classified decisions")
@@ -746,21 +652,16 @@ def get_trial_batch_document_uuids() -> set[uuid.UUID] | None:
         true_values = TRIAL_BATCH_CONFIG["TRUE_VALUES"]
         trial_batch_df = df[df[col_name].isin(true_values)]
 
-        # Convert Document IDs to UUIDs
-        def generate_document_uuid(document_id_str):
-            clean_id = str(document_id_str).strip().lower()
-            return uuid5(UUID_NAMESPACE, f"document_{clean_id}")
-
-        doc_uuids = set(trial_batch_df["Document ID"].apply(generate_document_uuid))
+        doc_ids = set(trial_batch_df["Document ID"].astype(str))
 
         logging.info("=" * 70)
         logging.info("TRIAL BATCH FILTERING")
         logging.info("=" * 70)
         logging.info(f"Total documents in database:  {len(df)}")
-        logging.info(f"Trial batch documents:        {len(doc_uuids)}")
+        logging.info(f"Trial batch documents:        {len(doc_ids)}")
         logging.info("=" * 70)
 
-        return doc_uuids
+        return doc_ids
 
     except Exception as e:
         logging.error(f"❌ Error loading trial batch filter: {e}")
@@ -928,59 +829,6 @@ def estimate_token_count(text: str) -> int:
     return len(text) // CHARS_PER_TOKEN
 
 
-def should_chunk_document(text: str) -> bool:
-    """
-    Determine if document needs to be chunked based on size.
-
-    INPUT: Document text
-    ALGORITHM: Compare character count to safe threshold
-    OUTPUT: True if chunking needed, False otherwise
-    """
-    return len(text) > SAFE_CHAR_THRESHOLD
-
-
-def chunk_document(text: str) -> list[tuple[str, int, int]]:
-    """
-    Split document into overlapping chunks for processing.
-
-    INPUT: Full document text
-    ALGORITHM:
-        1. Calculate chunk size (half of safe threshold for 2 chunks)
-        2. Create chunks with overlap at boundaries
-        3. Return list of (chunk_text, start_position, end_position)
-    OUTPUT: List of tuples (chunk_text, start_pos, end_pos)
-    """
-    # Use half the safe threshold for each chunk to ensure two chunks fit comfortably
-    chunk_size = SAFE_CHAR_THRESHOLD // 2
-
-    chunks = []
-    start = 0
-
-    while start < len(text):
-        # Calculate end position for this chunk
-        end = min(start + chunk_size, len(text))
-
-        # If this is not the last chunk, extend to include overlap
-        if end < len(text):
-            end = min(end + CHUNK_OVERLAP_CHARS, len(text))
-
-        chunk_text = text[start:end]
-        chunks.append((chunk_text, start, end))
-
-        # Move start position (accounting for overlap in previous chunk)
-        if end < len(text):
-            start = end - CHUNK_OVERLAP_CHARS
-        else:
-            break
-
-    logging.info(f"Document chunked into {len(chunks)} parts")
-    for i, (chunk, s, e) in enumerate(chunks):
-        logging.info(
-            f"  Chunk {i + 1}: chars {s}-{e} ({len(chunk):,} chars, ~{estimate_token_count(chunk):,} tokens)"
-        )
-
-    return chunks
-
 
 # ============================================================================
 # PHASE 1: SOURCE JURISDICTION IDENTIFICATION
@@ -1098,7 +946,7 @@ def extract_country_from_geographies(geographies_string: str) -> str:
 
 
 def generate_extraction_prompt(
-    text: str, source_jurisdiction: str, source_region: str, chunk_info: str = ""
+    text: str, source_jurisdiction: str, source_region: str
 ) -> str:
     """
     Generate comprehensive extraction prompt for Phase 2A.
@@ -1107,26 +955,15 @@ def generate_extraction_prompt(
     FOCUS: Maximum recall of case law references.
 
     INPUT:
-        - text: Document text (full or chunk)
+        - text: Full document text
         - source_jurisdiction: Where the citing court is located
         - source_region: Global North/South/International
-        - chunk_info: Optional info about which chunk this is
-    ALGORITHM:
-        1. Build detailed extraction instructions
-        2. List ALL 12 citation format patterns (RESTORED)
-        3. Specify JSON output format focused on extraction
     OUTPUT: Complete prompt string
     """
 
-    chunk_notice = ""
-    if chunk_info:
-        chunk_notice = (
-            f"\n\nNOTE: This is {chunk_info}. Extract ALL case law references from this portion.\n"
-        )
+    prompt = f"""You are extracting ALL legal references from a judicial decision document.
+Your ONLY task is EXTRACTION — identify and extract every reference.
 
-    prompt = f"""You are extracting ALL judicial decision references from a legal document.
-Your ONLY task is EXTRACTION - identify and extract every reference to case law.
-{chunk_notice}
 SOURCE COURT INFORMATION:
 - Jurisdiction: {source_jurisdiction}
 - Region: {source_region}
@@ -1134,11 +971,14 @@ SOURCE COURT INFORMATION:
 ============================================================
 CRITICAL INSTRUCTIONS:
 ============================================================
-1. Extract EVERY reference to case law, regardless of domestic or foreign origin
-2. Do NOT filter by jurisdiction - extract everything
-3. Do NOT classify how citations are used - just extract them
-4. Be EXHAUSTIVE - capture every mention of any case, court ruling, or judicial decision
-5. Read the ENTIRE text carefully - do not skip any sections
+1. Extract EVERY reference to case law (judicial decisions), regardless of domestic or foreign origin
+2. Do NOT filter by jurisdiction — extract everything
+4. Do NOT classify how citations are used — just extract them
+5. Be EXHAUSTIVE — capture every mention of any case, court ruling, judicial decision, or treaty
+6. Read the ENTIRE document text carefully — do not skip any sections
+7. Do NOT extract academic articles, books, or author names (e.g., "Hogg", "Bowden & Olszynski")
+8. Do NOT extract treaties, conventions, statutes, legislation, or procedural rules (e.g., Paris Agreement, UNFCCC, Clean Air Act, Resource Management Act, CPR rules, Federal Rules of Civil Procedure). Only extract JUDICIAL DECISIONS (cases decided by courts or tribunals).
+9. For raw_text: copy the COMPLETE citation text VERBATIM as it appears in the document — this is critical for manual review
 
 ============================================================
 EXTRACTION PATTERNS - CAPTURE ALL OF THESE:
@@ -1217,8 +1057,8 @@ OUTPUT FORMAT (JSON):
 {{
   "case_law_references": [
     {{
-      "case_name": "extracted case name (e.g., 'Urgenda Foundation v. State of the Netherlands')",
-      "raw_text": "complete citation text exactly as it appears",
+      "case_name": "case name (e.g., 'Urgenda Foundation v. State of the Netherlands')",
+      "raw_text": "VERBATIM citation text — copy the COMPLETE sentence or passage where this reference appears, exactly as written in the document, preserving original language, punctuation, and formatting",
       "confidence": 0.0-1.0
     }}
   ],
@@ -1226,14 +1066,21 @@ OUTPUT FORMAT (JSON):
   "extraction_notes": "any notes about the extraction process"
 }}
 
+FIELD INSTRUCTIONS:
+- "case_name": The name of the case being cited
+- "raw_text": The FULL verbatim passage from the document containing the citation — include enough surrounding text to show context (the sentence or clause where the reference appears). This must be copied EXACTLY from the source text, ipsis litteris.
+- "confidence": How confident you are this is a genuine judicial decision reference (0.0-1.0)
+
 ============================================================
 IMPORTANT REMINDERS:
 ============================================================
-- Extract EVERYTHING that looks like a case reference
+- Extract EVERY judicial decision reference (case law only — no treaties, statutes, or legislation)
 - Do NOT skip any sections of the document
 - Include citations even if you're uncertain about the format
 - Better to over-extract than to miss citations
-- Your job is ONLY extraction - classification comes later
+- Your job is ONLY extraction — classification comes later
+- Do NOT generate fabricated or hallucinated citations — only extract what actually appears in the text
+- The raw_text field is used for manual review — it MUST be a verbatim copy from the document
 
 Document text:
 {text}"""
@@ -1246,52 +1093,56 @@ def extract_citations_from_text(
     text: str,
     source_jurisdiction: str,
     source_region: str,
-    chunk_info: str = "",
 ) -> dict | None:
     """
-    Phase 2A: Extract ALL case law references using Sonnet 4.5.
+    Phase 2A: Extract ALL case law references using Gemini.
+
+    No max_output_tokens or response_mime_type — let the model finish naturally.
+    The JSON parser handles markdown fences. Retries once on parse failure.
 
     INPUT:
         - document_id: UUID of document
-        - text: Document text (full or chunk)
+        - text: Full document text
         - source_jurisdiction: Source court jurisdiction
         - source_region: Global North/South/International
-        - chunk_info: Optional info about which chunk this is
-    ALGORITHM:
-        1. Generate extraction prompt
-        2. Call Claude Sonnet 4.5 with maximum output tokens
-        3. Parse JSON response
-        4. Return extracted references
     OUTPUT: Dict with extracted references or None
     """
     try:
-        # Generate prompt
-        prompt = generate_extraction_prompt(text, source_jurisdiction, source_region, chunk_info)
+        prompt = generate_v6_extraction_prompt(
+            text, source_jurisdiction, source_region, kb_cases=_kb_cases
+        )
 
-        # Log token estimate
         estimated_tokens = estimate_token_count(prompt)
         logging.info(f"  Prompt size: ~{estimated_tokens:,} tokens")
 
-        # Call Gemini Flash-Lite for bulk extraction
         start_time = time.time()
-        result = call_gemini(
-            prompt,
-            model=CONFIG["EXTRACTION_MODEL"],
-            max_output_tokens=MAX_OUTPUT_TOKENS,
-        )
+        result = call_gemini(prompt, model=CONFIG["EXTRACTION_MODEL"])
         extraction_time = time.time() - start_time
 
-        # Parse response
+        # Parse response (handles markdown fences via _extract_json in gemini_client)
         data = result["data"]
         if not data:
             data = extract_json_from_text(result["text"])
 
-        if not data:
-            logging.error(f"Failed to parse extraction JSON for document {document_id}")
-            logging.debug(f"Raw response: {result['text'][:1000]}...")
-            return None
+        # LLM sometimes wraps response in a list
+        if isinstance(data, list) and len(data) > 0:
+            data = data[0]
 
-        # Add metadata
+        if not data or not isinstance(data, dict):
+            raw_text_snippet = result.get("text", "")[:500]
+            logging.error(f"Failed to parse extraction JSON for document {document_id}")
+            logging.info(f"Raw response (first 500 chars): {raw_text_snippet}")
+            logging.info("Retrying extraction...")
+            retry_result = call_gemini(prompt, model=CONFIG["EXTRACTION_MODEL"])
+            data = retry_result["data"] if retry_result else None
+            if isinstance(data, list) and len(data) > 0:
+                data = data[0]
+            if not data or not isinstance(data, dict):
+                data = extract_json_from_text(retry_result["text"]) if retry_result else None
+            if not data:
+                logging.error(f"Retry also failed for document {document_id}")
+                return None
+
         data["extraction_time"] = extraction_time
         data["tokens_input"] = result["tokens_in"]
         data["tokens_output"] = result["tokens_out"]
@@ -1307,39 +1158,74 @@ def extract_citations_from_text(
     except Exception as e:
         logging.error(f"Error in extraction: {e}")
         import traceback
-
         logging.error(traceback.format_exc())
         return None
 
 
-def deduplicate_citations(all_references: list[dict]) -> list[dict]:
-    """
-    Remove duplicate citations from combined chunk results.
 
-    INPUT: List of citation dictionaries (potentially with duplicates from overlapping chunks)
+def _split_into_chunks(text: str) -> list[str]:
+    """
+    Split document text into overlapping chunks by paragraph boundaries.
+
+    INPUT: Full document text
     ALGORITHM:
-        1. Create signature for each citation (case_name + raw_text)
-        2. Keep first occurrence of each unique citation
-        3. Return deduplicated list
-    OUTPUT: Deduplicated list of citations
+        1. Split text into paragraphs (double newline or single newline)
+        2. Accumulate paragraphs until target chunk size is reached
+        3. Add overlap from previous chunk's tail paragraphs
+    OUTPUT: List of text chunks
     """
-    seen_signatures = set()
-    unique_references = []
+    target_chars = CHUNK_TARGET_TOKENS * CHARS_PER_TOKEN
+    overlap_chars = CHUNK_OVERLAP_TOKENS * CHARS_PER_TOKEN
 
-    for ref in all_references:
-        # Create signature from case name and raw text
-        case_name = ref.get("case_name", "").lower().strip()
-        raw_text = ref.get("raw_text", "").lower().strip()[:100]  # Use first 100 chars
-        signature = f"{case_name}|{raw_text}"
+    # Split on paragraph boundaries (prefer double newline, fall back to single)
+    paragraphs = re.split(r'\n\s*\n', text)
+    if len(paragraphs) < 3:
+        paragraphs = text.split('\n')
 
-        if signature not in seen_signatures:
-            seen_signatures.add(signature)
-            unique_references.append(ref)
+    chunks = []
+    current_paras = []
+    current_len = 0
 
-    if len(all_references) != len(unique_references):
-        logging.info(f"  Deduplication: {len(all_references)} → {len(unique_references)} citations")
+    for para in paragraphs:
+        para_len = len(para)
+        if current_len + para_len > target_chars and current_paras:
+            chunks.append('\n\n'.join(current_paras))
+            # Build overlap from tail of current chunk
+            overlap_paras = []
+            overlap_len = 0
+            for p in reversed(current_paras):
+                if overlap_len + len(p) > overlap_chars:
+                    break
+                overlap_paras.insert(0, p)
+                overlap_len += len(p)
+            current_paras = overlap_paras
+            current_len = overlap_len
 
-    return unique_references
+        current_paras.append(para)
+        current_len += para_len
+
+    if current_paras:
+        chunks.append('\n\n'.join(current_paras))
+
+    return chunks
+
+
+def _deduplicate_references(references: list[dict]) -> list[dict]:
+    """
+    Remove duplicate citations extracted from overlapping chunks.
+
+    INPUT: List of citation dicts (may contain duplicates from chunk overlaps)
+    ALGORITHM: Deduplicate by normalized case_name. On collision, keep the
+               entry with the longer raw_text (more context).
+    OUTPUT: Deduplicated list
+    """
+    seen = {}
+    for ref in references:
+        key = ref.get("case_name", "").strip().lower()
+        raw = ref.get("raw_text", "")
+        if key not in seen or len(raw) > len(seen[key].get("raw_text", "")):
+            seen[key] = ref
+    return list(seen.values())
 
 
 def extract_all_case_references_phase2(
@@ -1347,81 +1233,83 @@ def extract_all_case_references_phase2(
 ) -> dict | None:
     """
     Phase 2A: Extract ALL case law references from full document.
-    Handles chunking automatically if document is too large.
+
+    For small documents (< CHUNK_TOKEN_THRESHOLD), sends the full text in one call.
+    For large documents, splits into overlapping chunks, extracts from each, then
+    merges and deduplicates results. All citations map to the same document_id.
 
     INPUT:
         - document_id: UUID of document
         - raw_text: Full document text
         - source_jurisdiction: Source court jurisdiction
         - source_region: Global North/South/International
-    ALGORITHM:
-        1. Check if document needs chunking
-        2. If yes, chunk and process each chunk separately
-        3. Merge and deduplicate results
-        4. If no, process entire document at once
     OUTPUT: Dict with extracted references or None
     """
-
-    # Log document size
     char_count = len(raw_text)
     estimated_tokens = estimate_token_count(raw_text)
     logging.info(f"  Document size: {char_count:,} chars (~{estimated_tokens:,} tokens)")
 
-    # Check if chunking is needed
-    if should_chunk_document(raw_text):
-        logging.info(
-            f"  Document exceeds safe threshold ({SAFE_CHAR_THRESHOLD:,} chars) - using chunked processing"
-        )
-        chunks = chunk_document(raw_text)
-
-        all_references = []
-        total_tokens_input = 0
-        total_tokens_output = 0
-        total_time = 0
-
-        for i, (chunk_text, start_pos, end_pos) in enumerate(chunks):
-            chunk_info = f"chunk {i + 1} of {len(chunks)} (chars {start_pos:,}-{end_pos:,})"
-            logging.info(f"  Processing {chunk_info}...")
-
-            chunk_result = extract_citations_from_text(
-                document_id, chunk_text, source_jurisdiction, source_region, chunk_info
-            )
-
-            if chunk_result:
-                # Adjust citation positions for chunk offset
-                for ref in chunk_result.get("case_law_references", []):
-                    ref["chunk_number"] = i + 1
-                    ref["chunk_offset"] = start_pos
-
-                all_references.extend(chunk_result.get("case_law_references", []))
-                total_tokens_input += chunk_result.get("tokens_input", 0)
-                total_tokens_output += chunk_result.get("tokens_output", 0)
-                total_time += chunk_result.get("extraction_time", 0)
-
-        # Deduplicate citations from overlapping regions
-        unique_references = deduplicate_citations(all_references)
-
-        return {
-            "case_law_references": unique_references,
-            "total_references_found": len(unique_references),
-            "extraction_time": total_time,
-            "tokens_input": total_tokens_input,
-            "tokens_output": total_tokens_output,
-            "model": "claude-sonnet-4-5-20250929",
-            "chunked": True,
-            "chunk_count": len(chunks),
-        }
-
-    else:
-        # Process entire document at once
-        logging.info("  Processing full document (no chunking needed)")
+    # Small document — single call (original path)
+    if estimated_tokens <= CHUNK_TOKEN_THRESHOLD:
         result = extract_citations_from_text(
             document_id, raw_text, source_jurisdiction, source_region
         )
-        if result:
-            result["chunked"] = False
-            result["chunk_count"] = 1
         return result
+
+    # Large document — chunked extraction
+    chunks = _split_into_chunks(raw_text)
+    logging.info(f"  Document exceeds {CHUNK_TOKEN_THRESHOLD:,} tokens — splitting into {len(chunks)} chunks")
+
+    all_references = []
+    total_tokens_in = 0
+    total_tokens_out = 0
+    total_time = 0.0
+    model_used = None
+    chunk_failures = 0
+
+    for i, chunk in enumerate(chunks):
+        chunk_tokens = estimate_token_count(chunk)
+        logging.info(f"  Chunk {i + 1}/{len(chunks)}: ~{chunk_tokens:,} tokens")
+
+        result = extract_citations_from_text(
+            document_id, chunk, source_jurisdiction, source_region
+        )
+
+        if result:
+            refs = result.get("case_law_references", [])
+            all_references.extend(refs)
+            total_tokens_in += result.get("tokens_input", 0)
+            total_tokens_out += result.get("tokens_output", 0)
+            total_time += result.get("extraction_time", 0.0)
+            model_used = result.get("model", model_used)
+            logging.info(f"  Chunk {i + 1}: {len(refs)} references extracted")
+        else:
+            chunk_failures += 1
+            logging.warning(f"  Chunk {i + 1}: extraction failed")
+
+    if not all_references and chunk_failures == len(chunks):
+        logging.error(f"  All {len(chunks)} chunks failed for document {document_id}")
+        return None
+
+    # Deduplicate citations from overlapping chunks
+    before_dedup = len(all_references)
+    all_references = _deduplicate_references(all_references)
+    if before_dedup > len(all_references):
+        logging.info(
+            f"  Deduplication: {before_dedup} → {len(all_references)} "
+            f"({before_dedup - len(all_references)} duplicates removed)"
+        )
+
+    return {
+        "case_law_references": all_references,
+        "total_references_found": len(all_references),
+        "extraction_notes": f"Chunked extraction: {len(chunks)} chunks, {chunk_failures} failures",
+        "extraction_time": total_time,
+        "tokens_input": total_tokens_in,
+        "tokens_output": total_tokens_out,
+        "model": model_used,
+        "chunk_count": len(chunks),
+    }
 
 
 # ============================================================================
@@ -1504,48 +1392,72 @@ def classify_citations_functionally(
         - raw_text: Full document text for context
         - source_jurisdiction: Source court jurisdiction
     ALGORITHM:
-        1. Generate classification prompt
-        2. Call Claude Sonnet 4.5
-        3. Parse and return classifications
+        1. Split citations into batches of 30
+        2. Generate classification prompt per batch
+        3. Call Gemini per batch
+        4. Merge and return all classifications
     OUTPUT: Dict mapping citation index to classification data
     """
     if not citations:
         return {}
 
+    BATCH_SIZE = 30
+    all_classifications = {}
+
     try:
-        # Take a sample of the document for context (first 10K chars)
-        text_sample = raw_text[:10000]
+        text_sample = raw_text
 
-        # Generate prompt
-        prompt = generate_functional_classification_prompt(
-            citations, text_sample, source_jurisdiction
-        )
+        for batch_start in range(0, len(citations), BATCH_SIZE):
+            batch = citations[batch_start : batch_start + BATCH_SIZE]
 
-        # Call Gemini for functional classification
-        result = call_gemini(prompt, model=CONFIG["GEMINI_MODEL"])
-        data = result.get("parsed") if result else None
+            prompt = generate_functional_classification_prompt(
+                batch, text_sample, source_jurisdiction
+            )
 
-        if not data:
-            logging.warning("Failed to parse functional classification JSON")
-            return {}
+            result = call_gemini(prompt, model=CONFIG["EXTRACTION_MODEL"])
+            data = result.get("data") if result else None
 
-        # Convert to dict indexed by citation_index
-        classifications = {}
-        for item in data.get("classifications", []):
-            idx = item.get("citation_index", 0) - 1  # Convert to 0-indexed
-            classifications[idx] = {
-                "functional_use": item.get("functional_use", "unknown"),
-                "opinion_type": item.get("opinion_type", "unclear"),
-                "key_signals": item.get("key_signals", []),
-                "reasoning": item.get("reasoning", ""),
-            }
+            # Fallback: local JSON extractor (handles markdown fences)
+            if not data and result:
+                data = extract_json_from_text(result["text"])
 
-        logging.info(f"  Functional classification complete for {len(classifications)} citations")
-        return classifications
+            # Retry once (matching Phase 2A pattern)
+            if not data:
+                batch_num = batch_start // BATCH_SIZE + 1
+                raw_snippet = (result.get("text", "")[:300] if result else "no response")
+                logging.warning(f"Failed to parse functional classification JSON (batch {batch_num}) - retrying...")
+                logging.info(f"  Initial raw response (first 300 chars): {raw_snippet}")
+                retry_result = call_gemini(prompt, model=CONFIG["EXTRACTION_MODEL"])
+                data = retry_result.get("data") if retry_result else None
+                if not data and retry_result:
+                    data = extract_json_from_text(retry_result["text"])
+                if not data:
+                    raw_snippet = (retry_result.get("text", "")[:300] if retry_result else "no response")
+                    logging.warning(f"Retry also failed for functional classification batch {batch_num}")
+                    logging.info(f"  Raw response (first 300 chars): {raw_snippet}")
+                    continue
+
+            # LLM sometimes wraps response in a list
+            if isinstance(data, list) and len(data) > 0:
+                data = data[0]
+
+            for item in data.get("classifications", []) if isinstance(data, dict) else []:
+                # citation_index is 1-based within the batch
+                batch_idx = item.get("citation_index", 0) - 1
+                global_idx = batch_start + batch_idx
+                all_classifications[global_idx] = {
+                    "functional_use": item.get("functional_use", "unknown"),
+                    "opinion_type": item.get("opinion_type", "unclear"),
+                    "key_signals": item.get("key_signals", []),
+                    "reasoning": item.get("reasoning", ""),
+                }
+
+        logging.info(f"  Functional classification complete for {len(all_classifications)} citations")
+        return all_classifications
 
     except Exception as e:
         logging.warning(f"Error in functional classification: {e}")
-        return {}
+        return all_classifications
 
 
 # ============================================================================
@@ -1553,18 +1465,20 @@ def classify_citations_functionally(
 # ============================================================================
 
 
-def identify_origin_tier1_dictionary(case_name: str, raw_text: str) -> dict | None:
+def identify_origin_tier1_dictionary(
+    case_name: str, raw_text: str, source_jurisdiction: str = ""
+) -> dict | None:
     """
-    Tier 1: Lookup in KNOWN_FOREIGN_COURTS and LANDMARK_CLIMATE_CASES.
+    Tier 1: Lookup in KNOWN_FOREIGN_COURTS dictionary.
 
     INPUT:
         - case_name: Extracted case name
         - raw_text: Raw citation text
+        - source_jurisdiction: Where the citing court is located (for ambiguity checks)
     ALGORITHM:
         1. Check cache first
         2. Search KNOWN_FOREIGN_COURTS for court name match
-        3. Search LANDMARK_CLIMATE_CASES for case name match
-        4. Return if found
+        3. Skip entries marked ambiguous for the source jurisdiction
     OUTPUT: Dict with origin data or None
     """
     # Check cache
@@ -1573,9 +1487,16 @@ def identify_origin_tier1_dictionary(case_name: str, raw_text: str) -> dict | No
         logging.debug(f"Tier 1: Cache hit for '{case_name}'")
         return CITATION_ORIGIN_CACHE[cache_key]
 
-    # Search KNOWN_FOREIGN_COURTS
+    # Search KNOWN_FOREIGN_COURTS (word-boundary match to prevent substring collisions)
     for court_pattern, court_data in KNOWN_FOREIGN_COURTS.items():
-        if court_pattern.lower() in raw_text.lower() or court_pattern.lower() in case_name.lower():
+        # Skip abbreviations that are ambiguous for the source jurisdiction
+        # (e.g., "FCA" means Federal Court of Australia, but also Federal Court of Appeal in Canada)
+        ambiguous_for = court_data.get("ambiguous_for", [])
+        if source_jurisdiction and source_jurisdiction in ambiguous_for:
+            continue
+
+        pattern_re = rf'\b{re.escape(court_pattern)}\b'
+        if re.search(pattern_re, raw_text, re.IGNORECASE) or re.search(pattern_re, case_name, re.IGNORECASE):
             result = {
                 "origin": court_data["country"],
                 "region": court_data["region"],
@@ -1584,57 +1505,47 @@ def identify_origin_tier1_dictionary(case_name: str, raw_text: str) -> dict | No
                 "confidence": 0.95,
                 "method": "dictionary_court_match",
             }
-            # Cache result
             CITATION_ORIGIN_CACHE[cache_key] = result
             logging.debug(f"Tier 1: Court match for '{case_name}' -> {court_data['country']}")
-            return result
-
-    # Search LANDMARK_CLIMATE_CASES
-    for case_pattern, case_data in LANDMARK_CLIMATE_CASES.items():
-        if case_pattern.lower() in case_name.lower():
-            result = {
-                "origin": case_data["country"],
-                "region": case_data["region"],
-                "court": case_data.get("court", "Unknown"),
-                "year": case_data.get("year"),
-                "tier": 1,
-                "confidence": 0.95,
-                "method": "dictionary_case_match",
-            }
-            # Cache result
-            CITATION_ORIGIN_CACHE[cache_key] = result
-            logging.debug(f"Tier 1: Case match for '{case_name}' -> {case_data['country']}")
             return result
 
     logging.debug(f"Tier 1: No match for '{case_name}'")
     return None
 
 
-def identify_origin_tier2_sonnet(case_name: str, raw_text: str) -> dict | None:
+def identify_origin_tier2_sonnet(case_name: str, raw_text: str, source_jurisdiction: str = "") -> dict | None:
     """
-    Tier 2: Use Claude Sonnet for intelligent origin identification.
+    Tier 2: Use Gemini for intelligent origin identification.
 
     INPUT:
         - case_name: Extracted case name
         - raw_text: Raw citation text
     ALGORITHM:
         1. Build prompt
-        2. Call Claude Sonnet 4.5
+        2. Call Gemini
         3. Parse origin identification
         4. Return with confidence score
     OUTPUT: Dict with origin data or None
     """
     try:
+        source_context = (
+            f"\nSOURCE COURT JURISDICTION: {source_jurisdiction}\n"
+            f"(The citing court is from {source_jurisdiction}. The citation may be domestic or foreign.)\n"
+            if source_jurisdiction
+            else ""
+        )
+
         prompt = f"""Identify the jurisdiction/country of origin for this legal case citation.
 
 CASE NAME: {case_name}
 RAW CITATION: {raw_text}
-
-Analyze ALL available signals:
-1. Court name in citation
-2. Citation format (e.g., "U.S." suggests United States, "UKSC" suggests UK)
-3. Case name patterns
-4. Legal system indicators
+{source_context}
+ANALYSIS RULES:
+1. Identify the court from the citation text (including non-English court names)
+2. Use citation format clues (e.g., "U.S." = United States, "UKSC" = UK, "[2014] FCA" = Australia, "ECLI:NL" = Netherlands)
+3. Analyze case name patterns and language for origin signals
+4. "Reference re ..." citations in Canadian documents are Canadian constitutional references
+5. If you cannot confidently determine the origin, set confidence below 0.5
 
 Respond in JSON:
 {{
@@ -1643,15 +1554,14 @@ Respond in JSON:
   "court": "court name if identifiable",
   "year": year if mentioned,
   "confidence": 0.0-1.0,
-  "reasoning": "brief explanation of how you determined the origin"
+  "reasoning": "brief explanation"
 }}
 
-If you cannot determine the origin with reasonable confidence (>0.5), return confidence 0.0.
-"""
+Analyze the citation objectively. Do NOT assume domestic origin by default."""
 
         gemini_result = call_gemini(
             prompt,
-            model=CONFIG["GEMINI_MODEL"],
+            model=CONFIG["EXTRACTION_MODEL"],
             max_output_tokens=500,
         )
 
@@ -1659,7 +1569,11 @@ If you cannot determine the origin with reasonable confidence (>0.5), return con
         if not data:
             data = extract_json_from_text(gemini_result["text"])
 
-        if not data or data.get("confidence", 0) < 0.5:
+        # LLM sometimes wraps response in a list
+        if isinstance(data, list) and len(data) > 0:
+            data = data[0]
+
+        if not data or not isinstance(data, dict) or data.get("confidence", 0) < 0.5:
             logging.debug(f"Tier 2: Low confidence for '{case_name}'")
             return None
 
@@ -1704,26 +1618,171 @@ def identify_origin_tier3_websearch(case_name: str, raw_text: str) -> dict | Non
     return None
 
 
-def identify_case_origin(case_name: str, raw_text: str) -> dict:
+def _is_likely_domestic(
+    case_name: str, raw_text: str, source_jurisdiction: str
+) -> bool:
     """
-    Identify origin using 3-tier approach.
+    Heuristic check: is this citation likely from the source jurisdiction?
+
+    Only matches country-specific citation FORMAT patterns (reporter names,
+    case numbering conventions). Does NOT match on country name alone, as
+    international court cases often name countries as parties (e.g.,
+    "Estonia v. X" at the ECtHR is NOT a domestic Estonian case).
+    """
+    combined = f"{case_name} {raw_text}".lower()
+    src = source_jurisdiction.lower()
+
+    # Country-specific citation format patterns
+    DOMESTIC_PATTERNS = {
+        "colombia": [
+            r"\b[TCcSs][Uu]?-\d{2,4}\b",  # T-300, SU-217, C-035
+            r"\bsentencia\b",
+            r"\btutela\b",
+        ],
+        "brazil": [
+            r"\b(?:AC|RE|ADI|ADPF|HC|MS|AgR)\s*\d",  # Brazilian case types
+            r"\b\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}\b",  # CNJ numbering
+            r"\bTRF\b",
+            r"\bSTF\b",
+            r"\bSTJ\b",
+        ],
+        "australia": [
+            r"\[\d{4}\]\s*(?:FCA|HCA|FCAFC|NSWLEC|VSC|QSC)\b",  # Medium neutral citations
+            r"\bFCR\b",
+            r"\bALR\b",
+            r"\bCLR\b",
+        ],
+        "united states": [
+            r"\b\d+\s*(?:U\.S\.|S\.Ct\.|F\.\d[a-z]*|F\.Supp|L\.Ed)\b",
+            r"\b\d+\s*(?:Cal\.|N\.Y\.|Ill\.|Tex\.|Fla\.)\s",
+        ],
+        "united kingdom": [
+            r"\[\d{4}\]\s*(?:UKSC|UKHL|EWCA|EWHC|UKPC)\b",
+        ],
+        "new zealand": [
+            r"\[\d{4}\]\s*(?:NZSC|NZCA|NZHC)\b",
+        ],
+        "canada": [
+            r"\[\d{4}\]\s*(?:SCC|SCR|FC|FCA|ABCA|BCCA|BCSC|ONCA|ONSC|QCCA|MBCA|SKCA|NSCA|NBCA|NLCA|PECA|YTCA|NTCA|NUCA)\b",
+            r"\b\d+\s*(?:SCR|DLR|OR|WWR|CCC|CR)\b",  # Canadian reporters
+            r"\bSCC?\s+\d",  # SCC 12, SC 2019
+            r"\bReference\s+re\b",  # Constitutional references
+        ],
+        "germany": [
+            r"\bBVerfG\b",
+            r"\bBGH\b",
+            r"\bBundesverfassungsgericht\b",
+        ],
+        "france": [
+            r"\bConseil\s+d'[EÉ]tat\b",
+            r"\bConseil\s+[Cc]onstitutionnel\b",
+            r"\bCour\s+de\s+[Cc]assation\b",
+        ],
+        "india": [
+            r"\bAIR\s+\d{4}\b",  # All India Reporter
+            r"\bSCC\b",
+        ],
+        "south africa": [
+            r"\[\d{4}\]\s*(?:ZACC|ZASCA|ZAGP|ZAWCHC|ZAKZDHC|ZAECGHC|ZALMPPHC|ZANWHC|ZAFSHC|ZAECMHC)\b",
+            r"\b\d+\s*(?:SA|BCLR|SACR|SALR)\s",  # South African reporters
+            r"\b(?:Pty|NPC)\s*\)?\s*Ltd\b",  # SA corporate entities in case names
+            r"\bMinister of\s+(?:Mineral Resources|Environmental Affairs|Water)\b",
+        ],
+        "netherlands": [
+            r"\bECLI:NL\b",
+            r"\bRechtbank\b",
+            r"\bHoge\s+Raad\b",
+        ],
+        "t\u00fcrkiye": [
+            r"\bDan\u0131\u015ftay\b",  # Council of State (Danıştay)
+            r"\bAnayasa\s+Mahkemesi\b",  # Constitutional Court
+            r"\bYarg\u0131tay\b",  # Court of Cassation
+            r"\bE:\d{4}/\d+",  # Turkish case numbering
+        ],
+        "turkey": [
+            r"\bDan\u0131\u015ftay\b",
+            r"\bAnayasa\s+Mahkemesi\b",
+            r"\bYarg\u0131tay\b",
+            r"\bE:\d{4}/\d+",
+        ],
+        "norway": [
+            r"\bHR-\d{4}-\d+\b",  # Norwegian Supreme Court
+            r"\bRt\.\s*\d{4}\b",
+        ],
+        "sweden": [
+            r"\bNJA\s+\d{4}\b",  # Nytt Juridiskt Arkiv
+        ],
+        "ireland": [
+            r"\[\d{4}\]\s*(?:IESC|IEHC|IECA)\b",
+        ],
+        "pakistan": [
+            r"\bPLD\s+\d{4}\b",  # Pakistan Legal Decisions
+            r"\bSCMR\b",
+        ],
+        "kenya": [
+            r"\[\d{4}\]\s*(?:eKLR)\b",
+        ],
+        "philippines": [
+            r"\bG\.R\.\s*No\.\b",  # General Register number
+        ],
+    }
+
+    patterns = DOMESTIC_PATTERNS.get(src, [])
+    for pattern in patterns:
+        if re.search(pattern, combined, re.IGNORECASE):
+            return True
+
+    return False
+
+
+def identify_case_origin(
+    case_name: str, raw_text: str, source_jurisdiction: str = "", source_region: str = ""
+) -> dict:
+    """
+    Identify origin using tiered approach.
 
     INPUT:
         - case_name: Extracted case name
         - raw_text: Raw citation text
+        - source_jurisdiction: Where the citing court is located
+        - source_region: Global North/South/International
     ALGORITHM:
-        Tier 1: Dictionary lookup (fastest)
-        Tier 2: LLM Analysis (Sonnet)
-        Tier 3: Web Search (fallback - placeholder)
+        Cache: Check if already identified (avoids repeat Tier 2 calls)
+        Tier 1: Dictionary lookup (word-boundary match, $0)
+        Tier 1.5: Domestic pattern heuristic (regex, $0)
+        Tier 2: Neutral LLM Analysis (Gemini, ~$0.001)
+        Tier 3: Web search stub (future)
+        Fallback: Domestic default (if no source jurisdiction, unknown)
     OUTPUT: Dict with origin, region, confidence, method
     """
-    # Tier 1: Dictionary lookup
-    tier1_result = identify_origin_tier1_dictionary(case_name, raw_text)
+    # Cache check — catches repeated case names within/across documents
+    cache_key = case_name.lower().strip()
+    if cache_key in CITATION_ORIGIN_CACHE:
+        logging.debug(f"Cache hit for '{case_name}'")
+        return CITATION_ORIGIN_CACHE[cache_key]
+
+    # Tier 1: Dictionary lookup (source_jurisdiction for ambiguity filtering)
+    tier1_result = identify_origin_tier1_dictionary(case_name, raw_text, source_jurisdiction)
     if tier1_result:
         return tier1_result
 
-    # Tier 2: LLM Analysis
-    tier2_result = identify_origin_tier2_sonnet(case_name, raw_text)
+    # Tier 1.5: Domestic pattern heuristic ($0 - regex)
+    if source_jurisdiction and _is_likely_domestic(case_name, raw_text, source_jurisdiction):
+        domestic_result = {
+            "origin": source_jurisdiction,
+            "region": source_region or get_source_region(source_jurisdiction),
+            "court": None,
+            "year": None,
+            "tier": 1,
+            "confidence": 0.80,
+            "method": "domestic_pattern_match",
+        }
+        CITATION_ORIGIN_CACHE[cache_key] = domestic_result
+        logging.debug(f"Domestic pattern match for '{case_name}' -> {source_jurisdiction}")
+        return domestic_result
+
+    # Tier 2: LLM Analysis (pass source context for better results)
+    tier2_result = identify_origin_tier2_sonnet(case_name, raw_text, source_jurisdiction)
     if tier2_result and tier2_result["confidence"] >= 0.5:
         return tier2_result
 
@@ -1732,9 +1791,24 @@ def identify_case_origin(case_name: str, raw_text: str) -> dict:
     if tier3_result:
         return tier3_result
 
-    # All tiers failed - return unknown
+    # All tiers failed — default to domestic (most citations in a document are domestic)
+    if source_jurisdiction:
+        logging.info(f"Phase 3: Defaulting to domestic for '{case_name}' -> {source_jurisdiction}")
+        fallback_result = {
+            "origin": source_jurisdiction,
+            "region": source_region or get_source_region(source_jurisdiction),
+            "court": None,
+            "year": None,
+            "tier": 3,
+            "confidence": 0.60,
+            "method": "domestic_default",
+        }
+        CITATION_ORIGIN_CACHE[cache_key] = fallback_result
+        return fallback_result
+
+    # No source jurisdiction available — truly unknown
     logging.warning(f"Phase 3: Could not identify origin for '{case_name}'")
-    return {
+    unknown_result = {
         "origin": "Unknown",
         "region": "Unknown",
         "court": None,
@@ -1743,6 +1817,8 @@ def identify_case_origin(case_name: str, raw_text: str) -> dict:
         "confidence": 0.0,
         "method": "failed_identification",
     }
+    CITATION_ORIGIN_CACHE[cache_key] = unknown_result
+    return unknown_result
 
 
 # ============================================================================
@@ -1866,6 +1942,21 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
         if not phase2a_result:
             logging.error("  Phase 2A failed - skipping document")
             stats["phase2_failures"] += 1
+            # Create failed summary so document isn't retried on next run
+            try:
+                summary = CitationExtractionPhasedSummary(
+                    document_id=document_id,
+                    extraction_started_at=datetime.fromtimestamp(start_time),
+                    extraction_completed_at=datetime.now(timezone.utc),
+                    total_processing_time_seconds=time.time() - start_time,
+                    extraction_success=False,
+                    extraction_error="Phase 2A extraction failed - no result returned",
+                )
+                session.add(summary)
+                session.commit()
+            except Exception as summary_err:
+                session.rollback()
+                logging.warning(f"⚠️  Could not save Phase 2A error summary: {summary_err}")
             return False
 
         total_api_calls += phase2a_result.get("chunk_count", 1)
@@ -1875,8 +1966,52 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
         references = phase2a_result.get("case_law_references", [])
         logging.info(f"  Extracted {len(references)} references")
 
+        # ====================================================================
+        # SABIN FILTER (v6): Keep only citations matching Sabin KB cases
+        # ====================================================================
+        sabin_kept = 0
+        sabin_discarded = 0
+        if _sabin_filter is not None:
+            logging.info("Sabin Filter: Matching citations against knowledge base...")
+            kept, discarded = _sabin_filter.filter_citations(references)
+            sabin_kept = len(kept)
+            sabin_discarded = len(discarded)
+            logging.info(f"  Sabin filter: {sabin_kept} kept, {sabin_discarded} discarded")
+            references = kept  # Only process Sabin-matched citations from here on
+
+            # Save discarded citations for manual verification (in savepoint so failures don't abort main pipeline)
+            if discarded:
+                try:
+                    nested = session.begin_nested()
+                    for d in discarded:
+                        match_info = d.get("sabin_match", {})
+                        session.add(CitationExtractionDiscarded(
+                            document_id=document_id,
+                            case_name=d.get("case_name", "")[:500],
+                            raw_text=d.get("raw_text", d.get("raw_citation_text", "")),
+                            confidence=d.get("confidence"),
+                            sabin_closest_match=match_info.get("closest_name", "")[:500] if match_info.get("closest_name") else None,
+                            sabin_match_score=match_info.get("closest_score"),
+                            discard_reason=match_info.get("reason", "no_sabin_match"),
+                            extraction_run_id=_extraction_run_id,
+                        ))
+                    nested.commit()
+                except Exception as e:
+                    logging.warning(f"Failed to save discarded citations: {e}")
+                    session.rollback()
+
+        # ====================================================================
+        # SNIPPET EXTRACTION (v6): Extract text snippets for kept citations
+        # ====================================================================
+        snippets = []
+        if references:
+            logging.info("Snippet Extraction: Locating citations in document text...")
+            snippets = extract_snippets_batch(raw_text, references)
+            found_count = sum(1 for s in snippets if s.get("found"))
+            logging.info(f"  Snippets: {found_count}/{len(references)} located in text")
+
         if len(references) == 0:
-            logging.info("  No references found - creating summary with zero citations")
+            logging.info("  No references found (or all filtered) - creating summary with zero citations")
 
             # Create summary record
             summary = CitationExtractionPhasedSummary(
@@ -1888,10 +2023,10 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
                 total_api_calls=total_api_calls,
                 total_tokens_input=total_tokens_input,
                 total_tokens_output=total_tokens_output,
-                total_cost_usd=(total_tokens_input / 1e6 * 3.0)
-                + (total_tokens_output / 1e6 * 15.0),
+                total_cost_usd=(total_tokens_input / 1e6 * 0.01)
+                + (total_tokens_output / 1e6 * 0.04),
                 extraction_started_at=datetime.fromtimestamp(start_time),
-                extraction_completed_at=datetime.utcnow(),
+                extraction_completed_at=datetime.now(timezone.utc),
                 total_processing_time_seconds=time.time() - start_time,
                 extraction_success=True,
                 average_confidence=0.0,
@@ -1902,12 +2037,19 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
 
             stats["processed"] += 1
             stats["no_citations"] += 1
+            stats["sabin_kept"] += sabin_kept
+            stats["sabin_discarded"] += sabin_discarded
             return True
 
         # ====================================================================
         # PHASE 2B: FUNCTIONAL CLASSIFICATION (OPTIONAL SEPARATE PASS)
         # ====================================================================
         logging.info("Phase 2B: Functional classification of citations...")
+
+        # Inject snippet context into references for Phase 2B prompt
+        for i, ref in enumerate(references):
+            if i < len(snippets) and snippets[i].get("found"):
+                ref["context_snippet"] = snippets[i].get("snippet", "")
 
         functional_classifications = classify_citations_functionally(
             references, raw_text, source_jurisdiction
@@ -1926,6 +2068,9 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
         foreign_count = 0
         international_count = 0
         foreign_international_count = 0
+        domestic_count = 0
+        unknown_count = 0
+        # treaty_count removed — treaties excluded from extraction in v5.4
         confidences = []
         items_for_review = 0
 
@@ -1938,9 +2083,12 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
 
         for i, ref in enumerate(references):
             # Phase 3: Identify origin
-            origin_data = identify_case_origin(ref.get("case_name", ""), ref.get("raw_text", ""))
+            origin_data = identify_case_origin(
+                ref.get("case_name", ""), ref.get("raw_text", ""),
+                source_jurisdiction, source_region,
+            )
 
-            # Track API calls (Tier 2 uses Sonnet)
+            # Track API calls (Tier 2 uses Gemini)
             if origin_data.get("tier") == 2:
                 total_api_calls += 1
 
@@ -1949,24 +2097,23 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
                 source_jurisdiction, source_region, origin_data["origin"], origin_data["region"]
             )
 
-            # Skip domestic citations
+            # Count by type (geographic) — ALL citations counted, none skipped
             if citation_type == "Domestic":
-                logging.debug(f"  Skipping domestic citation: {ref.get('case_name', 'Unknown')}")
-                continue
+                domestic_count += 1
+            elif citation_type == "Foreign Citation":
+                foreign_count += 1
+            elif citation_type == "International Citation":
+                international_count += 1
+            elif citation_type == "Foreign International Citation":
+                foreign_international_count += 1
+            elif citation_type == "Unknown":
+                unknown_count += 1
 
             # Get functional classification from Phase 2B
             func_class = functional_classifications.get(i, {})
             functional_use = func_class.get("functional_use", "unknown")
             opinion_type = func_class.get("opinion_type", ref.get("location", "unclear"))
             key_signals = func_class.get("key_signals", [])
-
-            # Count by type (geographic)
-            if citation_type == "Foreign Citation":
-                foreign_count += 1
-            elif citation_type == "International Citation":
-                international_count += 1
-            elif citation_type == "Foreign International Citation":
-                foreign_international_count += 1
 
             # Count by functional use
             if functional_use == "parties_argument":
@@ -1985,7 +2132,7 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
             # Check if needs manual review
             confidence = origin_data.get("confidence", 0.0)
             confidences.append(confidence)
-            needs_review = confidence < 0.7
+            needs_review = confidence < 0.7 or citation_type == "Unknown"
             if needs_review:
                 items_for_review += 1
 
@@ -1994,10 +2141,16 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
                 "functional_use": functional_use,
                 "opinion_type": opinion_type,
                 "key_signals": key_signals,
-                "v5_3_extraction": True,
+                "v5_4_extraction": True,
             }
 
-            # Create citation record using existing schema fields
+            # v6: Extract Sabin match metadata (attached by filter_citations)
+            sabin_match = ref.get("sabin_match", {})
+
+            # v6: Extract snippet data (parallel list from extract_snippets_batch)
+            snippet_data = snippets[i] if i < len(snippets) else {}
+
+            # Create citation record — ALL citations stored (domestic, foreign, treaty, unknown)
             citation_record = CitationExtractionPhased(
                 document_id=document_id,
                 case_id=case_id,
@@ -2007,7 +2160,7 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
                 # Phase 2
                 case_name=ref.get("case_name"),
                 raw_citation_text=ref.get("raw_text"),
-                location_in_document=opinion_type,  # Use for opinion_type
+                location_in_document=opinion_type,
                 # Phase 3
                 case_law_origin=origin_data["origin"],
                 case_law_region=origin_data["region"],
@@ -2020,18 +2173,26 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
                 cited_court=origin_data.get("court"),
                 cited_year=origin_data.get("year"),
                 # Processing metadata
-                phase_2_model="claude-sonnet-4-5-20250929",
+                phase_2_model=CONFIG["EXTRACTION_MODEL"],
                 phase_3_model=origin_data.get("method"),
                 phase_4_model="rule-based",
                 processing_time_seconds=time.time() - start_time,
                 api_calls_used=total_api_calls,
-                # Quality control - store functional metadata in manual_review_reason
+                # Quality control
                 requires_manual_review=needs_review,
                 manual_review_reason=(
                     f"Low confidence: {confidence:.2f} | FUNC: {json.dumps(functional_metadata)}"
                     if needs_review
                     else f"FUNC: {json.dumps(functional_metadata)}"
                 ),
+                # v6 Sabin Filter (D1)
+                sabin_case_id_cited=sabin_match.get("sabin_case_id"),
+                sabin_match_tier=sabin_match.get("tier"),
+                sabin_match_confidence=sabin_match.get("confidence"),
+                # v6 Snippet Extraction (D7)
+                snippet_text=snippet_data.get("snippet"),
+                snippet_start_char=snippet_data.get("snippet_start"),
+                snippet_end_char=snippet_data.get("snippet_end"),
             )
 
             citation_records.append(citation_record)
@@ -2039,7 +2200,7 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
         # ====================================================================
         # SAVE TO DATABASE
         # ====================================================================
-        logging.info(f"Saving {len(citation_records)} cross-jurisdictional citations...")
+        logging.info(f"Saving {len(citation_records)} citations (all types)...")
 
         # Calculate totals
         total_cross_jurisdictional = (
@@ -2047,8 +2208,8 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
         )
         avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
 
-        # Calculate cost (Sonnet 4.5: $3/M input, $15/M output)
-        total_cost = (total_tokens_input / 1e6 * 3.0) + (total_tokens_output / 1e6 * 15.0)
+        # Calculate cost (Gemini 3.1 Flash-Lite: ~$0.01/M input, ~$0.04/M output)
+        total_cost = (total_tokens_input / 1e6 * 0.01) + (total_tokens_output / 1e6 * 0.04)
 
         # Create summary
         summary = CitationExtractionPhasedSummary(
@@ -2062,7 +2223,7 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
             total_tokens_output=total_tokens_output,
             total_cost_usd=total_cost,
             extraction_started_at=datetime.fromtimestamp(start_time),
-            extraction_completed_at=datetime.utcnow(),
+            extraction_completed_at=datetime.now(timezone.utc),
             total_processing_time_seconds=time.time() - start_time,
             extraction_success=True,
             average_confidence=avg_confidence,
@@ -2082,15 +2243,22 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
         stats["foreign_citations"] += foreign_count
         stats["international_citations"] += international_count
         stats["foreign_international_citations"] += foreign_international_count
+        stats["domestic_citations"] += domestic_count
+        stats["unknown_citations"] += unknown_count
         stats["needs_review"] += items_for_review
         stats["functional_parties"] += functional_parties_count
         stats["functional_dismissed"] += functional_dismissed_count
         stats["functional_contributed"] += functional_contributed_count
         stats["majority_citations"] += majority_count
         stats["dissent_citations"] += dissent_count
+        stats["sabin_kept"] += sabin_kept
+        stats["sabin_discarded"] += sabin_discarded
+        stats["snippets_found"] += sum(1 for s in snippets if s.get("found"))
 
         logging.info("✓ Completed successfully:")
         logging.info(f"  Total references: {len(references)}")
+        logging.info(f"    - Domestic: {domestic_count}")
+        logging.info(f"    - Unknown origin: {unknown_count}")
         logging.info(f"  Cross-jurisdictional: {total_cross_jurisdictional}")
         logging.info(f"    - Foreign: {foreign_count}")
         logging.info(f"    - International: {international_count}")
@@ -2116,20 +2284,22 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
         logging.error(traceback.format_exc())
         stats["errors"] += 1
 
-        # Create failed summary
+        # Create failed summary (use begin_nested to isolate from prior rollback)
         try:
+            session.rollback()  # Ensure clean session state before retry
             summary = CitationExtractionPhasedSummary(
                 document_id=document_id,
                 extraction_started_at=datetime.fromtimestamp(start_time),
-                extraction_completed_at=datetime.utcnow(),
+                extraction_completed_at=datetime.now(timezone.utc),
                 total_processing_time_seconds=time.time() - start_time,
                 extraction_success=False,
                 extraction_error=str(e)[:500],
             )
             session.add(summary)
             session.commit()
-        except Exception as e:
-            logging.warning(f"⚠️  Could not save error summary: {e}")
+        except Exception as summary_err:
+            session.rollback()
+            logging.warning(f"⚠️  Could not save error summary: {summary_err}")
 
         return False
 
@@ -2156,28 +2326,31 @@ def main(test_run=None, seed=42):
         7. Report comprehensive statistics
     OUTPUT: Statistics printed to log
     """
+    global _kb_cases, _sabin_filter, _extraction_run_id
+    _extraction_run_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
     logging.info("=" * 70)
-    logging.info("CITATION EXTRACTION v5.3 - FULL TEXT PROCESSING")
-    logging.info("Complete Document Analysis with Separation of Concerns")
+    logging.info("CITATION EXTRACTION v6.0 - KB-ENHANCED PIPELINE")
+    logging.info("Complete Document Analysis with Sabin Knowledge Base")
     logging.info("=" * 70)
     logging.info("Architecture:")
     logging.info("  Phase 1:  Source Jurisdiction Identification")
-    logging.info("  Phase 2A: Extract ALL Case References - FULL DOCUMENT (Sonnet 4.5)")
-    logging.info("  Phase 2B: Functional Classification (Separate Pass)")
-    logging.info("  Phase 3:  Identify Case Origin (3-Tier)")
+    logging.info(f"  Phase 2A: Extract ALL Case References ({CONFIG['EXTRACTION_MODEL']})")
+    logging.info("  Phase 2A+: Snippet Extraction (locate citations in document)")
+    logging.info("  Phase 2A+: Sabin Filter (keep only KB-matched citations)")
+    logging.info(f"  Phase 2B: Functional Classification ({CONFIG['EXTRACTION_MODEL']})")
+    logging.info("  Phase 3:  Identify Case Origin (3-Tier: Dictionary > Gemini > Web)")
     logging.info("  Phase 4:  Classify Citation Type (Geographic + Functional)")
     logging.info("=" * 70)
-    logging.info("v5.3 Key Features:")
-    logging.info("  - FULL document processing (no text truncation)")
-    logging.info("  - ALL 12 extraction patterns restored")
-    logging.info("  - Separation of concerns: extraction vs. classification")
-    logging.info("  - Dynamic chunking for documents > 600K chars")
-    logging.info("  - Maximum output tokens (16,384)")
-    logging.info("  - Uses existing database schema (no reset required)")
+    logging.info("Loading Sabin knowledge base...")
+    _kb_cases = load_knowledge_base()
+    logging.info(f"  ✓ Loaded {len(_kb_cases)} cases")
+    _sabin_filter = SabinFilter()
+    logging.info("  ✓ Sabin filter initialized")
     logging.info("=" * 70)
 
     # Get trial batch filter
-    trial_batch_uuids = get_trial_batch_document_uuids()
+    trial_batch_ids = get_trial_batch_document_ids()
 
     # Connect to database
     engine = get_engine()
@@ -2186,6 +2359,32 @@ def main(test_run=None, seed=42):
 
     # Ensure tables exist
     Base.metadata.create_all(engine)
+
+    # v6 migration: add new columns if they don't exist yet
+    from sqlalchemy import text as sa_text, inspect as sa_inspect
+    inspector = sa_inspect(engine)
+    existing_cols = {c["name"] for c in inspector.get_columns("citation_extraction_phased")}
+    v6_columns = [
+        ("sabin_case_id_cited", "VARCHAR(200)"),
+        ("sabin_match_tier", "INTEGER"),
+        ("sabin_match_confidence", "DECIMAL(3,2)"),
+        ("snippet_text", "TEXT"),
+        ("snippet_start_char", "INTEGER"),
+        ("snippet_end_char", "INTEGER"),
+    ]
+    with engine.begin() as conn:
+        for col_name, col_type in v6_columns:
+            if col_name not in existing_cols:
+                conn.execute(sa_text(
+                    f"ALTER TABLE citation_extraction_phased ADD COLUMN {col_name} {col_type}"
+                ))
+                logging.info(f"  + Added column: {col_name}")
+
+    # Ensure citation_extraction_discarded table exists
+    if not inspector.has_table("citation_extraction_discarded"):
+        CitationExtractionDiscarded.__table__.create(engine)
+        logging.info("  + Created table: citation_extraction_discarded")
+
     logging.info("✓ Database tables verified/created")
 
     try:
@@ -2203,6 +2402,7 @@ def main(test_run=None, seed=42):
             .join(ExtractedText, Document.document_id == ExtractedText.document_id)
             .join(Case, Document.case_id == Case.case_id)
             .filter(ExtractedText.raw_text.isnot(None), Document.is_decision.is_(True))
+            .distinct(Document.document_id)
         )
 
         # Count total decisions
@@ -2210,17 +2410,17 @@ def main(test_run=None, seed=42):
         logging.info(f"Found {total_decisions} documents classified as decisions")
 
         # Filter by trial batch if enabled
-        if trial_batch_uuids is not None:
-            query = query.filter(Document.document_id.in_(trial_batch_uuids))
+        if trial_batch_ids is not None:
+            query = query.filter(Document.sabin_document_id.in_(trial_batch_ids))
             trial_filtered_count = query.count()
             logging.info(f"After trial batch filter: {trial_filtered_count} documents")
 
-        # Apply test-run sampling: filter query to sampled document UUIDs
+        # Apply test-run sampling: filter query to sampled document IDs
         if test_run is not None:
             df = pd.read_excel(DATABASE_FILE)
-            test_run_uuids = get_sampled_document_uuids(df, test_run, seed)
-            if test_run_uuids is not None:
-                query = query.filter(Document.document_id.in_(test_run_uuids))
+            test_run_ids = get_sampled_document_ids(df, test_run, seed)
+            if test_run_ids is not None:
+                query = query.filter(Document.sabin_document_id.in_(test_run_ids))
                 logging.info(f"After test-run filter: {query.count()} documents")
 
         # Exclude already processed (single-level NOT IN subquery)
@@ -2231,10 +2431,10 @@ def main(test_run=None, seed=42):
         if excluded_count:
             logging.info(f"Excluding {excluded_count} already processed documents")
 
-        # Stream results instead of materializing all at once
+        # Materialize results to avoid server-side cursor issues with per-doc commits
         total_to_process = query.count()
         logging.info(f"\n✓ Documents to process: {total_to_process}")
-        documents = query.yield_per(50)
+        documents = query.all()
 
         if total_to_process == 0:
             logging.warning("\n⚠️  No documents to process!")
@@ -2255,12 +2455,20 @@ def main(test_run=None, seed=42):
             "phase2_failures": 0,
             "no_citations": 0,
             "errors": 0,
+            # Citation type breakdown
+            "domestic_citations": 0,
+            "unknown_citations": 0,
             # Functional classification stats
             "functional_parties": 0,
             "functional_dismissed": 0,
             "functional_contributed": 0,
             "majority_citations": 0,
             "dissent_citations": 0,
+            # v6 Sabin filter stats
+            "sabin_kept": 0,
+            "sabin_discarded": 0,
+            # v6 Snippet stats
+            "snippets_found": 0,
         }
 
         # Process each document
@@ -2287,6 +2495,8 @@ def main(test_run=None, seed=42):
         logging.info("")
         logging.info("GEOGRAPHIC CLASSIFICATION:")
         logging.info(f"Total references extracted:      {stats['total_references']}")
+        logging.info(f"Domestic Citations:              {stats['domestic_citations']}")
+        logging.info(f"Unknown Origin Citations:        {stats['unknown_citations']}")
         logging.info(f"Foreign Citations:               {stats['foreign_citations']}")
         logging.info(f"International Citations:         {stats['international_citations']}")
         logging.info(f"Foreign International Citations: {stats['foreign_international_citations']}")
@@ -2304,6 +2514,11 @@ def main(test_run=None, seed=42):
         logging.info(f"  Dissent/Concurrence citations:   {stats['dissent_citations']}")
         logging.info("")
         logging.info(f"Items requiring manual review:   {stats['needs_review']}")
+        logging.info("")
+        logging.info("SABIN FILTER:")
+        logging.info(f"  Citations kept (Sabin match):  {stats['sabin_kept']}")
+        logging.info(f"  Citations discarded:           {stats['sabin_discarded']}")
+        logging.info(f"  Snippets located in text:      {stats['snippets_found']}")
 
         if TRIAL_BATCH_CONFIG["ENABLED"]:
             logging.info("\n✓ Trial batch mode was ENABLED")

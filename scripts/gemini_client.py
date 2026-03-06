@@ -36,10 +36,11 @@ def call_gemini(
     prompt: str,
     *,
     model: str = None,
-    max_output_tokens: int = 4000,
+    max_output_tokens: int | None = None,
     temperature: float = 0.0,
     max_retries: int = 3,
     retry_delay: float = 2.0,
+    response_mime_type: str = None,
 ) -> dict:
     """
     Call Gemini API with retry logic and structured response parsing.
@@ -47,7 +48,7 @@ def call_gemini(
     INPUT:
         - prompt: The prompt text to send
         - model: Gemini model name (defaults to CONFIG['GEMINI_MODEL'])
-        - max_output_tokens: Maximum output tokens
+        - max_output_tokens: Maximum output tokens (None = no limit, model finishes naturally)
         - temperature: Sampling temperature (0.0 for reproducibility)
         - max_retries: Number of retry attempts for JSON parse errors
         - retry_delay: Base delay between retries (seconds)
@@ -65,13 +66,18 @@ def call_gemini(
 
     for attempt in range(max_retries):
         try:
+            config_kwargs = dict(
+                temperature=temperature,
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
+            )
+            if max_output_tokens is not None:
+                config_kwargs["max_output_tokens"] = max_output_tokens
+            if response_mime_type:
+                config_kwargs["response_mime_type"] = response_mime_type
             response = client.models.generate_content(
                 model=model,
                 contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=temperature,
-                    max_output_tokens=max_output_tokens,
-                ),
+                config=types.GenerateContentConfig(**config_kwargs),
             )
 
             response_text = response.text
@@ -80,6 +86,20 @@ def call_gemini(
 
             # Attempt JSON parsing
             data = _extract_json(response_text)
+
+            # If JSON parse failed, try truncation repair (model may hit internal output limits)
+            if data is None and response_text and response_text.strip():
+                if max_output_tokens is not None and tokens_out >= max_output_tokens:
+                    logging.warning(
+                        f"Response hit max_output_tokens ({tokens_out}/{max_output_tokens}) "
+                        f"— attempting truncated JSON repair"
+                    )
+                else:
+                    logging.warning(
+                        f"JSON parse failed ({tokens_out} tokens out) "
+                        f"— attempting truncated JSON repair"
+                    )
+                data = _repair_truncated_json(response_text)
 
             return {
                 "text": response_text,
@@ -127,3 +147,66 @@ def _extract_json(text: str):
                 except json.JSONDecodeError:
                     continue
         return None
+
+
+def _repair_truncated_json(text: str):
+    """
+    Attempt to repair JSON truncated by max_output_tokens.
+
+    INPUT: Raw response text with potentially incomplete JSON
+    ALGORITHM:
+        1. Strip markdown fences
+        2. Find the start of the JSON object/array
+        3. Remove the last incomplete value (likely mid-string or mid-object)
+        4. Close all open braces and brackets
+    OUTPUT: Parsed dict/list or None
+    """
+    if not text:
+        return None
+
+    cleaned = re.sub(r"```json\s*|\s*```", "", text).strip()
+
+    # Find start of JSON
+    start = -1
+    start_char = None
+    for i, ch in enumerate(cleaned):
+        if ch in ('{', '['):
+            start = i
+            start_char = ch
+            break
+    if start == -1:
+        return None
+
+    fragment = cleaned[start:]
+
+    # Remove trailing incomplete entry: drop back to last complete comma-separated item
+    # Strip trailing whitespace, partial strings, etc.
+    # Try progressively trimming from the end to find a repairable point
+    for trim_chars in range(0, min(500, len(fragment))):
+        candidate = fragment if trim_chars == 0 else fragment[:-trim_chars]
+
+        # Remove trailing comma if present
+        candidate = candidate.rstrip().rstrip(',').rstrip()
+
+        # Count open/close braces and brackets
+        open_braces = candidate.count('{') - candidate.count('}')
+        open_brackets = candidate.count('[') - candidate.count(']')
+
+        if open_braces < 0 or open_brackets < 0:
+            continue
+
+        # Close all open structures
+        repaired = candidate + ']' * open_brackets + '}' * open_braces
+
+        try:
+            result = json.loads(repaired)
+            logging.info(
+                f"Truncated JSON repair succeeded (trimmed {trim_chars} chars, "
+                f"closed {open_braces} braces + {open_brackets} brackets)"
+            )
+            return result
+        except json.JSONDecodeError:
+            continue
+
+    logging.warning("Truncated JSON repair failed — could not recover valid JSON")
+    return None

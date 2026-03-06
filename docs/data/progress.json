@@ -77,7 +77,7 @@
       "name": "Phase 1: DB Schema Evolution",
       "description": "Add Sabin Case/Document IDs, Alembic migration",
       "status": "completed",
-      "start_date": "2026-03-04",
+      "start_date": null,
       "due_date": "2026-03-04",
       "completed_date": "2026-03-04",
       "sort_order": 1,
@@ -91,9 +91,9 @@
           "priority": "high",
           "status": "completed",
           "due_date": "2026-03-04",
-          "completed_date": "2026-03-04T15:44:08.741808",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:44:08"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         },
         {
           "id": 2,
@@ -104,9 +104,9 @@
           "priority": "high",
           "status": "completed",
           "due_date": "2026-03-04",
-          "completed_date": "2026-03-04T15:44:09.116766",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:44:09"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         },
         {
           "id": 3,
@@ -117,9 +117,9 @@
           "priority": "medium",
           "status": "completed",
           "due_date": "2026-03-04",
-          "completed_date": "2026-03-04T15:44:10.890140",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:44:10"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         },
         {
           "id": 4,
@@ -130,9 +130,9 @@
           "priority": "high",
           "status": "completed",
           "due_date": "2026-03-04",
-          "completed_date": "2026-03-04T15:44:11.117460",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:44:11"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         }
       ],
       "decisions": [
@@ -143,7 +143,7 @@
           "source": "Meeting 3 Mar",
           "status": "pending",
           "phase_id": 1,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         }
       ]
     },
@@ -152,7 +152,7 @@
       "name": "Phase 2: Seed Data & Download",
       "description": "Load updated Excel, --test-run flag, download pipeline",
       "status": "completed",
-      "start_date": "2026-03-04",
+      "start_date": null,
       "due_date": "2026-03-04",
       "completed_date": "2026-03-04",
       "sort_order": 2,
@@ -166,9 +166,9 @@
           "priority": "critical",
           "status": "completed",
           "due_date": "2026-03-04",
-          "completed_date": "2026-03-04T15:44:15.944155",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:44:15"
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-04 23:58:44"
         },
         {
           "id": 6,
@@ -179,9 +179,9 @@
           "priority": "high",
           "status": "completed",
           "due_date": "2026-03-04",
-          "completed_date": "2026-03-04T15:44:16.187046",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:44:16"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         },
         {
           "id": 7,
@@ -192,9 +192,9 @@
           "priority": "high",
           "status": "completed",
           "due_date": "2026-03-04",
-          "completed_date": "2026-03-04T15:54:21.107772",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:54:21"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         },
         {
           "id": 8,
@@ -205,9 +205,9 @@
           "priority": "critical",
           "status": "completed",
           "due_date": null,
-          "completed_date": "2026-03-04T15:54:19.644070",
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:54:19"
+          "completed_date": "2026-03-05T18:19:42.964807",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:19:42"
         }
       ],
       "decisions": []
@@ -216,10 +216,10 @@
       "id": 3,
       "name": "Phase 3: Markdown Extraction",
       "description": "PDF to Markdown instead of plain text",
-      "status": "pending",
+      "status": "completed",
       "start_date": null,
       "due_date": "2026-03-05",
-      "completed_date": null,
+      "completed_date": "2026-03-04",
       "sort_order": 3,
       "tasks": [
         {
@@ -229,11 +229,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "high",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         },
         {
           "id": 10,
@@ -242,11 +242,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "high",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         },
         {
           "id": 11,
@@ -255,11 +255,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "medium",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:40:03"
         }
       ],
       "decisions": [
@@ -270,7 +270,7 @@
           "source": "Meeting 3 Mar",
           "status": "pending",
           "phase_id": 3,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         }
       ]
     },
@@ -278,7 +278,7 @@
       "id": 4,
       "name": "Phase 4: Knowledge Base",
       "description": "Build case metadata index from Sabin/Columbia data",
-      "status": "pending",
+      "status": "completed",
       "start_date": null,
       "due_date": "2026-03-05",
       "completed_date": null,
@@ -291,11 +291,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "critical",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T19:16:05.041429",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:16:05"
         },
         {
           "id": 13,
@@ -304,24 +304,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "high",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
-        },
-        {
-          "id": 14,
-          "phase_id": 4,
-          "subject": "Export knowledge base as JSON for validation",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "pending",
-          "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T19:21:21.831427",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:21:21"
         }
       ],
       "decisions": [
@@ -332,7 +319,7 @@
           "source": "Meeting 3 Mar",
           "status": "pending",
           "phase_id": 4,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         }
       ]
     },
@@ -353,11 +340,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "critical",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-06",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T19:20:47.976715",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:20:47"
         },
         {
           "id": 16,
@@ -366,11 +353,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "critical",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-06",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T19:18:57.259845",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:18:57"
         },
         {
           "id": 17,
@@ -379,37 +366,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "high",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-06",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
-        },
-        {
-          "id": 18,
-          "phase_id": 5,
-          "subject": "Generate validation Excel for Lucas review",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "pending",
-          "due_date": "2026-03-06",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
-        },
-        {
-          "id": 19,
-          "phase_id": 5,
-          "subject": "Cost estimation: tokens × docs × price",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "pending",
-          "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T19:24:10.809954",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:24:10"
         }
       ],
       "decisions": [
@@ -420,7 +381,7 @@
           "source": "Meeting 3 Mar",
           "status": "pending",
           "phase_id": 5,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         },
         {
           "id": "D7",
@@ -429,9 +390,293 @@
           "source": "Meeting 3 Mar",
           "status": "pending",
           "phase_id": 5,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         }
       ]
+    },
+    {
+      "id": 109,
+      "name": "Phase F: GCP VM Setup & Pipeline Plan",
+      "description": "Provisioned GCP VM on Lucas project, replicated secrets, uploaded code+DB+PDFs. Refined decision-filtered pipeline plan (Steps A-F) with title-based classification.",
+      "status": "completed",
+      "start_date": "2026-03-06",
+      "due_date": "2026-03-06",
+      "completed_date": "2026-03-06",
+      "sort_order": 5.1,
+      "tasks": [
+        {
+          "id": 80,
+          "phase_id": 109,
+          "subject": "Provision GCP VM (e2-standard-16 Spot) on Lucas project",
+          "description": "VM: phdmutley-pipeline in us-central1-a, 16 vCPU, 64 GB RAM. Project: gen-lang-client-0764097936.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 81,
+          "phase_id": 109,
+          "subject": "Replicate GCP secrets to Lucas project",
+          "description": "phdmutley-db-password + phdmutley-gemini-api-key created in gen-lang-client-0764097936. Compute SA granted secretAccessor role.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 82,
+          "phase_id": 109,
+          "subject": "Create GCS transfer bucket and upload assets",
+          "description": "gs://phdmutley-pipeline-transfer (us-central1). Uploaded: code tarball, DB dump (plain SQL, PG version mismatch prevented custom format), 16,247 PDF files.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 83,
+          "phase_id": 109,
+          "subject": "Install and configure VM environment",
+          "description": "PostgreSQL 16 on port 5432, Python venv at /opt/phdMutley/venv/, all pip deps installed. gcp_secrets.py patched to read GCP_SECRET_PROJECT and DB_PORT env vars.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 84,
+          "phase_id": 109,
+          "subject": "Restore database on VM",
+          "description": "pg_restore failed (PG 18→16 version mismatch on custom format). Used plain SQL dump instead. Verified: 16,352 docs, 4,739 cases, 348 extractions.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 85,
+          "phase_id": 109,
+          "subject": "Refine pipeline implementation plan (Steps A-F)",
+          "description": "Corrected Step B: \"Other\" lookup by Document Title keyword (not Document Type). Added no-separator titles (3,504 docs) to Step B. Total Step B: 4,084 docs. Workers set to 8 (local) / 16 (VM). Updated cost estimate: ~2.08 total.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 86,
+          "phase_id": 109,
+          "subject": "Analyze Sabin Document Title keyword distribution",
+          "description": "Data analysis: 16,380 docs, 84 unique title keywords. Step A catches 2,921 decision docs. 9,000 non-decision exclusions. 4,084 ambiguous docs for LLM classification (580 \"other\" + 3,504 no-separator).",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D12",
+          "title": "Title-based document classification",
+          "rationale": "Use Document Title keyword (after last \" - \" separator) instead of unreliable Document Type column. 84 unique keywords mapped to decision/non-decision/ambiguous buckets.",
+          "source": "Session 6 Mar",
+          "status": "active",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": "D13",
+          "title": "LLM classification for ambiguous documents",
+          "rationale": "4,084 docs without clear title keyword (\"other\" or no separator) classified via partial text extraction (first+last 2,400 chars) + Gemini. Cost: ~.08.",
+          "source": "Session 6 Mar",
+          "status": "active",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": "D14",
+          "title": "GCP VM on Lucas project for pipeline execution",
+          "rationale": "Use Lucas GCP project (gen-lang-client-0764097936) for VM + secrets. e2-standard-16 Spot instance. Avoids billing on Gustavo personal project. VM cost: </job.",
+          "source": "Session 6 Mar",
+          "status": "implemented",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": "D15",
+          "title": "Workers = CPU count (8 local, 16 VM)",
+          "rationale": "SAFE_WORKERS matches logical processor count. Local: 8 vCPU / 8GB RAM. VM: 16 vCPU / 64GB RAM. Each pdfplumber worker uses ~200MB. Comfortable headroom in both environments.",
+          "source": "Session 6 Mar",
+          "status": "active",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Bug: Memory Leak Fix",
+      "description": "Fix pymupdf4llm memory leak + codebase hardening (engine.dispose, streaming queries, session hygiene, Excel dedup, bare except split, isnot(None) SQL fix)",
+      "status": "completed",
+      "start_date": "2026-03-04",
+      "due_date": "2026-03-04",
+      "completed_date": "2026-03-04",
+      "sort_order": 5.5,
+      "tasks": [
+        {
+          "id": 50,
+          "phase_id": 15,
+          "subject": "Fix pymupdf4llm doc handle leak",
+          "description": "Explicit fitz.Document lifecycle in extract_texts.py",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 51,
+          "phase_id": 15,
+          "subject": "Add engine.dispose() cross-codebase",
+          "description": "4 scripts: extract_citations, classify_decisions, sixfold_engine, export_to_excel",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 52,
+          "phase_id": 15,
+          "subject": "Replace .all() with yield_per streaming",
+          "description": "classify_decisions yield_per(100), extract_citations yield_per(50) + NOT IN subquery",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 53,
+          "phase_id": 15,
+          "subject": "Session hygiene + expunge_all",
+          "description": "expunge_all every 100 iters for column-only queries; removed for ORM entity queries",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 54,
+          "phase_id": 15,
+          "subject": "Deduplicate pd.read_excel()",
+          "description": "Single Excel read per script, passed via df= param",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 55,
+          "phase_id": 15,
+          "subject": "Split bare except into MemoryError + Exception",
+          "description": "All 3 PDF extractors + worker function",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 56,
+          "phase_id": 15,
+          "subject": "Fix Python is-not-None to SQL .isnot(None)",
+          "description": "classify_decisions.py and extract_citations.py filter bug",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 57,
+          "phase_id": 15,
+          "subject": "Fix UnicodeEncodeError in logging",
+          "description": "force=True + UTF-8 StreamHandler for cp1252 Windows consoles",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 58,
+          "phase_id": 15,
+          "subject": "Fix expunge_all crash with yield_per",
+          "description": "Removed expunge_all mid-stream for ORM entity queries",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        },
+        {
+          "id": 59,
+          "phase_id": 15,
+          "subject": "Add max_tasks_per_child=10 to ProcessPoolExecutor",
+          "description": "Auto-recycles workers every 10 PDFs to cap leak accumulation",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-04 23:58:44",
+          "updated_at": "2026-03-04 23:58:44"
+        }
+      ],
+      "decisions": []
     },
     {
       "id": 6,
@@ -453,47 +698,8 @@
           "status": "pending",
           "due_date": "2026-03-07",
           "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
-        },
-        {
-          "id": 21,
-          "phase_id": 6,
-          "subject": "Add top-5 jurisdiction queries",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
-        },
-        {
-          "id": 22,
-          "phase_id": 6,
-          "subject": "Generate static maps (top-5 + US aesthetic)",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
-        },
-        {
-          "id": 23,
-          "phase_id": 6,
-          "subject": "Add error margin disclaimer",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:25:11"
         }
       ],
       "decisions": [
@@ -504,7 +710,7 @@
           "source": "Meeting 3 Mar",
           "status": "pending",
           "phase_id": 6,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         },
         {
           "id": "D9",
@@ -513,7 +719,7 @@
           "source": "Meeting 3 Mar",
           "status": "pending",
           "phase_id": 6,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         }
       ]
     },
@@ -528,6 +734,19 @@
       "sort_order": 7,
       "tasks": [
         {
+          "id": 19,
+          "phase_id": 7,
+          "subject": "Cost estimation: tokens × docs × price",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-05",
+          "completed_date": "2026-03-05T19:26:18.685868",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:26:18"
+        },
+        {
           "id": 24,
           "phase_id": 7,
           "subject": "Execute --test-run 100 through full pipeline",
@@ -537,8 +756,8 @@
           "status": "pending",
           "due_date": "2026-03-07",
           "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-04 23:57:30"
         },
         {
           "id": 25,
@@ -547,11 +766,11 @@
           "description": null,
           "owner": "Gustavo",
           "priority": "high",
-          "status": "pending",
+          "status": "completed",
           "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "completed_date": "2026-03-05T19:22:53.010382",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:22:53"
         },
         {
           "id": 26,
@@ -560,11 +779,11 @@
           "description": null,
           "owner": "Lucas",
           "priority": "critical",
-          "status": "pending",
+          "status": "in_progress",
           "due_date": "2026-03-07",
           "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:19:43"
         }
       ],
       "decisions": [
@@ -575,7 +794,7 @@
           "source": "Session 4 Mar",
           "status": "pending",
           "phase_id": 7,
-          "created_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30"
         }
       ]
     },
@@ -599,21 +818,8 @@
           "status": "pending",
           "due_date": "2026-03-08",
           "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
-        },
-        {
-          "id": 28,
-          "phase_id": 8,
-          "subject": "Generate final static maps for Joana",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "critical",
-          "status": "pending",
-          "due_date": "2026-03-08",
-          "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-04 23:57:30"
         },
         {
           "id": 29,
@@ -625,12 +831,129 @@
           "status": "pending",
           "due_date": "2026-03-09",
           "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-04 23:57:30"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 107,
+      "name": "Phase E: Infrastructure Lean-out",
+      "description": "Drop Docker, native PostgreSQL, evaluate serverless hosting (Cloud Run / Cloud Functions / GitHub Pages)",
+      "status": "completed",
+      "start_date": "2026-03-05",
+      "due_date": "2026-03-06",
+      "completed_date": null,
+      "sort_order": 9,
+      "tasks": [
+        {
+          "id": 73,
+          "phase_id": 107,
+          "subject": "Migrate infrastructure: drop Docker, native PostgreSQL + serverless hosting evaluation",
+          "description": "Evaluate Cloud Run, Cloud Functions, and GitHub Pages for hosting. Restructure local dev to lean native PostgreSQL setup. Follow DevProtocol_1.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-05T19:10:05.245940",
+          "created_at": "2026-03-05 21:19:57",
+          "updated_at": "2026-03-05 22:10:05"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 108,
+      "name": "Post-Extraction",
+      "description": "Tasks deferred until after core extraction pipeline is complete",
+      "status": "pending",
+      "start_date": null,
+      "due_date": "2026-03-09",
+      "completed_date": null,
+      "sort_order": 10,
+      "tasks": [
+        {
+          "id": 14,
+          "phase_id": 108,
+          "subject": "Export knowledge base as JSON for validation",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:26:47"
+        },
+        {
+          "id": 18,
+          "phase_id": 108,
+          "subject": "Generate validation Excel for Lucas review",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-06",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 21,
+          "phase_id": 108,
+          "subject": "Add top-5 jurisdiction queries",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:53:25"
+        },
+        {
+          "id": 22,
+          "phase_id": 108,
+          "subject": "Generate static maps (top-5 + US aesthetic)",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:53:25"
+        },
+        {
+          "id": 23,
+          "phase_id": 108,
+          "subject": "Add error margin disclaimer",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:53:25"
+        },
+        {
+          "id": 28,
+          "phase_id": 108,
+          "subject": "Generate final static maps for Joana",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:53:25"
         },
         {
           "id": 30,
-          "phase_id": 8,
+          "phase_id": 108,
           "subject": "Package and deliver to Joana/Kate",
           "description": null,
           "owner": "Both",
@@ -638,8 +961,177 @@
           "status": "pending",
           "due_date": "2026-03-09",
           "completed_date": null,
-          "created_at": "2026-03-04 18:10:18",
-          "updated_at": "2026-03-04 18:10:18"
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 21:53:25"
+        },
+        {
+          "id": 74,
+          "phase_id": 108,
+          "subject": "Investigate snippet miss rate (35% on chunked docs)",
+          "description": "Trial run showed 39/60 snippets found (65% hit rate). Worst on chunked documents (e.g. 986K-char doc: 0/9 found). Root cause: LLM raw_text from chunk extraction does not match full document verbatim. Consider: normalized matching improvements in snippet_extractor.py, or extracting snippets per-chunk before deduplication. | Confirmed in debug session: snippet miss causes Phase 2B fallback (graceful degradation)",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-05 23:02:50",
+          "updated_at": "2026-03-05 23:52:19"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 106,
+      "name": "Bug: Phase 5 Debugging",
+      "description": "Citation extraction script debugging session",
+      "status": "completed",
+      "start_date": null,
+      "due_date": "2026-03-05",
+      "completed_date": "2026-03-05",
+      "sort_order": 99,
+      "tasks": [
+        {
+          "id": 63,
+          "phase_id": 106,
+          "subject": "Bug 6: MAX_OUTPUT_TOKENS=65536 repetitive output",
+          "description": null,
+          "owner": null,
+          "priority": "critical",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 21:40:03"
+        },
+        {
+          "id": 64,
+          "phase_id": 106,
+          "subject": "Bug 7: Functional classification fails >30 citations",
+          "description": null,
+          "owner": null,
+          "priority": "medium",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 21:40:03"
+        },
+        {
+          "id": 65,
+          "phase_id": 106,
+          "subject": "Bug 8: Treaties extracted as case law references",
+          "description": null,
+          "owner": null,
+          "priority": "low",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 21:40:03"
+        },
+        {
+          "id": 66,
+          "phase_id": 106,
+          "subject": "Bug 9: Tier 2 fails for abbreviated US case names",
+          "description": null,
+          "owner": null,
+          "priority": "medium",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 21:40:03"
+        },
+        {
+          "id": 67,
+          "phase_id": 106,
+          "subject": "Bug 10: SA domestic citations not caught by Tier 0",
+          "description": null,
+          "owner": null,
+          "priority": "medium",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-05T18:40:03.152300",
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 21:40:03"
+        },
+        {
+          "id": 68,
+          "phase_id": 106,
+          "subject": "Fix: cp1252 Unicode logging on Windows",
+          "description": null,
+          "owner": null,
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 12:51:03"
+        },
+        {
+          "id": 69,
+          "phase_id": 106,
+          "subject": "Fix: Tier 0 domestic citation heuristic",
+          "description": null,
+          "owner": null,
+          "priority": "critical",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 12:51:03"
+        },
+        {
+          "id": 70,
+          "phase_id": 106,
+          "subject": "Fix: Expanded Tier 1 dictionary (non-English courts)",
+          "description": null,
+          "owner": null,
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 12:51:03"
+        },
+        {
+          "id": 71,
+          "phase_id": 106,
+          "subject": "Fix: Improved Tier 2 prompt with source context",
+          "description": null,
+          "owner": null,
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 12:51:03"
+        },
+        {
+          "id": 72,
+          "phase_id": 106,
+          "subject": "Fix: datetime.utcnow() deprecation",
+          "description": null,
+          "owner": null,
+          "priority": "low",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-05 12:51:03",
+          "updated_at": "2026-03-05 12:51:03"
+        },
+        {
+          "id": 75,
+          "phase_id": 106,
+          "subject": "Debugging session: post-v6 pipeline stabilization",
+          "description": "Fixed P1 list-vs-dict in Tier2/Phase2B, P2 Unicode encoding on 6 scripts, added citation_extraction_discarded table for Sabin filter audit. Report: docs/reports/debugging_session_cycle1_20260305.md",
+          "owner": null,
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-05 23:52:19",
+          "updated_at": "2026-03-05 23:52:19"
         }
       ],
       "decisions": []
@@ -653,7 +1145,7 @@
       "source": "Meeting 3 Mar",
       "status": "pending",
       "phase_id": 5,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D10",
@@ -662,7 +1154,7 @@
       "source": "Meeting 3 Mar",
       "status": "pending",
       "phase_id": 6,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D11",
@@ -671,7 +1163,43 @@
       "source": "Session 4 Mar",
       "status": "pending",
       "phase_id": 7,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
+    },
+    {
+      "id": "D12",
+      "title": "Title-based document classification",
+      "rationale": "Use Document Title keyword (after last \" - \" separator) instead of unreliable Document Type column. 84 unique keywords mapped to decision/non-decision/ambiguous buckets.",
+      "source": "Session 6 Mar",
+      "status": "active",
+      "phase_id": 109,
+      "created_at": "2026-03-06 14:32:56"
+    },
+    {
+      "id": "D13",
+      "title": "LLM classification for ambiguous documents",
+      "rationale": "4,084 docs without clear title keyword (\"other\" or no separator) classified via partial text extraction (first+last 2,400 chars) + Gemini. Cost: ~.08.",
+      "source": "Session 6 Mar",
+      "status": "active",
+      "phase_id": 109,
+      "created_at": "2026-03-06 14:32:56"
+    },
+    {
+      "id": "D14",
+      "title": "GCP VM on Lucas project for pipeline execution",
+      "rationale": "Use Lucas GCP project (gen-lang-client-0764097936) for VM + secrets. e2-standard-16 Spot instance. Avoids billing on Gustavo personal project. VM cost: </job.",
+      "source": "Session 6 Mar",
+      "status": "implemented",
+      "phase_id": 109,
+      "created_at": "2026-03-06 14:32:56"
+    },
+    {
+      "id": "D15",
+      "title": "Workers = CPU count (8 local, 16 VM)",
+      "rationale": "SAFE_WORKERS matches logical processor count. Local: 8 vCPU / 8GB RAM. VM: 16 vCPU / 64GB RAM. Each pdfplumber worker uses ~200MB. Comfortable headroom in both environments.",
+      "source": "Session 6 Mar",
+      "status": "active",
+      "phase_id": 109,
+      "created_at": "2026-03-06 14:32:56"
     },
     {
       "id": "D2",
@@ -680,7 +1208,7 @@
       "source": "Meeting 3 Mar",
       "status": "implemented",
       "phase_id": null,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D3",
@@ -689,7 +1217,7 @@
       "source": "Meeting 3 Mar",
       "status": "pending",
       "phase_id": 3,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D4",
@@ -698,7 +1226,7 @@
       "source": "Meeting 3 Mar",
       "status": "pending",
       "phase_id": 1,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D5",
@@ -707,7 +1235,7 @@
       "source": "Meeting 3 Mar",
       "status": "active",
       "phase_id": null,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D6",
@@ -716,7 +1244,7 @@
       "source": "Meeting 3 Mar",
       "status": "pending",
       "phase_id": 4,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D7",
@@ -725,7 +1253,7 @@
       "source": "Meeting 3 Mar",
       "status": "pending",
       "phase_id": 5,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D8",
@@ -734,7 +1262,7 @@
       "source": "Meeting 3 Mar",
       "status": "active",
       "phase_id": null,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D9",
@@ -743,7 +1271,7 @@
       "source": "Meeting 3 Mar",
       "status": "pending",
       "phase_id": 6,
-      "created_at": "2026-03-04 18:10:18"
+      "created_at": "2026-03-04 23:57:30"
     }
   ],
   "dependencies": [
@@ -804,14 +1332,6 @@
       "depends_on_subject": "Implement Sabin filter (citation → Sabin case matching)"
     },
     {
-      "id": 8,
-      "task_id": 24,
-      "depends_on": 20,
-      "dep_type": "blocks",
-      "task_subject": "Execute --test-run 100 through full pipeline",
-      "depends_on_subject": "Update analysis engine for v2.0 citation data"
-    },
-    {
       "id": 9,
       "task_id": 24,
       "depends_on": 5,
@@ -834,6 +1354,14 @@
       "dep_type": "blocks",
       "task_subject": "Write 2-3 descriptive paragraphs",
       "depends_on_subject": "Generate final static maps for Joana"
+    },
+    {
+      "id": 23,
+      "task_id": 27,
+      "depends_on": 19,
+      "dep_type": "blocks",
+      "task_subject": "Full pipeline run on all documents",
+      "depends_on_subject": "Cost estimation: tokens × docs × price"
     }
   ],
   "action_items": [
@@ -842,7 +1370,7 @@
       "owner": "Lucas",
       "description": "Acquire updated Columbia/Sabin Excel with latest cases",
       "deadline": null,
-      "status": "pending",
+      "status": "completed",
       "source": "Meeting 3 Mar"
     },
     {
@@ -890,7 +1418,7 @@
       "owner": "Gustavo",
       "description": "Estimate token costs for full pipeline run",
       "deadline": "2026-03-05",
-      "status": "pending",
+      "status": "completed",
       "source": "Meeting 3 Mar"
     },
     {
@@ -903,17 +1431,18 @@
     }
   ],
   "summary": {
-    "total_tasks": 30,
+    "total_tasks": 62,
     "tasks_by_status": {
-      "completed": 8,
-      "pending": 22
+      "completed": 49,
+      "in_progress": 1,
+      "pending": 12
     },
-    "total_phases": 14,
+    "total_phases": 19,
     "phases_by_status": {
-      "completed": 8,
-      "pending": 6
+      "completed": 14,
+      "pending": 5
     },
-    "exported_at": "2026-03-04T15:54:45.677577",
+    "exported_at": "2026-03-06T11:33:01.168563",
     "deliverable_deadline": "2026-03-09",
     "article_deadline": "2026-03-15"
   }

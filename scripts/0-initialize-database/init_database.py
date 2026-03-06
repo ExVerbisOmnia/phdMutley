@@ -54,7 +54,7 @@ log_dir.mkdir(exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(log_dir / "database_init.log"), logging.StreamHandler()],
+    handlers=[logging.FileHandler(log_dir / "database_init.log", encoding="utf-8"), logging.StreamHandler()],
 )
 
 # Create logger instance
@@ -71,7 +71,7 @@ DATABASE_URL = get_database_url_auto()
 
 # Expose individual values for display purposes only
 DB_HOST = "localhost"
-DB_PORT = "5432"
+DB_PORT = "5433"
 DB_NAME = "climate_litigation"
 
 # ============================================================
@@ -374,8 +374,21 @@ class CitationExtractionPhased(Base):
     cited_year = Column(Integer)
     cited_case_citation = Column(String(500))
 
-    # Citation Context
-    # full_paragraph, position_in_document, start/end_char_index removed in v5.4
+    # v6 Sabin Filter (D1)
+    sabin_case_id_cited = Column(String(200), nullable=True,
+                                 comment="Sabin ID of the cited case (when matched by Sabin filter)")
+    sabin_match_tier = Column(Integer, nullable=True,
+                              comment="Sabin filter match tier: 1=exact, 2=fuzzy")
+    sabin_match_confidence = Column(DECIMAL(3, 2), nullable=True,
+                                    comment="Sabin filter match confidence 0.0-1.0")
+
+    # v6 Snippet Extraction (D7)
+    snippet_text = Column(Text, nullable=True,
+                          comment="Context snippet around citation in source document")
+    snippet_start_char = Column(Integer, nullable=True,
+                                comment="Snippet start character position in document")
+    snippet_end_char = Column(Integer, nullable=True,
+                              comment="Snippet end character position in document")
 
     # Processing Metadata
     phase_2_model = Column(String(50), default="claude-haiku-4.5")
@@ -439,6 +452,32 @@ class CitationExtractionPhasedSummary(Base):
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+class CitationExtractionDiscarded(Base):
+    """
+    Model for citations discarded by the Sabin filter.
+    Stores non-matching citations for manual verification of filter accuracy.
+    """
+
+    __tablename__ = "citation_extraction_discarded"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    document_id = Column(
+        UUID(as_uuid=True), ForeignKey("documents.document_id", ondelete="CASCADE"), nullable=False
+    )
+    case_name = Column(String(500), comment="Case name as extracted by LLM")
+    raw_text = Column(Text, comment="Verbatim citation text from document")
+    confidence = Column(DECIMAL(3, 2), comment="LLM extraction confidence 0.0-1.0")
+    sabin_closest_match = Column(String(500), nullable=True,
+                                 comment="Nearest KB case name from Sabin filter")
+    sabin_match_score = Column(DECIMAL(3, 2), nullable=True,
+                               comment="Highest similarity score from filter")
+    discard_reason = Column(String(100), default="no_sabin_match",
+                            comment="Why citation was discarded")
+    extraction_run_id = Column(String(50), nullable=True,
+                               comment="Batch/run identifier for grouping")
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
 # ============================================================
 # DATABASE INITIALIZATION FUNCTIONS
 # ============================================================
@@ -485,6 +524,7 @@ def init_database(reset: bool = False, verbose: bool = True) -> bool:
                 conn.execute(
                     text("DROP TABLE IF EXISTS citation_extraction_phased_summary CASCADE;")
                 )
+                conn.execute(text("DROP TABLE IF EXISTS citation_extraction_discarded CASCADE;"))
                 conn.execute(text("DROP TABLE IF EXISTS citation_extraction_phased CASCADE;"))
                 conn.execute(text("DROP TABLE IF EXISTS citations CASCADE;"))  # Legacy
                 conn.execute(text("DROP TABLE IF EXISTS citation_extractions CASCADE;"))  # Legacy
@@ -638,6 +678,7 @@ def init_database(reset: bool = False, verbose: bool = True) -> bool:
             "extracted_text",
             "citation_extraction_phased",
             "citation_extraction_phased_summary",
+            "citation_extraction_discarded",
         ]
 
         missing_tables = set(expected_tables) - set(tables)

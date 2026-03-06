@@ -115,20 +115,16 @@ def get_sampled_document_ids(df, n, seed=42, id_column="Document ID"):
 
 def get_sampled_document_uuids(df, n, seed=42, id_column="Document ID"):
     """
-    Return a set of Document UUIDs from a sampled subset (for DB-querying scripts).
-
-    INPUT:
-        - df: pandas DataFrame with document data
-        - n: number of documents to sample (None = no filtering)
-        - seed: random seed
-        - id_column: column containing Document IDs
-    ALGORITHM:
-        1. If n is None, return None (no filtering)
-        2. Sample df via sample_dataframe()
-        3. Convert each Document ID to UUID using generate_document_uuid logic
-        4. Return set of UUIDs
-    OUTPUT: set[UUID] of sampled Document UUIDs, or None
+    DEPRECATED: Use get_sampled_document_ids() instead.
+    All scripts now query by sabin_document_id (string) rather than computed UUIDs.
+    Kept only for backward compatibility — will be removed in a future cleanup.
     """
+    import warnings
+    warnings.warn(
+        "get_sampled_document_uuids() is deprecated. Use get_sampled_document_ids() instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if n is None:
         return None
 

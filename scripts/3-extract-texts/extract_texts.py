@@ -21,8 +21,6 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from uuid import uuid5
-
 import fitz  # PyMuPDF
 import pandas as pd
 import pymupdf4llm
@@ -48,7 +46,6 @@ from config import (
     LOGS_DIR,
     PDF_DOWNLOAD_DIR,
     TRIAL_BATCH_CONFIG,
-    UUID_NAMESPACE,
 )
 from gcp_secrets import get_engine
 from test_run import add_test_run_arg, get_sampled_document_ids
@@ -66,7 +63,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     force=True,
     handlers=[
-        logging.FileHandler(LOGS_DIR / "extraction_memory_safe.log", mode="a"),
+        logging.FileHandler(LOGS_DIR / "extraction_memory_safe.log", mode="a", encoding="utf-8"),
         logging.StreamHandler(),
     ],
 )
@@ -75,7 +72,7 @@ logging.basicConfig(
 # SAFETY SETTINGS
 # ============================================================================
 
-SAFE_WORKERS = 2
+SAFE_WORKERS = 8
 
 # ============================================================================
 # TRIAL BATCH FILTERING
@@ -152,11 +149,6 @@ def should_process_pdf(pdf_filename, trial_batch_ids):
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
-
-
-def generate_document_uuid(document_id_str):
-    clean_id = str(document_id_str).strip().lower()
-    return uuid5(UUID_NAMESPACE, f"document_{clean_id}")
 
 
 def extract_document_id_from_filename(filename):
@@ -343,14 +335,12 @@ def process_single_pdf_safe(args_tuple):
         if not doc_id_str:
             return {"status": "skipped_invalid_name", "file": pdf_path.name}
 
-        doc_uuid = generate_document_uuid(doc_id_str)
-
         # 2. Check DB
-        document = session.query(Document).filter(Document.document_id == doc_uuid).first()
+        document = session.query(Document).filter(Document.sabin_document_id == doc_id_str).first()
         if not document:
             return {"status": "skipped_not_in_db", "file": pdf_path.name}
 
-        if session.query(ExtractedText).filter(ExtractedText.document_id == doc_uuid).first():
+        if session.query(ExtractedText).filter(ExtractedText.document_id == document.document_id).first():
             return {"status": "skipped_exists", "file": pdf_path.name}
 
         # 3. Extract
@@ -358,7 +348,7 @@ def process_single_pdf_safe(args_tuple):
 
         if not extraction_result["success"]:
             extracted = ExtractedText(
-                document_id=doc_uuid,
+                document_id=document.document_id,
                 raw_text="",
                 extraction_quality="failed",
                 extraction_date=datetime.now(),
@@ -389,7 +379,7 @@ def process_single_pdf_safe(args_tuple):
                 method = f"{extraction_result['method']}+md"
 
         extracted = ExtractedText(
-            document_id=doc_uuid,
+            document_id=document.document_id,
             raw_text=extraction_result["text"],
             processed_text=extraction_result["text"],
             text_md=md_text,
@@ -443,7 +433,18 @@ def process_single_pdf_safe(args_tuple):
 # ============================================================================
 
 
-def process_all_pdfs(test_run=None, seed=42, format_mode="markdown"):
+def get_decision_pdf_paths(engine):
+    """Return set of PDF filenames for documents classified as decisions."""
+    from sqlalchemy import text
+    with engine.connect() as conn:
+        rows = conn.execute(text(
+            "SELECT pdf_file_path FROM documents "
+            "WHERE is_decision = TRUE AND pdf_file_path IS NOT NULL"
+        ))
+        return {Path(row[0]).name for row in rows}
+
+
+def process_all_pdfs(test_run=None, seed=42, format_mode="markdown", decisions_only=False):
     logging.info("=" * 70)
     logging.info(f"PDF TEXT EXTRACTION (SAFE MODE) - Workers: {SAFE_WORKERS}")
     logging.info(f"Format mode: {format_mode}")
@@ -474,6 +475,13 @@ def process_all_pdfs(test_run=None, seed=42, format_mode="markdown"):
     else:
         pdf_files = all_pdf_files
 
+    # Filter to decisions only if requested
+    if decisions_only:
+        decision_filenames = get_decision_pdf_paths(get_engine())
+        pre_count = len(pdf_files)
+        pdf_files = [f for f in pdf_files if f.name in decision_filenames]
+        logging.info(f"After --decisions-only filter: {len(pdf_files)} decision PDFs (excluded {pre_count - len(pdf_files)})")
+
     # Apply test-run sampling
     if test_run is not None:
         test_run_ids = get_sampled_document_ids(df_excel, test_run, seed)
@@ -499,7 +507,7 @@ def process_all_pdfs(test_run=None, seed=42, format_mode="markdown"):
 
     # Use limited workers, auto-recycle every 10 tasks to cap memory leaks
     with concurrent.futures.ProcessPoolExecutor(
-        max_workers=SAFE_WORKERS, max_tasks_per_child=10
+        max_workers=SAFE_WORKERS, max_tasks_per_child=50
     ) as executor:
         args_list = [(str(p), format_mode) for p in pdf_files]
 
@@ -554,6 +562,11 @@ if __name__ == "__main__":
         dest="format_mode",
         help="Text format: 'markdown' (default) adds pymupdf4llm extraction, 'plain' skips it",
     )
+    parser.add_argument(
+        "--decisions-only",
+        action="store_true",
+        help="Only extract text from documents classified as decisions",
+    )
     args = parser.parse_args()
 
-    process_all_pdfs(test_run=args.test_run, seed=args.seed, format_mode=args.format_mode)
+    process_all_pdfs(test_run=args.test_run, seed=args.seed, format_mode=args.format_mode, decisions_only=args.decisions_only)

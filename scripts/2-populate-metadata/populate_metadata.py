@@ -64,7 +64,7 @@ from init_database import Case, Document
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(LOGS_DIR / "metadata_population.log"), logging.StreamHandler()],
+    handlers=[logging.FileHandler(LOGS_DIR / "metadata_population.log", encoding="utf-8"), logging.StreamHandler()],
 )
 
 # Suppress verbose logging from external libraries
