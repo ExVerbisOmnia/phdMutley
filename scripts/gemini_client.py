@@ -10,6 +10,7 @@ VERSION: 1.0 — Phase B Gemini migration
 import asyncio
 import json
 import logging
+import random
 import re
 import time
 
@@ -128,7 +129,7 @@ async def call_gemini_async(
     model: str = None,
     max_output_tokens: int | None = None,
     temperature: float = 0.0,
-    max_retries: int = 3,
+    max_retries: int = 5,
     retry_delay: float = 2.0,
     response_mime_type: str = None,
 ) -> dict:
@@ -193,10 +194,18 @@ async def call_gemini_async(
             await asyncio.sleep(retry_delay * (attempt + 1))
 
         except Exception as e:
-            logging.error(f"Gemini API error (attempt {attempt + 1}/{max_retries}): {e}")
-            if attempt == max_retries - 1:
-                raise
-            await asyncio.sleep(retry_delay * (attempt + 1))
+            error_str = str(e).lower()
+            is_rate_limit = "429" in error_str or "resource_exhausted" in error_str or "rate" in error_str
+            if is_rate_limit:
+                jitter = random.uniform(0, retry_delay)
+                wait = retry_delay * (2 ** attempt) + jitter
+                logging.warning(f"Rate limited (attempt {attempt + 1}/{max_retries}), waiting {wait:.1f}s")
+                await asyncio.sleep(wait)
+            else:
+                logging.error(f"Gemini API error (attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt == max_retries - 1:
+                    raise
+                await asyncio.sleep(retry_delay * (attempt + 1))
 
 
 def _extract_json(text: str):

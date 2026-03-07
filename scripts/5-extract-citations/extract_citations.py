@@ -36,10 +36,12 @@ Version: 5.3
 Date: November 25, 2025
 """
 
+import asyncio
 import json
 import logging
 import os
 import re
+import signal
 import sys
 import time
 import uuid
@@ -59,7 +61,7 @@ _SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _SCRIPTS_DIR)
 from config import CONFIG, DATABASE_FILE, LOGS_DIR, TRIAL_BATCH_CONFIG
 from gcp_secrets import get_engine
-from gemini_client import call_gemini
+from gemini_client import call_gemini, call_gemini_async
 from test_run import add_test_run_arg, get_sampled_document_ids
 
 # v6 Knowledge Base modules
@@ -106,6 +108,7 @@ logging.getLogger("google.genai").setLevel(logging.WARNING)
 _kb_cases: list[dict] | None = None  # Loaded once in main()
 _sabin_filter: SabinFilter | None = None  # Initialized once in main()
 _extraction_run_id: str | None = None  # Set once per run in main()
+_shutdown_requested = False  # Graceful shutdown flag for concurrent mode
 
 # ============================================================================
 # PROCESSING CONFIGURATION
@@ -2305,17 +2308,702 @@ def process_single_document_phased(doc_tuple, session, stats: dict) -> bool:
 
 
 # ============================================================================
+# ASYNC WRAPPERS FOR CONCURRENT MODE
+# ============================================================================
+
+
+async def extract_citations_from_text_async(
+    document_id: uuid.UUID,
+    text: str,
+    source_jurisdiction: str,
+    source_region: str,
+) -> dict | None:
+    """Async version of extract_citations_from_text. Uses call_gemini_async."""
+    try:
+        prompt = generate_v6_extraction_prompt(
+            text, source_jurisdiction, source_region, kb_cases=_kb_cases
+        )
+
+        estimated_tokens = estimate_token_count(prompt)
+        logging.info(f"  Prompt size: ~{estimated_tokens:,} tokens")
+
+        start_time = time.time()
+        result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+        extraction_time = time.time() - start_time
+
+        data = result["data"]
+        if not data:
+            data = extract_json_from_text(result["text"])
+
+        if isinstance(data, list) and len(data) > 0:
+            data = data[0]
+
+        if not data or not isinstance(data, dict):
+            raw_text_snippet = result.get("text", "")[:500]
+            logging.error(f"Failed to parse extraction JSON for document {document_id}")
+            logging.info(f"Raw response (first 500 chars): {raw_text_snippet}")
+            logging.info("Retrying extraction...")
+            retry_result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+            data = retry_result["data"] if retry_result else None
+            if isinstance(data, list) and len(data) > 0:
+                data = data[0]
+            if not data or not isinstance(data, dict):
+                data = extract_json_from_text(retry_result["text"]) if retry_result else None
+            if not data:
+                logging.error(f"Retry also failed for document {document_id}")
+                return None
+
+        data["extraction_time"] = extraction_time
+        data["tokens_input"] = result["tokens_in"]
+        data["tokens_output"] = result["tokens_out"]
+        data["model"] = result["model"]
+
+        logging.info(
+            f"  Extraction complete: {data.get('total_references_found', 0)} references in {extraction_time:.1f}s"
+        )
+        logging.info(f"  Tokens: {result['tokens_in']:,} in / {result['tokens_out']:,} out")
+
+        return data
+
+    except Exception as e:
+        logging.error(f"Error in extraction: {e}")
+        import traceback
+        logging.error(traceback.format_exc())
+        return None
+
+
+async def extract_all_case_references_phase2_async(
+    document_id: uuid.UUID, raw_text: str, source_jurisdiction: str, source_region: str
+) -> dict | None:
+    """Async version of extract_all_case_references_phase2."""
+    char_count = len(raw_text)
+    estimated_tokens = estimate_token_count(raw_text)
+    logging.info(f"  Document size: {char_count:,} chars (~{estimated_tokens:,} tokens)")
+
+    if estimated_tokens <= CHUNK_TOKEN_THRESHOLD:
+        return await extract_citations_from_text_async(
+            document_id, raw_text, source_jurisdiction, source_region
+        )
+
+    # Large document — chunked extraction (sequential chunks within a document)
+    chunks = _split_into_chunks(raw_text)
+    logging.info(f"  Document exceeds {CHUNK_TOKEN_THRESHOLD:,} tokens -- splitting into {len(chunks)} chunks")
+
+    all_references = []
+    total_tokens_in = 0
+    total_tokens_out = 0
+    total_time = 0.0
+    model_used = None
+    chunk_failures = 0
+
+    for i, chunk in enumerate(chunks):
+        chunk_tokens = estimate_token_count(chunk)
+        logging.info(f"  Chunk {i + 1}/{len(chunks)}: ~{chunk_tokens:,} tokens")
+
+        result = await extract_citations_from_text_async(
+            document_id, chunk, source_jurisdiction, source_region
+        )
+
+        if result:
+            refs = result.get("case_law_references", [])
+            all_references.extend(refs)
+            total_tokens_in += result.get("tokens_input", 0)
+            total_tokens_out += result.get("tokens_output", 0)
+            total_time += result.get("extraction_time", 0.0)
+            model_used = result.get("model", model_used)
+            logging.info(f"  Chunk {i + 1}: {len(refs)} references extracted")
+        else:
+            chunk_failures += 1
+            logging.warning(f"  Chunk {i + 1}: extraction failed")
+
+    if not all_references and chunk_failures == len(chunks):
+        logging.error(f"  All {len(chunks)} chunks failed for document {document_id}")
+        return None
+
+    before_dedup = len(all_references)
+    all_references = _deduplicate_references(all_references)
+    if before_dedup > len(all_references):
+        logging.info(
+            f"  Deduplication: {before_dedup} -> {len(all_references)} "
+            f"({before_dedup - len(all_references)} duplicates removed)"
+        )
+
+    return {
+        "case_law_references": all_references,
+        "total_references_found": len(all_references),
+        "extraction_notes": f"Chunked extraction: {len(chunks)} chunks, {chunk_failures} failures",
+        "extraction_time": total_time,
+        "tokens_input": total_tokens_in,
+        "tokens_output": total_tokens_out,
+        "model": model_used,
+        "chunk_count": len(chunks),
+    }
+
+
+async def classify_citations_functionally_async(
+    citations: list[dict], raw_text: str, source_jurisdiction: str
+) -> dict[int, dict]:
+    """Async version of classify_citations_functionally."""
+    if not citations:
+        return {}
+
+    BATCH_SIZE = 30
+    all_classifications = {}
+
+    try:
+        text_sample = raw_text
+
+        for batch_start in range(0, len(citations), BATCH_SIZE):
+            batch = citations[batch_start : batch_start + BATCH_SIZE]
+
+            prompt = generate_functional_classification_prompt(
+                batch, text_sample, source_jurisdiction
+            )
+
+            result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+            data = result.get("data") if result else None
+
+            if not data and result:
+                data = extract_json_from_text(result["text"])
+
+            if not data:
+                batch_num = batch_start // BATCH_SIZE + 1
+                raw_snippet = (result.get("text", "")[:300] if result else "no response")
+                logging.warning(f"Failed to parse functional classification JSON (batch {batch_num}) - retrying...")
+                logging.info(f"  Initial raw response (first 300 chars): {raw_snippet}")
+                retry_result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+                data = retry_result.get("data") if retry_result else None
+                if not data and retry_result:
+                    data = extract_json_from_text(retry_result["text"])
+                if not data:
+                    raw_snippet = (retry_result.get("text", "")[:300] if retry_result else "no response")
+                    logging.warning(f"Retry also failed for functional classification batch {batch_num}")
+                    logging.info(f"  Raw response (first 300 chars): {raw_snippet}")
+                    continue
+
+            if isinstance(data, list) and len(data) > 0:
+                data = data[0]
+
+            for item in data.get("classifications", []) if isinstance(data, dict) else []:
+                batch_idx = item.get("citation_index", 0) - 1
+                global_idx = batch_start + batch_idx
+                all_classifications[global_idx] = {
+                    "functional_use": item.get("functional_use", "unknown"),
+                    "opinion_type": item.get("opinion_type", "unclear"),
+                    "key_signals": item.get("key_signals", []),
+                    "reasoning": item.get("reasoning", ""),
+                }
+
+        logging.info(f"  Functional classification complete for {len(all_classifications)} citations")
+        return all_classifications
+
+    except Exception as e:
+        logging.warning(f"Error in functional classification: {e}")
+        return all_classifications
+
+
+async def identify_origin_tier2_sonnet_async(
+    case_name: str, raw_text: str, source_jurisdiction: str = ""
+) -> dict | None:
+    """Async version of identify_origin_tier2_sonnet."""
+    try:
+        source_context = (
+            f"\nSOURCE COURT JURISDICTION: {source_jurisdiction}\n"
+            f"(The citing court is from {source_jurisdiction}. The citation may be domestic or foreign.)\n"
+            if source_jurisdiction
+            else ""
+        )
+
+        prompt = f"""Identify the jurisdiction/country of origin for this legal case citation.
+
+CASE NAME: {case_name}
+RAW CITATION: {raw_text}
+{source_context}
+ANALYSIS RULES:
+1. Identify the court from the citation text (including non-English court names)
+2. Use citation format clues (e.g., "U.S." = United States, "UKSC" = UK, "[2014] FCA" = Australia, "ECLI:NL" = Netherlands)
+3. Analyze case name patterns and language for origin signals
+4. "Reference re ..." citations in Canadian documents are Canadian constitutional references
+5. If you cannot confidently determine the origin, set confidence below 0.5
+
+Respond in JSON:
+{{
+  "origin_country": "country name",
+  "region": "Global North|Global South|International",
+  "court": "court name if identifiable",
+  "year": year if mentioned,
+  "confidence": 0.0-1.0,
+  "reasoning": "brief explanation"
+}}
+
+Analyze the citation objectively. Do NOT assume domestic origin by default."""
+
+        gemini_result = await call_gemini_async(
+            prompt,
+            model=CONFIG["EXTRACTION_MODEL"],
+            max_output_tokens=500,
+        )
+
+        data = gemini_result["data"]
+        if not data:
+            data = extract_json_from_text(gemini_result["text"])
+
+        if isinstance(data, list) and len(data) > 0:
+            data = data[0]
+
+        if not data or not isinstance(data, dict) or data.get("confidence", 0) < 0.5:
+            logging.debug(f"Tier 2: Low confidence for '{case_name}'")
+            return None
+
+        result = {
+            "origin": data.get("origin_country"),
+            "region": data.get("region"),
+            "court": data.get("court"),
+            "year": data.get("year"),
+            "tier": 2,
+            "confidence": data.get("confidence", 0.0),
+            "method": "gemini_analysis",
+            "reasoning": data.get("reasoning", ""),
+        }
+
+        if result["confidence"] >= 0.7:
+            cache_key = case_name.lower().strip()
+            CITATION_ORIGIN_CACHE[cache_key] = result
+
+        logging.debug(
+            f"Tier 2: Identified '{case_name}' -> {result['origin']} (confidence: {result['confidence']})"
+        )
+        return result
+
+    except Exception as e:
+        logging.error(f"Error in Tier 2 identification: {e}")
+        return None
+
+
+async def identify_case_origin_async(
+    case_name: str, raw_text: str, source_jurisdiction: str = "", source_region: str = ""
+) -> dict:
+    """Async version of identify_case_origin. Only Tier 2 is async (API call)."""
+    cache_key = case_name.lower().strip()
+    if cache_key in CITATION_ORIGIN_CACHE:
+        logging.debug(f"Cache hit for '{case_name}'")
+        return CITATION_ORIGIN_CACHE[cache_key]
+
+    # Tier 1: Dictionary lookup (no API call)
+    tier1_result = identify_origin_tier1_dictionary(case_name, raw_text, source_jurisdiction)
+    if tier1_result:
+        return tier1_result
+
+    # Tier 1.5: Domestic pattern heuristic (no API call)
+    if source_jurisdiction and _is_likely_domestic(case_name, raw_text, source_jurisdiction):
+        domestic_result = {
+            "origin": source_jurisdiction,
+            "region": source_region or get_source_region(source_jurisdiction),
+            "court": None,
+            "year": None,
+            "tier": 1,
+            "confidence": 0.80,
+            "method": "domestic_pattern_match",
+        }
+        CITATION_ORIGIN_CACHE[cache_key] = domestic_result
+        logging.debug(f"Domestic pattern match for '{case_name}' -> {source_jurisdiction}")
+        return domestic_result
+
+    # Tier 2: LLM Analysis (async API call)
+    tier2_result = await identify_origin_tier2_sonnet_async(case_name, raw_text, source_jurisdiction)
+    if tier2_result and tier2_result["confidence"] >= 0.5:
+        return tier2_result
+
+    # Tier 3: Web search (sync, stub)
+    tier3_result = identify_origin_tier3_websearch(case_name, raw_text)
+    if tier3_result:
+        return tier3_result
+
+    # Fallback
+    if source_jurisdiction:
+        logging.info(f"Phase 3: Defaulting to domestic for '{case_name}' -> {source_jurisdiction}")
+        fallback_result = {
+            "origin": source_jurisdiction,
+            "region": source_region or get_source_region(source_jurisdiction),
+            "court": None,
+            "year": None,
+            "tier": 3,
+            "confidence": 0.60,
+            "method": "domestic_default",
+        }
+        CITATION_ORIGIN_CACHE[cache_key] = fallback_result
+        return fallback_result
+
+    logging.warning(f"Phase 3: Could not identify origin for '{case_name}'")
+    unknown_result = {
+        "origin": "Unknown",
+        "region": "Unknown",
+        "court": None,
+        "year": None,
+        "tier": 0,
+        "confidence": 0.0,
+        "method": "failed_identification",
+    }
+    CITATION_ORIGIN_CACHE[cache_key] = unknown_result
+    return unknown_result
+
+
+async def process_single_document_phased_async(
+    doc_tuple, session_factory, stats: dict, stats_lock: asyncio.Lock, semaphore: asyncio.Semaphore
+) -> bool:
+    """
+    Async version of process_single_document_phased.
+
+    Each invocation creates its own DB session from session_factory.
+    Semaphore limits concurrent API calls. Stats updated under lock.
+    """
+    async with semaphore:
+        document_id = doc_tuple[0]
+        metadata_data = doc_tuple[1]
+        raw_text = doc_tuple[2]
+        case_id = doc_tuple[3]
+        geographies = doc_tuple[4]
+
+        start_time = time.time()
+        total_api_calls = 0
+        total_tokens_input = 0
+        total_tokens_output = 0
+
+        session = session_factory()
+        try:
+            logging.info(f"\n{'=' * 70}")
+            logging.info(f"Processing Document: {document_id}")
+            logging.info(f"{'=' * 70}")
+
+            # PHASE 1: SOURCE JURISDICTION (no API call)
+            logging.info("Phase 1: Identifying source jurisdiction...")
+            if not geographies and isinstance(metadata_data, dict):
+                geographies = metadata_data.get("Geographies", "")
+
+            source_jurisdiction = extract_country_from_geographies(geographies)
+            source_region = get_source_region(source_jurisdiction)
+            logging.info(f"  Geography raw: {geographies}")
+            logging.info(f"  Source: {source_jurisdiction} ({source_region})")
+
+            # PHASE 2A: PURE EXTRACTION (async API call)
+            logging.info("Phase 2A: Extracting ALL case law references (full document)...")
+            phase2a_result = await extract_all_case_references_phase2_async(
+                document_id, raw_text, source_jurisdiction, source_region
+            )
+
+            if not phase2a_result:
+                logging.error("  Phase 2A failed - skipping document")
+                async with stats_lock:
+                    stats["phase2_failures"] += 1
+                try:
+                    summary = CitationExtractionPhasedSummary(
+                        document_id=document_id,
+                        extraction_started_at=datetime.fromtimestamp(start_time),
+                        extraction_completed_at=datetime.now(timezone.utc),
+                        total_processing_time_seconds=time.time() - start_time,
+                        extraction_success=False,
+                        extraction_error="Phase 2A extraction failed - no result returned",
+                    )
+                    session.add(summary)
+                    session.commit()
+                except Exception as summary_err:
+                    session.rollback()
+                    logging.warning(f"Could not save Phase 2A error summary: {summary_err}")
+                return False
+
+            total_api_calls += phase2a_result.get("chunk_count", 1)
+            total_tokens_input += phase2a_result.get("tokens_input", 0)
+            total_tokens_output += phase2a_result.get("tokens_output", 0)
+
+            references = phase2a_result.get("case_law_references", [])
+            logging.info(f"  Extracted {len(references)} references")
+
+            # SABIN FILTER (no API call)
+            sabin_kept = 0
+            sabin_discarded = 0
+            if _sabin_filter is not None:
+                logging.info("Sabin Filter: Matching citations against knowledge base...")
+                kept, discarded = _sabin_filter.filter_citations(references)
+                sabin_kept = len(kept)
+                sabin_discarded = len(discarded)
+                logging.info(f"  Sabin filter: {sabin_kept} kept, {sabin_discarded} discarded")
+                references = kept
+
+                if discarded:
+                    try:
+                        nested = session.begin_nested()
+                        for d in discarded:
+                            match_info = d.get("sabin_match", {})
+                            session.add(CitationExtractionDiscarded(
+                                document_id=document_id,
+                                case_name=d.get("case_name", "")[:500],
+                                raw_text=d.get("raw_text", d.get("raw_citation_text", "")),
+                                confidence=d.get("confidence"),
+                                sabin_closest_match=match_info.get("closest_name", "")[:500] if match_info.get("closest_name") else None,
+                                sabin_match_score=match_info.get("closest_score"),
+                                discard_reason=match_info.get("reason", "no_sabin_match"),
+                                extraction_run_id=_extraction_run_id,
+                            ))
+                        nested.commit()
+                    except Exception as e:
+                        logging.warning(f"Failed to save discarded citations: {e}")
+                        session.rollback()
+
+            # SNIPPET EXTRACTION (no API call)
+            snippets = []
+            if references:
+                logging.info("Snippet Extraction: Locating citations in document text...")
+                snippets = extract_snippets_batch(raw_text, references)
+                found_count = sum(1 for s in snippets if s.get("found"))
+                logging.info(f"  Snippets: {found_count}/{len(references)} located in text")
+
+            if len(references) == 0:
+                logging.info("  No references found (or all filtered) - creating summary with zero citations")
+                summary = CitationExtractionPhasedSummary(
+                    document_id=document_id,
+                    total_references_extracted=0,
+                    foreign_citations_count=0,
+                    international_citations_count=0,
+                    foreign_international_citations_count=0,
+                    total_api_calls=total_api_calls,
+                    total_tokens_input=total_tokens_input,
+                    total_tokens_output=total_tokens_output,
+                    total_cost_usd=(total_tokens_input / 1e6 * 0.01) + (total_tokens_output / 1e6 * 0.04),
+                    extraction_started_at=datetime.fromtimestamp(start_time),
+                    extraction_completed_at=datetime.now(timezone.utc),
+                    total_processing_time_seconds=time.time() - start_time,
+                    extraction_success=True,
+                    average_confidence=0.0,
+                    items_requiring_review=0,
+                )
+                session.add(summary)
+                session.commit()
+
+                async with stats_lock:
+                    stats["processed"] += 1
+                    stats["no_citations"] += 1
+                    stats["sabin_kept"] += sabin_kept
+                    stats["sabin_discarded"] += sabin_discarded
+                return True
+
+            # PHASE 2B: FUNCTIONAL CLASSIFICATION (async API call)
+            logging.info("Phase 2B: Functional classification of citations...")
+            for i, ref in enumerate(references):
+                if i < len(snippets) and snippets[i].get("found"):
+                    ref["context_snippet"] = snippets[i].get("snippet", "")
+
+            functional_classifications = await classify_citations_functionally_async(
+                references, raw_text, source_jurisdiction
+            )
+            if functional_classifications:
+                total_api_calls += 1
+
+            # PHASE 3 & 4: ORIGIN + CLASSIFICATION
+            logging.info("Phase 3: Identifying case origins...")
+            logging.info("Phase 4: Classifying citations...")
+
+            citation_records = []
+            foreign_count = 0
+            international_count = 0
+            foreign_international_count = 0
+            domestic_count = 0
+            unknown_count = 0
+            confidences = []
+            items_for_review = 0
+            functional_parties_count = 0
+            functional_dismissed_count = 0
+            functional_contributed_count = 0
+            majority_count = 0
+            dissent_count = 0
+
+            for i, ref in enumerate(references):
+                origin_data = await identify_case_origin_async(
+                    ref.get("case_name", ""), ref.get("raw_text", ""),
+                    source_jurisdiction, source_region,
+                )
+
+                if origin_data.get("tier") == 2:
+                    total_api_calls += 1
+
+                citation_type, is_cross_jurisdictional = classify_citation_type(
+                    source_jurisdiction, source_region, origin_data["origin"], origin_data["region"]
+                )
+
+                if citation_type == "Domestic":
+                    domestic_count += 1
+                elif citation_type == "Foreign Citation":
+                    foreign_count += 1
+                elif citation_type == "International Citation":
+                    international_count += 1
+                elif citation_type == "Foreign International Citation":
+                    foreign_international_count += 1
+                elif citation_type == "Unknown":
+                    unknown_count += 1
+
+                func_class = functional_classifications.get(i, {})
+                functional_use = func_class.get("functional_use", "unknown")
+                opinion_type = func_class.get("opinion_type", ref.get("location", "unclear"))
+                key_signals = func_class.get("key_signals", [])
+
+                if functional_use == "parties_argument":
+                    functional_parties_count += 1
+                elif functional_use == "dismissed":
+                    functional_dismissed_count += 1
+                elif functional_use == "contributed":
+                    functional_contributed_count += 1
+
+                if opinion_type == "majority":
+                    majority_count += 1
+                elif opinion_type in ["dissent", "concurrence"]:
+                    dissent_count += 1
+
+                confidence = origin_data.get("confidence", 0.0)
+                confidences.append(confidence)
+                needs_review = confidence < 0.7 or citation_type == "Unknown"
+                if needs_review:
+                    items_for_review += 1
+
+                functional_metadata = {
+                    "functional_use": functional_use,
+                    "opinion_type": opinion_type,
+                    "key_signals": key_signals,
+                    "v5_4_extraction": True,
+                }
+
+                sabin_match = ref.get("sabin_match", {})
+                snippet_data = snippets[i] if i < len(snippets) else {}
+
+                citation_record = CitationExtractionPhased(
+                    document_id=document_id,
+                    case_id=case_id,
+                    source_jurisdiction=source_jurisdiction,
+                    source_region=source_region,
+                    case_name=ref.get("case_name"),
+                    raw_citation_text=ref.get("raw_text"),
+                    location_in_document=opinion_type,
+                    case_law_origin=origin_data["origin"],
+                    case_law_region=origin_data["region"],
+                    origin_identification_tier=origin_data["tier"],
+                    origin_confidence=origin_data["confidence"],
+                    citation_type=citation_type,
+                    is_cross_jurisdictional=is_cross_jurisdictional,
+                    cited_court=origin_data.get("court"),
+                    cited_year=origin_data.get("year"),
+                    phase_2_model=CONFIG["EXTRACTION_MODEL"],
+                    phase_3_model=origin_data.get("method"),
+                    phase_4_model="rule-based",
+                    processing_time_seconds=time.time() - start_time,
+                    api_calls_used=total_api_calls,
+                    requires_manual_review=needs_review,
+                    manual_review_reason=(
+                        f"Low confidence: {confidence:.2f} | FUNC: {json.dumps(functional_metadata)}"
+                        if needs_review
+                        else f"FUNC: {json.dumps(functional_metadata)}"
+                    ),
+                    sabin_case_id_cited=sabin_match.get("sabin_case_id"),
+                    sabin_match_tier=sabin_match.get("tier"),
+                    sabin_match_confidence=sabin_match.get("confidence"),
+                    snippet_text=snippet_data.get("snippet"),
+                    snippet_start_char=snippet_data.get("snippet_start"),
+                    snippet_end_char=snippet_data.get("snippet_end"),
+                )
+                citation_records.append(citation_record)
+
+            # SAVE TO DATABASE
+            logging.info(f"Saving {len(citation_records)} citations (all types)...")
+            total_cross_jurisdictional = foreign_count + international_count + foreign_international_count
+            avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
+            total_cost = (total_tokens_input / 1e6 * 0.01) + (total_tokens_output / 1e6 * 0.04)
+
+            summary = CitationExtractionPhasedSummary(
+                document_id=document_id,
+                total_references_extracted=len(references),
+                foreign_citations_count=foreign_count,
+                international_citations_count=international_count,
+                foreign_international_citations_count=foreign_international_count,
+                total_api_calls=total_api_calls,
+                total_tokens_input=total_tokens_input,
+                total_tokens_output=total_tokens_output,
+                total_cost_usd=total_cost,
+                extraction_started_at=datetime.fromtimestamp(start_time),
+                extraction_completed_at=datetime.now(timezone.utc),
+                total_processing_time_seconds=time.time() - start_time,
+                extraction_success=True,
+                average_confidence=avg_confidence,
+                items_requiring_review=items_for_review,
+            )
+
+            session.add(summary)
+            for citation in citation_records:
+                session.add(citation)
+            session.commit()
+
+            # Update shared stats
+            async with stats_lock:
+                stats["processed"] += 1
+                stats["total_references"] += len(references)
+                stats["foreign_citations"] += foreign_count
+                stats["international_citations"] += international_count
+                stats["foreign_international_citations"] += foreign_international_count
+                stats["domestic_citations"] += domestic_count
+                stats["unknown_citations"] += unknown_count
+                stats["needs_review"] += items_for_review
+                stats["functional_parties"] += functional_parties_count
+                stats["functional_dismissed"] += functional_dismissed_count
+                stats["functional_contributed"] += functional_contributed_count
+                stats["majority_citations"] += majority_count
+                stats["dissent_citations"] += dissent_count
+                stats["sabin_kept"] += sabin_kept
+                stats["sabin_discarded"] += sabin_discarded
+                stats["snippets_found"] += sum(1 for s in snippets if s.get("found"))
+
+            logging.info(f"Completed document {document_id}: {len(references)} refs, ${total_cost:.4f}")
+            return True
+
+        except Exception as e:
+            session.rollback()
+            logging.error(f"Error processing document {document_id}: {e}")
+            import traceback
+            logging.error(traceback.format_exc())
+
+            async with stats_lock:
+                stats["errors"] += 1
+
+            try:
+                session.rollback()
+                summary = CitationExtractionPhasedSummary(
+                    document_id=document_id,
+                    extraction_started_at=datetime.fromtimestamp(start_time),
+                    extraction_completed_at=datetime.now(timezone.utc),
+                    total_processing_time_seconds=time.time() - start_time,
+                    extraction_success=False,
+                    extraction_error=str(e)[:500],
+                )
+                session.add(summary)
+                session.commit()
+            except Exception as summary_err:
+                session.rollback()
+                logging.warning(f"Could not save error summary: {summary_err}")
+
+            return False
+
+        finally:
+            session.close()
+
+
+# ============================================================================
 # MAIN EXECUTION
 # ============================================================================
 
 
-def main(test_run=None, seed=42):
+def main(test_run=None, seed=42, concurrent=None):
     """
     Main execution function.
 
     INPUT:
         - test_run: number of documents to sample (None = all)
         - seed: random seed for reproducible sampling
+        - concurrent: number of concurrent documents (None = sequential)
     ALGORITHM:
         1. Load trial batch filter (if enabled)
         2. Query documents classified as decisions (is_decision = True)
@@ -2474,14 +3162,71 @@ def main(test_run=None, seed=42):
         # Process each document
         logging.info("\n" + "=" * 70)
         logging.info("STARTING FULL-TEXT EXTRACTION")
+        if concurrent:
+            logging.info(f"MODE: CONCURRENT (N={concurrent})")
+        else:
+            logging.info("MODE: SEQUENTIAL")
         logging.info("=" * 70)
 
-        for i, doc in enumerate(
-            tqdm(documents, total=total_to_process, desc="Processing Documents")
-        ):
-            process_single_document_phased(doc, session, stats)
-            if (i + 1) % 100 == 0:
-                session.expunge_all()  # Detach cached objects to free memory
+        if concurrent:
+            # Concurrent mode: use asyncio with per-document sessions
+            concurrent_engine = get_engine(pool_size=concurrent + 5, max_overflow=10)
+            Base.metadata.create_all(concurrent_engine)
+            ConcurrentSessionFactory = sessionmaker(bind=concurrent_engine)
+
+            async def run_concurrent():
+                global _shutdown_requested
+                sem = asyncio.Semaphore(concurrent)
+                lock = asyncio.Lock()
+                pbar = tqdm(total=len(documents), desc="Processing Documents")
+
+                async def process_one(doc):
+                    if _shutdown_requested:
+                        pbar.update(1)
+                        return
+                    result = await process_single_document_phased_async(
+                        doc, ConcurrentSessionFactory, stats, lock, sem
+                    )
+                    pbar.update(1)
+                    return result
+
+                results = await asyncio.gather(
+                    *[process_one(doc) for doc in documents],
+                    return_exceptions=True,
+                )
+                pbar.close()
+
+                # Log any unexpected exceptions from gather
+                for i, result in enumerate(results):
+                    if isinstance(result, Exception):
+                        logging.error(f"Document {i} raised unhandled exception: {result}")
+
+            # Set up graceful shutdown
+            original_sigint = signal.getsignal(signal.SIGINT)
+
+            def _handle_sigint(sig, frame):
+                global _shutdown_requested
+                if _shutdown_requested:
+                    # Second Ctrl+C: force exit
+                    logging.warning("Force shutdown requested")
+                    raise KeyboardInterrupt
+                _shutdown_requested = True
+                logging.warning("Shutdown requested - completing in-progress documents...")
+
+            signal.signal(signal.SIGINT, _handle_sigint)
+            try:
+                asyncio.run(run_concurrent())
+            finally:
+                signal.signal(signal.SIGINT, original_sigint)
+                concurrent_engine.dispose()
+        else:
+            # Sequential mode (original code path)
+            for i, doc in enumerate(
+                tqdm(documents, total=total_to_process, desc="Processing Documents")
+            ):
+                process_single_document_phased(doc, session, stats)
+                if (i + 1) % 100 == 0:
+                    session.expunge_all()  # Detach cached objects to free memory
 
         # Report final statistics
         logging.info("\n" + "=" * 70)
@@ -2542,6 +3287,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Extract citations from judicial decisions")
     add_test_run_arg(parser)
+    parser.add_argument(
+        "--concurrent", type=int, default=None, metavar="N",
+        help="Process N documents concurrently via asyncio (default: sequential)",
+    )
     args = parser.parse_args()
 
-    main(test_run=args.test_run, seed=args.seed)
+    main(test_run=args.test_run, seed=args.seed, concurrent=args.concurrent)
