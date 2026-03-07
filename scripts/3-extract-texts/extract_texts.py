@@ -73,6 +73,7 @@ logging.basicConfig(
 # ============================================================================
 
 SAFE_WORKERS = min(os.cpu_count() or 8, 16)  # Match VM vCPUs (16 on e2-standard-16, 8 on local)
+PDF_TIMEOUT_SECONDS = 300  # 5 min per PDF — prevents worker hangs on corrupt/huge files
 
 # ============================================================================
 # TRIAL BATCH FILTERING
@@ -428,6 +429,25 @@ def process_single_pdf_safe(args_tuple):
         gc.collect()
 
 
+def _tally_result(stats, res):
+    """Increment stats counters based on a single PDF result dict."""
+    status = res.get("status", "error")
+    if status == "success":
+        stats["success"] += 1
+        if res.get("md_success"):
+            stats["md_success"] += 1
+    elif status == "skipped_exists":
+        stats["skipped_exists"] += 1
+    elif status in ["skipped_invalid_name", "skipped_not_in_db"]:
+        stats["skipped_invalid"] += 1
+    elif status == "failed":
+        stats["failed"] += 1
+    elif status not in ("timeout", "error"):
+        stats["errors"] += 1
+        if res.get("error"):
+            logging.error(f"Error: {res['error']}")
+
+
 # ============================================================================
 # MAIN EXECUTION
 # ============================================================================
@@ -502,39 +522,67 @@ def process_all_pdfs(test_run=None, seed=42, format_mode="markdown", decisions_o
 
     stats = {
         "success": 0, "failed": 0, "skipped_exists": 0,
-        "skipped_invalid": 0, "errors": 0, "md_success": 0,
+        "skipped_invalid": 0, "errors": 0, "md_success": 0, "timeouts": 0,
     }
 
-    # Use limited workers, auto-recycle every 10 tasks to cap memory leaks
-    with concurrent.futures.ProcessPoolExecutor(
-        max_workers=SAFE_WORKERS, max_tasks_per_child=50
-    ) as executor:
-        args_list = [(str(p), format_mode) for p in pdf_files]
+    # Process in batches with a fresh executor per batch to prevent deadlocks.
+    # If all workers in a pool die (e.g., on a corrupt PDF), as_completed()
+    # blocks forever. Batching isolates failures: a dead pool only loses the
+    # current batch, and a new pool is created for the next one.
+    BATCH_SIZE = SAFE_WORKERS * 4  # 64 PDFs per batch
+    args_list = [(str(p), format_mode) for p in pdf_files]
 
-        results = list(
-            tqdm(
-                executor.map(process_single_pdf_safe, args_list),
-                total=len(args_list),
-                desc="Extracting (MemSafe)",
-            )
-        )
+    with tqdm(total=len(args_list), desc="Extracting (MemSafe)") as pbar:
+        for batch_start in range(0, len(args_list), BATCH_SIZE):
+            batch = args_list[batch_start:batch_start + BATCH_SIZE]
 
-    # Results
-    for res in results:
-        status = res["status"]
-        if status == "success":
-            stats["success"] += 1
-            if res.get("md_success"):
-                stats["md_success"] += 1
-        elif status == "skipped_exists":
-            stats["skipped_exists"] += 1
-        elif status in ["skipped_invalid_name", "skipped_not_in_db"]:
-            stats["skipped_invalid"] += 1
-        elif status == "failed":
-            stats["failed"] += 1
-        else:
-            stats["errors"] += 1
-            logging.error(f"Error: {res.get('error')}")
+            try:
+                with concurrent.futures.ProcessPoolExecutor(
+                    max_workers=SAFE_WORKERS, max_tasks_per_child=10
+                ) as executor:
+                    futures = {
+                        executor.submit(process_single_pdf_safe, args): args[0]
+                        for args in batch
+                    }
+
+                    # Timeout for the entire batch: PDF_TIMEOUT_SECONDS per PDF in batch
+                    batch_deadline = PDF_TIMEOUT_SECONDS
+                    done, not_done = concurrent.futures.wait(
+                        futures, timeout=batch_deadline, return_when=concurrent.futures.ALL_COMPLETED
+                    )
+
+                    # Process completed futures
+                    for future in done:
+                        pdf_path = futures[future]
+                        try:
+                            res = future.result(timeout=0)
+                        except Exception as e:
+                            stats["errors"] += 1
+                            logging.error(f"❌ Error on {Path(pdf_path).name}: {e}")
+                            res = {"status": "error", "file": Path(pdf_path).name, "error": str(e)}
+                        _tally_result(stats, res)
+                        pbar.update(1)
+
+                    # Handle timed-out futures
+                    if not_done:
+                        timed_out_files = [Path(futures[f]).name for f in not_done]
+                        stats["timeouts"] += len(not_done)
+                        logging.error(
+                            f"⏱️ BATCH TIMEOUT: {len(not_done)} PDFs did not finish in "
+                            f"{batch_deadline}s: {timed_out_files[:5]}{'...' if len(timed_out_files) > 5 else ''}"
+                        )
+                        for f in not_done:
+                            f.cancel()
+                            pbar.update(1)
+
+            except (concurrent.futures.BrokenExecutor, Exception) as pool_err:
+                # All workers died — count entire batch as errors
+                stats["errors"] += len(batch)
+                logging.error(
+                    f"💀 Pool crashed on batch at index {batch_start} ({type(pool_err).__name__}: {pool_err}). "
+                    f"{len(batch)} PDFs lost. Restarting with fresh pool."
+                )
+                pbar.update(len(batch))
 
     logging.info("\n" + "=" * 70)
     logging.info("EXTRACTION SUMMARY")
@@ -543,6 +591,7 @@ def process_all_pdfs(test_run=None, seed=42, format_mode="markdown", decisions_o
     logging.info(f"  Markdown OK:     {stats['md_success']}")
     logging.info(f"Already extracted: {stats['skipped_exists']}")
     logging.info(f"Failed:            {stats['failed']}")
+    logging.info(f"Timeouts:          {stats['timeouts']}")
     logging.info(f"Errors:            {stats['errors']}")
 
     if TRIAL_BATCH_CONFIG["ENABLED"]:
