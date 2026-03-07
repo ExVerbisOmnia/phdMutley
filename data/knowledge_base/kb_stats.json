@@ -1,0 +1,25 @@
+{
+  "total_cases": 4741,
+  "full_kb": {
+    "total_chars": 2145444,
+    "total_tokens_estimated": 534604,
+    "avg_tokens_per_case": 112,
+    "min_tokens": 48,
+    "max_tokens": 270,
+    "fits_single_context": true,
+    "recommended_batches": 1
+  },
+  "compact_kb_for_prompt": {
+    "total_chars": 599311,
+    "total_tokens_estimated": 149827,
+    "pct_of_safe_threshold": 16.6,
+    "batching_needed": false,
+    "notes": "Compact format (name + year + jurisdiction) fits easily in single context. Even with 500K-char documents, total prompt is ~30% of safe threshold. No batching required."
+  },
+  "prompt_estimates": {
+    "doc_10k_chars": {"total_tokens": 155012, "pct_threshold": 17.2},
+    "doc_50k_chars": {"total_tokens": 165012, "pct_threshold": 18.3},
+    "doc_200k_chars": {"total_tokens": 202512, "pct_threshold": 22.5},
+    "doc_500k_chars": {"total_tokens": 277512, "pct_threshold": 30.8}
+  }
+}

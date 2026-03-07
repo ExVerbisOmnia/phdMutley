@@ -72,7 +72,7 @@ logging.basicConfig(
 # SAFETY SETTINGS
 # ============================================================================
 
-SAFE_WORKERS = 8
+SAFE_WORKERS = min(os.cpu_count() or 8, 16)  # Match VM vCPUs (16 on e2-standard-16, 8 on local)
 
 # ============================================================================
 # TRIAL BATCH FILTERING

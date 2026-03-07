@@ -31,6 +31,7 @@ sys.path.insert(0, _SCRIPTS_DIR)
 
 from config import DATABASE_FILE, LOGS_DIR, PDF_DOWNLOAD_DIR
 from gcp_secrets import get_engine
+from pipeline_status import PipelineStatus
 from test_run import add_test_run_arg, get_sampled_document_ids
 
 sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "0-initialize-database"))
@@ -326,6 +327,8 @@ def main(test_run=None, seed=42, reset=False, link_pdfs=True):
         logger.info("-" * 50)
         logger.info("STEP A: Title keyword classification")
 
+        status = PipelineStatus("step-a")
+
         query = session.query(Document).filter(Document.is_decision.is_(None))
 
         if test_ids is not None:
@@ -375,6 +378,13 @@ def main(test_run=None, seed=42, reset=False, link_pdfs=True):
             if (i + 1) % batch_size == 0:
                 session.commit()
                 logger.info(f"Committed batch at {i + 1} documents")
+                status.update(
+                    processed=i + 1,
+                    total=len(unclassified),
+                    errors=0,
+                    decisions=stats["decisions"],
+                    non_decisions=stats["non_decisions"],
+                )
 
         session.commit()
 
@@ -398,6 +408,9 @@ def main(test_run=None, seed=42, reset=False, link_pdfs=True):
     logger.info(f"  --- classified: {classified}")
     logger.info(f"  --- deferred (for Step B): {deferred}")
     logger.info("=" * 70)
+
+    status.update(processed=classified + deferred, total=classified + deferred)
+    status.complete(**stats)
 
 
 # ---------------------------------------------------------------------------

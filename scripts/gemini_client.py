@@ -7,6 +7,7 @@ and token tracking for all pipeline scripts.
 VERSION: 1.0 — Phase B Gemini migration
 """
 
+import asyncio
 import json
 import logging
 import re
@@ -68,7 +69,6 @@ def call_gemini(
         try:
             config_kwargs = dict(
                 temperature=temperature,
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
             )
             if max_output_tokens is not None:
                 config_kwargs["max_output_tokens"] = max_output_tokens
@@ -120,6 +120,83 @@ def call_gemini(
             if attempt == max_retries - 1:
                 raise
             time.sleep(retry_delay * (attempt + 1))
+
+
+async def call_gemini_async(
+    prompt: str,
+    *,
+    model: str = None,
+    max_output_tokens: int | None = None,
+    temperature: float = 0.0,
+    max_retries: int = 3,
+    retry_delay: float = 2.0,
+    response_mime_type: str = None,
+) -> dict:
+    """
+    Async version of call_gemini(). Uses client.aio for non-blocking API calls.
+
+    INPUT/OUTPUT: Same as call_gemini().
+    """
+    if model is None:
+        model = CONFIG["GEMINI_MODEL"]
+
+    client = get_client()
+
+    for attempt in range(max_retries):
+        try:
+            config_kwargs = dict(
+                temperature=temperature,
+            )
+            if max_output_tokens is not None:
+                config_kwargs["max_output_tokens"] = max_output_tokens
+            if response_mime_type:
+                config_kwargs["response_mime_type"] = response_mime_type
+            response = await client.aio.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(**config_kwargs),
+            )
+
+            response_text = response.text
+            tokens_in = response.usage_metadata.prompt_token_count
+            tokens_out = response.usage_metadata.candidates_token_count
+
+            # Attempt JSON parsing
+            data = _extract_json(response_text)
+
+            # If JSON parse failed, try truncation repair
+            if data is None and response_text and response_text.strip():
+                if max_output_tokens is not None and tokens_out >= max_output_tokens:
+                    logging.warning(
+                        f"Response hit max_output_tokens ({tokens_out}/{max_output_tokens}) "
+                        f"— attempting truncated JSON repair"
+                    )
+                else:
+                    logging.warning(
+                        f"JSON parse failed ({tokens_out} tokens out) "
+                        f"— attempting truncated JSON repair"
+                    )
+                data = _repair_truncated_json(response_text)
+
+            return {
+                "text": response_text,
+                "data": data,
+                "tokens_in": tokens_in,
+                "tokens_out": tokens_out,
+                "model": model,
+            }
+
+        except json.JSONDecodeError as e:
+            logging.error(f"JSON parse error (attempt {attempt + 1}/{max_retries}): {e}")
+            if attempt == max_retries - 1:
+                raise
+            await asyncio.sleep(retry_delay * (attempt + 1))
+
+        except Exception as e:
+            logging.error(f"Gemini API error (attempt {attempt + 1}/{max_retries}): {e}")
+            if attempt == max_retries - 1:
+                raise
+            await asyncio.sleep(retry_delay * (attempt + 1))
 
 
 def _extract_json(text: str):

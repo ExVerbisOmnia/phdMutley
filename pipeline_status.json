@@ -1,0 +1,21 @@
+{
+  "step": "step-b",
+  "status": "completed",
+  "started_at": "2026-03-06T17:10:44.760887+00:00",
+  "updated_at": "2026-03-06T17:10:48.442227+00:00",
+  "processed": 0,
+  "total": 0,
+  "errors": 0,
+  "elapsed_seconds": 3.7,
+  "eta_seconds": 0,
+  "details": {
+    "cost_usd": 0.0,
+    "decisions_llm": 0,
+    "non_decisions_llm": 0,
+    "no_pdf": 0,
+    "extraction_failed": 0,
+    "llm_errors": 0,
+    "errors": 0,
+    "unclassified_defaulted": 16255
+  }
+}

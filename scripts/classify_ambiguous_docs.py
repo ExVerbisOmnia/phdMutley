@@ -9,14 +9,14 @@ Step B: For each NULL document, extract head+tail text from PDF and ask Gemini
         whether it is a judicial decision.
 Step C: Bulk-update any still-NULL documents to is_decision=FALSE (epilogue).
 
-VERSION: 1.0
+VERSION: 2.0 — Async parallelized (25 concurrent Gemini calls)
 """
 
 import argparse
+import asyncio
 import logging
 import os
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -31,9 +31,10 @@ from sqlalchemy.orm import sessionmaker
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _SCRIPTS_DIR)
-from config import CONFIG, DATABASE_FILE, LOGS_DIR
+from config import CONFIG, DATABASE_FILE, LOGS_DIR, PDF_DOWNLOAD_DIR
 from gcp_secrets import get_engine
-from gemini_client import call_gemini
+from gemini_client import call_gemini, call_gemini_async
+from pipeline_status import PipelineStatus
 from test_run import add_test_run_arg, get_sampled_document_ids
 
 sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "0-initialize-database"))
@@ -122,22 +123,17 @@ def extract_partial_text_from_pdf(pdf_path, head_chars=2400, tail_chars=2400):
 # ============================================================================
 
 
-def classify_with_llm(partial_text, doc_title, doc_type):
+def build_classification_prompt(partial_text, doc_title, doc_type):
     """
-    Use Gemini to classify whether a document is a judicial decision.
+    Build the Gemini classification prompt.
 
     INPUT:
         - partial_text: Head+tail excerpt from the PDF
         - doc_title: Document title from metadata
         - doc_type: Document type from metadata
-    ALGORITHM:
-        1. Build classification prompt with metadata and excerpt
-        2. Rate-limit with 1.5s sleep
-        3. Call Gemini classification model
-        4. Parse is_judicial_decision and confidence_score from JSON response
-    OUTPUT: (is_decision: bool, confidence: float) or (None, None) on error
+    OUTPUT: Prompt string
     """
-    prompt = f"""You are an expert legal document classifier specializing in judicial decisions worldwide.
+    return f"""You are an expert legal document classifier specializing in judicial decisions worldwide.
 
 <task>
 Analyze the provided document excerpt and determine whether it constitutes a JUDICIAL DECISION.
@@ -187,13 +183,27 @@ CRITICAL: Output ONLY the JSON object. No markdown, no code blocks, no explanato
 {partial_text}
 </document_excerpt>"""
 
+
+def classify_with_llm(partial_text, doc_title, doc_type):
+    """
+    Use Gemini to classify whether a document is a judicial decision (sync version).
+
+    INPUT:
+        - partial_text: Head+tail excerpt from the PDF
+        - doc_title: Document title from metadata
+        - doc_type: Document type from metadata
+    OUTPUT: (is_decision, confidence, tokens_in, tokens_out) or (None, None, 0, 0) on error
+    """
+    prompt = build_classification_prompt(partial_text, doc_title, doc_type)
+
     try:
-        time.sleep(1.5)  # Rate limiting
+        import time
+        time.sleep(0.5)  # Rate limiting for sync usage
 
         result = call_gemini(
             prompt,
             model=CONFIG["CLASSIFICATION_MODEL"],
-            max_output_tokens=200,
+            max_output_tokens=1024,
         )
 
         data = result["data"]
@@ -209,6 +219,78 @@ CRITICAL: Output ONLY the JSON object. No markdown, no code blocks, no explanato
     except Exception as e:
         logging.error(f"LLM classification error: {e}")
         return None, None, 0, 0
+
+
+async def classify_with_llm_async(partial_text, doc_title, doc_type, semaphore):
+    """
+    Async version: classify a document via Gemini with concurrency control.
+
+    INPUT:
+        - partial_text: Head+tail excerpt from the PDF
+        - doc_title, doc_type: Document metadata
+        - semaphore: asyncio.Semaphore for concurrency control
+    OUTPUT: (is_decision, confidence, tokens_in, tokens_out) or (None, None, 0, 0) on error
+    """
+    async with semaphore:
+        prompt = build_classification_prompt(partial_text, doc_title, doc_type)
+        try:
+            result = await call_gemini_async(
+                prompt,
+                model=CONFIG["CLASSIFICATION_MODEL"],
+                max_output_tokens=1024,
+            )
+
+            data = result["data"]
+            if not data:
+                logging.error(f"Failed to parse classification JSON. Response: {result['text'][:300]}")
+                return None, None, result.get("tokens_in", 0), result.get("tokens_out", 0)
+
+            is_decision = data.get("is_judicial_decision", False)
+            confidence = data.get("confidence_score", 0.0)
+
+            return is_decision, confidence, result["tokens_in"], result["tokens_out"]
+
+        except Exception as e:
+            logging.error(f"LLM classification error: {e}")
+            return None, None, 0, 0
+
+
+# ============================================================================
+# ASYNC BATCH ORCHESTRATOR
+# ============================================================================
+
+
+async def classify_batch_async(doc_infos: list[dict], concurrency: int = 25) -> list[dict]:
+    """
+    Run LLM classification for a batch of documents concurrently.
+
+    INPUT:
+        - doc_infos: List of dicts with keys: doc_id, partial_text, title, dtype
+        - concurrency: Max concurrent API calls (default 25 → ~100 RPM)
+    OUTPUT: List of result dicts with keys: doc_id, is_decision, confidence, tokens_in, tokens_out, error
+    """
+    semaphore = asyncio.Semaphore(concurrency)
+    completed = 0
+    total = len(doc_infos)
+
+    async def classify_one(info):
+        nonlocal completed
+        is_decision, confidence, tokens_in, tokens_out = await classify_with_llm_async(
+            info["partial_text"], info["title"], info["dtype"], semaphore
+        )
+        completed += 1
+        if completed % 50 == 0:
+            logging.info(f"  Phase 2 progress: {completed}/{total} API calls completed")
+        return {
+            "doc_id": info["doc_id"],
+            "is_decision": is_decision,
+            "confidence": confidence,
+            "tokens_in": tokens_in,
+            "tokens_out": tokens_out,
+        }
+
+    tasks = [classify_one(info) for info in doc_infos]
+    return await asyncio.gather(*tasks)
 
 
 # ============================================================================
@@ -251,20 +333,14 @@ def aggregate_unclassified(session):
 def main(test_run=None, seed=42):
     """
     Classify ambiguous documents via LLM partial-text analysis (Steps B+C).
+    3-phase architecture: Preparation → Async API calls → DB commits.
 
     INPUT:
         - test_run: Number of documents to sample (None = all)
         - seed: Random seed for reproducible sampling
-    ALGORITHM:
-        1. Query documents WHERE is_decision IS NULL
-        2. Optionally filter by test-run sampling
-        3. For each document: extract PDF text, classify via LLM, update DB
-        4. Run aggregate_unclassified() as Step C epilogue
-        5. Log summary with token/cost totals
-    OUTPUT: Statistics printed to log
     """
     logging.info("=" * 70)
-    logging.info("CLASSIFY AMBIGUOUS DOCUMENTS - Steps B + C")
+    logging.info("CLASSIFY AMBIGUOUS DOCUMENTS - Steps B + C (async)")
     logging.info(f"Classification Model: {CONFIG['CLASSIFICATION_MODEL']}")
     logging.info("=" * 70)
 
@@ -301,9 +377,22 @@ def main(test_run=None, seed=42):
         total = len(documents)
         logging.info(f"Found {total} unclassified documents to process")
 
+        status = PipelineStatus("step-b")
+
         if total == 0:
             logging.info("No unclassified documents found. Skipping to Step C.")
         else:
+            # ==================================================================
+            # PHASE 1: Preparation (synchronous) — PDF extraction, filter docs
+            # ==================================================================
+            logging.info("")
+            logging.info("=" * 70)
+            logging.info("PHASE 1: Preparation — PDF extraction & filtering")
+            logging.info("=" * 70)
+
+            docs_for_llm = []  # List of dicts for async processing
+            doc_map = {}       # doc_id -> ORM Document object
+
             for i, doc in enumerate(documents, 1):
                 try:
                     # Extract metadata
@@ -313,16 +402,32 @@ def main(test_run=None, seed=42):
                         title = doc.metadata_data.get("document_title", "") or ""
                         dtype = doc.metadata_data.get("document_type", "") or ""
 
-                    # Check PDF availability
+                    # Check PDF availability (resolve cross-platform paths)
                     pdf_path = doc.pdf_file_path
-                    if not pdf_path or not Path(pdf_path).exists():
+                    resolved = False
+                    if pdf_path:
+                        # Always try local resolution by filename first (handles
+                        # Windows paths stored in DB when running on Linux VM)
+                        filename = Path(pdf_path.replace("\\", "/")).name
+                        candidate = PDF_DOWNLOAD_DIR / filename
+                        if candidate.exists():
+                            pdf_path = str(candidate)
+                            resolved = True
+                        elif not resolved:
+                            try:
+                                if Path(pdf_path).exists():
+                                    resolved = True
+                            except OSError:
+                                pass  # e.g. filename too long on Linux
+                    if not pdf_path or not resolved:
                         doc.is_decision = False
                         doc.decision_classification_method = "no_pdf"
                         doc.decision_classification_confidence = 0.5
                         doc.decision_classification_date = datetime.now()
                         session.commit()
                         stats["no_pdf"] += 1
-                        logging.info(f"[{i}/{total}] No PDF: {doc.sabin_document_id}")
+                        if i % 100 == 0 or i <= 5:
+                            logging.info(f"  [{i}/{total}] No PDF: {doc.sabin_document_id}")
                         continue
 
                     # Extract partial text from PDF
@@ -334,50 +439,89 @@ def main(test_run=None, seed=42):
                         doc.decision_classification_date = datetime.now()
                         session.commit()
                         stats["extraction_failed"] += 1
-                        logging.info(f"[{i}/{total}] Extraction failed: {doc.sabin_document_id}")
+                        if i % 100 == 0 or i <= 5:
+                            logging.info(f"  [{i}/{total}] Extraction failed: {doc.sabin_document_id}")
                         continue
 
-                    # LLM classification
-                    is_decision, confidence, tokens_in, tokens_out = classify_with_llm(
-                        partial_text, title, dtype
-                    )
-                    stats["total_tokens_in"] += tokens_in
-                    stats["total_tokens_out"] += tokens_out
-
-                    if is_decision is None:
-                        doc.is_decision = False
-                        doc.decision_classification_method = "llm_error"
-                        doc.decision_classification_confidence = 0.3
-                        doc.decision_classification_date = datetime.now()
-                        session.commit()
-                        stats["llm_errors"] += 1
-                        logging.warning(f"[{i}/{total}] LLM error: {doc.sabin_document_id}")
-                        continue
-
-                    # Store successful classification
-                    doc.is_decision = is_decision
-                    doc.decision_classification_method = "llm_partial_text"
-                    doc.decision_classification_confidence = confidence
-                    doc.decision_classification_date = datetime.now()
-                    session.commit()
-
-                    if is_decision:
-                        stats["decisions_llm"] += 1
-                        logging.info(
-                            f"[{i}/{total}] Decision (conf={confidence:.2f}): {doc.sabin_document_id}"
-                        )
-                    else:
-                        stats["non_decisions_llm"] += 1
-                        logging.info(
-                            f"[{i}/{total}] Non-decision (conf={confidence:.2f}): {doc.sabin_document_id}"
-                        )
+                    # Queue for async LLM classification
+                    doc_id = doc.sabin_document_id
+                    docs_for_llm.append({
+                        "doc_id": doc_id,
+                        "partial_text": partial_text,
+                        "title": title,
+                        "dtype": dtype,
+                    })
+                    doc_map[doc_id] = doc
 
                 except Exception as e:
                     session.rollback()
                     stats["errors"] += 1
-                    logging.error(f"[{i}/{total}] Error processing {doc.sabin_document_id}: {e}")
+                    logging.error(f"  [{i}/{total}] Error preparing {doc.sabin_document_id}: {e}")
+
+            logging.info(f"Phase 1 complete: {len(docs_for_llm)} docs queued for LLM, "
+                         f"{stats['no_pdf']} no-PDF, {stats['extraction_failed']} extraction-failed, "
+                         f"{stats['errors']} errors")
+
+            # ==================================================================
+            # PHASE 2: Async API calls — all Gemini calls happen here
+            # ==================================================================
+            if docs_for_llm:
+                logging.info("")
+                logging.info("=" * 70)
+                logging.info(f"PHASE 2: Async LLM classification — {len(docs_for_llm)} docs, concurrency=25")
+                logging.info("=" * 70)
+
+                results = asyncio.run(classify_batch_async(docs_for_llm, concurrency=25))
+
+                # ==============================================================
+                # PHASE 3: DB commits (synchronous) — batch update from results
+                # ==============================================================
+                logging.info("")
+                logging.info("=" * 70)
+                logging.info("PHASE 3: DB commits")
+                logging.info("=" * 70)
+
+                batch_count = 0
+                for r in results:
+                    doc = doc_map[r["doc_id"]]
+                    stats["total_tokens_in"] += r["tokens_in"]
+                    stats["total_tokens_out"] += r["tokens_out"]
+
+                    if r["is_decision"] is None:
+                        doc.is_decision = False
+                        doc.decision_classification_method = "llm_error"
+                        doc.decision_classification_confidence = 0.3
+                        doc.decision_classification_date = datetime.now()
+                        stats["llm_errors"] += 1
+                    else:
+                        doc.is_decision = r["is_decision"]
+                        doc.decision_classification_method = "llm_partial_text"
+                        doc.decision_classification_confidence = r["confidence"]
+                        doc.decision_classification_date = datetime.now()
+                        if r["is_decision"]:
+                            stats["decisions_llm"] += 1
+                        else:
+                            stats["non_decisions_llm"] += 1
+
+                    batch_count += 1
+                    if batch_count % 50 == 0:
+                        session.commit()
+                        status.update(
+                            processed=stats["no_pdf"] + stats["extraction_failed"] + batch_count,
+                            total=total,
+                            errors=stats["llm_errors"] + stats["errors"],
+                            decisions_llm=stats["decisions_llm"],
+                            non_decisions_llm=stats["non_decisions_llm"],
+                            no_pdf=stats["no_pdf"],
+                        )
+                        logging.info(f"  Committed batch {batch_count}/{len(results)}")
+
+                # Final commit for remainder
+                session.commit()
+                logging.info(f"Phase 3 complete: {batch_count} results committed")
 
         # Step C: aggregate unclassified
+        logging.info("")
         logging.info("=" * 70)
         logging.info("STEP C: Aggregate Unclassified Documents")
         logging.info("=" * 70)
@@ -405,6 +549,12 @@ def main(test_run=None, seed=42):
         cost_out = stats["total_tokens_out"] * 0.30 / 1_000_000
         logging.info(f"Estimated cost:          ${cost_in + cost_out:.4f}")
         logging.info("=" * 70)
+
+        status.update(processed=total, total=total, errors=stats["errors"])
+        status.complete(
+            cost_usd=round(cost_in + cost_out, 4),
+            **{k: v for k, v in stats.items() if k != "total_tokens_in" and k != "total_tokens_out"},
+        )
 
     finally:
         session.close()
