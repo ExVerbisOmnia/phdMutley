@@ -167,9 +167,13 @@ def _build_snippet(
     }
 
 
-def _normalize_whitespace(text: str) -> str:
-    """Collapse all whitespace to single spaces."""
+def normalize_whitespace(text: str) -> str:
+    """Collapse all whitespace to single spaces. Public API for reuse."""
     return re.sub(r"\s+", " ", text).strip()
+
+
+# Keep private alias for backward compatibility within this module
+_normalize_whitespace = normalize_whitespace
 
 
 def _map_to_original(original: str, normalized: str, norm_pos: int, norm_len: int) -> tuple[int, int] | None:
