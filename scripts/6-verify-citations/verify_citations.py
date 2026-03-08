@@ -541,6 +541,29 @@ async def verify_single_document(
                 for citation in citations:
                     v = all_verifications.get(citation.extraction_id)
 
+                    if not v and not all_verifications:
+                        # All batches were skipped (too long) — persist status
+                        session.execute(
+                            sa_text("""
+                                UPDATE citation_extraction_phased
+                                SET verification_status = 'SKIPPED_TOO_LONG',
+                                    verification_notes = :notes,
+                                    verification_model = :model,
+                                    verified_at = :now,
+                                    requires_manual_review = TRUE,
+                                    manual_review_reason = 'Document exceeds token limit'
+                                WHERE extraction_id = :extraction_id
+                                  AND verification_status IS NULL
+                            """),
+                            {
+                                "notes": f"Document text {len(document_text):,} chars exceeds model context window",
+                                "model": model,
+                                "now": now,
+                                "extraction_id": str(citation.extraction_id),
+                            },
+                        )
+                        continue
+
                     if v:
                         verdict = v["verdict"]
                         quote = v["quote"]
