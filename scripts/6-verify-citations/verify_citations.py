@@ -478,6 +478,13 @@ async def verify_single_document(
                         continue
                     raise
 
+                # Guard against None result (e.g., all retries exhausted)
+                if result is None:
+                    logging.warning(f"Doc {doc_id}: API returned None, skipping batch")
+                    async with lock:
+                        stats["parse_errors"] += 1
+                    continue
+
                 # Track cost
                 tokens_in = result.get("tokens_in", 0)
                 tokens_out = result.get("tokens_out", 0)
