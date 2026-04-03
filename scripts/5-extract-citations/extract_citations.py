@@ -1,29 +1,26 @@
 #!/usr/bin/env python3
 """
-Citation Extraction Script - Version 5.3 (Full Text Processing)
-================================================================
-Enhanced Foreign Case Law Capture with Complete Document Analysis
+Citation Extraction Script - Version 7.0 (Anti-Hallucination Pipeline)
+=======================================================================
+Full-text extraction with KB-removed prompt, hard filters, and inline verification.
 
 🏃 Run from: project root
-Command: python scripts/phase2/extract_citations_v5_3_fulltext.py
+Command: python scripts/5-extract-citations/extract_citations.py
 
-VERSION 5.3 - FULL TEXT PROCESSING WITH SEPARATION OF CONCERNS
-==============================================================
+VERSION 7.0 - ANTI-HALLUCINATION PIPELINE
+==========================================
 
-CHANGES FROM v5.2:
-- FULL TEXT PROCESSING: Passes entire document to LLM (1M token context, no chunking)
-- ALL 12 EXTRACTION PATTERNS
-- TWO-PASS APPROACH: Extraction and Functional Classification are separated
-  - Pass 1: Pure extraction (maximize recall)
-  - Pass 2: Functional classification (applied to extracted citations)
-- No output token limit, no response_mime_type — model finishes naturally
-
-ARCHITECTURE:
-Phase 1: Source Jurisdiction Identification (from Case.geographies)
-Phase 2A: Extract ALL case law references - FULL DOCUMENT (Gemini 3.1 Flash-Lite)
-Phase 2B: Functional Classification of extracted citations (Gemini 3.1 Pro)
-Phase 3: Identify case origin (3-tier: Dictionary → Gemini → Web Search)
-Phase 4: Classify citation type (Geographic + Functional)
+Pipeline phases:
+  Phase 0:  Document quality pre-check (garbled/too-long detection)
+  Phase 1:  Source Jurisdiction Identification
+  Phase 2A: Extract ALL case references (Gemini 2.5 Flash, thinking=1024)
+  Phase 2A+: Hard filters (pipe-format, anachronism detection)
+  Phase 2A+: Sabin Filter (keep only KB-matched citations)
+  Phase 2A+: Snippet Extraction (locate citations in document text)
+  Phase 2B: Functional Classification (Gemini 2.5 Flash, thinking=2048)
+  Phase 3:  Identify case origin (3-Tier: Dictionary > Gemini > Web)
+  Phase 4:  Classify citation type (Geographic + Functional)
+  Phase 5:  Inline verification (Gemini 2.5 Flash, thinking=1024)
 
 REQUIREMENTS:
 - Documents must be classified first (is_decision = True)
@@ -32,8 +29,8 @@ REQUIREMENTS:
 
 Author: Lucas Biasetton & Claude
 Project: Doutorado PM
-Version: 5.3
-Date: November 25, 2025
+Version: 7.0
+Date: March 2026
 """
 
 import asyncio
@@ -69,6 +66,10 @@ from build_knowledge_base import load_knowledge_base
 from extraction_prompt_v6 import generate_v6_extraction_prompt
 from sabin_filter import SabinFilter
 from snippet_extractor import extract_snippets_batch
+
+# v7 Quality & Verification modules
+from text_quality import is_garbled_text, is_too_long
+from citation_verification import verify_document_citations_inline
 
 sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "0-initialize-database"))
 
@@ -109,6 +110,84 @@ _kb_cases: list[dict] | None = None  # Loaded once in main()
 _sabin_filter: SabinFilter | None = None  # Initialized once in main()
 _extraction_run_id: str | None = None  # Set once per run in main()
 _shutdown_requested = False  # Graceful shutdown flag for concurrent mode
+
+
+# ============================================================================
+# POST-EXTRACTION HARD FILTERS (anti-hallucination, Step 1D.1)
+# ============================================================================
+
+
+def is_pipe_format(raw_text: str) -> bool:
+    """
+    Detect Sabin metadata format: 'Case Name (Year) | Court; Jurisdiction'.
+    Citations with this format are KB contamination, not real citations.
+    """
+    if not raw_text:
+        return False
+    return bool('|' in raw_text and re.search(r'\(\d{4}\)\s*\|', raw_text))
+
+
+def is_anachronistic(cited_year, document_year) -> bool:
+    """
+    Detect citations to cases that didn't exist when the document was written.
+    +1 year tolerance for cases decided near year boundary.
+    """
+    if cited_year and document_year:
+        try:
+            return int(cited_year) > int(document_year) + 1
+        except (ValueError, TypeError):
+            return False
+    return False
+
+
+def apply_hard_filters(references: list[dict], document_year: int | None = None) -> tuple[list[dict], list[dict]]:
+    """
+    Apply post-extraction hard filters to remove hallucinated citations.
+
+    INPUT:
+        - references: List of extracted citation dicts
+        - document_year: Year of the source document
+    OUTPUT: (kept, discarded) — both lists of citation dicts
+        Discarded items have 'discard_reason' added.
+    """
+    kept = []
+    discarded = []
+
+    for ref in references:
+        raw_text = ref.get("raw_text", ref.get("raw_citation_text", ""))
+
+        # Filter 1: Pipe-format metadata contamination
+        if is_pipe_format(raw_text):
+            ref["discard_reason"] = "pipe_format_metadata"
+            discarded.append(ref)
+            continue
+
+        # Filter 2: Anachronistic citation
+        cited_year = ref.get("cited_year") or _extract_year_from_text(raw_text)
+        if document_year and cited_year and is_anachronistic(cited_year, document_year):
+            ref["discard_reason"] = f"anachronistic_{cited_year}_from_{document_year}"
+            discarded.append(ref)
+            continue
+
+        kept.append(ref)
+
+    return kept, discarded
+
+
+def _extract_year_from_text(text: str) -> int | None:
+    """Extract a 4-digit year from citation text, preferring years in parentheses."""
+    if not text:
+        return None
+    # Prefer years in parentheses like (2015) or [2015]
+    m = re.search(r'[\(\[]((?:19|20)\d{2})[\)\]]', text)
+    if m:
+        return int(m.group(1))
+    # Fallback: any 4-digit year
+    m = re.search(r'\b((?:19|20)\d{2})\b', text)
+    if m:
+        return int(m.group(1))
+    return None
+
 
 # ============================================================================
 # PROCESSING CONFIGURATION
@@ -2317,19 +2396,25 @@ async def extract_citations_from_text_async(
     text: str,
     source_jurisdiction: str,
     source_region: str,
+    document_year: int | None = None,
 ) -> dict | None:
     """Async version of extract_citations_from_text. Uses call_gemini_async."""
     try:
         prompt = generate_v6_extraction_prompt(
-            text, source_jurisdiction, source_region, kb_cases=_kb_cases
+            text, source_jurisdiction, source_region, kb_cases=_kb_cases,
+            document_year=document_year
         )
 
         estimated_tokens = estimate_token_count(prompt)
         logging.info(f"  Prompt size: ~{estimated_tokens:,} tokens")
 
         start_time = time.time()
-        result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+        result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"], thinking_budget=1024)
         extraction_time = time.time() - start_time
+
+        if result is None:
+            logging.error(f"  API call returned None for document {document_id}")
+            return None
 
         data = result["data"]
         if not data:
@@ -2343,7 +2428,7 @@ async def extract_citations_from_text_async(
             logging.error(f"Failed to parse extraction JSON for document {document_id}")
             logging.info(f"Raw response (first 500 chars): {raw_text_snippet}")
             logging.info("Retrying extraction...")
-            retry_result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+            retry_result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"], thinking_budget=1024)
             data = retry_result["data"] if retry_result else None
             if isinstance(data, list) and len(data) > 0:
                 data = data[0]
@@ -2373,7 +2458,8 @@ async def extract_citations_from_text_async(
 
 
 async def extract_all_case_references_phase2_async(
-    document_id: uuid.UUID, raw_text: str, source_jurisdiction: str, source_region: str
+    document_id: uuid.UUID, raw_text: str, source_jurisdiction: str, source_region: str,
+    document_year: int | None = None,
 ) -> dict | None:
     """Async version of extract_all_case_references_phase2."""
     char_count = len(raw_text)
@@ -2382,7 +2468,8 @@ async def extract_all_case_references_phase2_async(
 
     if estimated_tokens <= CHUNK_TOKEN_THRESHOLD:
         return await extract_citations_from_text_async(
-            document_id, raw_text, source_jurisdiction, source_region
+            document_id, raw_text, source_jurisdiction, source_region,
+            document_year=document_year,
         )
 
     # Large document — chunked extraction (sequential chunks within a document)
@@ -2401,7 +2488,8 @@ async def extract_all_case_references_phase2_async(
         logging.info(f"  Chunk {i + 1}/{len(chunks)}: ~{chunk_tokens:,} tokens")
 
         result = await extract_citations_from_text_async(
-            document_id, chunk, source_jurisdiction, source_region
+            document_id, chunk, source_jurisdiction, source_region,
+            document_year=document_year
         )
 
         if result:
@@ -2460,7 +2548,7 @@ async def classify_citations_functionally_async(
                 batch, text_sample, source_jurisdiction
             )
 
-            result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+            result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"], thinking_budget=2048)
             data = result.get("data") if result else None
 
             if not data and result:
@@ -2471,7 +2559,7 @@ async def classify_citations_functionally_async(
                 raw_snippet = (result.get("text", "")[:300] if result else "no response")
                 logging.warning(f"Failed to parse functional classification JSON (batch {batch_num}) - retrying...")
                 logging.info(f"  Initial raw response (first 300 chars): {raw_snippet}")
-                retry_result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"])
+                retry_result = await call_gemini_async(prompt, model=CONFIG["EXTRACTION_MODEL"], thinking_budget=2048)
                 data = retry_result.get("data") if retry_result else None
                 if not data and retry_result:
                     data = extract_json_from_text(retry_result["text"])
@@ -2540,8 +2628,9 @@ Analyze the citation objectively. Do NOT assume domestic origin by default."""
 
         gemini_result = await call_gemini_async(
             prompt,
-            model=CONFIG["EXTRACTION_MODEL"],
+            model=CONFIG["CLASSIFICATION_MODEL"],
             max_output_tokens=500,
+            thinking_budget=1024,
         )
 
         data = gemini_result["data"]
@@ -2675,6 +2764,28 @@ async def process_single_document_phased_async(
             logging.info(f"Processing Document: {document_id}")
             logging.info(f"{'=' * 70}")
 
+            # PHASE 0: DOCUMENT QUALITY PRE-CHECK (no API call)
+            if is_garbled_text(raw_text):
+                logging.info(f"Phase 0: SKIPPED — garbled text ({len(raw_text):,} chars)")
+                summary = CitationExtractionPhasedSummary(
+                    document_id=document_id,
+                    total_references_extracted=0,
+                    extraction_started_at=datetime.fromtimestamp(start_time),
+                    extraction_completed_at=datetime.now(timezone.utc),
+                    total_processing_time_seconds=time.time() - start_time,
+                    extraction_success=False,
+                    extraction_error="SKIPPED_GARBLED: Document text is garbled/corrupted",
+                )
+                session.add(summary)
+                session.commit()
+                async with stats_lock:
+                    stats["errors"] += 1
+                return False
+
+            doc_is_too_long = is_too_long(raw_text)
+            if doc_is_too_long:
+                logging.warning(f"Phase 0: Document is very large ({len(raw_text):,} chars) — will process but flag verification")
+
             # PHASE 1: SOURCE JURISDICTION (no API call)
             logging.info("Phase 1: Identifying source jurisdiction...")
             if not geographies and isinstance(metadata_data, dict):
@@ -2685,14 +2796,31 @@ async def process_single_document_phased_async(
             logging.info(f"  Geography raw: {geographies}")
             logging.info(f"  Source: {source_jurisdiction} ({source_region})")
 
+            # Extract document_year early (used by prompt and hard filters)
+            document_year = None
+            if isinstance(metadata_data, dict):
+                date_val = metadata_data.get("Filing Date") or metadata_data.get("Document Date")
+                if date_val:
+                    try:
+                        if hasattr(date_val, 'year'):
+                            document_year = date_val.year
+                        else:
+                            year_match = re.search(r'((?:19|20)\d{2})', str(date_val))
+                            if year_match:
+                                document_year = int(year_match.group(1))
+                    except (ValueError, TypeError):
+                        pass
+
             # PHASE 2A: PURE EXTRACTION (async API call)
             logging.info("Phase 2A: Extracting ALL case law references (full document)...")
             phase2a_result = await extract_all_case_references_phase2_async(
-                document_id, raw_text, source_jurisdiction, source_region
+                document_id, raw_text, source_jurisdiction, source_region,
+                document_year=document_year,
             )
 
             if not phase2a_result:
-                logging.error("  Phase 2A failed - skipping document")
+                logging.error(f"  Phase 2A failed - skipping document "
+                              f"(text_len={len(raw_text):,} chars)")
                 async with stats_lock:
                     stats["phase2_failures"] += 1
                 try:
@@ -2717,6 +2845,31 @@ async def process_single_document_phased_async(
 
             references = phase2a_result.get("case_law_references", [])
             logging.info(f"  Extracted {len(references)} references")
+
+            # HARD FILTERS (anti-hallucination, no API call)
+            if references:
+                kept_refs, filter_discarded = apply_hard_filters(references, document_year)
+                if filter_discarded:
+                    logging.info(f"  Hard filters: {len(filter_discarded)} citations discarded "
+                                 f"(pipe:{sum(1 for d in filter_discarded if d.get('discard_reason','').startswith('pipe'))} "
+                                 f"anachronistic:{sum(1 for d in filter_discarded if d.get('discard_reason','').startswith('anach'))})")
+                    # Save discarded to DB
+                    try:
+                        nested = session.begin_nested()
+                        for d in filter_discarded:
+                            session.add(CitationExtractionDiscarded(
+                                document_id=document_id,
+                                case_name=d.get("case_name", "")[:500],
+                                raw_text=d.get("raw_text", d.get("raw_citation_text", "")),
+                                confidence=d.get("confidence"),
+                                discard_reason=d.get("discard_reason", "hard_filter"),
+                                extraction_run_id=_extraction_run_id,
+                            ))
+                        nested.commit()
+                    except Exception as e:
+                        logging.warning(f"Failed to save hard-filter discarded citations: {e}")
+                        session.rollback()
+                references = kept_refs
 
             # SABIN FILTER (no API call)
             sabin_kept = 0
@@ -2768,7 +2921,7 @@ async def process_single_document_phased_async(
                     total_api_calls=total_api_calls,
                     total_tokens_input=total_tokens_input,
                     total_tokens_output=total_tokens_output,
-                    total_cost_usd=(total_tokens_input / 1e6 * 0.01) + (total_tokens_output / 1e6 * 0.04),
+                    total_cost_usd=(total_tokens_input / 1e6 * 0.15) + (total_tokens_output / 1e6 * 0.60),
                     extraction_started_at=datetime.fromtimestamp(start_time),
                     extraction_completed_at=datetime.now(timezone.utc),
                     total_processing_time_seconds=time.time() - start_time,
@@ -2909,11 +3062,62 @@ async def process_single_document_phased_async(
                 )
                 citation_records.append(citation_record)
 
+            # PHASE 5: INLINE VERIFICATION (async API call)
+            verification_stats = {"confirmed": 0, "not_found": 0, "misattributed": 0,
+                                  "cost_usd": 0.0, "tokens_in": 0, "tokens_out": 0, "tokens_thinking": 0}
+            if citation_records and not doc_is_too_long:
+                logging.info("Phase 5: Inline verification of extracted citations...")
+                try:
+                    # Add records to session first so they get extraction_id assigned
+                    for cr in citation_records:
+                        session.add(cr)
+                    session.flush()  # Assign PKs without committing
+
+                    v_result = await verify_document_citations_inline(
+                        document_text=raw_text,
+                        citation_records=citation_records,
+                        model=CONFIG["EXTRACTION_MODEL"],
+                        thinking_budget=1024,
+                    )
+                    verification_stats = v_result
+
+                    # Apply verification updates to ORM objects
+                    for extraction_id, update_dict in v_result.get("updates", []):
+                        for cr in citation_records:
+                            if cr.extraction_id == extraction_id:
+                                for key, val in update_dict.items():
+                                    setattr(cr, key, val)
+                                break
+
+                    total_api_calls += v_result.get("api_calls", 0)
+                    total_tokens_input += v_result.get("tokens_in", 0)
+                    total_tokens_output += v_result.get("tokens_out", 0)
+
+                    unverified_count = v_result.get('unverified', 0)
+                    uv_suffix = f" UV:{unverified_count}" if unverified_count else ""
+                    logging.info(f"  Verification: C:{v_result['confirmed']} NF:{v_result['not_found']} "
+                                 f"M:{v_result['misattributed']}{uv_suffix} Cost:${v_result['cost_usd']:.4f}")
+                except Exception as ve:
+                    logging.warning(f"Phase 5 verification failed (non-fatal): {ve}")
+                    # VMISSUE-3 fix: set all citations to UNVERIFIED when Phase 5 fails entirely
+                    from datetime import timezone as _tz
+                    _now = datetime.now(_tz.utc)
+                    for cr in citation_records:
+                        if not getattr(cr, 'verification_status', None):
+                            cr.verification_status = "UNVERIFIED"
+                            cr.verification_notes = f"Phase 5 failed: {str(ve)[:200]}"
+                            cr.verified_at = _now
+                            cr.requires_manual_review = True
+                            cr.manual_review_reason = "Verification: UNVERIFIED — Phase 5 exception"
+            elif doc_is_too_long:
+                logging.info("Phase 5: SKIPPED — document too long for verification")
+                verification_stats["skipped"] = len(citation_records)
+
             # SAVE TO DATABASE
             logging.info(f"Saving {len(citation_records)} citations (all types)...")
             total_cross_jurisdictional = foreign_count + international_count + foreign_international_count
             avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
-            total_cost = (total_tokens_input / 1e6 * 0.01) + (total_tokens_output / 1e6 * 0.04)
+            total_cost = (total_tokens_input / 1e6 * 0.15) + (total_tokens_output / 1e6 * 0.60)
 
             summary = CitationExtractionPhasedSummary(
                 document_id=document_id,
@@ -2931,11 +3135,19 @@ async def process_single_document_phased_async(
                 extraction_success=True,
                 average_confidence=avg_confidence,
                 items_requiring_review=items_for_review,
+                verified_confirmed=verification_stats.get("confirmed", 0),
+                verified_not_found=verification_stats.get("not_found", 0),
+                verified_misattributed=verification_stats.get("misattributed", 0),
+                verified_skipped=verification_stats.get("skipped", 0),
+                verification_cost_usd=verification_stats.get("cost_usd", 0.0),
             )
 
             session.add(summary)
+            # citation_records may already be added via session.add() in Phase 5
+            # Only add if not already in session
             for citation in citation_records:
-                session.add(citation)
+                if citation not in session:
+                    session.add(citation)
             session.commit()
 
             # Update shared stats
@@ -2956,6 +3168,10 @@ async def process_single_document_phased_async(
                 stats["sabin_kept"] += sabin_kept
                 stats["sabin_discarded"] += sabin_discarded
                 stats["snippets_found"] += sum(1 for s in snippets if s.get("found"))
+                stats["verified_confirmed"] += verification_stats.get("confirmed", 0)
+                stats["verified_not_found"] += verification_stats.get("not_found", 0)
+                stats["verified_misattributed"] += verification_stats.get("misattributed", 0)
+                stats["verification_cost_usd"] += verification_stats.get("cost_usd", 0.0)
 
             logging.info(f"Completed document {document_id}: {len(references)} refs, ${total_cost:.4f}")
             return True
@@ -3018,17 +3234,20 @@ def main(test_run=None, seed=42, concurrent=None):
     _extraction_run_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
     logging.info("=" * 70)
-    logging.info("CITATION EXTRACTION v6.0 - KB-ENHANCED PIPELINE")
-    logging.info("Complete Document Analysis with Sabin Knowledge Base")
+    logging.info("CITATION EXTRACTION v7.0 - ANTI-HALLUCINATION PIPELINE")
+    logging.info("Full-text extraction with hard filters and inline verification")
     logging.info("=" * 70)
     logging.info("Architecture:")
+    logging.info("  Phase 0:  Document Quality Pre-check")
     logging.info("  Phase 1:  Source Jurisdiction Identification")
-    logging.info(f"  Phase 2A: Extract ALL Case References ({CONFIG['EXTRACTION_MODEL']})")
-    logging.info("  Phase 2A+: Snippet Extraction (locate citations in document)")
+    logging.info(f"  Phase 2A: Extract ALL Case References ({CONFIG['EXTRACTION_MODEL']}, thinking)")
+    logging.info("  Phase 2A+: Hard Filters (pipe-format, anachronism)")
     logging.info("  Phase 2A+: Sabin Filter (keep only KB-matched citations)")
-    logging.info(f"  Phase 2B: Functional Classification ({CONFIG['EXTRACTION_MODEL']})")
+    logging.info("  Phase 2A+: Snippet Extraction (locate citations in document)")
+    logging.info(f"  Phase 2B: Functional Classification ({CONFIG['EXTRACTION_MODEL']}, thinking)")
     logging.info("  Phase 3:  Identify Case Origin (3-Tier: Dictionary > Gemini > Web)")
     logging.info("  Phase 4:  Classify Citation Type (Geographic + Functional)")
+    logging.info("  Phase 5:  Inline Verification (confirm citations in source text)")
     logging.info("=" * 70)
     logging.info("Loading Sabin knowledge base...")
     _kb_cases = load_knowledge_base()
@@ -3157,6 +3376,13 @@ def main(test_run=None, seed=42, concurrent=None):
             "sabin_discarded": 0,
             # v6 Snippet stats
             "snippets_found": 0,
+            # v7 Hard filter stats
+            "hard_filter_discarded": 0,
+            # v7 Verification stats
+            "verified_confirmed": 0,
+            "verified_not_found": 0,
+            "verified_misattributed": 0,
+            "verification_cost_usd": 0.0,
         }
 
         # Process each document
@@ -3220,17 +3446,47 @@ def main(test_run=None, seed=42, concurrent=None):
                 signal.signal(signal.SIGINT, original_sigint)
                 concurrent_engine.dispose()
         else:
-            # Sequential mode (original code path)
-            for i, doc in enumerate(
-                tqdm(documents, total=total_to_process, desc="Processing Documents")
-            ):
-                process_single_document_phased(doc, session, stats)
-                if (i + 1) % 100 == 0:
-                    session.expunge_all()  # Detach cached objects to free memory
+            # Sequential mode — uses async path to ensure Phase 0, hard filters,
+            # Phase 5 verification, and thinking are all active
+            sequential_engine = get_engine(pool_size=5, max_overflow=5)
+            Base.metadata.create_all(sequential_engine)
+            SequentialSessionFactory = sessionmaker(bind=sequential_engine)
+
+            async def run_sequential():
+                global _shutdown_requested
+                lock = asyncio.Lock()
+                sem = asyncio.Semaphore(1)
+                pbar = tqdm(total=len(documents), desc="Processing Documents")
+                for doc in documents:
+                    if _shutdown_requested:
+                        pbar.update(1)
+                        continue
+                    await process_single_document_phased_async(
+                        doc, SequentialSessionFactory, stats, lock, sem
+                    )
+                    pbar.update(1)
+                pbar.close()
+
+            original_sigint = signal.getsignal(signal.SIGINT)
+
+            def _handle_sigint_seq(sig, frame):
+                global _shutdown_requested
+                if _shutdown_requested:
+                    logging.warning("Force shutdown requested")
+                    raise KeyboardInterrupt
+                _shutdown_requested = True
+                logging.warning("Shutdown requested - completing current document...")
+
+            signal.signal(signal.SIGINT, _handle_sigint_seq)
+            try:
+                asyncio.run(run_sequential())
+            finally:
+                signal.signal(signal.SIGINT, original_sigint)
+                sequential_engine.dispose()
 
         # Report final statistics
         logging.info("\n" + "=" * 70)
-        logging.info("EXTRACTION COMPLETE - FINAL STATISTICS (v5.3)")
+        logging.info("EXTRACTION COMPLETE - FINAL STATISTICS (v7.0)")
         logging.info("=" * 70)
         logging.info(f"Total decisions in database:     {total_decisions}")
         logging.info(f"Documents processed:             {stats['processed']}")
@@ -3264,6 +3520,12 @@ def main(test_run=None, seed=42, concurrent=None):
         logging.info(f"  Citations kept (Sabin match):  {stats['sabin_kept']}")
         logging.info(f"  Citations discarded:           {stats['sabin_discarded']}")
         logging.info(f"  Snippets located in text:      {stats['snippets_found']}")
+        logging.info("")
+        logging.info("INLINE VERIFICATION (Phase 5):")
+        logging.info(f"  CONFIRMED:                     {stats['verified_confirmed']}")
+        logging.info(f"  NOT_FOUND:                     {stats['verified_not_found']}")
+        logging.info(f"  MISATTRIBUTED:                 {stats['verified_misattributed']}")
+        logging.info(f"  Verification cost:             ${stats['verification_cost_usd']:.4f}")
 
         if TRIAL_BATCH_CONFIG["ENABLED"]:
             logging.info("\n✓ Trial batch mode was ENABLED")

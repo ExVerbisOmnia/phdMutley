@@ -18,6 +18,22 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import create_engine, inspect, text
 
+# Monkey-patch openpyxl to auto-strip illegal XML characters instead of raising.
+# Necessary because OCR/garbled text in the DB contains control characters.
+import openpyxl.cell.cell as _openpyxl_cell
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE as _ILLEGAL_RE
+_orig_check_string = _openpyxl_cell.Cell.check_string.__func__ if hasattr(_openpyxl_cell.Cell.check_string, '__func__') else _openpyxl_cell.Cell.check_string
+
+@staticmethod
+def _safe_check_string(value):
+    if isinstance(value, str):
+        value = _ILLEGAL_RE.sub("", value)
+        if len(value) > 32767:
+            value = value[:32767]
+    return value
+
+_openpyxl_cell.Cell.check_string = _safe_check_string
+
 # Add scripts dir to path for secrets module
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -43,9 +59,20 @@ OUTPUT_DIR = Path(__file__).parent.parent / "data" / "exports"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def _sanitize_string_for_excel(value, max_len=32767):
+    """Remove characters that openpyxl/Excel rejects and enforce cell length limit."""
+    if not isinstance(value, str):
+        return value
+    value = _ILLEGAL_RE.sub("", value)
+    if len(value) > max_len:
+        value = value[:max_len]
+    return value
+
+
 def _clean_df_for_excel(df):
     """
-    Prepare a DataFrame for Excel export: flatten arrays, strip timezones.
+    Prepare a DataFrame for Excel export: flatten arrays, strip timezones,
+    and remove characters illegal in XML/Excel worksheets.
     """
     for col in df.columns:
         non_null_values = df[col].dropna()
@@ -62,6 +89,10 @@ def _clean_df_for_excel(df):
                 df[col] = df[col].dt.tz_localize(None)
             except Exception:
                 pass
+    # Strip illegal characters and enforce Excel cell length limit on all string columns
+    for col in df.columns:
+        if df[col].dtype == "object":
+            df[col] = df[col].apply(_sanitize_string_for_excel)
     return df
 
 
@@ -74,7 +105,7 @@ def _export_data_quality_sheet(engine, writer):
     with engine.connect() as conn:
         # Section A — Download Failures
         df_download = pd.read_sql_query(text("""
-            SELECT d.document_id, c.case_name, c.case_url, d.document_content_url, d.download_error
+            SELECT d.document_id, c.case_name, c.case_url, d.document_url AS source_document_url, d.download_error
             FROM documents d
             JOIN cases c ON d.case_id = c.case_id
             WHERE d.pdf_downloaded = FALSE OR d.pdf_downloaded IS NULL
@@ -83,7 +114,7 @@ def _export_data_quality_sheet(engine, writer):
 
         # Section B — Extraction Failures
         df_extraction = pd.read_sql_query(text("""
-            SELECT et.document_id, c.case_name, c.case_url, d.document_content_url,
+            SELECT et.document_id, c.case_name, c.case_url, d.document_url AS source_document_url,
                    et.extraction_method, et.extraction_quality, et.extraction_notes
             FROM extracted_text et
             JOIN documents d ON et.document_id = d.document_id
@@ -188,7 +219,7 @@ def export_database_to_excel(output_file: str = None, text_truncate_length: int 
                 SELECT
                     c.case_name AS source_case_name,
                     c.case_url AS source_case_url,
-                    d.document_content_url AS source_pdf_url,
+                    d.document_url AS source_document_url,
                     cep.*
                 FROM citation_extraction_phased cep
                 JOIN documents d ON cep.document_id = d.document_id
@@ -199,13 +230,19 @@ def export_database_to_excel(output_file: str = None, text_truncate_length: int 
                 SELECT
                     c.case_name,
                     c.case_url,
-                    d.document_content_url AS source_pdf_url,
+                    d.document_url AS source_document_url,
                     ceps.*
                 FROM citation_extraction_phased_summary ceps
                 JOIN documents d ON ceps.document_id = d.document_id
                 JOIN cases c ON d.case_id = c.case_id
                 ORDER BY c.case_name, ceps.summary_id
             """,
+        }
+
+        # Tables with text columns that should be truncated (besides extracted_text which has special handling)
+        TEXT_TRUNCATION = {
+            "citation_extraction_discarded": ["raw_text"],
+            "documents": ["document_summary", "download_error"],
         }
 
         # Create Excel writer
@@ -224,6 +261,19 @@ def export_database_to_excel(output_file: str = None, text_truncate_length: int 
                         # Enriched export with JOINed context columns
                         df = pd.read_sql_query(text(ENRICHED_QUERIES[table_name]), engine)
                         logger.info(f"  ℹ Enriched with case_name and document URLs")
+                        # Apply truncation to enriched tables if needed
+                        if table_name in TEXT_TRUNCATION and text_truncate_length:
+                            for col in TEXT_TRUNCATION[table_name]:
+                                if col in df.columns:
+                                    df[col] = df[col].astype(str).str[:text_truncate_length]
+                            logger.info(f"  ⚠️  Truncated {TEXT_TRUNCATION[table_name]} to {text_truncate_length} chars")
+                    elif table_name in TEXT_TRUNCATION and text_truncate_length:
+                        # Tables with specific text columns to truncate
+                        df = pd.read_sql_table(table_name, engine)
+                        for col in TEXT_TRUNCATION[table_name]:
+                            if col in df.columns:
+                                df[col] = df[col].astype(str).str[:text_truncate_length]
+                        logger.info(f"  ⚠️  Truncated {TEXT_TRUNCATION[table_name]} to {text_truncate_length} chars")
                     elif table_name == "extracted_text" and text_truncate_length:
                         # Special handling for extracted_text table to truncate long text fields
                         query = f"""
@@ -242,6 +292,7 @@ def export_database_to_excel(output_file: str = None, text_truncate_length: int 
                             sentence_count,
                             language_detected,
                             language_confidence,
+                            LEFT(text_md, {text_truncate_length}) as text_md,
                             created_at,
                             updated_at
                         FROM {table_name}

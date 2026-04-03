@@ -49,6 +49,7 @@ from config import (
 )
 from gcp_secrets import get_engine
 from test_run import add_test_run_arg, get_sampled_document_ids
+from text_quality import compute_text_quality_flags
 
 # Import database models
 sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "0-initialize-database"))
@@ -370,6 +371,13 @@ def process_single_pdf_safe(args_tuple):
             document.file_size_bytes = pdf_path.stat().st_size
         except OSError:
             pass
+
+        # 5b. Compute text quality flags for downstream pipeline
+        text_flags = compute_text_quality_flags(extraction_result["text"])
+        document.is_garbled = text_flags["is_garbled"]
+        document.is_too_long = text_flags["is_too_long"]
+        document.text_char_count = text_flags["char_count"]
+        document.text_token_estimate = text_flags["est_tokens"]
 
         # 6. Markdown extraction (non-blocking)
         md_text = None

@@ -24,16 +24,12 @@ Usage:
 
 import argparse
 import asyncio
-import difflib
 import logging
 import os
 import signal
 import sys
 import time
 from datetime import datetime, timezone
-
-from pydantic import BaseModel
-from typing import Literal
 
 from sqlalchemy import text as sa_text, inspect as sa_inspect
 from sqlalchemy.orm import sessionmaker
@@ -51,6 +47,16 @@ from config import CONFIG, LOGS_DIR
 from gcp_secrets import get_engine
 from gemini_client import call_gemini_async
 from snippet_extractor import extract_snippet, normalize_whitespace
+from text_quality import is_garbled_text
+from citation_verification import (
+    SingleCitationVerification,
+    DocumentVerificationResponse,
+    SYSTEM_INSTRUCTION,
+    build_verification_prompt,
+    fuzzy_match_snippet,
+    MAX_SNIPPET_CHARS,
+    FUZZY_THRESHOLD,
+)
 from init_database import (
     Base,
     CitationExtractionPhased,
@@ -79,8 +85,8 @@ logging.basicConfig(level=logging.INFO, handlers=[_file_handler, _stream_handler
 
 _shutdown_requested = False
 
-# Default model — Flash-Lite for cost efficiency
-DEFAULT_MODEL = "gemini-3.1-flash-lite-preview"
+# Default model — Flash for cost-effective verification
+DEFAULT_MODEL = "gemini-2.5-flash"
 
 # Max citations per LLM call (D1)
 BATCH_SIZE = 50
@@ -89,228 +95,13 @@ BATCH_SIZE = 50
 FUZZY_THRESHOLD = 0.95
 
 # Cost estimates per 1K tokens (input/output) for budget tracking
-# Flash-Lite: $0.075/1M input, $0.30/1M output
-COST_PER_1K_INPUT = 0.000075
-COST_PER_1K_OUTPUT = 0.000300
+# Flash: $0.15/1M input, $0.60/1M output
+COST_PER_1K_INPUT = 0.000150
+COST_PER_1K_OUTPUT = 0.000600
 
-# Max snippet length to store (prevents bloated DB rows)
-MAX_SNIPPET_CHARS = 2000
-
-# Garbled text detection thresholds
-GARBLED_ALPHA_RATIO_MIN = 0.40  # At least 40% alphabetic characters
-GARBLED_AVG_WORD_LEN_MAX = 25   # Average word length under 25 chars
-
-
-def is_garbled_text(text: str) -> bool:
-    """
-    Detect garbled/corrupted OCR text that would cause LLM hallucinations.
-
-    INPUT: Document text string
-    ALGORITHM:
-        1. Check alphabetic character ratio (garbled text has many symbols/digits)
-        2. Check average word length (garbled OCR produces long "words")
-        3. Sample first 5000 chars for efficiency
-    OUTPUT: True if text appears garbled, False if readable
-    """
-    if not text or len(text) < 100:
-        return True  # Too short to be a real document
-
-    sample = text[:5000]
-
-    # Check 1: Alphabetic ratio
-    alpha_count = sum(1 for c in sample if c.isalpha())
-    alpha_ratio = alpha_count / len(sample)
-    if alpha_ratio < GARBLED_ALPHA_RATIO_MIN:
-        return True
-
-    # Check 2: Average word length
-    words = sample.split()
-    if words:
-        avg_word_len = sum(len(w) for w in words) / len(words)
-        if avg_word_len > GARBLED_AVG_WORD_LEN_MAX:
-            return True
-
-    return False
-
-
-# ============================================================================
-# PYDANTIC SCHEMAS — Structured Output (3a)
-# ============================================================================
-
-class SingleCitationVerification(BaseModel):
-    citation_index: int
-    verdict: Literal["CONFIRMED", "NOT_FOUND", "MISATTRIBUTED"]
-    verbatim_quote: str | None = None
-    corrected_case_name: str | None = None
-    notes: str | None = None
-
-
-class DocumentVerificationResponse(BaseModel):
-    verifications: list[SingleCitationVerification]
-
-
-# ============================================================================
-# PROMPT BUILDER (3b)
-# ============================================================================
-
-SYSTEM_INSTRUCTION = """You are a legal citation verification assistant. Your task is to verify
-whether specific court cases are actually cited in a judicial document.
-
-RULES:
-1. For each case name provided, search the document for ANY reference to that case.
-2. If found, set verdict to "CONFIRMED" and provide a verbatim_quote that is an EXACT
-   copy-paste substring from the document (1-3 sentences around the citation). Do NOT
-   paraphrase or normalize — the quote must appear character-for-character in the document.
-3. If the case name is not found anywhere in the document, set verdict to "NOT_FOUND".
-4. If the document references a similarly-named but different case, set verdict to
-   "MISATTRIBUTED" and provide the corrected_case_name.
-5. If a case is cited multiple times, return the FIRST occurrence's verbatim quote.
-6. The verbatim_quote MUST be a direct substring of the source document text."""
-
-
-def build_verification_prompt(document_text: str, citations: list[dict]) -> str:
-    """
-    Build the verification prompt for a batch of citations.
-
-    INPUT:
-        - document_text: Full extracted text of the source document
-        - citations: List of dicts with 'index' and 'case_name' keys
-    OUTPUT: Formatted prompt string
-    """
-    citation_list = "\n".join(
-        f"[{c['index']}] {c['case_name']}"
-        for c in citations
-    )
-
-    return f"""{SYSTEM_INSTRUCTION}
-
---- DOCUMENT TEXT ---
-{document_text}
-
---- CITATIONS TO VERIFY ---
-{citation_list}
-
-For each citation above, provide your verification result."""
-
-
-# ============================================================================
-# FUZZY SNIPPET MATCHING (Issue D — option B: >=95% similarity)
-# ============================================================================
-
-def fuzzy_match_snippet(document_text: str, verbatim_quote: str) -> dict | None:
-    """
-    Try to find verbatim_quote in document_text using fuzzy matching.
-
-    INPUT:
-        - document_text: Full document text
-        - verbatim_quote: LLM-provided quote to locate
-    OUTPUT: Snippet dict from extract_snippet if match found, else None
-
-    ALGORITHM:
-        1. Try exact match via extract_snippet (tier 1-3)
-        2. If not found, use SequenceMatcher sliding window for fuzzy match
-        3. Accept if ratio >= FUZZY_THRESHOLD (0.95)
-    """
-    if not verbatim_quote or not document_text:
-        return None
-
-    # Cap verbatim_quote length (#120)
-    if len(verbatim_quote) > MAX_SNIPPET_CHARS:
-        verbatim_quote = verbatim_quote[:MAX_SNIPPET_CHARS]
-
-    # Tier 1: Try existing extract_snippet (exact / normalized / key phrase)
-    result = extract_snippet(document_text, verbatim_quote)
-    if result.get("found"):
-        # Cap snippet text (#120)
-        if result.get("snippet") and len(result["snippet"]) > MAX_SNIPPET_CHARS:
-            result["snippet"] = result["snippet"][:MAX_SNIPPET_CHARS]
-        return result
-
-    # Tier 1.5: Whitespace-normalized matching (#119)
-    # LLM often normalizes whitespace in quotes — try matching after normalization
-    norm_doc = normalize_whitespace(document_text)
-    norm_quote = normalize_whitespace(verbatim_quote)
-    pos = norm_doc.find(norm_quote)
-    if pos != -1:
-        # Found in normalized text — map back to approximate original position
-        # Use ratio-based mapping (fast approximation)
-        ratio = pos / max(len(norm_doc), 1)
-        approx_start = int(ratio * len(document_text))
-        # Search nearby in original for a close match
-        search_start = max(0, approx_start - 200)
-        search_end = min(len(document_text), approx_start + len(verbatim_quote) + 200)
-        search_region = document_text[search_start:search_end]
-        # Find best substring match in the region
-        norm_search = normalize_whitespace(search_region)
-        local_pos = norm_search.find(norm_quote)
-        if local_pos != -1:
-            local_ratio = local_pos / max(len(norm_search), 1)
-            est_start = search_start + int(local_ratio * len(search_region))
-            est_end = min(len(document_text), est_start + len(verbatim_quote) + 50)
-            ctx_start = max(0, est_start - 300)
-            ctx_end = min(len(document_text), est_end + 300)
-            snippet = document_text[ctx_start:ctx_end]
-            if len(snippet) > MAX_SNIPPET_CHARS:
-                snippet = snippet[:MAX_SNIPPET_CHARS]
-            return {
-                "found": True,
-                "match_type": "whitespace_normalized",
-                "start_char": est_start,
-                "end_char": est_end,
-                "matched_text": document_text[est_start:est_end][:200],
-                "snippet": snippet,
-                "snippet_start": ctx_start,
-                "snippet_end": ctx_end,
-            }
-
-    # Tier 2: Sliding window fuzzy match
-    quote_len = len(verbatim_quote)
-    if quote_len < 20:
-        return None  # Too short for reliable fuzzy matching
-
-    best_ratio = 0.0
-    best_start = 0
-
-    # Slide window across document (step by 1/4 of quote length for speed)
-    step = max(1, quote_len // 4)
-    for i in range(0, len(document_text) - quote_len + 1, step):
-        candidate = document_text[i:i + quote_len]
-        ratio = difflib.SequenceMatcher(None, verbatim_quote, candidate).ratio()
-        if ratio > best_ratio:
-            best_ratio = ratio
-            best_start = i
-
-    # Refine: search around best_start with step=1
-    if best_ratio >= FUZZY_THRESHOLD - 0.05:
-        refine_start = max(0, best_start - step)
-        refine_end = min(len(document_text) - quote_len + 1, best_start + step)
-        for i in range(refine_start, refine_end):
-            candidate = document_text[i:i + quote_len]
-            ratio = difflib.SequenceMatcher(None, verbatim_quote, candidate).ratio()
-            if ratio > best_ratio:
-                best_ratio = ratio
-                best_start = i
-
-    if best_ratio >= FUZZY_THRESHOLD:
-        matched_text = document_text[best_start:best_start + quote_len]
-        # Build snippet with context
-        ctx_start = max(0, best_start - 300)
-        ctx_end = min(len(document_text), best_start + quote_len + 300)
-        snippet = document_text[ctx_start:ctx_end]
-        if len(snippet) > MAX_SNIPPET_CHARS:
-            snippet = snippet[:MAX_SNIPPET_CHARS]
-        return {
-            "found": True,
-            "match_type": f"fuzzy_{best_ratio:.3f}",
-            "start_char": best_start,
-            "end_char": best_start + quote_len,
-            "matched_text": matched_text[:200],
-            "snippet": snippet,
-            "snippet_start": ctx_start,
-            "snippet_end": ctx_end,
-        }
-
-    return None
+    # Note: is_garbled_text, SingleCitationVerification, DocumentVerificationResponse,
+    # SYSTEM_INSTRUCTION, build_verification_prompt, fuzzy_match_snippet, MAX_SNIPPET_CHARS,
+    # and FUZZY_THRESHOLD are imported from shared modules (text_quality.py, citation_verification.py)
 
 
 # ============================================================================
@@ -469,6 +260,7 @@ async def verify_single_document(
                         model=model,
                         temperature=0.0,
                         response_schema=DocumentVerificationResponse,
+                        thinking_budget=1024,
                     )
                 except Exception as e:
                     if "INVALID_ARGUMENT" in str(e) and "token" in str(e).lower():

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Questions & Query Plan — Climate Litigation</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #0a0f14;
+            --bg-secondary: #111820;
+            --bg-panel: #1a222d;
+            --bg-hover: #242d3a;
+            --text-primary: #e8edf3;
+            --text-secondary: #8b9aad;
+            --text-muted: #5a6978;
+            --north-primary: #3b82f6;
+            --north-glow: rgba(59, 130, 246, 0.4);
+            --south-primary: #10b981;
+            --south-glow: rgba(16, 185, 129, 0.4);
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-yellow: #eab308;
+            --accent-cyan: #06b6d4;
+            --border-color: #2a3544;
+            --border-hover: #3d4f66;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            padding: 20px 32px;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .title-block h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-block .subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .header-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: right;
+            line-height: 1.8;
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main-content {
+            padding: 24px 32px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* ── SECTION LABEL ── */
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 12px;
+            margin-top: 40px;
+        }
+
+        .section-label:first-child { margin-top: 0; }
+
+        /* ── PANELS ── */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s ease;
+        }
+
+        .panel:hover { border-color: var(--border-hover); }
+
+        .panel h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .panel p, .panel li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .panel ul, .panel ol {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .panel li { margin-bottom: 6px; }
+
+        /* ── QUESTION CARDS ── */
+        .question-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 28px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--north-primary);
+            transition: border-color 0.2s ease;
+        }
+
+        .question-card:hover { border-color: var(--border-hover); border-left-color: var(--north-primary); }
+
+        .question-card .q-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: var(--north-primary);
+            color: white;
+            display: inline-block;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        .question-card .q-number.q2 {
+            background: var(--south-primary);
+        }
+
+        .question-card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .question-card blockquote {
+            border-left: 2px solid var(--border-color);
+            padding: 8px 16px;
+            margin: 12px 0;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ── APPROACH PANEL ── */
+        .approach {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .approach h4 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+        }
+
+        .approach p, .approach li {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .approach ul { padding-left: 20px; margin-top: 6px; }
+        .approach li { margin-bottom: 4px; }
+
+        /* ── CODE BLOCKS ── */
+        .code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 14px 18px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--accent-cyan);
+            line-height: 1.8;
+            margin: 12px 0;
+            overflow-x: auto;
+        }
+
+        .code-block .comment { color: var(--text-muted); }
+        .code-block .arrow { color: var(--accent-orange); }
+        .code-block .keyword { color: var(--accent-purple); }
+
+        /* ── INLINE CODE ── */
+        code {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-cyan);
+        }
+
+        /* ── TABLES ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        thead th {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        tbody td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        tbody tr:hover { background: var(--bg-hover); }
+
+        tbody td:first-child { color: var(--text-primary); font-weight: 500; }
+
+        /* ── TAGS ── */
+        .tag {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.03em;
+        }
+
+        .tag-blue { background: rgba(59, 130, 246, 0.15); color: var(--north-primary); }
+        .tag-green { background: rgba(16, 185, 129, 0.15); color: var(--south-primary); }
+        .tag-orange { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
+        .tag-purple { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+        .tag-red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+
+        /* ── DECISION BADGES ── */
+        .decision-ref {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-orange);
+            font-weight: 700;
+        }
+
+        /* ── GAP / CHALLENGE CALLOUT ── */
+        .callout {
+            background: rgba(249, 115, 22, 0.06);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-top: 12px;
+        }
+
+        .callout p {
+            color: var(--accent-orange);
+            font-size: 0.85rem;
+        }
+
+        .callout strong { color: var(--accent-orange); }
+
+        /* ── DIVIDER ── */
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 32px 0;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            padding: 20px 32px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .main-content { padding: 16px; }
+            .panel, .question-card { padding: 16px; }
+            table { font-size: 0.78rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         HEADER
+         ════════════════════════════════════════════════════════════════ -->
+    <header class="header">
+        <div class="title-block">
+            <h1>Research Questions & Query Plan</h1>
+            <div class="subtitle">Touchpoint 7 Mar 2026 &mdash; Monday Deliverable Scope</div>
+        </div>
+        <div class="header-meta">
+            Source: Lucas Biasetton (touchpoint transcript)<br>
+            Compiled: 7 Mar 2026
+        </div>
+    </header>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         MAIN CONTENT
+         ════════════════════════════════════════════════════════════════ -->
+    <div class="main-content">
+
+        <!-- ── RESEARCH QUESTIONS ── -->
+        <div class="section-label">Research Questions (from transcript ~00:13:47&ndash;00:16:04)</div>
+
+        <div class="question-card">
+            <span class="q-number">Q1</span>
+            <h3>Which jurisdictions are most susceptible to using foreign climate decisions in their own?</h3>
+            <blockquote>
+                "quais s&atilde;o os pa&iacute;ses que mais t&atilde;o suscept&iacute;veis a usar decis&otilde;es estrangeiras em suas decis&otilde;es"
+            </blockquote>
+        </div>
+
+        <div class="question-card">
+            <span class="q-number q2">Q2</span>
+            <h3>Which are the most paradigmatic cases globally, and how far did they reach?</h3>
+            <blockquote>
+                "quais s&atilde;o os casos mais paradigm&aacute;ticos e at&eacute; onde eles chegaram"
+            </blockquote>
+        </div>
+
+        <div class="panel" style="border-left: 3px solid var(--accent-orange);">
+            <p>Both questions framed as <strong style="color: var(--text-primary);">factual findings only</strong> &mdash; no thesis argumentation
+                (<span class="decision-ref">D18</span>).
+            </p>
+        </div>
+
+        <hr>
+
+        <!-- ── HOW TO ANSWER ── -->
+        <div class="section-label">How to Answer &mdash; Pipeline & DB Capabilities</div>
+
+        <!-- Q1 APPROACH -->
+        <div class="panel">
+            <h3>Q1 &mdash; Top Citing Jurisdictions</h3>
+            <p><strong style="color: var(--text-primary);">Data source:</strong>
+                <code>citation_extraction_phased</code> +
+                <code>citation_extraction_phased_summary</code> +
+                <code>documents</code> +
+                <code>cases</code>
+            </p>
+
+            <div class="approach">
+                <h4>Approach</h4>
+                <div class="code-block">
+<span class="comment">-- Per document, count DISTINCT foreign decisions cited (not textual repetitions)</span> <span class="arrow">&rarr;</span> <span class="decision-ref">D16</span>
+<span class="comment">-- Aggregate by source jurisdiction</span> <span class="arrow">&rarr;</span> rank countries
+<span class="comment">-- Express as % of total identified citations</span> <span class="arrow">&rarr;</span> <span class="decision-ref">D17</span> <span class="keyword">(relative proportions)</span>
+                </div>
+            </div>
+
+            <div class="approach">
+                <h4>What We Have</h4>
+                <ul>
+                    <li><code>citation_extraction_phased</code> has individual citations with <code>source_jurisdiction</code> (the citing court) and <code>cited_jurisdiction</code> (the cited court)</li>
+                    <li>The sixfold classification in <code>citation_sixfold_classification</code> already tags each citation's direction type (foreign, international, etc.)</li>
+                    <li>We can query distinct <code>(document_id, cited_case)</code> pairs grouped by source country</li>
+                </ul>
+            </div>
+
+            <div class="callout">
+                <p><strong>Gap:</strong> The 275 failed docs (~5%) are missing &mdash; acceptable for Monday if flagged as a limitation.</p>
+            </div>
+        </div>
+
+        <!-- Q2 APPROACH -->
+        <div class="panel">
+            <h3>Q2 &mdash; Most Paradigmatic Cases (Most-Cited)</h3>
+            <p><strong style="color: var(--text-primary);">Data source:</strong> Same tables, flipped perspective</p>
+
+            <div class="approach">
+                <h4>Approach</h4>
+                <div class="code-block">
+<span class="comment">-- Count how many DISTINCT documents cite each foreign case</span> <span class="arrow">&rarr;</span> rank by citation count
+<span class="comment">-- Map cited cases to their jurisdictions</span> <span class="arrow">&rarr;</span> shows geographic reach
+<span class="comment">-- Bonus: network visualization showing origin &rarr; destination</span>
+                </div>
+            </div>
+
+            <div class="approach">
+                <h4>What We Have</h4>
+                <ul>
+                    <li><code>citation_extraction_phased</code> stores the cited case name/reference per citation</li>
+                    <li>We can group by cited case, count distinct citing documents, and rank</li>
+                    <li>The <code>cases</code> table has jurisdiction metadata to map geographic spread</li>
+                    <li>The analysis engine (<code>sixfold_analysis_engine.py</code>) already produces network data for D3.js &mdash; section 7 (network graph data) likely covers this</li>
+                </ul>
+            </div>
+
+            <div class="callout">
+                <p><strong>Challenge:</strong> Cited case names may have variations (e.g., "Urgenda" vs "Urgenda Foundation v. State of the Netherlands"). The Sabin filter / knowledge base (<code>build_knowledge_base.py</code>) was built exactly for this &mdash; normalizing case references against known cases.</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- ── QUERY PLAN ── -->
+        <div class="section-label">Concrete Query Plan</div>
+
+        <div class="panel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Query</th>
+                            <th>Answers</th>
+                            <th>Table(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Distinct cited cases per document, grouped by source jurisdiction</td>
+                            <td><span class="tag tag-blue">Q1</span> top citing countries</td>
+                            <td><code>citation_extraction_phased</code> + <code>cases</code></td>
+                        </tr>
+                        <tr>
+                            <td>Distinct citing documents per cited case, ranked</td>
+                            <td><span class="tag tag-green">Q2</span> paradigmatic cases</td>
+                            <td><code>citation_extraction_phased</code> + <code>cases</code></td>
+                        </tr>
+                        <tr>
+                            <td>Geographic spread of each top-cited case</td>
+                            <td><span class="tag tag-green">Q2</span> "how far they reached"</td>
+                            <td>Same + jurisdiction mapping from <code>config.py</code></td>
+                        </tr>
+                        <tr>
+                            <td>North/South split of both metrics</td>
+                            <td><span class="tag tag-purple">Context</span> for both Qs</td>
+                            <td><code>citation_sixfold_classification</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- ── PRESENTATION FORMAT ── -->
+        <div class="section-label">Presentation Format</div>
+
+        <div class="panel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Constraint</th>
+                            <th>Rule</th>
+                            <th>Decision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Relative proportions</td>
+                            <td>"X% of documents with citations cited foreign decisions" rather than raw counts</td>
+                            <td><span class="decision-ref">D17</span></td>
+                        </tr>
+                        <tr>
+                            <td>Per-document counting</td>
+                            <td>1 citation = 1 act of invoking, regardless of textual repetitions</td>
+                            <td><span class="decision-ref">D16</span></td>
+                        </tr>
+                        <tr>
+                            <td>Factual only</td>
+                            <td>Observable patterns, no causal claims</td>
+                            <td><span class="decision-ref">D18</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel" style="border-left: 3px solid var(--south-primary); margin-top: 20px;">
+            <p>The analysis engine already has most of this logic in its 9 query sections. The Monday deliverable is essentially running the engine, exporting the top-N rankings, and visualizing them on the map/dashboard. The main work is ensuring the <strong style="color: var(--text-primary);">deduplication logic</strong> (distinct cited case per document) is correctly implemented.</p>
+        </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         FOOTER
+         ════════════════════════════════════════════════════════════════ -->
+    <footer class="footer">
+        PhD Climate Litigation Citation Analysis &mdash; Research Questions Report &mdash; 7 Mar 2026
+    </footer>
+
+</body>
+</html>

@@ -68,9 +68,9 @@ cd scripts && python export_to_excel.py
 ```python
 from config import CONFIG, DB_CONFIG, TRIAL_BATCH_CONFIG, TEST_CONFIG
 
-# Models (Gemini via google-genai SDK)
-# gemini-2.5-flash-lite: bulk extraction, ~$0.002/doc
-# gemini-2.5-flash: classification & origin ID, ~$0.001/doc
+# Models (Gemini via google-genai SDK, thinking enabled)
+# gemini-2.5-flash: extraction + verification (w/ thinking_budget=1024)
+# gemini-2.5-pro: classification & origin ID (w/ thinking_budget=1024-2048)
 
 # Test mode: limits processing to first N rows
 TEST_CONFIG = { 'ENABLED': True, 'LIMIT': 50, 'STRATEGY': 'first' }
@@ -95,14 +95,16 @@ Core tables (all use **UUIDv7 primary keys**):
 
 Schema conventions: UUIDv7 PKs, FK with CASCADE, `created_at`/`updated_at` timestamps, COMMENT ON for documentation.
 
-### Citation Extraction v5 Pipeline
+### Citation Extraction v7 Pipeline
 
-4-phase pipeline optimized for cost:
+6-phase pipeline with anti-hallucination hardening:
 
+0. **Quality Pre-check** — Skip garbled/corrupted documents ($0)
 1. **Source Jurisdiction ID** — Database lookup ($0)
-2. **Extraction** — Gemini 2.5 Flash-Lite, 12 citation format patterns (~$0.002/doc)
-3. **Origin ID** — Tier 1: dictionary (80+ courts, $0) → Tier 2: Gemini 2.5 Flash (~$0.001) → Tier 3: web search (future)
+2. **Extraction** — Gemini 2.5 Flash (thinking=1024), 12 citation format patterns, NO KB in prompt + hard filters (pipe-format, anachronism)
+3. **Origin ID** — Tier 1: dictionary (80+ courts, $0) → Tier 2: Gemini 2.5 Pro (thinking=1024) → Tier 3: web search (future)
 4. **Classification** — Rule-based sixfold classification ($0)
+5. **Inline Verification** — Gemini 2.5 Flash (thinking=1024) verifies each citation against source text, fuzzy snippet matching
 
 Quality: confidence scoring 0.0-1.0, auto-flag <0.7, manual review workflow.
 
@@ -161,8 +163,9 @@ logging.error("❌ Error")
 ### LLM API Usage
 
 - `temperature=0.0` always (reproducibility for academic research)
-- Gemini 2.5 Flash-Lite for bulk extraction, Gemini 2.5 Flash for classification/origin ID
-- Shared client helper: `scripts/gemini_client.py` (singleton client, retry logic, JSON parsing)
+- Gemini 2.5 Flash for extraction + verification, Gemini 2.5 Pro for classification/origin ID
+- Thinking enabled via `thinking_budget` parameter (1024-2048 tokens)
+- Shared client helper: `scripts/gemini_client.py` (singleton client, retry logic, JSON parsing, thinking support)
 - Track token usage for cost reporting
 - JSON parsing with fallback extraction
 - Retry logic for API failures

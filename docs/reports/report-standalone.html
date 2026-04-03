@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhD Climate Litigation — Project Report (Standalone)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['DM Sans', 'system-ui', 'sans-serif'], mono: ['Space Mono', 'monospace'] },
+          colors: {
+            surface: { 1: '#0a0f14', 2: '#111820', 3: '#1a222d', 4: '#242d3a' },
+            border: { DEFAULT: '#2a3544', hover: '#3d4f66' },
+            txt: { 1: '#e8edf3', 2: '#8b9aad', 3: '#5a6978' },
+            north: '#3b82f6',
+            south: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: #0a0f14; }
+    .mono { font-family: 'Space Mono', monospace; }
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111820; }
+    ::-webkit-scrollbar-thumb { background: #2a3544; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3d4f66; }
+    /* accordion animation */
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease; opacity: 0; }
+    .accordion-body.open { opacity: 1; }
+    .accordion-chevron { transition: transform 0.3s ease; }
+    .accordion-chevron.open { transform: rotate(180deg); }
+    /* tab underline */
+    .tab-active { border-bottom: 2px solid #3b82f6; color: #e8edf3; }
+    .tab-inactive { border-bottom: 2px solid transparent; color: #5a6978; }
+    .tab-inactive:hover { color: #8b9aad; }
+    /* modal */
+    .modal-backdrop { opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+    .modal-backdrop.active { opacity: 1; pointer-events: auto; }
+    .modal-panel { transform: scale(0.95) translateY(10px); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
+    .modal-backdrop.active .modal-panel { transform: scale(1) translateY(0); }
+    /* pipeline node */
+    .pipeline-node { transition: all 0.2s ease; }
+    .pipeline-node:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+    /* badge pulse */
+    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+    /* progress bar animation */
+    @keyframes progress-fill { from { width: 0; } }
+    .progress-bar { animation: progress-fill 1.2s cubic-bezier(0.4,0,0.2,1); }
+    /* card hover */
+    .card-hover { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { border-color: #3d4f66; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body class="text-txt-1 min-h-screen">
+
+  <!-- App Shell -->
+  <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <header class="mb-10">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 rounded-lg bg-north/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-north" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-txt-1">PhD Climate Litigation</h1>
+          <p class="text-sm text-txt-3 mono">Citation Analysis Pipeline &mdash; Project Report</p>
+        </div>
+      </div>
+      <p class="text-txt-2 text-sm mt-3 max-w-2xl">Doctoral research analyzing citation patterns between Global North and Global South courts in climate litigation decisions. Processing 2,924 judicial decisions from the Climate Case Chart database.</p>
+    </header>
+
+    <!-- Summary Cards -->
+    <div id="summary-cards" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10"></div>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex gap-6 border-b border-border mb-8">
+      <button onclick="switchTab('completed')" id="tab-completed" class="tab-active pb-3 text-sm font-medium cursor-pointer">Completed</button>
+      <button onclick="switchTab('pending')" id="tab-pending" class="tab-inactive pb-3 text-sm font-medium cursor-pointer">Pending</button>
+      <button onclick="switchTab('decisions')" id="tab-decisions" class="tab-inactive pb-3 text-sm font-medium cursor-pointer">Decisions</button>
+      <button onclick="switchTab('pipeline')" id="tab-pipeline" class="tab-inactive pb-3 text-sm font-medium cursor-pointer">Pipeline</button>
+    </nav>
+
+    <!-- Tab Content -->
+    <div id="tab-content"></div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onclick="closeModal(event)">
+    <div class="modal-panel bg-surface-3 rounded-xl border border-border max-w-2xl w-full mx-4 max-h-[85vh] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+        <h3 id="modal-title" class="font-semibold text-txt-1"></h3>
+        <button onclick="closeModal()" class="text-txt-3 hover:text-txt-1 cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="modal-body" class="px-6 py-4 overflow-y-auto text-sm text-txt-2 leading-relaxed"></div>
+    </div>
+  </div>
+
+  <script>
+  // ─── Data ──────────────────────────────────────────────────────────────
+  const DATA = {"phases":[{"id":100,"name":"v1.0 (1st Run)","description":"Full pipeline: 2,924 decisions processed, deployed on Railway","status":"completed","start_date":"2025-11-01","due_date":"2025-11-30","completed_date":"2025-11-30","sort_order":-5,"tasks":[]},{"id":101,"name":"Phase A: Data Integrity","description":"Duplicate columns, hardcoded paths, bare excepts, tests","status":"completed","start_date":"2026-03-01","due_date":"2026-03-02","completed_date":"2026-03-02","sort_order":-4,"tasks":[]},{"id":102,"name":"Phase B: Gemini Migration","description":"Anthropic SDK to google-genai for all LLM calls","status":"completed","start_date":"2026-03-02","due_date":"2026-03-02","completed_date":"2026-03-02","sort_order":-3,"tasks":[]},{"id":103,"name":"Phase B+: Reproducibility","description":"Ruff, Pydantic config, pinned deps, Alembic, pipeline models","status":"completed","start_date":"2026-03-02","due_date":"2026-03-03","completed_date":"2026-03-03","sort_order":-2,"tasks":[]},{"id":104,"name":"Phase C: Docker Integration","description":"Dockerfile, docker-compose, run-pipeline.sh, Docker secrets","status":"completed","start_date":"2026-03-03","due_date":"2026-03-03","completed_date":"2026-03-03","sort_order":-1,"tasks":[]},{"id":105,"name":"Phase D: GitHub Pages Migration","description":"Railway decommissioned, static site at docs, export script","status":"completed","start_date":"2026-03-04","due_date":"2026-03-04","completed_date":"2026-03-04","sort_order":0,"tasks":[]},{"id":1,"name":"Phase 1: DB Schema Evolution","description":"Add Sabin Case/Document IDs, Alembic migration","status":"completed","start_date":null,"due_date":"2026-03-04","completed_date":"2026-03-04","sort_order":1,"tasks":[{"id":1,"phase_id":1,"subject":"Add sabin_case_id / sabin_document_id columns","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-04","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"},{"id":2,"phase_id":1,"subject":"Create Alembic migration for new columns","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-04","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"},{"id":3,"phase_id":1,"subject":"Update init_database.py for new schema","description":null,"owner":"Gustavo","priority":"medium","status":"completed","due_date":"2026-03-04","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"},{"id":4,"phase_id":1,"subject":"Update populate_metadata.py to store Sabin IDs","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-04","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"}]},{"id":2,"name":"Phase 2: Seed Data & Download","description":"Load updated Excel, --test-run flag, download pipeline","status":"completed","start_date":null,"due_date":"2026-03-04","completed_date":"2026-03-04","sort_order":2,"tasks":[{"id":5,"phase_id":2,"subject":"Implement --test-run N CLI flag across pipeline scripts","description":null,"owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-04","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-04 23:58:44"},{"id":6,"phase_id":2,"subject":"Add TestRunSettings to config.py","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-04","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"},{"id":7,"phase_id":2,"subject":"Adapt populate_metadata.py for new Excel structure","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-04","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"},{"id":8,"phase_id":2,"subject":"Acquire updated Columbia/Sabin Excel","description":null,"owner":"Lucas","priority":"critical","status":"completed","due_date":null,"completed_date":"2026-03-05T18:19:42.964807","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:19:42"}]},{"id":3,"name":"Phase 3: Markdown Extraction","description":"PDF to Markdown instead of plain text","status":"completed","start_date":null,"due_date":"2026-03-05","completed_date":"2026-03-04","sort_order":3,"tasks":[{"id":9,"phase_id":3,"subject":"Evaluate Markdown conversion libraries","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-05","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"},{"id":10,"phase_id":3,"subject":"Modify extract_texts.py for Markdown output","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-05","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"},{"id":11,"phase_id":3,"subject":"Add text_md column to extracted_text table","description":null,"owner":"Gustavo","priority":"medium","status":"completed","due_date":"2026-03-05","completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:40:03"}]},{"id":4,"name":"Phase 4: Knowledge Base","description":"Build case metadata index from Sabin/Columbia data","status":"completed","start_date":null,"due_date":"2026-03-05","completed_date":null,"sort_order":4,"tasks":[{"id":12,"phase_id":4,"subject":"Create build_knowledge_base.py","description":null,"owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-05","completed_date":"2026-03-05T19:16:05.041429","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:16:05"},{"id":13,"phase_id":4,"subject":"Design batching strategy for context windows","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-05","completed_date":"2026-03-05T19:21:21.831427","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:21:21"}]},{"id":5,"name":"Phase 5: Citation Extraction v6","description":"Sabin-filtered extraction with knowledge base","status":"in_progress","start_date":"2026-03-05","due_date":"2026-03-06","completed_date":null,"sort_order":5,"tasks":[{"id":15,"phase_id":5,"subject":"Design v6 extraction prompt with knowledge base","description":null,"owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-05T19:20:47.976715","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:20:47"},{"id":16,"phase_id":5,"subject":"Implement Sabin filter (citation → Sabin case matching)","description":null,"owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-05T19:18:57.259845","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:18:57"},{"id":17,"phase_id":5,"subject":"Implement snippet extraction with char-count anchoring","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-05T19:24:10.809954","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:24:10"}]},{"id":109,"name":"Phase F: GCP VM Setup & Pipeline Plan","description":"Provisioned GCP VM on Lucas project, replicated secrets, uploaded code+DB+PDFs. Refined decision-filtered pipeline plan (Steps A-F) with title-based classification.","status":"completed","start_date":"2026-03-06","due_date":"2026-03-06","completed_date":"2026-03-06","sort_order":5.1,"tasks":[{"id":80,"phase_id":109,"subject":"Provision GCP VM (e2-standard-16 Spot) on Lucas project","description":"VM: phdmutley-pipeline in us-central1-a, 16 vCPU, 64 GB RAM. Project: gen-lang-client-0764097936.","owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T11:32:56.990684","created_at":"2026-03-06 14:32:56","updated_at":"2026-03-06 14:32:56"},{"id":81,"phase_id":109,"subject":"Replicate GCP secrets to Lucas project","description":"phdmutley-db-password + phdmutley-gemini-api-key created in gen-lang-client-0764097936. Compute SA granted secretAccessor role.","owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T11:32:56.990684","created_at":"2026-03-06 14:32:56","updated_at":"2026-03-06 14:32:56"},{"id":82,"phase_id":109,"subject":"Create GCS transfer bucket and upload assets","description":"gs://phdmutley-pipeline-transfer (us-central1). Uploaded: code tarball, DB dump (plain SQL, PG version mismatch prevented custom format), 16,247 PDF files.","owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T11:32:56.990684","created_at":"2026-03-06 14:32:56","updated_at":"2026-03-06 14:32:56"},{"id":83,"phase_id":109,"subject":"Install and configure VM environment","description":"PostgreSQL 16 on port 5432, Python venv at /opt/phdMutley/venv/, all pip deps installed. gcp_secrets.py patched to read GCP_SECRET_PROJECT and DB_PORT env vars.","owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T11:32:56.990684","created_at":"2026-03-06 14:32:56","updated_at":"2026-03-06 14:32:56"},{"id":84,"phase_id":109,"subject":"Restore database on VM","description":"pg_restore failed (PG 18→16 version mismatch on custom format). Used plain SQL dump instead. Verified: 16,352 docs, 4,739 cases, 348 extractions.","owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T11:32:56.990684","created_at":"2026-03-06 14:32:56","updated_at":"2026-03-06 14:32:56"},{"id":85,"phase_id":109,"subject":"Refine pipeline implementation plan (Steps A-F)","description":"Corrected Step B: \"Other\" lookup by Document Title keyword (not Document Type). Added no-separator titles (3,504 docs) to Step B. Total Step B: 4,084 docs. Workers set to 8 (local) / 16 (VM). Updated cost estimate: ~2.08 total.","owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T11:32:56.990684","created_at":"2026-03-06 14:32:56","updated_at":"2026-03-06 14:32:56"},{"id":86,"phase_id":109,"subject":"Analyze Sabin Document Title keyword distribution","description":"Data analysis: 16,380 docs, 84 unique title keywords. Step A catches 2,921 decision docs. 9,000 non-decision exclusions. 4,084 ambiguous docs for LLM classification (580 \"other\" + 3,504 no-separator).","owner":"Gustavo","priority":"medium","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T11:32:56.990684","created_at":"2026-03-06 14:32:56","updated_at":"2026-03-06 14:32:56"}]},{"id":15,"name":"Bug: Memory Leak Fix","description":"Fix pymupdf4llm memory leak + codebase hardening (engine.dispose, streaming queries, session hygiene, Excel dedup, bare except split, isnot(None) SQL fix)","status":"completed","start_date":"2026-03-04","due_date":"2026-03-04","completed_date":"2026-03-04","sort_order":5.5,"tasks":[{"id":50,"phase_id":15,"subject":"Fix pymupdf4llm doc handle leak","description":"Explicit fitz.Document lifecycle in extract_texts.py","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":51,"phase_id":15,"subject":"Add engine.dispose() cross-codebase","description":"4 scripts: extract_citations, classify_decisions, sixfold_engine, export_to_excel","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":52,"phase_id":15,"subject":"Replace .all() with yield_per streaming","description":"classify_decisions yield_per(100), extract_citations yield_per(50) + NOT IN subquery","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":53,"phase_id":15,"subject":"Session hygiene + expunge_all","description":"expunge_all every 100 iters for column-only queries; removed for ORM entity queries","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":54,"phase_id":15,"subject":"Deduplicate pd.read_excel()","description":"Single Excel read per script, passed via df= param","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":55,"phase_id":15,"subject":"Split bare except into MemoryError + Exception","description":"All 3 PDF extractors + worker function","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":56,"phase_id":15,"subject":"Fix Python is-not-None to SQL .isnot(None)","description":"classify_decisions.py and extract_citations.py filter bug","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":57,"phase_id":15,"subject":"Fix UnicodeEncodeError in logging","description":"force=True + UTF-8 StreamHandler for cp1252 Windows consoles","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":58,"phase_id":15,"subject":"Fix expunge_all crash with yield_per","description":"Removed expunge_all mid-stream for ORM entity queries","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"},{"id":59,"phase_id":15,"subject":"Add max_tasks_per_child=10 to ProcessPoolExecutor","description":"Auto-recycles workers every 10 PDFs to cap leak accumulation","owner":"Gustavo","priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-04 23:58:44","updated_at":"2026-03-04 23:58:44"}]},{"id":6,"name":"Phase 6: Analysis & Export v2","description":"Updated engine, top-5, static maps, disclaimer","status":"pending","start_date":null,"due_date":"2026-03-07","completed_date":null,"sort_order":6,"tasks":[{"id":20,"phase_id":6,"subject":"Update analysis engine for v2.0 citation data","description":null,"owner":"Gustavo","priority":"high","status":"pending","due_date":"2026-03-07","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:25:11"}]},{"id":7,"name":"Phase 7: Trial Run (100 docs)","description":"Validate full v2.0 pipeline on sample","status":"completed","start_date":null,"due_date":"2026-03-07","completed_date":"2026-03-06","sort_order":7,"tasks":[{"id":19,"phase_id":7,"subject":"Cost estimation: tokens × docs × price","description":null,"owner":"Gustavo","priority":"medium","status":"completed","due_date":"2026-03-05","completed_date":"2026-03-05T19:26:18.685868","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:26:18"},{"id":24,"phase_id":7,"subject":"Execute --test-run 100 through full pipeline","description":null,"owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-07","completed_date":"2026-03-07T18:38:56.337564","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-07 21:38:56"},{"id":25,"phase_id":7,"subject":"Monitor cost, errors, processing time","description":null,"owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-07","completed_date":"2026-03-05T19:22:53.010382","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:22:53"},{"id":26,"phase_id":7,"subject":"Lucas validates sample of results","description":null,"owner":"Lucas","priority":"critical","status":"completed","due_date":"2026-03-07","completed_date":"2026-03-07T18:38:56.337564","created_at":"2026-03-04 23:57:30","updated_at":"2026-03-07 21:38:56"}]},{"id":8,"name":"Phase 8: Full Run & Deliverable","description":"ABSORBED into Phase 5 / Phase 110 (Decision D19). The full VM pipeline run replaced this phase.","status":"completed","start_date":null,"due_date":"2026-03-09","completed_date":"2026-03-07","sort_order":8,"tasks":[{"id":27,"phase_id":8,"subject":"Full pipeline run on all documents","description":"SUPERSEDED by Phase 110, Task #92 (Step E on GCP VM). Decision D19.","owner":"Gustavo","priority":"critical","status":"deferred","due_date":"2026-03-08","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-07 21:38:56"}]},{"id":107,"name":"Phase E: Infrastructure Lean-out","description":"Drop Docker, native PostgreSQL, evaluate serverless hosting (Cloud Run / Cloud Functions / GitHub Pages)","status":"completed","start_date":"2026-03-05","due_date":"2026-03-06","completed_date":null,"sort_order":9,"tasks":[{"id":73,"phase_id":107,"subject":"Migrate infrastructure: drop Docker, native PostgreSQL + serverless hosting evaluation","description":"Evaluate Cloud Run, Cloud Functions, and GitHub Pages for hosting. Restructure local dev to lean native PostgreSQL setup. Follow DevProtocol_1.","owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-05T19:10:05.245940","created_at":"2026-03-05 21:19:57","updated_at":"2026-03-05 22:10:05"}]},{"id":108,"name":"Phase Post-Extraction: Review & Deliverable","description":"Post-extraction review, analysis, maps, and Monday deliverable preparation","status":"in_progress","start_date":null,"due_date":"2026-03-09","completed_date":null,"sort_order":10,"tasks":[{"id":14,"phase_id":108,"subject":"Export knowledge base as JSON for validation","description":null,"owner":"Gustavo","priority":"medium","status":"completed","due_date":"2026-03-05","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 22:26:47"},{"id":18,"phase_id":108,"subject":"Generate validation Excel for Lucas review","description":null,"owner":"Gustavo","priority":"high","status":"pending","due_date":"2026-03-06","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-06 14:32:56"},{"id":21,"phase_id":108,"subject":"Add top-5 jurisdiction queries","description":null,"owner":"Gustavo","priority":"high","status":"pending","due_date":"2026-03-07","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:53:25"},{"id":22,"phase_id":108,"subject":"Generate static maps (top-5 + US aesthetic)","description":null,"owner":"Gustavo","priority":"high","status":"pending","due_date":"2026-03-07","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:53:25"},{"id":23,"phase_id":108,"subject":"Add error margin disclaimer","description":null,"owner":"Gustavo","priority":"medium","status":"pending","due_date":"2026-03-07","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:53:25"},{"id":28,"phase_id":108,"subject":"Generate final static maps for Joana","description":null,"owner":"Gustavo","priority":"critical","status":"pending","due_date":"2026-03-08","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-05 21:53:25"},{"id":29,"phase_id":108,"subject":"Write 2-3 descriptive paragraphs","description":null,"owner":"Lucas","priority":"critical","status":"pending","due_date":"2026-03-09","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-07 21:38:56"},{"id":30,"phase_id":108,"subject":"Package and deliver to Joana/Kate","description":null,"owner":"Both","priority":"critical","status":"pending","due_date":"2026-03-09","completed_date":null,"created_at":"2026-03-04 23:57:30","updated_at":"2026-03-07 21:38:56"},{"id":74,"phase_id":108,"subject":"Investigate snippet miss rate (35% on chunked docs)","description":"Trial run showed 39/60 snippets found (65% hit rate). Worst on chunked documents (e.g. 986K-char doc: 0/9 found). Root cause: LLM raw_text from chunk extraction does not match full document verbatim. Consider: normalized matching improvements in snippet_extractor.py, or extracting snippets per-chunk before deduplication. | Confirmed in debug session: snippet miss causes Phase 2B fallback (graceful degradation)","owner":"Gustavo","priority":"medium","status":"pending","due_date":"2026-03-08","completed_date":null,"created_at":"2026-03-05 23:02:50","updated_at":"2026-03-05 23:52:19"},{"id":94,"phase_id":108,"subject":"Review 259 extraction-failed documents","description":"Report at data/extraction_failed_docs.json (on VM). 91 zero-byte (download failures) + 168 unreadable PDFs (corrupt/no text layer). 1.6%% of corpus. Cross-reference with Sabin DB if Lucas flags missing decisions.","owner":"Lucas","priority":"low","status":"pending","due_date":null,"completed_date":null,"created_at":"2026-03-06 18:11:32","updated_at":"2026-03-06 18:11:32"},{"id":99,"phase_id":108,"subject":"Export extraction results to Excel with doc links for Lucas","description":"Excel format with direct document links for manual review. Similar to previous validation Excel.","owner":"Gustavo","priority":"critical","status":"pending","due_date":"2026-03-07","completed_date":null,"created_at":"2026-03-07 21:38:56","updated_at":"2026-03-07 21:38:56"},{"id":100,"phase_id":108,"subject":"Lucas manual review of Excel output with process annotations","description":"Review extraction results in Excel. Annotate review process (what is checked, data path) to enable future AI-automated review.","owner":"Lucas","priority":"critical","status":"pending","due_date":"2026-03-08","completed_date":null,"created_at":"2026-03-07 21:38:56","updated_at":"2026-03-07 21:38:56"},{"id":101,"phase_id":108,"subject":"Run DB queries for automated pre-review of citations","description":"Query citation data, inspect chunks, validate patterns. Complementary to Lucas manual review.","owner":"Gustavo","priority":"high","status":"pending","due_date":"2026-03-08","completed_date":null,"created_at":"2026-03-07 21:38:56","updated_at":"2026-03-07 21:38:56"},{"id":102,"phase_id":108,"subject":"Morning sync + work session at Lucas place","description":"Align manual + automated reviews. Work together until Adriano meeting (noon-1pm).","owner":"Both","priority":"critical","status":"pending","due_date":"2026-03-08","completed_date":null,"created_at":"2026-03-07 21:38:56","updated_at":"2026-03-07 21:38:56"}]},{"id":111,"name":"Bugs: Step E Extraction (VM Run)","description":"Issues identified during extract_citations.py --concurrent 10 on GCP VM","status":"in_progress","start_date":"2026-03-07","due_date":null,"completed_date":null,"sort_order":11,"tasks":[{"id":95,"phase_id":111,"subject":"BUG: NoneType object is not subscriptable in Phase 2A extraction","description":"DESCRIPTION:\nRecurring error during Phase 2A (citation extraction). The Gemini API occasionally returns None instead of expected JSON structure, and the code attempts to subscript it (e.g., response[\"candidates\"] or similar).\n\nIMPACT: 275 documents (8% of processed) failed extraction entirely — recorded as extraction_success=false in DB. These docs have zero citations extracted.\n\nEVIDENCE: 1,004 error log lines in step_e_concurrent.log. Pattern: \"Error in extraction: 'NoneType' object is not subscriptable\" followed by \"Phase 2A failed - skipping document\".\n\nPROBABLE CAUSE: Missing null check on Gemini API response before accessing nested fields. The google-genai SDK may return None for response.text when the model returns an empty response, safety-filtered content, or hits a transient error.\n\nSUGGESTED FIX:\n1. Add null guard in extraction code: check if response and response.text are not None before JSON parsing\n2. If None, retry once before marking as failed (may be transient API issue)\n3. Log the raw response object for diagnosis when None is encountered\n4. Consider adding to gemini_client.py shared helper for consistency","owner":"Gustavo","priority":"high","status":"pending","due_date":"2026-03-07","completed_date":null,"created_at":"2026-03-07 20:19:57","updated_at":"2026-03-07 20:19:57"},{"id":96,"phase_id":111,"subject":"BUG: High rate-limit retry volume (5,274 retries) with --concurrent 10","description":"DESCRIPTION:\n5,274 rate-limit retries logged during the extraction run with concurrency=10. While the exponential backoff handles this gracefully (2.9s-5.7s waits), the volume suggests the concurrency level exceeds the Gemini API quota sweet spot.\n\nIMPACT: Not a hard failure — retries succeed. But adds ~15,000+ seconds of cumulative wait time, slowing overall throughput. Some retries cascade (attempt 1 then attempt 2 on same request).\n\nEVIDENCE: grep -c \"Rate limited\" shows 5,274 occurrences. Retry waits range from 2.2s to 5.7s with exponential backoff.\n\nPROBABLE CAUSE: --concurrent 10 fires too many parallel Gemini API calls for the project quota. The Gemini API rate limit is likely ~5-8 RPM for Flash-Lite, and 10 concurrent workers exceed this consistently.\n\nSUGGESTED FIX:\n1. For retry runs, reduce concurrency: --concurrent 5 or --concurrent 7\n2. Add adaptive concurrency: if rate-limit count exceeds threshold in a window, dynamically reduce active workers\n3. Add a rate-limit counter to the progress/cost summary for visibility\n4. Consider token-bucket rate limiter in gemini_client.py instead of reactive retries","owner":"Gustavo","priority":"high","status":"pending","due_date":null,"completed_date":null,"created_at":"2026-03-07 20:19:57","updated_at":"2026-03-07 20:19:57"},{"id":97,"phase_id":111,"subject":"BUG: 275 failed documents need retry pass","description":"DESCRIPTION:\n275 documents have extraction_success=false in citation_extraction_phased_summary. These documents were skipped after Phase 2A errors and have no citation data.\n\nIMPACT: ~8% data gap in the final analysis. If these docs contain significant cross-references (especially Global South citations), the research findings could be biased.\n\nEVIDENCE: DB query: SELECT COUNT(*) FROM citation_extraction_phased_summary WHERE extraction_success = false; → 275\n\nPROBABLE CAUSE: Combination of Bug #95 (NoneType errors) and transient API failures during high-concurrency processing.\n\nSUGGESTED FIX:\n1. After main run completes, run a targeted retry: extract_citations.py with a filter for failed documents only (WHERE extraction_success = false)\n2. Use lower concurrency (--concurrent 3-5) to reduce rate-limit pressure\n3. Add --retry-failed flag to extract_citations.py that queries for failed summaries and reprocesses only those\n4. If still failing after retry, log document IDs for manual inspection — may be corrupted/empty PDFs","owner":"Gustavo","priority":"high","status":"pending","due_date":"2026-03-08","completed_date":null,"created_at":"2026-03-07 20:19:57","updated_at":"2026-03-07 20:19:57"},{"id":98,"phase_id":111,"subject":"BUG: document_type=decision returns 0 on VM database","description":"DESCRIPTION:\nQuery SELECT COUNT(*) FROM documents WHERE document_type = 'decision' returns 0 on the VM database, yet 4,502 documents are being processed by the extraction script.\n\nIMPACT: Low immediate impact (extraction uses a different filter), but indicates the document_type column was not populated during the VM database restore or the classification step used a different column/value.\n\nEVIDENCE: psql query returns 0 for document_type='decision', but the extraction script found 4,502 docs to process. The classify_by_title.py and classify_ambiguous_docs.py scripts may store classification in a different column or table.\n\nPROBABLE CAUSE: \n- Classification stored in a different column (e.g., doc_classification, is_decision) \n- Or the title-based classifier uses sabin_document_title keywords and stores results differently than the original document_type field\n- Or the DB dump was from before classification was run and the VM classification used a separate tracking mechanism\n\nSUGGESTED FIX:\n1. Check what column/table classify_by_title.py and classify_ambiguous_docs.py actually write to\n2. Verify the extraction script filter query — it may use a JOIN or different column\n3. If document_type is supposed to be populated, add a post-classification step to sync it\n4. Document the actual classification storage mechanism in CLAUDE.md","owner":"Gustavo","priority":"high","status":"pending","due_date":null,"completed_date":null,"created_at":"2026-03-07 20:19:57","updated_at":"2026-03-07 20:19:57"}]},{"id":110,"name":"Phase G: VM Pipeline Execution","description":"Execute classification pipeline (Steps A-C) on GCP VM with async parallelization","status":"in_progress","start_date":"2026-03-06","due_date":"2026-03-07","completed_date":null,"sort_order":12,"tasks":[{"id":87,"phase_id":110,"subject":"Step A: classify_by_title.py (title keyword classification)","description":"Rule-based classification of 16K docs by title keywords. Ran on VM, classified ~13K docs.","owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T14:47:16.052379","created_at":"2026-03-06 17:47:16","updated_at":"2026-03-06 17:47:16"},{"id":88,"phase_id":110,"subject":"Step B: classify_ambiguous_docs.py (LLM classification)","description":"LLM partial-text classification of ~6K ambiguous docs. Running async (25 concurrent) on VM.","owner":"Gustavo","priority":"critical","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T16:22:39.604523","created_at":"2026-03-06 17:47:16","updated_at":"2026-03-06 19:22:39"},{"id":89,"phase_id":110,"subject":"Async refactor of classify_ambiguous_docs.py","description":"3-phase architecture: sync PDF prep -> async Gemini calls (semaphore=25) -> sync DB commits. Added call_gemini_async() to gemini_client.py. ~10x speedup (7h -> 70min).","owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T14:47:16.052379","created_at":"2026-03-06 17:47:16","updated_at":"2026-03-06 17:47:16"},{"id":90,"phase_id":110,"subject":"Step C: aggregate_unclassified (bulk default)","description":"Auto-runs as epilogue of Step B. Defaults remaining NULL docs to non-decision.","owner":"Gustavo","priority":"medium","status":"completed","due_date":"2026-03-06","completed_date":"2026-03-06T16:22:39.604523","created_at":"2026-03-06 17:47:16","updated_at":"2026-03-06 19:22:39"},{"id":91,"phase_id":110,"subject":"Step D: extract_texts.py (text extraction)","description":"PDF text extraction for all classified decisions. Not yet started.","owner":"Gustavo","priority":"high","status":"completed","due_date":"2026-03-07","completed_date":"2026-03-07","created_at":"2026-03-06 17:47:16","updated_at":"2026-03-07 21:38:56"},{"id":92,"phase_id":110,"subject":"Step E: extract_citations (citation extraction v6)","description":"KB-enhanced citation extraction on all decisions. Not yet started.","owner":"Gustavo","priority":"critical","status":"in_progress","due_date":"2026-03-07","completed_date":null,"created_at":"2026-03-06 17:47:16","updated_at":"2026-03-07 21:38:56"},{"id":93,"phase_id":110,"subject":"Investigate docs with filenames too long for Linux (Errno 36)","description":"Some PDFs have filenames >255 chars that fail on Linux ext4. Seen in Step B Phase 1. Need to either rename files or resolve by truncated filename lookup. Low count but may affect classification completeness.","owner":"Gustavo","priority":"low","status":"pending","due_date":null,"completed_date":null,"created_at":"2026-03-06 17:50:31","updated_at":"2026-03-06 17:50:31"}]},{"id":106,"name":"Bug: Phase 5 Debugging","description":"Citation extraction script debugging session","status":"completed","start_date":null,"due_date":"2026-03-05","completed_date":"2026-03-05","sort_order":99,"tasks":[{"id":63,"phase_id":106,"subject":"Bug 6: MAX_OUTPUT_TOKENS=65536 repetitive output","description":null,"owner":null,"priority":"critical","status":"completed","due_date":null,"completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 21:40:03"},{"id":64,"phase_id":106,"subject":"Bug 7: Functional classification fails >30 citations","description":null,"owner":null,"priority":"medium","status":"completed","due_date":null,"completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 21:40:03"},{"id":65,"phase_id":106,"subject":"Bug 8: Treaties extracted as case law references","description":null,"owner":null,"priority":"low","status":"completed","due_date":null,"completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 21:40:03"},{"id":66,"phase_id":106,"subject":"Bug 9: Tier 2 fails for abbreviated US case names","description":null,"owner":null,"priority":"medium","status":"completed","due_date":null,"completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 21:40:03"},{"id":67,"phase_id":106,"subject":"Bug 10: SA domestic citations not caught by Tier 0","description":null,"owner":null,"priority":"medium","status":"completed","due_date":null,"completed_date":"2026-03-05T18:40:03.152300","created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 21:40:03"},{"id":68,"phase_id":106,"subject":"Fix: cp1252 Unicode logging on Windows","description":null,"owner":null,"priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 12:51:03"},{"id":69,"phase_id":106,"subject":"Fix: Tier 0 domestic citation heuristic","description":null,"owner":null,"priority":"critical","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 12:51:03"},{"id":70,"phase_id":106,"subject":"Fix: Expanded Tier 1 dictionary (non-English courts)","description":null,"owner":null,"priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 12:51:03"},{"id":71,"phase_id":106,"subject":"Fix: Improved Tier 2 prompt with source context","description":null,"owner":null,"priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 12:51:03"},{"id":72,"phase_id":106,"subject":"Fix: datetime.utcnow() deprecation","description":null,"owner":null,"priority":"low","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-05 12:51:03","updated_at":"2026-03-05 12:51:03"},{"id":75,"phase_id":106,"subject":"Debugging session: post-v6 pipeline stabilization","description":"Fixed P1 list-vs-dict in Tier2/Phase2B, P2 Unicode encoding on 6 scripts, added citation_extraction_discarded table for Sabin filter audit. Report: docs/reports/debugging_session_cycle1_20260305.md","owner":null,"priority":"high","status":"completed","due_date":null,"completed_date":null,"created_at":"2026-03-05 23:52:19","updated_at":"2026-03-05 23:52:19"}]}],"decisions":[{"id":"D1","title":"Sabin-only citation filter","rationale":"Australia data noise from non-climate citations","source":"Meeting 3 Mar","status":"pending","phase_id":5,"created_at":"2026-03-04 23:57:30"},{"id":"D10","title":"Error margin disclaimer","rationale":"Transparency about LLM limitations","source":"Meeting 3 Mar","status":"pending","phase_id":6,"created_at":"2026-03-04 23:57:30"},{"id":"D11","title":"Trial run: 100 random documents","rationale":"Validate before full-scale execution","source":"Session 4 Mar","status":"pending","phase_id":7,"created_at":"2026-03-04 23:57:30"},{"id":"D12","title":"Title-based document classification","rationale":"Use Document Title keyword (after last \" - \" separator) instead of unreliable Document Type column. 84 unique keywords mapped to decision/non-decision/ambiguous buckets.","source":"Session 6 Mar","status":"active","phase_id":109,"created_at":"2026-03-06 14:32:56"},{"id":"D13","title":"LLM classification for ambiguous documents","rationale":"4,084 docs without clear title keyword (\"other\" or no separator) classified via partial text extraction (first+last 2,400 chars) + Gemini. Cost: ~.08.","source":"Session 6 Mar","status":"active","phase_id":109,"created_at":"2026-03-06 14:32:56"},{"id":"D14","title":"GCP VM on Lucas project for pipeline execution","rationale":"Use Lucas GCP project (gen-lang-client-0764097936) for VM + secrets. e2-standard-16 Spot instance. Avoids billing on Gustavo personal project. VM cost: </job.","source":"Session 6 Mar","status":"implemented","phase_id":109,"created_at":"2026-03-06 14:32:56"},{"id":"D15","title":"Concurrency: asyncio Semaphore(25) for API calls","rationale":"Originally CPU-count workers. Replaced with asyncio semaphore=25 concurrent API calls — single-threaded, no thread safety issues. call_gemini_async() added to gemini_client.py.","source":"Session 6 Mar","status":"implemented","phase_id":109,"created_at":"2026-03-06 14:32:56"},{"id":"D16","title":"Async parallelization for Step B (semaphore=25)","rationale":"Sequential processing at ~15 RPM wastes 99%% of VM capacity. asyncio.Semaphore(25) targets ~100 RPM. 3-phase architecture isolates PDF I/O, API calls, and DB commits. Reduces runtime from ~7h to ~70min.","source":"Session 6 Mar (pm)","status":"implemented","phase_id":110,"created_at":"2026-03-06 17:47:16"},{"id":"D17","title":"Use relative proportions for public claims","rationale":"Addresses concern about cautious academic claims. Use percentages of identified citations, not raw counts.","source":"Touchpoint 7 Mar","status":"active","phase_id":null,"created_at":"2026-03-07 21:38:56"},{"id":"D18","title":"Monday deliverable = factual findings only","rationale":"Focus on observable patterns: which jurisdictions use foreign climate decisions, which cases are paradigmatic. No thesis argumentation.","source":"Touchpoint 7 Mar","status":"active","phase_id":6,"created_at":"2026-03-07 21:38:56"},{"id":"D19","title":"Phase 8 absorbed into Phase 5 / Phase 110","rationale":"The VM full extraction run (Step E) IS the full pipeline run. Phase 8 as originally planned is redundant.","source":"Touchpoint 7 Mar","status":"implemented","phase_id":null,"created_at":"2026-03-07 21:38:56"},{"id":"D2","title":"Gemini as primary LLM","rationale":"Cheaper, matches benchmarks, Lucas has credits","source":"Meeting 3 Mar","status":"implemented","phase_id":null,"created_at":"2026-03-04 23:57:30"},{"id":"D20","title":"Phase 7 (Trial Run) confirmed complete","rationale":"Test run of 100 docs executed, reviewed by Lucas, adjustments implemented, re-tested before full run.","source":"Touchpoint 7 Mar","status":"implemented","phase_id":7,"created_at":"2026-03-07 21:38:56"},{"id":"D21","title":"Complementary review strategy","rationale":"Lucas: manual Excel review (domain/legal). Gustavo: automated DB queries + chunk inspection (technical). Aligned tomorrow.","source":"Touchpoint 7 Mar","status":"active","phase_id":null,"created_at":"2026-03-07 21:38:56"},{"id":"D22","title":"Count citations per document (1 invocation per doc)","rationale":"If a document cites a foreign decision 15 times textually, count as 1. The act of invoking, not number of textual references.","source":"Touchpoint 7 Mar","status":"active","phase_id":null,"created_at":"2026-03-07 21:39:14"},{"id":"D3","title":"Markdown text extraction","rationale":"Better optimized for LLM processing","source":"Meeting 3 Mar","status":"pending","phase_id":3,"created_at":"2026-03-04 23:57:30"},{"id":"D4","title":"Use Sabin Case/Document IDs","rationale":"Sabin DB already provides both IDs","source":"Meeting 3 Mar","status":"pending","phase_id":1,"created_at":"2026-03-04 23:57:30"},{"id":"D5","title":"No wholesale reclassification","rationale":"Too expensive; trust Sabin scope","source":"Meeting 3 Mar","status":"active","phase_id":null,"created_at":"2026-03-04 23:57:30"},{"id":"D6","title":"Build Knowledge step before extraction","rationale":"Dramatically improved recall in corporate-cases project","source":"Meeting 3 Mar","status":"pending","phase_id":4,"created_at":"2026-03-04 23:57:30"},{"id":"D7","title":"Snippets after filter only","rationale":"Don't waste tokens on discarded citations","source":"Meeting 3 Mar","status":"pending","phase_id":5,"created_at":"2026-03-04 23:57:30"},{"id":"D8","title":"Gustavo handles all pipeline work","rationale":"Iterative work, dividing creates overhead","source":"Meeting 3 Mar","status":"active","phase_id":null,"created_at":"2026-03-04 23:57:30"},{"id":"D9","title":"Top-5 format for deliverable","rationale":"Comfortable with ranked format given data imperfections","source":"Meeting 3 Mar","status":"pending","phase_id":6,"created_at":"2026-03-04 23:57:30"}],"dependencies":[{"id":1,"task_id":7,"depends_on":8,"dep_type":"blocks","task_subject":"Adapt populate_metadata.py for new Excel structure","depends_on_subject":"Acquire updated Columbia/Sabin Excel"},{"id":2,"task_id":5,"depends_on":8,"dep_type":"blocks","task_subject":"Implement --test-run N CLI flag across pipeline scripts","depends_on_subject":"Acquire updated Columbia/Sabin Excel"},{"id":3,"task_id":12,"depends_on":4,"dep_type":"blocks","task_subject":"Create build_knowledge_base.py","depends_on_subject":"Update populate_metadata.py to store Sabin IDs"},{"id":4,"task_id":15,"depends_on":10,"dep_type":"blocks","task_subject":"Design v6 extraction prompt with knowledge base","depends_on_subject":"Modify extract_texts.py for Markdown output"},{"id":5,"task_id":15,"depends_on":12,"dep_type":"blocks","task_subject":"Design v6 extraction prompt with knowledge base","depends_on_subject":"Create build_knowledge_base.py"},{"id":6,"task_id":16,"depends_on":12,"dep_type":"blocks","task_subject":"Implement Sabin filter (citation → Sabin case matching)","depends_on_subject":"Create build_knowledge_base.py"},{"id":7,"task_id":20,"depends_on":16,"dep_type":"blocks","task_subject":"Update analysis engine for v2.0 citation data","depends_on_subject":"Implement Sabin filter (citation → Sabin case matching)"},{"id":9,"task_id":24,"depends_on":5,"dep_type":"blocks","task_subject":"Execute --test-run 100 through full pipeline","depends_on_subject":"Implement --test-run N CLI flag across pipeline scripts"},{"id":10,"task_id":27,"depends_on":24,"dep_type":"blocks","task_subject":"Full pipeline run on all documents","depends_on_subject":"Execute --test-run 100 through full pipeline"},{"id":11,"task_id":29,"depends_on":28,"dep_type":"blocks","task_subject":"Write 2-3 descriptive paragraphs","depends_on_subject":"Generate final static maps for Joana"},{"id":23,"task_id":27,"depends_on":19,"dep_type":"blocks","task_subject":"Full pipeline run on all documents","depends_on_subject":"Cost estimation: tokens × docs × price"},{"id":24,"task_id":88,"depends_on":87,"dep_type":"blocks","task_subject":"Step B: classify_ambiguous_docs.py (LLM classification)","depends_on_subject":"Step A: classify_by_title.py (title keyword classification)"},{"id":25,"task_id":90,"depends_on":88,"dep_type":"blocks","task_subject":"Step C: aggregate_unclassified (bulk default)","depends_on_subject":"Step B: classify_ambiguous_docs.py (LLM classification)"},{"id":26,"task_id":91,"depends_on":90,"dep_type":"blocks","task_subject":"Step D: extract_texts.py (text extraction)","depends_on_subject":"Step C: aggregate_unclassified (bulk default)"},{"id":27,"task_id":92,"depends_on":91,"dep_type":"blocks","task_subject":"Step E: extract_citations (citation extraction v6)","depends_on_subject":"Step D: extract_texts.py (text extraction)"},{"id":28,"task_id":97,"depends_on":92,"dep_type":"blocks","task_subject":"BUG: 275 failed documents need retry pass","depends_on_subject":"Step E: extract_citations (citation extraction v6)"},{"id":29,"task_id":100,"depends_on":99,"dep_type":"blocks","task_subject":"Lucas manual review of Excel output with process annotations","depends_on_subject":"Export extraction results to Excel with doc links for Lucas"},{"id":30,"task_id":99,"depends_on":92,"dep_type":"blocks","task_subject":"Export extraction results to Excel with doc links for Lucas","depends_on_subject":"Step E: extract_citations (citation extraction v6)"},{"id":31,"task_id":101,"depends_on":92,"dep_type":"blocks","task_subject":"Run DB queries for automated pre-review of citations","depends_on_subject":"Step E: extract_citations (citation extraction v6)"}],"action_items":[{"id":"A1","owner":"Lucas","description":"Acquire updated Columbia/Sabin Excel with latest cases","deadline":null,"status":"completed","source":"Meeting 3 Mar"},{"id":"A2","owner":"Gustavo","description":"Pipeline v2.0 development and execution (all phases)","deadline":"2026-03-08","status":"in_progress","source":"Meeting 3 Mar"},{"id":"A3","owner":"Lucas","description":"Develop map presentation (text, colors, aesthetics)","deadline":"2026-03-08","status":"pending","source":"Meeting 3 Mar"},{"id":"A4","owner":"Lucas","description":"Write descriptive/reflective paragraphs (pending data)","deadline":"2026-03-09","status":"pending","source":"Meeting 3 Mar"},{"id":"A5","owner":"Both","description":"Daily touchpoints (morning sync + end-of-day review)","deadline":null,"status":"in_progress","source":"Meeting 3 Mar"},{"id":"A6","owner":"Lucas","description":"Create Discord/Teams room for always-on communication","deadline":"2026-03-04","status":"pending","source":"Meeting 3 Mar"},{"id":"A7","owner":"Gustavo","description":"Estimate token costs for full pipeline run","deadline":"2026-03-05","status":"completed","source":"Meeting 3 Mar"},{"id":"A8","owner":"Both","description":"Consider Columbia Junior Scholars submission (15 Mar)","deadline":"2026-03-10","status":"pending","source":"Meeting 3 Mar"}],"summary":{"total_tasks":78,"tasks_by_status":{"completed":56,"deferred":2,"in_progress":1,"pending":19}}};
+
+  function loadData() {
+    render();
+  }
+
+  // ─── Helpers ───────────────────────────────────────────────────────────
+  const statusConfig = {
+    completed:   { label: 'Completed',   color: 'bg-emerald-500/20 text-emerald-400', dot: 'bg-emerald-400', border: 'border-emerald-500/30' },
+    in_progress: { label: 'In Progress', color: 'bg-blue-500/20 text-blue-400',      dot: 'bg-blue-400 pulse-dot', border: 'border-blue-500/30' },
+    pending:     { label: 'Pending',     color: 'bg-amber-500/20 text-amber-400',    dot: 'bg-amber-400', border: 'border-amber-500/30' },
+    blocked:     { label: 'Blocked',     color: 'bg-red-500/20 text-red-400',        dot: 'bg-red-400', border: 'border-red-500/30' },
+    deferred:    { label: 'Deferred',    color: 'bg-gray-500/20 text-gray-400',      dot: 'bg-gray-400', border: 'border-gray-500/30' },
+    implemented: { label: 'Implemented', color: 'bg-emerald-500/20 text-emerald-400', dot: 'bg-emerald-400', border: 'border-emerald-500/30' },
+    active:      { label: 'Active',      color: 'bg-cyan-500/20 text-cyan-400',      dot: 'bg-cyan-400', border: 'border-cyan-500/30' },
+  };
+
+  const priorityConfig = {
+    critical: { label: 'Critical', color: 'text-red-400 bg-red-500/10 border-red-500/20' },
+    high:     { label: 'High',     color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },
+    medium:   { label: 'Medium',   color: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' },
+    low:      { label: 'Low',      color: 'text-gray-400 bg-gray-500/10 border-gray-500/20' },
+  };
+
+  function badge(status) {
+    const c = statusConfig[status] || statusConfig.pending;
+    return `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${c.color}"><span class="w-1.5 h-1.5 rounded-full ${c.dot}"></span>${c.label}</span>`;
+  }
+
+  function priorityBadge(p) {
+    const c = priorityConfig[p] || priorityConfig.medium;
+    return `<span class="inline-flex px-2 py-0.5 rounded text-xs font-medium border ${c.color}">${c.label}</span>`;
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function escHtml(s) {
+    if (!s) return '';
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ─── Render Summary Cards ─────────────────────────────────────────────
+  function renderSummary() {
+    const s = DATA.summary;
+    const bs = s.tasks_by_status;
+    const totalPhases = DATA.phases.length;
+    const completedPhases = DATA.phases.filter(p => p.status === 'completed').length;
+    const phasePct = Math.round((completedPhases / totalPhases) * 100);
+    const taskPct = Math.round(((bs.completed || 0) / s.total_tasks) * 100);
+
+    const cards = [
+      { label: 'Total Tasks', value: s.total_tasks, sub: `${bs.completed||0} completed`, icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', accent: 'north' },
+      { label: 'Task Progress', value: `${taskPct}%`, sub: `${bs.pending||0} pending`, icon: 'M13 10V3L4 14h7v7l9-11h-7', accent: 'emerald-400', bar: taskPct },
+      { label: 'Phases', value: `${completedPhases}/${totalPhases}`, sub: `${phasePct}% complete`, icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', accent: 'violet-400', bar: phasePct },
+      { label: 'Decisions', value: DATA.decisions.length, sub: `${DATA.decisions.filter(d=>d.status==='implemented'||d.status==='active').length} active`, icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', accent: 'cyan-400' },
+    ];
+
+    document.getElementById('summary-cards').innerHTML = cards.map(c => `
+      <div class="bg-surface-3 rounded-xl border border-border p-5 card-hover">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs text-txt-3 font-medium uppercase tracking-wider">${c.label}</span>
+          <svg class="w-4 h-4 text-txt-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${c.icon}"/></svg>
+        </div>
+        <div class="text-2xl font-bold text-txt-1 mono">${c.value}</div>
+        <div class="text-xs text-txt-3 mt-1">${c.sub}</div>
+        ${c.bar !== undefined ? `<div class="mt-3 h-1.5 bg-surface-4 rounded-full overflow-hidden"><div class="progress-bar h-full bg-${c.accent} rounded-full" style="width:${c.bar}%"></div></div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // ─── Tab switching ─────────────────────────────────────────────────────
+  let currentTab = 'completed';
+  function switchTab(tab) {
+    currentTab = tab;
+    ['completed','pending','decisions','pipeline'].forEach(t => {
+      const el = document.getElementById('tab-' + t);
+      el.className = t === tab ? 'tab-active pb-3 text-sm font-medium cursor-pointer' : 'tab-inactive pb-3 text-sm font-medium cursor-pointer';
+    });
+    renderTab();
+  }
+
+  function renderTab() {
+    const container = document.getElementById('tab-content');
+    switch(currentTab) {
+      case 'completed': container.innerHTML = renderPhaseGroups('completed'); break;
+      case 'pending':   container.innerHTML = renderPhaseGroups('pending'); break;
+      case 'decisions': container.innerHTML = renderDecisions(); break;
+      case 'pipeline':  container.innerHTML = renderPipeline(); break;
+    }
+  }
+
+  // ─── Phase Groups (Completed / Pending) ────────────────────────────────
+  function renderPhaseGroups(mode) {
+    const phases = DATA.phases.filter(p => {
+      if (mode === 'completed') return p.status === 'completed';
+      return p.status !== 'completed';
+    });
+
+    if (phases.length === 0) {
+      return `<div class="text-center py-16 text-txt-3">No ${mode} phases.</div>`;
+    }
+
+    const taskFilter = mode === 'completed'
+      ? t => t.status === 'completed'
+      : t => t.status !== 'completed';
+
+    return `
+      <div class="space-y-3">
+        ${phases.map((phase, idx) => {
+          const tasks = (phase.tasks || []).filter(taskFilter);
+          const allTasks = phase.tasks || [];
+          const completedCount = allTasks.filter(t => t.status === 'completed').length;
+          const totalCount = allTasks.length;
+          const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : (phase.status === 'completed' ? 100 : 0);
+          const sc = statusConfig[phase.status] || statusConfig.pending;
+
+          return `
+            <div class="bg-surface-2 rounded-xl border border-border card-hover overflow-hidden">
+              <!-- Phase Header (Accordion Trigger) -->
+              <button onclick="toggleAccordion('phase-${mode}-${idx}')" class="w-full flex items-center justify-between px-5 py-4 cursor-pointer text-left group">
+                <div class="flex items-center gap-4 min-w-0">
+                  <div class="flex-shrink-0 w-9 h-9 rounded-lg ${sc.color} flex items-center justify-center">
+                    <span class="text-sm font-bold">${phase.id > 100 ? String.fromCharCode(64 + (phase.id - 100)) : phase.id}</span>
+                  </div>
+                  <div class="min-w-0">
+                    <h3 class="text-sm font-semibold text-txt-1 truncate">${escHtml(phase.name)}</h3>
+                    <p class="text-xs text-txt-3 truncate">${escHtml(phase.description || '')}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 flex-shrink-0 ml-4">
+                  ${totalCount > 0 ? `
+                    <div class="hidden sm:flex items-center gap-2">
+                      <div class="w-24 h-1.5 bg-surface-4 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full ${phase.status === 'completed' ? 'bg-emerald-400' : 'bg-blue-400'}" style="width:${pct}%"></div>
+                      </div>
+                      <span class="text-xs text-txt-3 mono w-12 text-right">${completedCount}/${totalCount}</span>
+                    </div>
+                  ` : ''}
+                  ${badge(phase.status)}
+                  <svg id="chevron-phase-${mode}-${idx}" class="accordion-chevron w-4 h-4 text-txt-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+              </button>
+
+              <!-- Phase Body (Accordion Content) -->
+              <div id="phase-${mode}-${idx}" class="accordion-body">
+                <div class="px-5 pb-4">
+                  ${phase.start_date || phase.due_date || phase.completed_date ? `
+                    <div class="flex gap-4 mb-3 text-xs text-txt-3">
+                      ${phase.start_date ? `<span>Started: <span class="text-txt-2 mono">${formatDate(phase.start_date)}</span></span>` : ''}
+                      ${phase.due_date ? `<span>Due: <span class="text-txt-2 mono">${formatDate(phase.due_date)}</span></span>` : ''}
+                      ${phase.completed_date ? `<span>Completed: <span class="text-emerald-400 mono">${formatDate(phase.completed_date)}</span></span>` : ''}
+                    </div>
+                  ` : ''}
+
+                  ${tasks.length > 0 ? `
+                    <div class="space-y-2">
+                      ${tasks.map(t => `
+                        <div class="bg-surface-3 rounded-lg border border-border/50 px-4 py-3 flex items-start justify-between gap-3 cursor-pointer card-hover" onclick="openTaskModal(${t.id})">
+                          <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                              <span class="text-xs text-txt-3 mono">#${t.id}</span>
+                              ${priorityBadge(t.priority)}
+                              ${badge(t.status)}
+                            </div>
+                            <h4 class="text-sm font-medium text-txt-1 leading-snug">${escHtml(t.subject)}</h4>
+                            ${t.owner ? `<span class="text-xs text-txt-3 mt-1 inline-block">@${escHtml(t.owner)}</span>` : ''}
+                          </div>
+                          <div class="flex-shrink-0 text-txt-3 mt-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : `<p class="text-xs text-txt-3 italic py-2">No individual tasks tracked for this phase.</p>`}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  // ─── Decisions ─────────────────────────────────────────────────────────
+  function renderDecisions() {
+    const decisions = DATA.decisions;
+    return `
+      <div class="space-y-4">
+        <p class="text-sm text-txt-2 mb-4">${decisions.length} key decisions shaping the project's architecture and methodology.</p>
+        <div class="grid gap-3 md:grid-cols-2">
+          ${decisions.map(d => {
+            const sc = statusConfig[d.status] || statusConfig.pending;
+            return `
+              <div class="bg-surface-2 rounded-xl border border-border p-5 card-hover cursor-pointer" onclick="openDecisionModal('${d.id}')">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="mono text-xs font-bold text-north">${escHtml(d.id)}</span>
+                  ${badge(d.status)}
+                </div>
+                <h4 class="text-sm font-semibold text-txt-1 mb-2">${escHtml(d.title)}</h4>
+                <p class="text-xs text-txt-3 line-clamp-2">${escHtml(d.rationale || '')}</p>
+                <div class="flex items-center gap-3 mt-3 text-xs text-txt-3">
+                  ${d.source ? `<span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>${escHtml(d.source)}</span>` : ''}
+                  ${d.phase_id ? `<span>Phase ${d.phase_id}</span>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // ─── Pipeline ──────────────────────────────────────────────────────────
+  function renderPipeline() {
+    // Build dependency graph for pending tasks
+    const pendingPhases = DATA.phases.filter(p => p.status !== 'completed');
+    const pendingTasks = [];
+    pendingPhases.forEach(p => {
+      (p.tasks || []).filter(t => t.status !== 'completed' && t.status !== 'deferred').forEach(t => {
+        pendingTasks.push({ ...t, phaseName: p.name });
+      });
+    });
+
+    // Build dep map
+    const depMap = {};
+    DATA.dependencies.forEach(d => {
+      if (!depMap[d.task_id]) depMap[d.task_id] = [];
+      depMap[d.task_id].push(d);
+    });
+
+    // Topological sort into layers
+    const allTasks = [];
+    DATA.phases.forEach(p => (p.tasks || []).forEach(t => allTasks.push(t)));
+    const taskMap = {};
+    allTasks.forEach(t => taskMap[t.id] = t);
+
+    // Determine execution order layers
+    const layers = [];
+    const placed = new Set();
+    const pendingIds = new Set(pendingTasks.map(t => t.id));
+
+    // Layer 0: tasks with no unresolved dependencies
+    let maxIter = 20;
+    while (placed.size < pendingTasks.length && maxIter-- > 0) {
+      const layer = [];
+      pendingTasks.forEach(t => {
+        if (placed.has(t.id)) return;
+        const deps = (depMap[t.id] || []);
+        const blocked = deps.some(d => pendingIds.has(d.depends_on) && !placed.has(d.depends_on));
+        if (!blocked) layer.push(t);
+      });
+      if (layer.length === 0) {
+        // remaining are circular or blocked — push them all
+        pendingTasks.forEach(t => { if (!placed.has(t.id)) layer.push(t); });
+      }
+      layer.forEach(t => placed.add(t.id));
+      layers.push(layer);
+    }
+
+    return `
+      <div>
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-txt-1 mb-1">Execution Pipeline</h3>
+          <p class="text-sm text-txt-2">Ideal execution order based on task dependencies. Tasks in the same layer can run in parallel.</p>
+        </div>
+
+        <div class="relative">
+          ${layers.map((layer, li) => `
+            <!-- Layer ${li + 1} -->
+            <div class="mb-6">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-north/20 flex items-center justify-center">
+                  <span class="text-xs font-bold text-north mono">${li + 1}</span>
+                </div>
+                <div class="flex-1 h-px bg-border"></div>
+                <span class="text-xs text-txt-3 mono">${layer.length} task${layer.length > 1 ? 's' : ''}</span>
+              </div>
+              <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3 ml-11">
+                ${layer.map(t => {
+                  const deps = (depMap[t.id] || []);
+                  const sc = statusConfig[t.status] || statusConfig.pending;
+                  return `
+                    <div class="pipeline-node bg-surface-3 rounded-xl border ${sc.border} p-4 cursor-pointer" onclick="openTaskModal(${t.id})">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="mono text-xs text-txt-3">#${t.id}</span>
+                        <div class="flex items-center gap-2">
+                          ${priorityBadge(t.priority)}
+                          ${badge(t.status)}
+                        </div>
+                      </div>
+                      <h4 class="text-sm font-medium text-txt-1 mb-2 leading-snug">${escHtml(t.subject)}</h4>
+                      <div class="flex items-center justify-between text-xs text-txt-3">
+                        <span>${escHtml(t.phaseName || '')}</span>
+                        ${t.owner ? `<span>@${escHtml(t.owner)}</span>` : ''}
+                      </div>
+                      ${deps.length > 0 ? `
+                        <div class="mt-2 pt-2 border-t border-border/50">
+                          <span class="text-xs text-txt-3">Depends on:</span>
+                          ${deps.map(d => `<span class="inline-flex ml-1 px-1.5 py-0.5 rounded bg-surface-4 text-xs text-txt-3 mono">#${d.depends_on}</span>`).join('')}
+                        </div>
+                      ` : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+            ${li < layers.length - 1 ? `
+              <div class="ml-4 flex items-center gap-2 mb-4 -mt-2">
+                <div class="w-px h-6 bg-border ml-3.5"></div>
+                <svg class="w-3 h-3 text-txt-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+              </div>
+            ` : ''}
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // ─── Accordion Toggle ─────────────────────────────────────────────────
+  function toggleAccordion(id) {
+    const body = document.getElementById(id);
+    const chevron = document.getElementById('chevron-' + id);
+    if (body.classList.contains('open')) {
+      body.style.maxHeight = '0px';
+      body.classList.remove('open');
+      chevron.classList.remove('open');
+    } else {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      body.classList.add('open');
+      chevron.classList.add('open');
+    }
+  }
+
+  // ─── Modal ─────────────────────────────────────────────────────────────
+  function openTaskModal(taskId) {
+    let task = null;
+    let phaseName = '';
+    DATA.phases.forEach(p => {
+      (p.tasks || []).forEach(t => {
+        if (t.id === taskId) { task = t; phaseName = p.name; }
+      });
+    });
+    if (!task) return;
+
+    const deps = DATA.dependencies.filter(d => d.task_id === taskId);
+    const blocksOthers = DATA.dependencies.filter(d => d.depends_on === taskId);
+
+    document.getElementById('modal-title').innerHTML = `
+      <span class="mono text-txt-3 mr-2">#${task.id}</span> ${escHtml(task.subject)}
+    `;
+
+    let descHtml = '';
+    if (task.description) {
+      // Parse the structured description into sections
+      const lines = task.description.split('\n');
+      let currentSection = '';
+      let sections = {};
+      lines.forEach(line => {
+        const sMatch = line.match(/^([A-Z][A-Z\s]+):/);
+        if (sMatch) {
+          currentSection = sMatch[1].trim();
+          sections[currentSection] = (sections[currentSection] || '') + line.substring(sMatch[0].length).trim() + '\n';
+        } else if (currentSection) {
+          sections[currentSection] += line + '\n';
+        } else {
+          sections['_intro'] = (sections['_intro'] || '') + line + '\n';
+        }
+      });
+
+      const sectionIcons = {
+        'DESCRIPTION': 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+        'IMPACT': 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
+        'EVIDENCE': 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+        'PROBABLE CAUSE': 'M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z',
+        'SUGGESTED FIX': 'M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1 2 2 0 110-4 1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z',
+      };
+
+      Object.entries(sections).forEach(([key, val]) => {
+        if (key === '_intro') {
+          descHtml += `<p class="mb-4 text-txt-2">${escHtml(val.trim())}</p>`;
+        } else {
+          const icon = sectionIcons[key] || 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+          descHtml += `
+            <div class="mb-4">
+              <div class="flex items-center gap-2 mb-1.5">
+                <svg class="w-4 h-4 text-north" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${icon}"/></svg>
+                <h4 class="text-xs font-bold text-txt-1 uppercase tracking-wider">${escHtml(key)}</h4>
+              </div>
+              <div class="ml-6 text-txt-2 whitespace-pre-line text-sm leading-relaxed">${escHtml(val.trim())}</div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    document.getElementById('modal-body').innerHTML = `
+      <div class="space-y-4">
+        <!-- Meta row -->
+        <div class="flex flex-wrap gap-3 items-center">
+          ${badge(task.status)}
+          ${priorityBadge(task.priority)}
+          ${task.owner ? `<span class="text-xs text-txt-3 border border-border rounded-full px-2.5 py-0.5">@${escHtml(task.owner)}</span>` : ''}
+          <span class="text-xs text-txt-3 bg-surface-4 rounded-full px-2.5 py-0.5">${escHtml(phaseName)}</span>
+        </div>
+
+        <!-- Dates -->
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <div class="bg-surface-4 rounded-lg p-3">
+            <span class="text-txt-3 block mb-0.5">Created</span>
+            <span class="text-txt-2 mono">${formatDate(task.created_at)}</span>
+          </div>
+          <div class="bg-surface-4 rounded-lg p-3">
+            <span class="text-txt-3 block mb-0.5">Due</span>
+            <span class="text-txt-2 mono">${formatDate(task.due_date)}</span>
+          </div>
+          <div class="bg-surface-4 rounded-lg p-3">
+            <span class="text-txt-3 block mb-0.5">Completed</span>
+            <span class="${task.completed_date ? 'text-emerald-400' : 'text-txt-3'} mono">${formatDate(task.completed_date)}</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        ${descHtml ? `<div class="pt-2">${descHtml}</div>` : ''}
+
+        <!-- Dependencies -->
+        ${deps.length > 0 || blocksOthers.length > 0 ? `
+          <div class="border-t border-border pt-4">
+            <h4 class="text-xs font-bold text-txt-1 uppercase tracking-wider mb-2">Dependencies</h4>
+            ${deps.length > 0 ? `
+              <div class="mb-2">
+                <span class="text-xs text-txt-3 mb-1 block">This task depends on:</span>
+                ${deps.map(d => `
+                  <div class="flex items-center gap-2 ml-2 my-1">
+                    <svg class="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/></svg>
+                    <span class="text-xs mono text-txt-3">#${d.depends_on}</span>
+                    <span class="text-xs text-txt-2">${escHtml(d.depends_on_subject)}</span>
+                    ${taskMap[d.depends_on]?.status === 'completed' ? badge('completed') : badge(taskMap[d.depends_on]?.status || 'pending')}
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            ${blocksOthers.length > 0 ? `
+              <div>
+                <span class="text-xs text-txt-3 mb-1 block">Blocks:</span>
+                ${blocksOthers.map(d => `
+                  <div class="flex items-center gap-2 ml-2 my-1">
+                    <svg class="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    <span class="text-xs mono text-txt-3">#${d.task_id}</span>
+                    <span class="text-xs text-txt-2">${escHtml(d.task_subject)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+      </div>
+    `;
+
+    document.getElementById('modal').classList.add('active');
+  }
+
+  function openDecisionModal(decisionId) {
+    const d = DATA.decisions.find(x => x.id === decisionId);
+    if (!d) return;
+
+    document.getElementById('modal-title').innerHTML = `
+      <span class="mono text-north mr-2">${escHtml(d.id)}</span> ${escHtml(d.title)}
+    `;
+
+    document.getElementById('modal-body').innerHTML = `
+      <div class="space-y-4">
+        <div class="flex flex-wrap gap-3 items-center">
+          ${badge(d.status)}
+          ${d.phase_id ? `<span class="text-xs text-txt-3 bg-surface-4 rounded-full px-2.5 py-0.5">Phase ${d.phase_id}</span>` : ''}
+          ${d.source ? `<span class="text-xs text-txt-3 bg-surface-4 rounded-full px-2.5 py-0.5">${escHtml(d.source)}</span>` : ''}
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold text-txt-1 uppercase tracking-wider mb-2">Rationale</h4>
+          <p class="text-sm text-txt-2 leading-relaxed">${escHtml(d.rationale || 'No rationale recorded.')}</p>
+        </div>
+
+        <div class="bg-surface-4 rounded-lg p-3 text-xs text-txt-3">
+          <span>Recorded: <span class="text-txt-2 mono">${formatDate(d.created_at)}</span></span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('modal').classList.add('active');
+  }
+
+  function closeModal(e) {
+    if (e && e.target !== e.currentTarget) return;
+    document.getElementById('modal').classList.remove('active');
+  }
+
+  // Close modal on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // ─── Init ──────────────────────────────────────────────────────────────
+  function render() {
+    renderSummary();
+    renderTab();
+  }
+
+  loadData();
+  </script>
+</body>
+</html>

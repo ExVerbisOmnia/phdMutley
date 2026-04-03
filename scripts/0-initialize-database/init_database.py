@@ -229,6 +229,12 @@ class Document(Base):
     page_count = Column(Integer, comment="Number of pages in PDF")
     is_scanned = Column(Boolean, comment="Flag for scanned PDFs (require OCR)")
 
+    # Text quality flags (computed during text extraction)
+    is_garbled = Column(Boolean, nullable=True, comment="True if text appears garbled/corrupted")
+    is_too_long = Column(Boolean, nullable=True, comment="True if text exceeds model token limit")
+    text_char_count = Column(Integer, nullable=True, comment="Character count of extracted text")
+    text_token_estimate = Column(Integer, nullable=True, comment="Estimated token count (~chars/4)")
+
     # Classification
     is_decision = Column(
         Boolean, default=None, comment="True if document is a decision, False otherwise"
@@ -403,6 +409,18 @@ class CitationExtractionPhased(Base):
     reviewed_by = Column(String(100))
     reviewed_at = Column(TIMESTAMP)
 
+    # Phase V: Verification
+    verification_status = Column(String(20), nullable=True,
+                                 comment="CONFIRMED, NOT_FOUND, or MISATTRIBUTED")
+    verification_snippet = Column(Text, nullable=True,
+                                  comment="Raw LLM verbatim quote (before fuzzy matching)")
+    verification_notes = Column(Text, nullable=True,
+                                comment="LLM notes on the verification result")
+    verification_model = Column(String(50), nullable=True,
+                                comment="Model used for verification")
+    verified_at = Column(TIMESTAMP, nullable=True,
+                         comment="Timestamp of verification")
+
     # Timestamps
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -446,6 +464,13 @@ class CitationExtractionPhasedSummary(Base):
     # Quality Metrics
     average_confidence = Column(DECIMAL(3, 2))
     items_requiring_review = Column(Integer, default=0)
+
+    # Inline Verification Stats (Phase 5)
+    verified_confirmed = Column(Integer, default=0, comment="Citations verified as CONFIRMED")
+    verified_not_found = Column(Integer, default=0, comment="Citations verified as NOT_FOUND")
+    verified_misattributed = Column(Integer, default=0, comment="Citations verified as MISATTRIBUTED")
+    verified_skipped = Column(Integer, default=0, comment="Citations skipped (garbled/too long)")
+    verification_cost_usd = Column(DECIMAL(10, 4), default=0.0, comment="Cost of verification API calls")
 
     # Timestamps
     created_at = Column(TIMESTAMP, default=datetime.utcnow)

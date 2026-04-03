@@ -24,6 +24,13 @@ import os
 
 from google.cloud import secretmanager
 
+# Load .env file early so env vars are available for all resolvers
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 logger = logging.getLogger(__name__)
 
 GCP_PROJECT = os.environ.get("GCP_SECRET_PROJECT", "extreme-hull-489213-p9")
@@ -79,6 +86,41 @@ def get_gemini_api_key() -> str:
     if env_key:
         return env_key
     return get_secret("phdmutley-gemini-api-key")
+
+
+def get_gemini_api_keys() -> list[dict]:
+    """
+    Resolve multiple Gemini API keys for key rotation.
+
+    Checks for GEMINI_KEY_NATY, GEMINI_KEY_ORLANDO, GEMINI_KEY_MUTLEY1,
+    GEMINI_KEY_MUTLEY2 env vars. If none found, falls back to single key
+    via get_gemini_api_key().
+
+    INPUT: None (reads env vars, .env loaded at module init)
+    OUTPUT: List of {"name": str, "api_key": str, "tier": str} dicts
+    """
+    key_specs = [
+        ("naty", "GEMINI_KEY_NATY", "primary"),
+        ("orlando", "GEMINI_KEY_ORLANDO", "primary"),
+        ("mutley1", "GEMINI_KEY_MUTLEY1", "fallback"),
+        ("mutley2", "GEMINI_KEY_MUTLEY2", "fallback"),
+    ]
+
+    keys = []
+    for name, env_var, tier in key_specs:
+        value = os.environ.get(env_var)
+        if value:
+            keys.append({"name": name, "api_key": value, "tier": tier})
+
+    if keys:
+        return keys
+
+    # Fallback: single key from existing path (GCP Secret Manager)
+    single_key = get_gemini_api_key()
+    if single_key:
+        return [{"name": "default", "api_key": single_key, "tier": "primary"}]
+
+    return []
 
 
 def get_db_config() -> dict:

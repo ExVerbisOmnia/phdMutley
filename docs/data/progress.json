@@ -139,9 +139,9 @@
         {
           "id": "D4",
           "title": "Use Sabin Case/Document IDs",
-          "rationale": "Sabin DB already provides both IDs",
+          "rationale": "Use Sabin Case/Document IDs -- schema updated, populate_metadata.py stores both IDs.",
           "source": "Meeting 3 Mar",
-          "status": "pending",
+          "status": "implemented",
           "phase_id": 1,
           "created_at": "2026-03-04 23:57:30"
         }
@@ -266,9 +266,9 @@
         {
           "id": "D3",
           "title": "Markdown text extraction",
-          "rationale": "Better optimized for LLM processing",
+          "rationale": "Markdown text extraction -- extract_texts.py modified to use pymupdf4llm, text_md column added to extracted_text table.",
           "source": "Meeting 3 Mar",
-          "status": "pending",
+          "status": "implemented",
           "phase_id": 3,
           "created_at": "2026-03-04 23:57:30"
         }
@@ -281,7 +281,7 @@
       "status": "completed",
       "start_date": null,
       "due_date": "2026-03-05",
-      "completed_date": null,
+      "completed_date": "2026-03-05",
       "sort_order": 4,
       "tasks": [
         {
@@ -315,9 +315,9 @@
         {
           "id": "D6",
           "title": "Build Knowledge step before extraction",
-          "rationale": "Dramatically improved recall in corporate-cases project",
+          "rationale": "Build Knowledge step -- build_knowledge_base.py creates 4,741-case index (535K tokens full, 150K compact). Feeds v6 extraction prompt.",
           "source": "Meeting 3 Mar",
-          "status": "pending",
+          "status": "implemented",
           "phase_id": 4,
           "created_at": "2026-03-04 23:57:30"
         }
@@ -326,11 +326,11 @@
     {
       "id": 5,
       "name": "Phase 5: Citation Extraction v6",
-      "description": "Sabin-filtered extraction with knowledge base",
-      "status": "pending",
-      "start_date": null,
+      "description": "Sabin-filtered extraction with knowledge base. Methodology complete: v6 prompt, Sabin filter, snippet extractor, KB integration. Full-scale execution moved to Phase G (110).",
+      "status": "completed",
+      "start_date": "2026-03-05",
       "due_date": "2026-03-06",
-      "completed_date": null,
+      "completed_date": "2026-03-06",
       "sort_order": 5,
       "tasks": [
         {
@@ -377,161 +377,20 @@
         {
           "id": "D1",
           "title": "Sabin-only citation filter",
-          "rationale": "Australia data noise from non-climate citations",
+          "rationale": "Sabin-only citation filter -- sabin_filter.py built with 2-tier matching (exact normalized + fuzzy Jaccard/containment). Running in production pipeline.",
           "source": "Meeting 3 Mar",
-          "status": "pending",
+          "status": "implemented",
           "phase_id": 5,
           "created_at": "2026-03-04 23:57:30"
         },
         {
           "id": "D7",
           "title": "Snippets after filter only",
-          "rationale": "Don't waste tokens on discarded citations",
+          "rationale": "Snippets after filter only -- snippet_extractor.py with 3-tier text location (exact, normalized, key phrase) + char anchoring. Applied post-Sabin-filter.",
           "source": "Meeting 3 Mar",
-          "status": "pending",
+          "status": "implemented",
           "phase_id": 5,
           "created_at": "2026-03-04 23:57:30"
-        }
-      ]
-    },
-    {
-      "id": 109,
-      "name": "Phase F: GCP VM Setup & Pipeline Plan",
-      "description": "Provisioned GCP VM on Lucas project, replicated secrets, uploaded code+DB+PDFs. Refined decision-filtered pipeline plan (Steps A-F) with title-based classification.",
-      "status": "completed",
-      "start_date": "2026-03-06",
-      "due_date": "2026-03-06",
-      "completed_date": "2026-03-06",
-      "sort_order": 5.1,
-      "tasks": [
-        {
-          "id": 80,
-          "phase_id": 109,
-          "subject": "Provision GCP VM (e2-standard-16 Spot) on Lucas project",
-          "description": "VM: phdmutley-pipeline in us-central1-a, 16 vCPU, 64 GB RAM. Project: gen-lang-client-0764097936.",
-          "owner": "Gustavo",
-          "priority": "critical",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-06T11:32:56.990684",
-          "created_at": "2026-03-06 14:32:56",
-          "updated_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": 81,
-          "phase_id": 109,
-          "subject": "Replicate GCP secrets to Lucas project",
-          "description": "phdmutley-db-password + phdmutley-gemini-api-key created in gen-lang-client-0764097936. Compute SA granted secretAccessor role.",
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-06T11:32:56.990684",
-          "created_at": "2026-03-06 14:32:56",
-          "updated_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": 82,
-          "phase_id": 109,
-          "subject": "Create GCS transfer bucket and upload assets",
-          "description": "gs://phdmutley-pipeline-transfer (us-central1). Uploaded: code tarball, DB dump (plain SQL, PG version mismatch prevented custom format), 16,247 PDF files.",
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-06T11:32:56.990684",
-          "created_at": "2026-03-06 14:32:56",
-          "updated_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": 83,
-          "phase_id": 109,
-          "subject": "Install and configure VM environment",
-          "description": "PostgreSQL 16 on port 5432, Python venv at /opt/phdMutley/venv/, all pip deps installed. gcp_secrets.py patched to read GCP_SECRET_PROJECT and DB_PORT env vars.",
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-06T11:32:56.990684",
-          "created_at": "2026-03-06 14:32:56",
-          "updated_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": 84,
-          "phase_id": 109,
-          "subject": "Restore database on VM",
-          "description": "pg_restore failed (PG 18→16 version mismatch on custom format). Used plain SQL dump instead. Verified: 16,352 docs, 4,739 cases, 348 extractions.",
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-06T11:32:56.990684",
-          "created_at": "2026-03-06 14:32:56",
-          "updated_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": 85,
-          "phase_id": 109,
-          "subject": "Refine pipeline implementation plan (Steps A-F)",
-          "description": "Corrected Step B: \"Other\" lookup by Document Title keyword (not Document Type). Added no-separator titles (3,504 docs) to Step B. Total Step B: 4,084 docs. Workers set to 8 (local) / 16 (VM). Updated cost estimate: ~2.08 total.",
-          "owner": "Gustavo",
-          "priority": "critical",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-06T11:32:56.990684",
-          "created_at": "2026-03-06 14:32:56",
-          "updated_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": 86,
-          "phase_id": 109,
-          "subject": "Analyze Sabin Document Title keyword distribution",
-          "description": "Data analysis: 16,380 docs, 84 unique title keywords. Step A catches 2,921 decision docs. 9,000 non-decision exclusions. 4,084 ambiguous docs for LLM classification (580 \"other\" + 3,504 no-separator).",
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-06T11:32:56.990684",
-          "created_at": "2026-03-06 14:32:56",
-          "updated_at": "2026-03-06 14:32:56"
-        }
-      ],
-      "decisions": [
-        {
-          "id": "D12",
-          "title": "Title-based document classification",
-          "rationale": "Use Document Title keyword (after last \" - \" separator) instead of unreliable Document Type column. 84 unique keywords mapped to decision/non-decision/ambiguous buckets.",
-          "source": "Session 6 Mar",
-          "status": "active",
-          "phase_id": 109,
-          "created_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": "D13",
-          "title": "LLM classification for ambiguous documents",
-          "rationale": "4,084 docs without clear title keyword (\"other\" or no separator) classified via partial text extraction (first+last 2,400 chars) + Gemini. Cost: ~.08.",
-          "source": "Session 6 Mar",
-          "status": "active",
-          "phase_id": 109,
-          "created_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": "D14",
-          "title": "GCP VM on Lucas project for pipeline execution",
-          "rationale": "Use Lucas GCP project (gen-lang-client-0764097936) for VM + secrets. e2-standard-16 Spot instance. Avoids billing on Gustavo personal project. VM cost: </job.",
-          "source": "Session 6 Mar",
-          "status": "implemented",
-          "phase_id": 109,
-          "created_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": "D15",
-          "title": "Workers = CPU count (8 local, 16 VM)",
-          "rationale": "SAFE_WORKERS matches logical processor count. Local: 8 vCPU / 8GB RAM. VM: 16 vCPU / 64GB RAM. Each pdfplumber worker uses ~200MB. Comfortable headroom in both environments.",
-          "source": "Session 6 Mar",
-          "status": "active",
-          "phase_id": 109,
-          "created_at": "2026-03-06 14:32:56"
         }
       ]
     },
@@ -543,7 +402,7 @@
       "start_date": "2026-03-04",
       "due_date": "2026-03-04",
       "completed_date": "2026-03-04",
-      "sort_order": 5.5,
+      "sort_order": 6,
       "tasks": [
         {
           "id": 50,
@@ -679,308 +538,6 @@
       "decisions": []
     },
     {
-      "id": 6,
-      "name": "Phase 6: Analysis & Export v2",
-      "description": "Updated engine, top-5, static maps, disclaimer",
-      "status": "pending",
-      "start_date": null,
-      "due_date": "2026-03-07",
-      "completed_date": null,
-      "sort_order": 6,
-      "tasks": [
-        {
-          "id": 20,
-          "phase_id": 6,
-          "subject": "Update analysis engine for v2.0 citation data",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 22:25:11"
-        }
-      ],
-      "decisions": [
-        {
-          "id": "D10",
-          "title": "Error margin disclaimer",
-          "rationale": "Transparency about LLM limitations",
-          "source": "Meeting 3 Mar",
-          "status": "pending",
-          "phase_id": 6,
-          "created_at": "2026-03-04 23:57:30"
-        },
-        {
-          "id": "D9",
-          "title": "Top-5 format for deliverable",
-          "rationale": "Comfortable with ranked format given data imperfections",
-          "source": "Meeting 3 Mar",
-          "status": "pending",
-          "phase_id": 6,
-          "created_at": "2026-03-04 23:57:30"
-        }
-      ]
-    },
-    {
-      "id": 7,
-      "name": "Phase 7: Trial Run (100 docs)",
-      "description": "Validate full v2.0 pipeline on sample",
-      "status": "pending",
-      "start_date": null,
-      "due_date": "2026-03-07",
-      "completed_date": null,
-      "sort_order": 7,
-      "tasks": [
-        {
-          "id": 19,
-          "phase_id": 7,
-          "subject": "Cost estimation: tokens × docs × price",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "completed",
-          "due_date": "2026-03-05",
-          "completed_date": "2026-03-05T19:26:18.685868",
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 22:26:18"
-        },
-        {
-          "id": 24,
-          "phase_id": 7,
-          "subject": "Execute --test-run 100 through full pipeline",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "critical",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-04 23:57:30"
-        },
-        {
-          "id": 25,
-          "phase_id": 7,
-          "subject": "Monitor cost, errors, processing time",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "completed",
-          "due_date": "2026-03-07",
-          "completed_date": "2026-03-05T19:22:53.010382",
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 22:22:53"
-        },
-        {
-          "id": 26,
-          "phase_id": 7,
-          "subject": "Lucas validates sample of results",
-          "description": null,
-          "owner": "Lucas",
-          "priority": "critical",
-          "status": "in_progress",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 21:19:43"
-        }
-      ],
-      "decisions": [
-        {
-          "id": "D11",
-          "title": "Trial run: 100 random documents",
-          "rationale": "Validate before full-scale execution",
-          "source": "Session 4 Mar",
-          "status": "pending",
-          "phase_id": 7,
-          "created_at": "2026-03-04 23:57:30"
-        }
-      ]
-    },
-    {
-      "id": 8,
-      "name": "Phase 8: Full Run & Deliverable",
-      "description": "Process all documents, generate maps + text for Joana",
-      "status": "pending",
-      "start_date": null,
-      "due_date": "2026-03-09",
-      "completed_date": null,
-      "sort_order": 8,
-      "tasks": [
-        {
-          "id": 27,
-          "phase_id": 8,
-          "subject": "Full pipeline run on all documents",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "critical",
-          "status": "pending",
-          "due_date": "2026-03-08",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-04 23:57:30"
-        },
-        {
-          "id": 29,
-          "phase_id": 8,
-          "subject": "Write 2-3 descriptive paragraphs",
-          "description": null,
-          "owner": "Lucas",
-          "priority": "critical",
-          "status": "pending",
-          "due_date": "2026-03-09",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-04 23:57:30"
-        }
-      ],
-      "decisions": []
-    },
-    {
-      "id": 107,
-      "name": "Phase E: Infrastructure Lean-out",
-      "description": "Drop Docker, native PostgreSQL, evaluate serverless hosting (Cloud Run / Cloud Functions / GitHub Pages)",
-      "status": "completed",
-      "start_date": "2026-03-05",
-      "due_date": "2026-03-06",
-      "completed_date": null,
-      "sort_order": 9,
-      "tasks": [
-        {
-          "id": 73,
-          "phase_id": 107,
-          "subject": "Migrate infrastructure: drop Docker, native PostgreSQL + serverless hosting evaluation",
-          "description": "Evaluate Cloud Run, Cloud Functions, and GitHub Pages for hosting. Restructure local dev to lean native PostgreSQL setup. Follow DevProtocol_1.",
-          "owner": "Gustavo",
-          "priority": "critical",
-          "status": "completed",
-          "due_date": "2026-03-06",
-          "completed_date": "2026-03-05T19:10:05.245940",
-          "created_at": "2026-03-05 21:19:57",
-          "updated_at": "2026-03-05 22:10:05"
-        }
-      ],
-      "decisions": []
-    },
-    {
-      "id": 108,
-      "name": "Post-Extraction",
-      "description": "Tasks deferred until after core extraction pipeline is complete",
-      "status": "pending",
-      "start_date": null,
-      "due_date": "2026-03-09",
-      "completed_date": null,
-      "sort_order": 10,
-      "tasks": [
-        {
-          "id": 14,
-          "phase_id": 108,
-          "subject": "Export knowledge base as JSON for validation",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "completed",
-          "due_date": "2026-03-05",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 22:26:47"
-        },
-        {
-          "id": 18,
-          "phase_id": 108,
-          "subject": "Generate validation Excel for Lucas review",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "pending",
-          "due_date": "2026-03-06",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-06 14:32:56"
-        },
-        {
-          "id": 21,
-          "phase_id": 108,
-          "subject": "Add top-5 jurisdiction queries",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 21:53:25"
-        },
-        {
-          "id": 22,
-          "phase_id": 108,
-          "subject": "Generate static maps (top-5 + US aesthetic)",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "high",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 21:53:25"
-        },
-        {
-          "id": 23,
-          "phase_id": 108,
-          "subject": "Add error margin disclaimer",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "pending",
-          "due_date": "2026-03-07",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 21:53:25"
-        },
-        {
-          "id": 28,
-          "phase_id": 108,
-          "subject": "Generate final static maps for Joana",
-          "description": null,
-          "owner": "Gustavo",
-          "priority": "critical",
-          "status": "pending",
-          "due_date": "2026-03-08",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 21:53:25"
-        },
-        {
-          "id": 30,
-          "phase_id": 108,
-          "subject": "Package and deliver to Joana/Kate",
-          "description": null,
-          "owner": "Both",
-          "priority": "critical",
-          "status": "pending",
-          "due_date": "2026-03-09",
-          "completed_date": null,
-          "created_at": "2026-03-04 23:57:30",
-          "updated_at": "2026-03-05 21:53:25"
-        },
-        {
-          "id": 74,
-          "phase_id": 108,
-          "subject": "Investigate snippet miss rate (35% on chunked docs)",
-          "description": "Trial run showed 39/60 snippets found (65% hit rate). Worst on chunked documents (e.g. 986K-char doc: 0/9 found). Root cause: LLM raw_text from chunk extraction does not match full document verbatim. Consider: normalized matching improvements in snippet_extractor.py, or extracting snippets per-chunk before deduplication. | Confirmed in debug session: snippet miss causes Phase 2B fallback (graceful degradation)",
-          "owner": "Gustavo",
-          "priority": "medium",
-          "status": "pending",
-          "due_date": "2026-03-08",
-          "completed_date": null,
-          "created_at": "2026-03-05 23:02:50",
-          "updated_at": "2026-03-05 23:52:19"
-        }
-      ],
-      "decisions": []
-    },
-    {
       "id": 106,
       "name": "Bug: Phase 5 Debugging",
       "description": "Citation extraction script debugging session",
@@ -988,7 +545,7 @@
       "start_date": null,
       "due_date": "2026-03-05",
       "completed_date": "2026-03-05",
-      "sort_order": 99,
+      "sort_order": 7,
       "tasks": [
         {
           "id": 63,
@@ -1135,15 +692,1046 @@
         }
       ],
       "decisions": []
+    },
+    {
+      "id": 107,
+      "name": "Phase E: Infrastructure Lean-out",
+      "description": "Drop Docker, native PostgreSQL, evaluate serverless hosting (Cloud Run / Cloud Functions / GitHub Pages)",
+      "status": "completed",
+      "start_date": "2026-03-05",
+      "due_date": "2026-03-06",
+      "completed_date": "2026-03-05",
+      "sort_order": 8,
+      "tasks": [
+        {
+          "id": 73,
+          "phase_id": 107,
+          "subject": "Migrate infrastructure: drop Docker, native PostgreSQL + serverless hosting evaluation",
+          "description": "Evaluate Cloud Run, Cloud Functions, and GitHub Pages for hosting. Restructure local dev to lean native PostgreSQL setup. Follow DevProtocol_1.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-05T19:10:05.245940",
+          "created_at": "2026-03-05 21:19:57",
+          "updated_at": "2026-03-05 22:10:05"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 9,
+      "name": "Phase V: Citation Verification",
+      "description": "LLM-based verification of extracted citations, fuzzy snippet matching, export URL fix",
+      "status": "completed",
+      "start_date": "2026-03-08",
+      "due_date": null,
+      "completed_date": "2026-03-27T13:34:09.613549",
+      "sort_order": 9,
+      "tasks": [
+        {
+          "id": 105,
+          "phase_id": 9,
+          "subject": "Implement verification pipeline",
+          "description": "verify_citations.py, DB migration, gemini_client response_schema, export URL fix",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-08 14:19:23",
+          "updated_at": "2026-03-08 14:19:23"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 109,
+      "name": "Phase F: GCP VM Setup & Pipeline Plan",
+      "description": "Provisioned GCP VM on Lucas project, replicated secrets, uploaded code+DB+PDFs. Refined decision-filtered pipeline plan (Steps A-F) with title-based classification.",
+      "status": "completed",
+      "start_date": "2026-03-06",
+      "due_date": "2026-03-06",
+      "completed_date": "2026-03-06",
+      "sort_order": 9,
+      "tasks": [
+        {
+          "id": 80,
+          "phase_id": 109,
+          "subject": "Provision GCP VM (e2-standard-16 Spot) on Lucas project",
+          "description": "VM: phdmutley-pipeline in us-central1-a, 16 vCPU, 64 GB RAM. Project: gen-lang-client-0764097936.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 81,
+          "phase_id": 109,
+          "subject": "Replicate GCP secrets to Lucas project",
+          "description": "phdmutley-db-password + phdmutley-gemini-api-key created in gen-lang-client-0764097936. Compute SA granted secretAccessor role.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 82,
+          "phase_id": 109,
+          "subject": "Create GCS transfer bucket and upload assets",
+          "description": "gs://phdmutley-pipeline-transfer (us-central1). Uploaded: code tarball, DB dump (plain SQL, PG version mismatch prevented custom format), 16,247 PDF files.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 83,
+          "phase_id": 109,
+          "subject": "Install and configure VM environment",
+          "description": "PostgreSQL 16 on port 5432, Python venv at /opt/phdMutley/venv/, all pip deps installed. gcp_secrets.py patched to read GCP_SECRET_PROJECT and DB_PORT env vars.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 84,
+          "phase_id": 109,
+          "subject": "Restore database on VM",
+          "description": "pg_restore failed (PG 18→16 version mismatch on custom format). Used plain SQL dump instead. Verified: 16,352 docs, 4,739 cases, 348 extractions.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 85,
+          "phase_id": 109,
+          "subject": "Refine pipeline implementation plan (Steps A-F)",
+          "description": "Corrected Step B: \"Other\" lookup by Document Title keyword (not Document Type). Added no-separator titles (3,504 docs) to Step B. Total Step B: 4,084 docs. Workers set to 8 (local) / 16 (VM). Updated cost estimate: ~2.08 total.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": 86,
+          "phase_id": 109,
+          "subject": "Analyze Sabin Document Title keyword distribution",
+          "description": "Data analysis: 16,380 docs, 84 unique title keywords. Step A catches 2,921 decision docs. 9,000 non-decision exclusions. 4,084 ambiguous docs for LLM classification (580 \"other\" + 3,504 no-separator).",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T11:32:56.990684",
+          "created_at": "2026-03-06 14:32:56",
+          "updated_at": "2026-03-06 14:32:56"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D12",
+          "title": "Title-based document classification",
+          "rationale": "Use Document Title keyword (after last \" - \" separator) instead of unreliable Document Type column. 84 unique keywords mapped to decision/non-decision/ambiguous buckets.",
+          "source": "Session 6 Mar",
+          "status": "active",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": "D13",
+          "title": "LLM classification for ambiguous documents",
+          "rationale": "4,084 docs without clear title keyword (\"other\" or no separator) classified via partial text extraction (first+last 2,400 chars) + Gemini. Cost: ~.08.",
+          "source": "Session 6 Mar",
+          "status": "active",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": "D14",
+          "title": "GCP VM on Lucas project for pipeline execution",
+          "rationale": "Use Lucas GCP project (gen-lang-client-0764097936) for VM + secrets. e2-standard-16 Spot instance. Avoids billing on Gustavo personal project. VM cost: </job.",
+          "source": "Session 6 Mar",
+          "status": "implemented",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        },
+        {
+          "id": "D15",
+          "title": "Concurrency: asyncio Semaphore(25) for API calls",
+          "rationale": "Originally CPU-count workers. Replaced with asyncio semaphore=25 concurrent API calls — single-threaded, no thread safety issues. call_gemini_async() added to gemini_client.py.",
+          "source": "Session 6 Mar",
+          "status": "implemented",
+          "phase_id": 109,
+          "created_at": "2026-03-06 14:32:56"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Phase 7: Trial Run (100 docs)",
+      "description": "Validate full v2.0 pipeline on sample",
+      "status": "completed",
+      "start_date": null,
+      "due_date": "2026-03-07",
+      "completed_date": "2026-03-06",
+      "sort_order": 10,
+      "tasks": [
+        {
+          "id": 19,
+          "phase_id": 7,
+          "subject": "Cost estimation: tokens × docs × price",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-05",
+          "completed_date": "2026-03-05T19:26:18.685868",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:26:18"
+        },
+        {
+          "id": 24,
+          "phase_id": 7,
+          "subject": "Execute --test-run 100 through full pipeline",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-07",
+          "completed_date": "2026-03-07T18:38:56.337564",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 21:38:56"
+        },
+        {
+          "id": 25,
+          "phase_id": 7,
+          "subject": "Monitor cost, errors, processing time",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-07",
+          "completed_date": "2026-03-05T19:22:53.010382",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:22:53"
+        },
+        {
+          "id": 26,
+          "phase_id": 7,
+          "subject": "Lucas validates sample of results",
+          "description": null,
+          "owner": "Lucas",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-07",
+          "completed_date": "2026-03-07T18:38:56.337564",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 21:38:56"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D11",
+          "title": "Trial run: 100 random documents",
+          "rationale": "Trial run: 100 random documents -- executed Mar 5-6, reviewed by Lucas, adjustments implemented, re-tested before full run.",
+          "source": "Session 4 Mar",
+          "status": "implemented",
+          "phase_id": 7,
+          "created_at": "2026-03-04 23:57:30"
+        },
+        {
+          "id": "D20",
+          "title": "Phase 7 (Trial Run) confirmed complete",
+          "rationale": "Test run of 100 docs executed, reviewed by Lucas, adjustments implemented, re-tested before full run.",
+          "source": "Touchpoint 7 Mar",
+          "status": "implemented",
+          "phase_id": 7,
+          "created_at": "2026-03-07 21:38:56"
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "name": "Phase G: VM Pipeline Execution",
+      "description": "Execute full pipeline on GCP VM. Steps A-C (classification) completed Mar 6. Step D (text extraction) completed Mar 7. Step E (citation extraction v6, --concurrent 10) at 98%+ completion Mar 7. 275 docs with extraction errors flagged for retry.",
+      "status": "completed",
+      "start_date": "2026-03-06",
+      "due_date": "2026-03-07",
+      "completed_date": "2026-03-27T13:34:09.613549",
+      "sort_order": 11,
+      "tasks": [
+        {
+          "id": 87,
+          "phase_id": 110,
+          "subject": "Step A: classify_by_title.py (title keyword classification)",
+          "description": "Rule-based classification of 16K docs by title keywords. Ran on VM, classified ~13K docs.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T14:47:16.052379",
+          "created_at": "2026-03-06 17:47:16",
+          "updated_at": "2026-03-06 17:47:16"
+        },
+        {
+          "id": 88,
+          "phase_id": 110,
+          "subject": "Step B: classify_ambiguous_docs.py (LLM classification)",
+          "description": "LLM partial-text classification of ~6K ambiguous docs. Running async (25 concurrent) on VM.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T16:22:39.604523",
+          "created_at": "2026-03-06 17:47:16",
+          "updated_at": "2026-03-06 19:22:39"
+        },
+        {
+          "id": 89,
+          "phase_id": 110,
+          "subject": "Async refactor of classify_ambiguous_docs.py",
+          "description": "3-phase architecture: sync PDF prep -> async Gemini calls (semaphore=25) -> sync DB commits. Added call_gemini_async() to gemini_client.py. ~10x speedup (7h -> 70min).",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T14:47:16.052379",
+          "created_at": "2026-03-06 17:47:16",
+          "updated_at": "2026-03-06 17:47:16"
+        },
+        {
+          "id": 90,
+          "phase_id": 110,
+          "subject": "Step C: aggregate_unclassified (bulk default)",
+          "description": "Auto-runs as epilogue of Step B. Defaults remaining NULL docs to non-decision.",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06T16:22:39.604523",
+          "created_at": "2026-03-06 17:47:16",
+          "updated_at": "2026-03-06 19:22:39"
+        },
+        {
+          "id": 91,
+          "phase_id": 110,
+          "subject": "Step D: extract_texts.py (text extraction)",
+          "description": "PDF text extraction for all classified decisions. Not yet started.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-07",
+          "completed_date": "2026-03-07",
+          "created_at": "2026-03-06 17:47:16",
+          "updated_at": "2026-03-07 22:06:35"
+        },
+        {
+          "id": 92,
+          "phase_id": 110,
+          "subject": "Step E: extract_citations (citation extraction v6)",
+          "description": "KB-enhanced citation extraction on 5,513 decisions via GCP VM (--concurrent 10). 98%+ complete as of Mar 7 evening. 11,600 citations extracted, 4,600 docs with citations, 275 docs with extraction errors. Retry pass needed for failed docs.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": "2026-03-07",
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-06 17:47:16",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 93,
+          "phase_id": 110,
+          "subject": "Investigate docs with filenames too long for Linux (Errno 36)",
+          "description": "Some PDFs have filenames >255 chars that fail on Linux ext4. Seen in Step B Phase 1. Need to either rename files or resolve by truncated filename lookup. Low count but may affect classification completeness.",
+          "owner": "Gustavo",
+          "priority": "low",
+          "status": "deferred",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-06 17:50:31",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 103,
+          "phase_id": 110,
+          "subject": "Step F: Post-extraction VM analysis & data export",
+          "description": "Run analysis queries on VM database (citation counts, jurisdiction breakdown, decision distribution). Export processed data as SQL dump or JSON for local analysis. Transfer results to local machine.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-08",
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-07 22:06:35",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 104,
+          "phase_id": 110,
+          "subject": "Clean up GCP resources (VM + GCS bucket)",
+          "description": "Delete phdmutley-pipeline VM + gs://phdmutley-pipeline-transfer bucket. Switch gcloud back to extreme-hull-489213-p9. Only after all data exported.",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-09",
+          "completed_date": null,
+          "created_at": "2026-03-07 22:06:35",
+          "updated_at": "2026-03-07 22:06:35"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D16",
+          "title": "Async parallelization for Step B (semaphore=25)",
+          "rationale": "Sequential processing at ~15 RPM wastes 99%% of VM capacity. asyncio.Semaphore(25) targets ~100 RPM. 3-phase architecture isolates PDF I/O, API calls, and DB commits. Reduces runtime from ~7h to ~70min.",
+          "source": "Session 6 Mar (pm)",
+          "status": "implemented",
+          "phase_id": 110,
+          "created_at": "2026-03-06 17:47:16"
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "name": "Bugs: Step E Extraction (VM Run)",
+      "description": "Issues identified during extract_citations.py --concurrent 10 on GCP VM",
+      "status": "completed",
+      "start_date": "2026-03-07",
+      "due_date": null,
+      "completed_date": "2026-03-27T13:34:09.613549",
+      "sort_order": 12,
+      "tasks": [
+        {
+          "id": 95,
+          "phase_id": 111,
+          "subject": "BUG: NoneType object is not subscriptable in Phase 2A extraction",
+          "description": "DESCRIPTION:\nRecurring error during Phase 2A (citation extraction). The Gemini API occasionally returns None instead of expected JSON structure, and the code attempts to subscript it (e.g., response[\"candidates\"] or similar).\n\nIMPACT: 275 documents (8% of processed) failed extraction entirely — recorded as extraction_success=false in DB. These docs have zero citations extracted.\n\nEVIDENCE: 1,004 error log lines in step_e_concurrent.log. Pattern: \"Error in extraction: 'NoneType' object is not subscriptable\" followed by \"Phase 2A failed - skipping document\".\n\nPROBABLE CAUSE: Missing null check on Gemini API response before accessing nested fields. The google-genai SDK may return None for response.text when the model returns an empty response, safety-filtered content, or hits a transient error.\n\nSUGGESTED FIX:\n1. Add null guard in extraction code: check if response and response.text are not None before JSON parsing\n2. If None, retry once before marking as failed (may be transient API issue)\n3. Log the raw response object for diagnosis when None is encountered\n4. Consider adding to gemini_client.py shared helper for consistency",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-07",
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-07 20:19:57",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 96,
+          "phase_id": 111,
+          "subject": "BUG: High rate-limit retry volume (5,274 retries) with --concurrent 10",
+          "description": "DESCRIPTION:\n5,274 rate-limit retries logged during the extraction run with concurrency=10. While the exponential backoff handles this gracefully (2.9s-5.7s waits), the volume suggests the concurrency level exceeds the Gemini API quota sweet spot.\n\nIMPACT: Not a hard failure — retries succeed. But adds ~15,000+ seconds of cumulative wait time, slowing overall throughput. Some retries cascade (attempt 1 then attempt 2 on same request).\n\nEVIDENCE: grep -c \"Rate limited\" shows 5,274 occurrences. Retry waits range from 2.2s to 5.7s with exponential backoff.\n\nPROBABLE CAUSE: --concurrent 10 fires too many parallel Gemini API calls for the project quota. The Gemini API rate limit is likely ~5-8 RPM for Flash-Lite, and 10 concurrent workers exceed this consistently.\n\nSUGGESTED FIX:\n1. For retry runs, reduce concurrency: --concurrent 5 or --concurrent 7\n2. Add adaptive concurrency: if rate-limit count exceeds threshold in a window, dynamically reduce active workers\n3. Add a rate-limit counter to the progress/cost summary for visibility\n4. Consider token-bucket rate limiter in gemini_client.py instead of reactive retries",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-07 20:19:57",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 97,
+          "phase_id": 111,
+          "subject": "BUG: 275 failed documents need retry pass",
+          "description": "DESCRIPTION:\n275 documents have extraction_success=false in citation_extraction_phased_summary. These documents were skipped after Phase 2A errors and have no citation data.\n\nIMPACT: ~8% data gap in the final analysis. If these docs contain significant cross-references (especially Global South citations), the research findings could be biased.\n\nEVIDENCE: DB query: SELECT COUNT(*) FROM citation_extraction_phased_summary WHERE extraction_success = false; → 275\n\nPROBABLE CAUSE: Combination of Bug #95 (NoneType errors) and transient API failures during high-concurrency processing.\n\nSUGGESTED FIX:\n1. After main run completes, run a targeted retry: extract_citations.py with a filter for failed documents only (WHERE extraction_success = false)\n2. Use lower concurrency (--concurrent 3-5) to reduce rate-limit pressure\n3. Add --retry-failed flag to extract_citations.py that queries for failed summaries and reprocesses only those\n4. If still failing after retry, log document IDs for manual inspection — may be corrupted/empty PDFs",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-08",
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-07 20:19:57",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 98,
+          "phase_id": 111,
+          "subject": "BUG: document_type=decision returns 0 on VM database",
+          "description": "DESCRIPTION:\nQuery SELECT COUNT(*) FROM documents WHERE document_type = 'decision' returns 0 on the VM database, yet 4,502 documents are being processed by the extraction script.\n\nIMPACT: Low immediate impact (extraction uses a different filter), but indicates the document_type column was not populated during the VM database restore or the classification step used a different column/value.\n\nEVIDENCE: psql query returns 0 for document_type='decision', but the extraction script found 4,502 docs to process. The classify_by_title.py and classify_ambiguous_docs.py scripts may store classification in a different column or table.\n\nPROBABLE CAUSE: \n- Classification stored in a different column (e.g., doc_classification, is_decision) \n- Or the title-based classifier uses sabin_document_title keywords and stores results differently than the original document_type field\n- Or the DB dump was from before classification was run and the VM classification used a separate tracking mechanism\n\nSUGGESTED FIX:\n1. Check what column/table classify_by_title.py and classify_ambiguous_docs.py actually write to\n2. Verify the extraction script filter query — it may use a JOIN or different column\n3. If document_type is supposed to be populated, add a post-classification step to sync it\n4. Document the actual classification storage mechanism in CLAUDE.md",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-07 20:19:57",
+          "updated_at": "2026-03-27 16:34:09"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 8,
+      "name": "Phase 8: Full Run & Deliverable",
+      "description": "ABSORBED into Phase 5 / Phase 110 (Decision D19). The full VM pipeline run replaced this phase.",
+      "status": "completed",
+      "start_date": null,
+      "due_date": "2026-03-09",
+      "completed_date": "2026-03-07",
+      "sort_order": 13,
+      "tasks": [
+        {
+          "id": 27,
+          "phase_id": 8,
+          "subject": "Full pipeline run on all documents",
+          "description": "SUPERSEDED by Phase 110, Task #92 (Step E on GCP VM). Decision D19. Full extraction run executed on GCP VM with --concurrent 10.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "deferred",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 22:06:35"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 6,
+      "name": "Phase 6: Analysis & Export v2",
+      "description": "Updated analysis engine for v2.0 citation data. Blocked by Phase G (Step E) completion and extraction review.",
+      "status": "in_progress",
+      "start_date": "2026-03-27T13:34:09.613549",
+      "due_date": "2026-03-08",
+      "completed_date": null,
+      "sort_order": 14,
+      "tasks": [
+        {
+          "id": 20,
+          "phase_id": 6,
+          "subject": "Update analysis engine for v2.0 citation data",
+          "description": "Update sixfold_analysis_engine.py to work with v2.0 citation data from citation_extraction_phased tables. Blocked by Step E completion + review.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "in_progress",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-27 16:34:09"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D10",
+          "title": "Error margin disclaimer",
+          "rationale": "Transparency about LLM limitations",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 6,
+          "created_at": "2026-03-04 23:57:30"
+        },
+        {
+          "id": "D18",
+          "title": "Monday deliverable = factual findings only",
+          "rationale": "Focus on observable patterns: which jurisdictions use foreign climate decisions, which cases are paradigmatic. No thesis argumentation.",
+          "source": "Touchpoint 7 Mar",
+          "status": "active",
+          "phase_id": 6,
+          "created_at": "2026-03-07 21:38:56"
+        },
+        {
+          "id": "D23",
+          "title": "Improve pipeline before full re-extraction",
+          "rationale": "Fix inconsistencies from 2nd run; more effective than comparing old vs. new extractions",
+          "source": "Meeting 27 Mar 2026",
+          "status": "pending",
+          "phase_id": 6,
+          "created_at": "2026-03-27 17:20:29"
+        },
+        {
+          "id": "D24",
+          "title": "Document extraction rules in human-readable format before coding",
+          "rationale": "Ensures Lucas can review and add domain knowledge before rules are encoded into pipeline",
+          "source": "Meeting 27 Mar 2026",
+          "status": "pending",
+          "phase_id": 6,
+          "created_at": "2026-03-27 17:20:29"
+        },
+        {
+          "id": "D26",
+          "title": "Run iterative small batches before full dataset run",
+          "rationale": "Build confidence incrementally; catch errors early before committing to full extraction",
+          "source": "Meeting 27 Mar 2026",
+          "status": "active",
+          "phase_id": 6,
+          "created_at": "2026-03-27 17:20:29"
+        },
+        {
+          "id": "D9",
+          "title": "Top-5 format for deliverable",
+          "rationale": "Comfortable with ranked format given data imperfections",
+          "source": "Meeting 3 Mar",
+          "status": "pending",
+          "phase_id": 6,
+          "created_at": "2026-03-04 23:57:30"
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "name": "Phase Post-Extraction: Review & Deliverable",
+      "description": "Post-extraction review (manual + automated), analysis engine updates, map generation, and Monday deliverable preparation for Joana/Kate. Blocked by Step E completion.",
+      "status": "in_progress",
+      "start_date": null,
+      "due_date": "2026-03-09",
+      "completed_date": null,
+      "sort_order": 15,
+      "tasks": [
+        {
+          "id": 14,
+          "phase_id": 108,
+          "subject": "Export knowledge base as JSON for validation",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "completed",
+          "due_date": "2026-03-05",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-05 22:26:47"
+        },
+        {
+          "id": 18,
+          "phase_id": 108,
+          "subject": "Generate validation Excel for Lucas review",
+          "description": "Generated validation Excel from 100-doc test run. Lucas reviewed and provided feedback. Adjustments implemented before full run.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": "2026-03-06",
+          "completed_date": "2026-03-06",
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 22:06:35"
+        },
+        {
+          "id": 21,
+          "phase_id": 108,
+          "subject": "Add top-5 jurisdiction queries",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 22:06:35"
+        },
+        {
+          "id": 22,
+          "phase_id": 108,
+          "subject": "Generate static maps (top-5 + US aesthetic)",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 22:06:35"
+        },
+        {
+          "id": 23,
+          "phase_id": 108,
+          "subject": "Add error margin disclaimer",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-07",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 22:06:35"
+        },
+        {
+          "id": 28,
+          "phase_id": 108,
+          "subject": "Generate final static maps for Joana",
+          "description": null,
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 22:06:35"
+        },
+        {
+          "id": 29,
+          "phase_id": 108,
+          "subject": "Write 2-3 descriptive paragraphs",
+          "description": null,
+          "owner": "Lucas",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-09",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 21:38:56"
+        },
+        {
+          "id": 30,
+          "phase_id": 108,
+          "subject": "Package and deliver to Joana/Kate",
+          "description": null,
+          "owner": "Both",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-09",
+          "completed_date": null,
+          "created_at": "2026-03-04 23:57:30",
+          "updated_at": "2026-03-07 21:38:56"
+        },
+        {
+          "id": 74,
+          "phase_id": 108,
+          "subject": "Investigate snippet miss rate (35% on chunked docs)",
+          "description": "Trial run showed 39/60 snippets found (65% hit rate). Worst on chunked documents (e.g. 986K-char doc: 0/9 found). Root cause: LLM raw_text from chunk extraction does not match full document verbatim. Consider: normalized matching improvements in snippet_extractor.py, or extracting snippets per-chunk before deduplication. | Confirmed in debug session: snippet miss causes Phase 2B fallback (graceful degradation)",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-05 23:02:50",
+          "updated_at": "2026-03-05 23:52:19"
+        },
+        {
+          "id": 94,
+          "phase_id": 108,
+          "subject": "Review 259 extraction-failed documents",
+          "description": "Report at data/extraction_failed_docs.json (on VM). 91 zero-byte (download failures) + 168 unreadable PDFs (corrupt/no text layer). 1.6%% of corpus. Cross-reference with Sabin DB if Lucas flags missing decisions.",
+          "owner": "Lucas",
+          "priority": "low",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-06 18:11:32",
+          "updated_at": "2026-03-06 18:11:32"
+        },
+        {
+          "id": 99,
+          "phase_id": 108,
+          "subject": "Export extraction results to Excel with doc links for Lucas",
+          "description": "Excel format with direct document links for manual review. Similar to previous validation Excel.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-07 21:38:56",
+          "updated_at": "2026-03-07 22:06:35"
+        },
+        {
+          "id": 100,
+          "phase_id": 108,
+          "subject": "Lucas manual review of Excel output with process annotations",
+          "description": "Review extraction results in Excel. Annotate review process (what is checked, data path) to enable future AI-automated review.",
+          "owner": "Lucas",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-07 21:38:56",
+          "updated_at": "2026-03-07 21:38:56"
+        },
+        {
+          "id": 101,
+          "phase_id": 108,
+          "subject": "Run DB queries for automated pre-review of citations",
+          "description": "Query citation data, inspect chunks, validate patterns. Complementary to Lucas manual review.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-07 21:38:56",
+          "updated_at": "2026-03-07 21:38:56"
+        },
+        {
+          "id": 102,
+          "phase_id": 108,
+          "subject": "Morning sync + work session at Lucas place",
+          "description": "Align manual + automated reviews. Work together until Adriano meeting (noon-1pm).",
+          "owner": "Both",
+          "priority": "critical",
+          "status": "deferred",
+          "due_date": "2026-03-08",
+          "completed_date": null,
+          "created_at": "2026-03-07 21:38:56",
+          "updated_at": "2026-03-27 16:34:09"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "id": 10,
+      "name": "Phase DQ: Data Quality Issues (Verification)",
+      "description": "Issues discovered during Phase V citation verification data quality audit. Covers hallucination on garbled docs, char anchor misalignment, Sabin filter mismatches, and pipeline pre-filter gaps.",
+      "status": "completed",
+      "start_date": "2026-03-08T15:13:59.536213",
+      "due_date": null,
+      "completed_date": "2026-03-27T13:34:09.613549",
+      "sort_order": 22,
+      "tasks": [
+        {
+          "id": 106,
+          "phase_id": 10,
+          "subject": "Assess unstructured LLM response impact on extraction data",
+          "description": "The entire citation extraction dataset (11,932 kept + 75,704 discarded) was processed with response_mime_type=application/json but NO response_schema. Need to: (1) Sample 100-200 docs and compare raw LLM responses vs schema-enforced re-run, (2) Quantify divergence, (3) If >5%% affected, plan structured re-extraction with Pydantic schemas for Phase 2A/2B outputs. Estimated re-run cost: ~5-20 with Flash-Lite.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-08 14:19:23",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 107,
+          "phase_id": 10,
+          "subject": "Run verification pipeline on VM",
+          "description": "verify_citations.py --concurrent 40 --budget 25 on GCP VM",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-08 14:19:23",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 108,
+          "phase_id": 10,
+          "subject": "BUG: LLM hallucination on CID-encoded/garbled documents (double failure)",
+          "description": "Documents with extraction_quality='poor' and high (cid:...) density produce hallucinated citations AND hallucinated verification confirmations. Both the extraction LLM (Phase 5) and verification LLM (Phase V) fabricate content from unreadable input. Example: doc 8f4cf38c (Energy Transfer v. Greenpeace) — 751 CID artifacts, 95% unreadable, yet 2 citations to 'Juliana v. US' were extracted and CONFIRMED with fabricated verification_snippets that do not exist in the document.\n\nFIX: (1) Quantify blast radius (see #109). (2) Flag/invalidate citations on garbled documents. (3) Add CID/garbled text pre-filter to both pipelines (see #112).",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 109,
+          "phase_id": 10,
+          "subject": "EXPLORE: Quantify extraction_quality='poor' documents with citations — blast radius",
+          "description": "Run query to count how many documents with extraction_quality='poor' or high CID artifact density have citations in citation_extraction_phased. Determine how many of those citations are CONFIRMED vs NOT_FOUND. This establishes the blast radius of Issue #108.\n\nFIX: Single SQL query against extracted_text JOIN citation_extraction_phased. Results inform whether a bulk invalidation is needed.",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 110,
+          "phase_id": 10,
+          "subject": "BUG: 187 NOT_FOUND citations not flagged for manual review (CSV import bug)",
+          "description": "The CSV import from VM only updates requires_manual_review when snippet_text is non-empty. Since NOT_FOUND rows have no snippet, the import skipped the review flag update. Result: 187 of 349 NOT_FOUND citations retain requires_manual_review=FALSE with stale Phase 5 FUNC reasons instead of being flagged for review.\n\nFIX: UPDATE citation_extraction_phased SET requires_manual_review=TRUE, manual_review_reason='Verification: NOT_FOUND' WHERE verification_status='NOT_FOUND' AND requires_manual_review=FALSE",
+          "owner": "Gustavo",
+          "priority": "critical",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 111,
+          "phase_id": 10,
+          "subject": "BUG: Char anchors on verified rows misaligned by ~300 chars (VM/local text drift)",
+          "description": "1,848 of 1,919 anchored verified rows have snippet_start_char/snippet_end_char pointing to wrong positions. The snippet_text IS a valid substring of raw_text (100% match confirmed), but offsets are systematically shifted by +300 to +313 characters. Caused by CSV import carrying VM-computed anchors that don't align with local raw_text. Unverified rows (Phase 5 local anchors) are 100% accurate.\n\nFIX: Re-anchor locally using position(snippet_text IN raw_text). Single SQL UPDATE to recompute snippet_start_char and snippet_end_char from the local raw_text.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 112,
+          "phase_id": 10,
+          "subject": "TASK: Add garbled-text pre-filter to extraction and verification pipelines",
+          "description": "Both extract_citations.py and verify_citations.py should reject documents where >50% of characters are (cid:...) sequences or non-printable. Currently these documents pass through and produce hallucinated output.\n\nFIX: ~20 lines in each script. Add a function like is_garbled(text) -> bool that checks CID density and printable-char ratio. Call it before sending text to the LLM. Log skipped documents.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 113,
+          "phase_id": 10,
+          "subject": "BUG: Sabin filter matches wrong case from same litigation family",
+          "description": "When multiple related cases exist (e.g., WildEarth Guardians v. Zinke vs v. Nesvik, or Greenpeace Nordic vs Greenpeace Ltd v. Advocate General), the Sabin knowledge-base filter sometimes maps to the wrong variant. This causes correct citations to appear as NOT_FOUND or MISATTRIBUTED during verification. Example: doc ef941bc8 (R Finch v. Surrey CC) — raw_citation says 'WildEarth Guardians v Zinke' but case_name was mapped to 'WildEarth Guardians v. Nesvik'. Similarly 'Gloucester Resources v Minister of Planning' mapped to 'Whitehaven Coal v. ACF'.\n\nFIX: No simple automated fix. Requires either (a) manual review of MISATTRIBUTED/NOT_FOUND cases where raw_citation_text contains a different but related case name, or (b) enhanced Sabin matching that considers docket numbers/reporter citations.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 114,
+          "phase_id": 10,
+          "subject": "EXPLORE: Verification snippets only 15.9% exact substring match — LLM normalization",
+          "description": "The verification LLM (Flash-Lite) normalizes whitespace, line breaks, and formatting when producing 'verbatim' quotes. Only 15.9% of verification_snippets are exact substrings of raw_text. After whitespace normalization, match rate improves to ~80%. Remaining ~20% have minor paraphrasing. Consequence: fuzzy_match_snippet() at 95% threshold never promoted a single verification snippet to snippet_text (from_verification=0 out of 1,835 CONFIRMED).\n\nFIX OPTIONS: (a) Lower fuzzy match threshold (e.g., 85%). (b) Add whitespace-normalized matching pass before fuzzy matching. (c) Accept verification_snippet as approximate — use for human review only. (d) Use Flash instead of Flash-Lite for better verbatim copying. Relates to Task #106.",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 115,
+          "phase_id": 10,
+          "subject": "EXPLORE: Verification pipeline fails as safety net on garbled documents",
+          "description": "The verification pipeline was designed to catch extraction hallucinations, but it fails on the exact case where it is most needed — unreadable documents. When source text is garbled (CID-encoded), the LLM invents both the 'found' snippet and the CONFIRMED verdict. This undermines the pipeline's purpose as a quality gate.\n\nFIX OPTIONS: (a) Pre-filter (Task #112) prevents this case entirely. (b) Post-hoc: cross-validate all CONFIRMED verification_snippets against raw_text — any that are not substrings (even after normalization) should be downgraded to UNVERIFIED. (c) Add a verification confidence score based on snippet-to-document match quality.",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 116,
+          "phase_id": 10,
+          "subject": "EXPLORE: 3 outlier verification_snippets >10K chars — possible LLM over-quoting",
+          "description": "Three verification_snippets exceed 10,000 characters (max=28,585). Snippet length distribution: p50=240, p75=341, p95=556, p99=845. These 3 outliers are >30x the p99. From: (1) Institute for Fisheries Resources v. U.S. FDA (28,585), (2) Sierra Club v. U.S. DOE (25,791), (3) Preston New Road Action Group v. SSCC (10,682). May indicate the LLM copied entire document sections.\n\nFIX: Review these 3 manually. Consider adding a max_snippet_length cap (e.g., 2,000 chars) to the verification pipeline to prevent over-quoting.",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 117,
+          "phase_id": 10,
+          "subject": "EXPLORE: 10 documents with 100% NOT_FOUND rate — extraction quality or doc mismatch?",
+          "description": "Several documents have all citations marked NOT_FOUND: '350 Montana v. Haaland' (36/36), 'Cosima Rade v. Baden-Wuerttemberg' (15/15), 'Repsol Sinopec v. SSBECA' (15/15), 'Nuestros Derechos v. Mexico' (13/13). Top offender 'Sharma v. Minister for Environment' has 76/81 NOT_FOUND (94%). These could indicate: (a) Phase 5 extraction hallucinated all citations, (b) non-English docs where LLM cannot locate English case names, or (c) document text quality issues.\n\nFIX: Sample 2-3 of these documents and manually inspect whether the cited cases actually appear in the source text. Determines whether this is an extraction or verification problem.",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:13:59.536213",
+          "updated_at": "2026-03-08T15:13:59.536213"
+        },
+        {
+          "id": 118,
+          "phase_id": 10,
+          "subject": "TASK: Fix CSV import script to carry requires_manual_review independently of snippet_text",
+          "description": "The one-time CSV import logic (used in this session to merge VM results to local DB) only updates requires_manual_review and manual_review_reason when snippet_text is non-empty. This means NOT_FOUND and MISATTRIBUTED rows (which have no snippet) don't get their review flags imported. The immediate symptom was fixed by #110 (backfill query), but the import logic itself should be corrected for future VM-to-local syncs.\n\nFIX: In the CSV merge script, separate the snippet_text update from the requires_manual_review update. Always update review flags when the CSV has non-empty values for those columns, regardless of snippet_text.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:18:56.798902+00:00",
+          "updated_at": "2026-03-08T15:18:56.798902+00:00"
+        },
+        {
+          "id": 119,
+          "phase_id": 10,
+          "subject": "TASK: Add whitespace-normalized matching pass to fuzzy_match_snippet in verify_citations.py",
+          "description": "The current fuzzy_match_snippet() uses difflib.SequenceMatcher at 95% threshold against raw text. Since the verification LLM normalizes whitespace and line breaks (only 15.9% exact substring match), the fuzzy matcher never promotes verification snippets to snippet_text (0 out of 1,835 CONFIRMED). A whitespace-normalized pre-pass would catch the ~64% of snippets that match after normalization but fail exact substring check.\n\nFIX: Before running SequenceMatcher, try: (1) normalize both verification_snippet and document_text (collapse whitespace, strip line breaks), (2) check if normalized snippet is a substring, (3) if found, map back to original char positions for anchoring. This would recover ~1,170 additional snippet promotions. ~30 lines.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:18:56.798902+00:00",
+          "updated_at": "2026-03-08T15:18:56.798902+00:00"
+        },
+        {
+          "id": 120,
+          "phase_id": 10,
+          "subject": "TASK: Add max_snippet_length cap to verification prompt/response handling",
+          "description": "Three verification_snippets exceed 10,000 chars (max=28,585) — the LLM copied entire document sections instead of isolating the citation reference sentence. The verification prompt asks for '1-3 sentences' but Flash-Lite ignores this constraint occasionally.\n\nFIX: (1) In verify_citations.py, after receiving the LLM response, truncate any verbatim_quote longer than 2,000 chars and log a warning. (2) Optionally add explicit length constraint to the Pydantic schema description field. Relates to #116 (outlier investigation).",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:18:56.798902+00:00",
+          "updated_at": "2026-03-08T15:18:56.798902+00:00"
+        },
+        {
+          "id": 121,
+          "phase_id": 10,
+          "subject": "TASK: verify_citations.py — handle truncated JSON output gracefully (65K output limit)",
+          "description": "One document hit the 65K output token limit during verification, producing truncated JSON that gemini_client's _repair_truncated_json() could not recover. The 7 citations in that batch got ERROR status with 'No verification result returned'. Current behavior is acceptable (non-critical), but could be improved.\n\nFIX OPTIONS: (a) Reduce BATCH_SIZE dynamically for documents with many citations (e.g., if >30 citations, use batch size 20 instead of 50). (b) Set max_output_tokens in the call_gemini_async() call to leave headroom. (c) Accept current behavior — 33 ERROR rows out of 2,274 verified (1.5%) is tolerable.",
+          "owner": "Gustavo",
+          "priority": "low",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:18:56.798902+00:00",
+          "updated_at": "2026-03-08T15:18:56.798902+00:00"
+        },
+        {
+          "id": 122,
+          "phase_id": 10,
+          "subject": "TASK: Complete verification of remaining 9,658 unverified citations",
+          "description": "Phase V verification ran on VM for ~2,274 of 11,932 citations (19.1%) before being stopped. 9,658 citations remain with verification_status=NULL. Task #107 covers the VM execution, but this task tracks the overall completion goal including re-running after applying fixes from #108 (garbled doc filter), #112 (pre-filter), #119 (whitespace matching), and #120 (snippet length cap).\n\nFIX: After applying pipeline fixes, run: python verify_citations.py --concurrent 40 --budget 25 on VM. Expected to process remaining ~2,378 documents. Estimated cost: ~$10-15 with Flash-Lite.",
+          "owner": "Gustavo",
+          "priority": "high",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": "2026-03-27T13:34:09.613549",
+          "created_at": "2026-03-08T15:18:56.798902+00:00",
+          "updated_at": "2026-03-27 16:34:09"
+        },
+        {
+          "id": 123,
+          "phase_id": 10,
+          "subject": "TASK: Post-verification cross-validation — downgrade CONFIRMED with no document match",
+          "description": "Validation audit found that ~20% of CONFIRMED verification_snippets cannot be found in the source document even after whitespace normalization. These are likely LLM paraphrases rather than true confirmations. Need a post-hoc pass to cross-validate all CONFIRMED rows and downgrade those where the verification_snippet has no reasonable match in raw_text.\n\nFIX: SQL/Python script that checks position(verification_snippet IN raw_text) for all CONFIRMED rows. If not found, also try whitespace-normalized check. If still not found, set verification_status='UNVERIFIED' or add a verification_confidence score. Relates to #114 and #115.",
+          "owner": "Gustavo",
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null,
+          "created_at": "2026-03-08T15:18:56.798902+00:00",
+          "updated_at": "2026-03-08T15:18:56.798902+00:00"
+        }
+      ],
+      "decisions": []
     }
   ],
   "decisions": [
     {
       "id": "D1",
       "title": "Sabin-only citation filter",
-      "rationale": "Australia data noise from non-climate citations",
+      "rationale": "Sabin-only citation filter -- sabin_filter.py built with 2-tier matching (exact normalized + fuzzy Jaccard/containment). Running in production pipeline.",
       "source": "Meeting 3 Mar",
-      "status": "pending",
+      "status": "implemented",
       "phase_id": 5,
       "created_at": "2026-03-04 23:57:30"
     },
@@ -1159,9 +1747,9 @@
     {
       "id": "D11",
       "title": "Trial run: 100 random documents",
-      "rationale": "Validate before full-scale execution",
+      "rationale": "Trial run: 100 random documents -- executed Mar 5-6, reviewed by Lucas, adjustments implemented, re-tested before full run.",
       "source": "Session 4 Mar",
-      "status": "pending",
+      "status": "implemented",
       "phase_id": 7,
       "created_at": "2026-03-04 23:57:30"
     },
@@ -1194,12 +1782,48 @@
     },
     {
       "id": "D15",
-      "title": "Workers = CPU count (8 local, 16 VM)",
-      "rationale": "SAFE_WORKERS matches logical processor count. Local: 8 vCPU / 8GB RAM. VM: 16 vCPU / 64GB RAM. Each pdfplumber worker uses ~200MB. Comfortable headroom in both environments.",
+      "title": "Concurrency: asyncio Semaphore(25) for API calls",
+      "rationale": "Originally CPU-count workers. Replaced with asyncio semaphore=25 concurrent API calls — single-threaded, no thread safety issues. call_gemini_async() added to gemini_client.py.",
       "source": "Session 6 Mar",
-      "status": "active",
+      "status": "implemented",
       "phase_id": 109,
       "created_at": "2026-03-06 14:32:56"
+    },
+    {
+      "id": "D16",
+      "title": "Async parallelization for Step B (semaphore=25)",
+      "rationale": "Sequential processing at ~15 RPM wastes 99%% of VM capacity. asyncio.Semaphore(25) targets ~100 RPM. 3-phase architecture isolates PDF I/O, API calls, and DB commits. Reduces runtime from ~7h to ~70min.",
+      "source": "Session 6 Mar (pm)",
+      "status": "implemented",
+      "phase_id": 110,
+      "created_at": "2026-03-06 17:47:16"
+    },
+    {
+      "id": "D17",
+      "title": "Use relative proportions for public claims",
+      "rationale": "Addresses concern about cautious academic claims. Use percentages of identified citations, not raw counts.",
+      "source": "Touchpoint 7 Mar",
+      "status": "active",
+      "phase_id": null,
+      "created_at": "2026-03-07 21:38:56"
+    },
+    {
+      "id": "D18",
+      "title": "Monday deliverable = factual findings only",
+      "rationale": "Focus on observable patterns: which jurisdictions use foreign climate decisions, which cases are paradigmatic. No thesis argumentation.",
+      "source": "Touchpoint 7 Mar",
+      "status": "active",
+      "phase_id": 6,
+      "created_at": "2026-03-07 21:38:56"
+    },
+    {
+      "id": "D19",
+      "title": "Phase 8 absorbed into Phase 5 / Phase 110",
+      "rationale": "The VM full extraction run (Step E) IS the full pipeline run. Phase 8 as originally planned is redundant.",
+      "source": "Touchpoint 7 Mar",
+      "status": "implemented",
+      "phase_id": null,
+      "created_at": "2026-03-07 21:38:56"
     },
     {
       "id": "D2",
@@ -1211,20 +1835,101 @@
       "created_at": "2026-03-04 23:57:30"
     },
     {
+      "id": "D20",
+      "title": "Phase 7 (Trial Run) confirmed complete",
+      "rationale": "Test run of 100 docs executed, reviewed by Lucas, adjustments implemented, re-tested before full run.",
+      "source": "Touchpoint 7 Mar",
+      "status": "implemented",
+      "phase_id": 7,
+      "created_at": "2026-03-07 21:38:56"
+    },
+    {
+      "id": "D21",
+      "title": "Complementary review strategy",
+      "rationale": "Lucas: manual Excel review (domain/legal). Gustavo: automated DB queries + chunk inspection (technical). Aligned tomorrow.",
+      "source": "Touchpoint 7 Mar",
+      "status": "active",
+      "phase_id": null,
+      "created_at": "2026-03-07 21:38:56"
+    },
+    {
+      "id": "D22",
+      "title": "Count citations per document (1 invocation per doc)",
+      "rationale": "If a document cites a foreign decision 15 times textually, count as 1. The act of invoking, not number of textual references.",
+      "source": "Touchpoint 7 Mar",
+      "status": "active",
+      "phase_id": null,
+      "created_at": "2026-03-07 21:39:14"
+    },
+    {
+      "id": "D23",
+      "title": "Improve pipeline before full re-extraction",
+      "rationale": "Fix inconsistencies from 2nd run; more effective than comparing old vs. new extractions",
+      "source": "Meeting 27 Mar 2026",
+      "status": "pending",
+      "phase_id": 6,
+      "created_at": "2026-03-27 17:20:29"
+    },
+    {
+      "id": "D24",
+      "title": "Document extraction rules in human-readable format before coding",
+      "rationale": "Ensures Lucas can review and add domain knowledge before rules are encoded into pipeline",
+      "source": "Meeting 27 Mar 2026",
+      "status": "pending",
+      "phase_id": 6,
+      "created_at": "2026-03-27 17:20:29"
+    },
+    {
+      "id": "D25",
+      "title": "Create AI verification agent",
+      "rationale": "Reduces manual review burden; leverages Lucas domain rules at scale for citation validation",
+      "source": "Meeting 27 Mar 2026",
+      "status": "pending",
+      "phase_id": null,
+      "created_at": "2026-03-27 17:20:29"
+    },
+    {
+      "id": "D26",
+      "title": "Run iterative small batches before full dataset run",
+      "rationale": "Build confidence incrementally; catch errors early before committing to full extraction",
+      "source": "Meeting 27 Mar 2026",
+      "status": "active",
+      "phase_id": 6,
+      "created_at": "2026-03-27 17:20:29"
+    },
+    {
+      "id": "D27",
+      "title": "Article angle: intercourt dialogue building global environmental governance",
+      "rationale": "Combines quantitative (DB citation clusters) + qualitative analysis; fits Florence conference themes",
+      "source": "Meeting 27 Mar 2026",
+      "status": "pending",
+      "phase_id": null,
+      "created_at": "2026-03-27 17:20:29"
+    },
+    {
+      "id": "D28",
+      "title": "Maintain flexibility on article framing",
+      "rationale": "Data should guide the final angle; thesis deposit deadline is 2029, no need to lock in early",
+      "source": "Meeting 27 Mar 2026",
+      "status": "active",
+      "phase_id": null,
+      "created_at": "2026-03-27 17:20:29"
+    },
+    {
       "id": "D3",
       "title": "Markdown text extraction",
-      "rationale": "Better optimized for LLM processing",
+      "rationale": "Markdown text extraction -- extract_texts.py modified to use pymupdf4llm, text_md column added to extracted_text table.",
       "source": "Meeting 3 Mar",
-      "status": "pending",
+      "status": "implemented",
       "phase_id": 3,
       "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D4",
       "title": "Use Sabin Case/Document IDs",
-      "rationale": "Sabin DB already provides both IDs",
+      "rationale": "Use Sabin Case/Document IDs -- schema updated, populate_metadata.py stores both IDs.",
       "source": "Meeting 3 Mar",
-      "status": "pending",
+      "status": "implemented",
       "phase_id": 1,
       "created_at": "2026-03-04 23:57:30"
     },
@@ -1240,18 +1945,18 @@
     {
       "id": "D6",
       "title": "Build Knowledge step before extraction",
-      "rationale": "Dramatically improved recall in corporate-cases project",
+      "rationale": "Build Knowledge step -- build_knowledge_base.py creates 4,741-case index (535K tokens full, 150K compact). Feeds v6 extraction prompt.",
       "source": "Meeting 3 Mar",
-      "status": "pending",
+      "status": "implemented",
       "phase_id": 4,
       "created_at": "2026-03-04 23:57:30"
     },
     {
       "id": "D7",
       "title": "Snippets after filter only",
-      "rationale": "Don't waste tokens on discarded citations",
+      "rationale": "Snippets after filter only -- snippet_extractor.py with 3-tier text location (exact, normalized, key phrase) + char anchoring. Applied post-Sabin-filter.",
       "source": "Meeting 3 Mar",
-      "status": "pending",
+      "status": "implemented",
       "phase_id": 5,
       "created_at": "2026-03-04 23:57:30"
     },
@@ -1362,6 +2067,94 @@
       "dep_type": "blocks",
       "task_subject": "Full pipeline run on all documents",
       "depends_on_subject": "Cost estimation: tokens × docs × price"
+    },
+    {
+      "id": 24,
+      "task_id": 88,
+      "depends_on": 87,
+      "dep_type": "blocks",
+      "task_subject": "Step B: classify_ambiguous_docs.py (LLM classification)",
+      "depends_on_subject": "Step A: classify_by_title.py (title keyword classification)"
+    },
+    {
+      "id": 25,
+      "task_id": 90,
+      "depends_on": 88,
+      "dep_type": "blocks",
+      "task_subject": "Step C: aggregate_unclassified (bulk default)",
+      "depends_on_subject": "Step B: classify_ambiguous_docs.py (LLM classification)"
+    },
+    {
+      "id": 26,
+      "task_id": 91,
+      "depends_on": 90,
+      "dep_type": "blocks",
+      "task_subject": "Step D: extract_texts.py (text extraction)",
+      "depends_on_subject": "Step C: aggregate_unclassified (bulk default)"
+    },
+    {
+      "id": 27,
+      "task_id": 92,
+      "depends_on": 91,
+      "dep_type": "blocks",
+      "task_subject": "Step E: extract_citations (citation extraction v6)",
+      "depends_on_subject": "Step D: extract_texts.py (text extraction)"
+    },
+    {
+      "id": 28,
+      "task_id": 97,
+      "depends_on": 92,
+      "dep_type": "blocks",
+      "task_subject": "BUG: 275 failed documents need retry pass",
+      "depends_on_subject": "Step E: extract_citations (citation extraction v6)"
+    },
+    {
+      "id": 29,
+      "task_id": 100,
+      "depends_on": 99,
+      "dep_type": "blocks",
+      "task_subject": "Lucas manual review of Excel output with process annotations",
+      "depends_on_subject": "Export extraction results to Excel with doc links for Lucas"
+    },
+    {
+      "id": 30,
+      "task_id": 99,
+      "depends_on": 92,
+      "dep_type": "blocks",
+      "task_subject": "Export extraction results to Excel with doc links for Lucas",
+      "depends_on_subject": "Step E: extract_citations (citation extraction v6)"
+    },
+    {
+      "id": 31,
+      "task_id": 101,
+      "depends_on": 92,
+      "dep_type": "blocks",
+      "task_subject": "Run DB queries for automated pre-review of citations",
+      "depends_on_subject": "Step E: extract_citations (citation extraction v6)"
+    },
+    {
+      "id": 32,
+      "task_id": 103,
+      "depends_on": 92,
+      "dep_type": "blocks",
+      "task_subject": "Step F: Post-extraction VM analysis & data export",
+      "depends_on_subject": "Step E: extract_citations (citation extraction v6)"
+    },
+    {
+      "id": 33,
+      "task_id": 104,
+      "depends_on": 103,
+      "dep_type": "blocks",
+      "task_subject": "Clean up GCP resources (VM + GCS bucket)",
+      "depends_on_subject": "Step F: Post-extraction VM analysis & data export"
+    },
+    {
+      "id": 34,
+      "task_id": 20,
+      "depends_on": 103,
+      "dep_type": "blocks",
+      "task_subject": "Update analysis engine for v2.0 citation data",
+      "depends_on_subject": "Step F: Post-extraction VM analysis & data export"
     }
   ],
   "action_items": [
@@ -1408,9 +2201,9 @@
     {
       "id": "A6",
       "owner": "Lucas",
-      "description": "Create Discord/Teams room for always-on communication",
+      "description": "Create Discord/Teams room for always-on communication. Superseded -- used Google Meet touchpoints instead (see A5).",
       "deadline": "2026-03-04",
-      "status": "pending",
+      "status": "completed",
       "source": "Meeting 3 Mar"
     },
     {
@@ -1431,18 +2224,19 @@
     }
   ],
   "summary": {
-    "total_tasks": 62,
+    "total_tasks": 99,
     "tasks_by_status": {
-      "completed": 49,
+      "completed": 69,
+      "deferred": 4,
       "in_progress": 1,
-      "pending": 12
+      "pending": 25
     },
-    "total_phases": 19,
+    "total_phases": 23,
     "phases_by_status": {
-      "completed": 14,
-      "pending": 5
+      "completed": 21,
+      "in_progress": 2
     },
-    "exported_at": "2026-03-06T11:33:01.168563",
+    "exported_at": "2026-03-27T14:20:33.591958",
     "deliverable_deadline": "2026-03-09",
     "article_deadline": "2026-03-15"
   }

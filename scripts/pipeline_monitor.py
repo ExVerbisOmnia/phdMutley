@@ -29,9 +29,17 @@ from gcp_secrets import get_engine
 
 logger = logging.getLogger(__name__)
 
-# Gemini 3.1 Flash-Lite pricing (per 1M tokens)
-PRICE_INPUT_PER_M = 0.01
-PRICE_OUTPUT_PER_M = 0.04
+# Model-aware pricing (per 1M tokens)
+MODEL_PRICING = {
+    "gemini-2.5-pro": {"input": 1.25, "output": 10.00, "thinking": 1.25},
+    "gemini-2.5-flash": {"input": 0.15, "output": 0.60, "thinking": 0.15},
+    "gemini-2.5-flash-lite": {"input": 0.075, "output": 0.30, "thinking": 0.0},
+    "gemini-3.1-pro-preview": {"input": 1.25, "output": 10.00, "thinking": 1.25},
+    "gemini-3.1-flash-lite-preview": {"input": 0.01, "output": 0.04, "thinking": 0.0},
+}
+# Default pricing (Flash for extraction — the bulk operation)
+PRICE_INPUT_PER_M = MODEL_PRICING["gemini-2.5-flash"]["input"]
+PRICE_OUTPUT_PER_M = MODEL_PRICING["gemini-2.5-flash"]["output"]
 
 
 def get_summary_stats(engine) -> dict:
@@ -168,27 +176,23 @@ def estimate_full_run_cost(stats: dict, target_docs: int | None = None) -> dict:
     avg_tokens_out = stats["total_tokens_output"] / stats["successful"]
     avg_time = stats["avg_processing_time_s"]
 
-    # v6 adds ~150K tokens for KB context per extraction call
-    v6_tokens_in = avg_tokens_in + 150_000
-    v6_cost_per_doc = (v6_tokens_in / 1e6 * PRICE_INPUT_PER_M) + (
+    # v7: No KB in prompt (removed), but includes extraction + verification calls
+    cost_per_doc = (avg_tokens_in / 1e6 * PRICE_INPUT_PER_M) + (
         avg_tokens_out / 1e6 * PRICE_OUTPUT_PER_M
     )
-
-    v5_cost_per_doc = (avg_tokens_in / 1e6 * PRICE_INPUT_PER_M) + (
-        avg_tokens_out / 1e6 * PRICE_OUTPUT_PER_M
-    )
+    # Add ~30% overhead for classification + verification + origin ID calls
+    cost_per_doc_total = cost_per_doc * 1.3
 
     return {
         "target_documents": docs,
-        "v5_cost_per_doc": round(v5_cost_per_doc, 4),
-        "v6_cost_per_doc": round(v6_cost_per_doc, 4),
-        "v6_total_cost": round(v6_cost_per_doc * docs, 2),
-        "v6_total_cost_with_classification": round(v6_cost_per_doc * docs * 1.3, 2),
+        "cost_per_doc": round(cost_per_doc, 4),
+        "cost_per_doc_total": round(cost_per_doc_total, 4),
+        "total_cost": round(cost_per_doc_total * docs, 2),
         "avg_time_per_doc_s": round(avg_time, 1),
         "estimated_total_time_min": round(docs * avg_time / 60, 1),
         "estimated_total_time_hr": round(docs * avg_time / 3600, 1),
         "budget_remaining": round(200 - stats["total_cost_usd"], 2),
-        "within_budget": (v6_cost_per_doc * docs * 1.3) < (200 - stats["total_cost_usd"]),
+        "within_budget": (cost_per_doc_total * docs) < (200 - stats["total_cost_usd"]),
     }
 
 
@@ -220,17 +224,16 @@ def print_report(stats: dict, estimates: dict):
     print(f"  Max time:             {stats['max_processing_time_s']:.1f}s")
 
     print("\n" + "-" * 70)
-    print("COST ESTIMATES (v6 with Knowledge Base)")
+    print("COST ESTIMATES (v7 — Flash extraction + Pro classification)")
     print("-" * 70)
 
     if "error" in estimates:
         print(f"  {estimates['error']}")
     else:
         print(f"  Target documents:     {estimates['target_documents']}")
-        print(f"  v5 cost/doc:          ${estimates['v5_cost_per_doc']:.4f}")
-        print(f"  v6 cost/doc (w/ KB):  ${estimates['v6_cost_per_doc']:.4f}")
-        print(f"  v6 total cost:        ${estimates['v6_total_cost']:.2f}")
-        print(f"  + classification:     ${estimates['v6_total_cost_with_classification']:.2f}")
+        print(f"  Cost/doc (extract):   ${estimates['cost_per_doc']:.4f}")
+        print(f"  Cost/doc (total):     ${estimates['cost_per_doc_total']:.4f}")
+        print(f"  Total cost:           ${estimates['total_cost']:.2f}")
         print(f"  Estimated time:       {estimates['estimated_total_time_hr']:.1f} hours")
         print(f"  Budget remaining:     ${estimates['budget_remaining']:.2f}")
         print(f"  Within budget:        {'YES' if estimates['within_budget'] else 'NO - OVER BUDGET'}")

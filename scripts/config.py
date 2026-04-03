@@ -62,9 +62,9 @@ class PipelineSettings(_DictBridge, BaseSettings):
     request_timeout: int = 30
     scanned_pdf_threshold: int = 100
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-3.1-pro-preview"
-    classification_model: str = "gemini-2.5-flash"
-    extraction_model: str = "gemini-3.1-flash-lite-preview"
+    gemini_model: str = "gemini-2.5-pro"
+    classification_model: str = "gemini-2.5-pro"
+    extraction_model: str = "gemini-2.5-flash"
     model_context_window: int = 1_000_000
     model_max_output: int = 65536
     safe_token_threshold: int = 900_000

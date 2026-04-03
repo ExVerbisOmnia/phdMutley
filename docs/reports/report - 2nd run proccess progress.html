@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>phdMutley — Pipeline Issues, Decisions & Fixes</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['DM Sans', 'system-ui', 'sans-serif'], mono: ['Space Mono', 'monospace'] },
+          colors: {
+            surface: { 1: '#0a0f14', 2: '#111820', 3: '#1a222d', 4: '#242d3a' },
+            border: { DEFAULT: '#2a3544', hover: '#3d4f66' },
+            txt: { 1: '#e8edf3', 2: '#8b9aad', 3: '#5a6978' },
+            north: '#3b82f6',
+            south: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: #0a0f14; }
+    .mono { font-family: 'Space Mono', monospace; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111820; }
+    ::-webkit-scrollbar-thumb { background: #2a3544; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3d4f66; }
+
+    /* Accordion */
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease; opacity: 0; }
+    .accordion-body.open { opacity: 1; }
+    .accordion-chevron { transition: transform 0.3s ease; }
+    .accordion-chevron.open { transform: rotate(180deg); }
+
+    /* Tabs */
+    .tab-active { border-bottom: 2px solid #3b82f6; color: #e8edf3; }
+    .tab-inactive { border-bottom: 2px solid transparent; color: #5a6978; }
+    .tab-inactive:hover { color: #8b9aad; }
+
+    /* Animations */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 8px rgba(59,130,246,0.3); } 50% { box-shadow: 0 0 20px rgba(59,130,246,0.6); } }
+    @keyframes progress-fill { from { width: 0; } }
+    .animate-fadeUp { animation: fadeUp 0.5s ease forwards; }
+    .animate-slideIn { animation: slideIn 0.4s ease forwards; }
+    .progress-bar { animation: progress-fill 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+    /* Severity badges */
+    .sev-critical { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .sev-high     { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+    .sev-medium   { background: rgba(234,179,8,0.15);  color: #facc15; border: 1px solid rgba(234,179,8,0.3); }
+    .sev-low      { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .sev-design   { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+    .sev-deferred { background: rgba(90,105,120,0.15); color: #8b9aad; border: 1px solid rgba(90,105,120,0.3); }
+
+    /* Status badges */
+    .status-fixed   { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .status-active  { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .status-pending { background: rgba(234,179,8,0.15);  color: #facc15; border: 1px solid rgba(234,179,8,0.3); }
+
+    /* Card hover */
+    .card-hover { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { border-color: #3d4f66; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+    /* Table styles */
+    .data-table { border-collapse: separate; border-spacing: 0; }
+    .data-table th { text-align: left; padding: 10px 16px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #5a6978; border-bottom: 1px solid #2a3544; background: #111820; position: sticky; top: 0; z-index: 1; }
+    .data-table td { padding: 10px 16px; font-size: 0.85rem; border-bottom: 1px solid rgba(42,53,68,0.5); color: #e8edf3; }
+    .data-table tr:hover td { background: rgba(36,45,58,0.5); }
+    .data-table td:first-child { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: #8b9aad; }
+
+    /* Glow stripe on section headers */
+    .section-stripe { position: relative; }
+    .section-stripe::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 2px; }
+    .stripe-blue::before  { background: #3b82f6; }
+    .stripe-red::before   { background: #ef4444; }
+    .stripe-green::before { background: #10b981; }
+    .stripe-orange::before{ background: #f97316; }
+    .stripe-purple::before{ background: #8b5cf6; }
+    .stripe-cyan::before  { background: #06b6d4; }
+    .stripe-yellow::before{ background: #eab308; }
+
+    /* Timeline connector */
+    .timeline-connector { position: relative; }
+    .timeline-connector::before { content: ''; position: absolute; left: 15px; top: 32px; bottom: -8px; width: 2px; background: #2a3544; }
+    .timeline-connector:last-child::before { display: none; }
+    .timeline-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid; flex-shrink: 0; position: relative; z-index: 1; }
+
+    /* Print */
+    @media print {
+      body { background: #fff; color: #111; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="text-txt-1 min-h-screen">
+
+<div id="app" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+  <header class="mb-8 animate-fadeUp">
+    <div class="flex items-start justify-between flex-wrap gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight mb-1">
+          Pipeline Issues, Decisions <span class="text-north">&</span> Fixes
+        </h1>
+        <p class="mono text-xs text-txt-3 tracking-wider uppercase">
+          phdMutley &mdash; Climate Litigation Citation Analysis &middot; Compiled 2026-03-09
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="mono text-xs px-3 py-1.5 rounded-md bg-surface-3 border border-border text-txt-2">
+          Branch: <span class="text-north font-bold">feature/phase-dq</span>
+        </span>
+        <span class="mono text-xs px-3 py-1.5 rounded-md bg-surface-3 border border-border text-txt-2">
+          v7.0
+        </span>
+      </div>
+    </div>
+
+    <!-- KPI Strip -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+      <div class="bg-surface-3 border border-border rounded-lg p-4 text-center card-hover">
+        <div class="text-2xl font-bold text-red-400">52</div>
+        <div class="mono text-[0.65rem] text-txt-3 uppercase tracking-wider mt-1">Total Issues</div>
+      </div>
+      <div class="bg-surface-3 border border-border rounded-lg p-4 text-center card-hover">
+        <div class="text-2xl font-bold text-emerald-400">44</div>
+        <div class="mono text-[0.65rem] text-txt-3 uppercase tracking-wider mt-1">Resolved</div>
+      </div>
+      <div class="bg-surface-3 border border-border rounded-lg p-4 text-center card-hover">
+        <div class="text-2xl font-bold text-yellow-400">6</div>
+        <div class="mono text-[0.65rem] text-txt-3 uppercase tracking-wider mt-1">Pending</div>
+      </div>
+      <div class="bg-surface-3 border border-border rounded-lg p-4 text-center card-hover">
+        <div class="text-2xl font-bold text-txt-3">2</div>
+        <div class="mono text-[0.65rem] text-txt-3 uppercase tracking-wider mt-1">Deferred</div>
+      </div>
+      <div class="bg-surface-3 border border-border rounded-lg p-4 text-center card-hover">
+        <div class="text-2xl font-bold text-purple-400">9</div>
+        <div class="mono text-[0.65rem] text-txt-3 uppercase tracking-wider mt-1">Design Decisions</div>
+      </div>
+      <div class="bg-surface-3 border border-border rounded-lg p-4 text-center card-hover">
+        <div class="text-2xl font-bold text-cyan-400">8</div>
+        <div class="mono text-[0.65rem] text-txt-3 uppercase tracking-wider mt-1">Sessions</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="bg-surface-2 border border-border rounded-lg p-4">
+      <div class="flex justify-between items-baseline mb-2">
+        <span class="text-sm font-semibold">Issue Resolution</span>
+        <span class="mono text-sm text-txt-2">44 / 52 <span class="text-emerald-400">(84.6%)</span></span>
+      </div>
+      <div class="bg-surface-1 border border-border rounded-full h-3 overflow-hidden flex">
+        <div class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full progress-bar" style="width: 84.6%"></div>
+        <div class="bg-gradient-to-r from-yellow-600 to-yellow-400 h-full progress-bar" style="width: 11.5%"></div>
+        <div class="bg-surface-4 h-full" style="width: 3.9%"></div>
+      </div>
+      <div class="flex gap-5 mt-2">
+        <span class="text-xs text-txt-3 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> Resolved
+        </span>
+        <span class="text-xs text-txt-3 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-yellow-400 inline-block"></span> Pending
+        </span>
+        <span class="text-xs text-txt-3 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-surface-4 inline-block"></span> Deferred
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       TABS
+       ============================================================ -->
+  <nav class="flex gap-1 border-b border-border mb-6 overflow-x-auto no-print" id="tabNav">
+    <button class="tab-active px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" onclick="switchTab('summary')">Executive Summary</button>
+    <button class="tab-inactive px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" onclick="switchTab('issues')">Issues Registry</button>
+    <button class="tab-inactive px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" onclick="switchTab('decisions')">Design Decisions</button>
+    <button class="tab-inactive px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" onclick="switchTab('timeline')">Session Timeline</button>
+    <button class="tab-inactive px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" onclick="switchTab('metrics')">Metrics & Charts</button>
+    <button class="tab-inactive px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors" onclick="switchTab('pipeline')">Pipeline State</button>
+  </nav>
+
+  <!-- ============================================================
+       TAB 0: EXECUTIVE SUMMARY
+       ============================================================ -->
+  <div id="tab-summary" class="tab-panel">
+    <section class="animate-fadeUp">
+      <div class="section-stripe stripe-blue pl-5 mb-6">
+        <h2 class="text-base font-bold">Executive Summary</h2>
+        <p class="text-xs text-txt-3 mt-0.5">High-level overview of the v7 pipeline development effort &mdash; 9 days, 8 sessions, 52 issues tracked</p>
+      </div>
+
+      <!-- Narrative -->
+      <div class="bg-surface-2 border border-border rounded-lg p-6 mb-6">
+        <h3 class="text-sm font-semibold mb-3">Project Status</h3>
+        <p class="text-sm text-txt-2 leading-relaxed mb-4">
+          The phdMutley citation extraction pipeline reached <strong class="text-txt-1">v7.0 production readiness</strong> after 9 days of intensive development (1&ndash;9 Mar 2026). The pipeline processes 4,724 judicial decisions from the Climate Case Chart database, extracting and verifying transnational citation patterns between Global North and Global South courts. A full-dataset extraction is currently <strong class="text-north">31% complete</strong> on a GCP VM, running at 16.5 docs/min with a 94.9% citation confirmation rate.
+        </p>
+        <p class="text-sm text-txt-2 leading-relaxed">
+          The most consequential finding was that the <strong class="text-red-400">v6 extraction prompt caused 49.3% hallucinated citations</strong> due to Knowledge Base contamination. This was resolved by removing the KB from the prompt entirely and adding three hard filters (pipe-format, anachronism, snippet-must-exist). The v7 pipeline now achieves &lt;5% unconfirmed citations across all verification categories.
+        </p>
+      </div>
+
+      <!-- Key Bullets -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> What Went Right
+          </h3>
+          <ul class="space-y-2 text-sm text-txt-2">
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Hallucination rate: 49.3% &rarr; &lt;5%</strong> by removing KB from extraction prompt</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">11,932 citations verified to 100%</strong> in Phase DQ ($0.16 cost)</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">44 of 52 issues resolved</strong> (84.6%) across 7 categories</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">$0.009/document</strong> cost &mdash; well under $200 budget cap</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Async refactor:</strong> classification time 7h &rarr; 70 min (6x speedup)</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Docker removed</strong> &mdash; simpler ops, 223 lines dead code cleaned</li>
+          </ul>
+        </div>
+
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-yellow-400"></span> Key Challenges & Remaining Work
+          </h3>
+          <ul class="space-y-2 text-sm text-txt-2">
+            <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Gemini quota storms</strong> with high concurrency burned daily limits for both Flash &amp; Pro models</li>
+            <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Undocumented TPD quota</strong> &mdash; daily token limit not in official docs; required API key rotation</li>
+            <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">94 NULL citations</strong> from pre-fix runs need SQL UPDATE post-run</li>
+            <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">4 oversized documents</strong> (&gt;2M chars) skipped &mdash; exceed model context window</li>
+            <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Phase 2 review pending:</strong> accuracy audit, DB optimization, code consolidation</li>
+            <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">VM cleanup:</strong> delete VM + GCS bucket after run completes</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Issue Breakdown -->
+      <div class="bg-surface-2 border border-border rounded-lg p-5 mb-6">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-purple-400"></span> Issues by Category
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+          <div class="bg-surface-3 rounded-md p-3 text-center">
+            <div class="text-lg font-bold text-red-400">5</div>
+            <div class="text-[0.6rem] text-txt-3 uppercase">Hallucination</div>
+          </div>
+          <div class="bg-surface-3 rounded-md p-3 text-center">
+            <div class="text-lg font-bold text-purple-400">11</div>
+            <div class="text-[0.6rem] text-txt-3 uppercase">Sixfold</div>
+          </div>
+          <div class="bg-surface-3 rounded-md p-3 text-center">
+            <div class="text-lg font-bold text-emerald-400">10</div>
+            <div class="text-[0.6rem] text-txt-3 uppercase">Data Quality</div>
+          </div>
+          <div class="bg-surface-3 rounded-md p-3 text-center">
+            <div class="text-lg font-bold text-orange-400">4</div>
+            <div class="text-[0.6rem] text-txt-3 uppercase">VM Runtime</div>
+          </div>
+          <div class="bg-surface-3 rounded-md p-3 text-center">
+            <div class="text-lg font-bold text-cyan-400">4</div>
+            <div class="text-[0.6rem] text-txt-3 uppercase">API / Quota</div>
+          </div>
+          <div class="bg-surface-3 rounded-md p-3 text-center">
+            <div class="text-lg font-bold text-yellow-400">11</div>
+            <div class="text-[0.6rem] text-txt-3 uppercase">Pipeline Bugs</div>
+          </div>
+          <div class="bg-surface-3 rounded-md p-3 text-center">
+            <div class="text-lg font-bold text-blue-400">3</div>
+            <div class="text-[0.6rem] text-txt-3 uppercase">Infrastructure</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Architecture Snapshot -->
+      <div class="bg-surface-2 border border-border rounded-lg p-5">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Architecture at a Glance
+        </h3>
+        <ul class="space-y-2 text-sm text-txt-2">
+          <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">6-phase pipeline:</strong> Quality pre-check &rarr; Jurisdiction &rarr; Extraction (Flash) &rarr; Hard filters + Sabin &rarr; Origin ID (Pro) &rarr; Classification &rarr; Inline verification (Flash)</li>
+          <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Models:</strong> Gemini 2.5 Flash (extraction + verification, thinking=1024), Gemini 2.5 Pro (classification + origin, thinking=2048)</li>
+          <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Anti-hallucination:</strong> KB removed from prompt, pipe-format filter, anachronistic citation filter, context-aware verification</li>
+          <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">Infrastructure:</strong> Native PG18 (port 5433), GCP VM e2-standard-16 (16 vCPU, 64 GB), GitHub Pages static dashboard</li>
+          <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5 shrink-0">&bull;</span> <strong class="text-txt-1">New shared modules:</strong> <code class="mono text-xs bg-surface-4 px-1 rounded">text_quality.py</code>, <code class="mono text-xs bg-surface-4 px-1 rounded">citation_verification.py</code> (DRY across extraction &amp; verification)</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       TAB 1: ISSUES REGISTRY
+       ============================================================ -->
+  <div id="tab-issues" class="tab-panel hidden">
+
+    <!-- Tab Executive Summary -->
+    <div class="bg-surface-2 border border-north/20 rounded-lg p-5 mb-6 animate-fadeUp">
+      <h3 class="text-sm font-semibold mb-2 text-north">Issues Registry &mdash; At a Glance</h3>
+      <ul class="space-y-1.5 text-sm text-txt-2">
+        <li class="flex items-start gap-2"><span class="text-north mt-0.5">&bull;</span> <strong>52 total issues</strong> tracked across 7 categories; <strong>44 resolved</strong> (84.6%), 6 pending, 2 deferred</li>
+        <li class="flex items-start gap-2"><span class="text-north mt-0.5">&bull;</span> <strong>Most impactful fix:</strong> KB removal from extraction prompt eliminated 49.3% hallucination rate (HALL-1)</li>
+        <li class="flex items-start gap-2"><span class="text-north mt-0.5">&bull;</span> <strong>2 critical sixfold bugs</strong> (BUG-1, BUG-2) were silently producing incorrect research results &mdash; now fixed</li>
+        <li class="flex items-start gap-2"><span class="text-north mt-0.5">&bull;</span> <strong>VMISSUE-4</strong> (retry storm) was the most operationally disruptive &mdash; burned daily API quotas for 2 models</li>
+        <li class="flex items-start gap-2"><span class="text-north mt-0.5">&bull;</span> All failed documents are <strong>garbled OCR</strong> (correctly skipped by Phase 0); zero API-caused data loss</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 1: Hallucination & Accuracy -->
+    <section class="mb-8 animate-fadeUp">
+      <div class="section-stripe stripe-red pl-5 mb-4">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          Hallucination & Accuracy
+          <span class="mono text-[0.65rem] px-2 py-0.5 rounded sev-critical">5 issues</span>
+        </h2>
+        <p class="text-xs text-txt-3 mt-0.5">Root cause: Knowledge Base contamination in extraction prompt caused 49.3% fabricated citations</p>
+      </div>
+
+      <div class="space-y-2">
+        <!-- HALL-1 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-16 shrink-0">HALL-1</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-critical shrink-0">CRITICAL</span>
+            <span class="text-sm font-medium flex-1">49.3% of citations hallucinated &mdash; KB contamination</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <div class="text-txt-3 text-xs uppercase tracking-wider mb-1">Root Cause</div>
+                  <p class="text-txt-2">The v6 extraction prompt included 4,741 case names from the Sabin knowledge base (~150K tokens). The LLM "extracted" KB entries that were topically related but <em>not actually cited</em> in the document. This is associative hallucination, not extraction.</p>
+                </div>
+                <div>
+                  <div class="text-txt-3 text-xs uppercase tracking-wider mb-1">Evidence</div>
+                  <p class="text-txt-2">Claude Chat manual verification of 1,410 citations: <strong class="text-red-400">695 REJECTED</strong> (49.3%). 467/695 rejections (67.2%) had pipe <code class="mono text-xs bg-surface-4 px-1.5 py-0.5 rounded">|</code> delimiter &mdash; Sabin metadata format, not judicial citation format.</p>
+                </div>
+              </div>
+              <div>
+                <div class="text-txt-3 text-xs uppercase tracking-wider mb-1">Fix Applied</div>
+                <p class="text-txt-2 text-sm">
+                  <strong>KB entirely removed</strong> from extraction prompt. Sabin filter continues to run <em>post-extraction</em> for ID linking and name standardization only. File: <code class="mono text-xs bg-surface-4 px-1.5 py-0.5 rounded">extraction_prompt_v6.py</code>
+                </p>
+              </div>
+              <div class="mono text-xs text-txt-3">Source: Plan Step 1D &middot; claude-chat-verification-run-output.xlsx</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HALL-2 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-16 shrink-0">HALL-2</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-high shrink-0">HIGH</span>
+            <span class="text-sm font-medium flex-1">Pipe-format metadata strings detected as citations (67.2% of hallucinations)</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 space-y-2 text-sm text-txt-2">
+              <p>Hard filter detects <code class="mono text-xs bg-surface-4 px-1.5 py-0.5 rounded">(Year) | Court; Jurisdiction</code> pattern in <code>raw_citation_text</code>. Citations matching this pattern are moved to <code>citation_extraction_discarded</code> with reason <code>PIPE_FORMAT_METADATA</code>.</p>
+              <p class="mono text-xs text-txt-3">File: extract_citations.py &middot; Function: is_pipe_format()</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- HALL-3 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-16 shrink-0">HALL-3</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-high shrink-0">HIGH</span>
+            <span class="text-sm font-medium flex-1">Anachronistic citations &mdash; docs citing cases from the future</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 space-y-2 text-sm text-txt-2">
+              <p>Hard filter rejects citations where <code>cited_year > document_year + 1</code>. A 2021 document cannot cite a 2023 case. +1 year tolerance for delayed publication.</p>
+              <p class="mono text-xs text-txt-3">File: extract_citations.py &middot; Function: is_anachronistic()</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- HALL-4 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-16 shrink-0">HALL-4</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium shrink-0">MEDIUM</span>
+            <span class="text-sm font-medium flex-1">4.3% false positive rate in CONFIRMED citations (keyword-only matches)</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 space-y-2 text-sm text-txt-2">
+              <p>25/574 pipeline-CONFIRMED citations were actually REJECTED on manual review. E.g., "Wells" matching "exploratory wells", "EPA" in generic human rights text.</p>
+              <p><strong>Fix:</strong> Verification prompt hardened &mdash; context-aware matching required (footnotes, "see also", case law sections), not just keyword presence.</p>
+              <p class="mono text-xs text-txt-3">File: citation_verification.py &middot; Verification prompt enhancement</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- HALL-5 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-16 shrink-0">HALL-5</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium shrink-0">MEDIUM</span>
+            <span class="text-sm font-medium flex-1">Name confusion: Urgenda/Shell, Neubauer/Steinmetz &mdash; related case conflation</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 space-y-2 text-sm text-txt-2">
+              <p>54 citations (3.8%) exist under wrong names. KB has separate entries for related cases and the LLM confuses them. Normalized name matching in Sabin filter.</p>
+              <p class="mono text-xs text-txt-3">Source: Plan Step 1D &middot; CORRECTED bucket in manual verification</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Sixfold Classification -->
+    <section class="mb-8 animate-fadeUp" style="animation-delay: 0.1s">
+      <div class="section-stripe stripe-purple pl-5 mb-4">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          Sixfold Classification
+          <span class="mono text-[0.65rem] px-2 py-0.5 rounded sev-critical">8 bugs + 3 design</span>
+        </h2>
+        <p class="text-xs text-txt-3 mt-0.5">Classification logic issues in classify_decisions_sixfold.py &mdash; affects research accuracy</p>
+      </div>
+
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="data-table w-full">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Severity</th>
+              <th>Issue</th>
+              <th>Fix</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>BUG-1</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-critical">CRITICAL</span></td>
+              <td>Zero Member-State citations (Type 5) &mdash; matching logic never triggered</td>
+              <td>Fixed court membership matching for IACtHR, ECtHR, ACHPR member state lists</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>BUG-2</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-critical">CRITICAL</span></td>
+              <td>EU countries classified as Global South</td>
+              <td>Added full EU country list to Global North mapping in config.py</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>BUG-3</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-high">HIGH</span></td>
+              <td>NULL source_jurisdiction causing misclassification</td>
+              <td>Added NULL handling with graceful fallback logic</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>BUG-4</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-high">HIGH</span></td>
+              <td>Urgenda has 19+ name variants &mdash; fuzzy matching fails</td>
+              <td>Normalized case name matching with alias table</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>BUG-5</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium">MEDIUM</span></td>
+              <td>Domestic citations fall to Unclassified instead of exclusion</td>
+              <td>Added Domestic&rarr;excluded logic before sixfold branching</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>BUG-6&ndash;8</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-low">LOW&ndash;MED</span></td>
+              <td>Edge cases in court jurisdiction LIKE patterns</td>
+              <td>Fixed pattern matching, added missing court mappings</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>DSN-1&ndash;3</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-design">DESIGN</span></td>
+              <td>Region assignment ambiguity, binding court scope, confidence scoring</td>
+              <td>Architectural decisions documented for thesis &mdash; no code change</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-design">DOCUMENTED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mono text-xs text-txt-3 mt-2">Source: sixfold-classification-review-report.md</p>
+    </section>
+
+    <!-- SECTION 3: Data Quality (Phase DQ) -->
+    <section class="mb-8 animate-fadeUp" style="animation-delay: 0.15s">
+      <div class="section-stripe stripe-green pl-5 mb-4">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          Data Quality &mdash; Phase DQ
+          <span class="mono text-[0.65rem] px-2 py-0.5 rounded sev-medium">18 issues (#106&ndash;#123)</span>
+        </h2>
+        <p class="text-xs text-txt-3 mt-0.5">Citation verification pipeline audit &mdash; 11,932 citations verified to 100%, zero NULLs, $0.16 cost</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
+        <!-- Wave 1: Code Fixes -->
+        <div class="bg-surface-2 border border-border rounded-lg p-4">
+          <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Wave 1: Code Fixes <span class="mono text-xs text-txt-3">(no API cost)</span>
+          </h3>
+          <div class="space-y-2">
+            <div class="flex items-start gap-2 text-sm text-txt-2">
+              <span class="text-emerald-400 mt-0.5 shrink-0">&check;</span>
+              <div><strong class="text-txt-1">#108/#112:</strong> <code class="mono text-xs bg-surface-4 px-1 rounded">is_garbled_text()</code> pre-filter skips corrupted OCR documents</div>
+            </div>
+            <div class="flex items-start gap-2 text-sm text-txt-2">
+              <span class="text-emerald-400 mt-0.5 shrink-0">&check;</span>
+              <div><strong class="text-txt-1">#119:</strong> Whitespace-normalized matching tier (Tier 1.5) in <code class="mono text-xs bg-surface-4 px-1 rounded">fuzzy_match_snippet()</code></div>
+            </div>
+            <div class="flex items-start gap-2 text-sm text-txt-2">
+              <span class="text-emerald-400 mt-0.5 shrink-0">&check;</span>
+              <div><strong class="text-txt-1">#120:</strong> 2,000-char cap on all snippets and verification quotes</div>
+            </div>
+            <div class="flex items-start gap-2 text-sm text-txt-2">
+              <span class="text-emerald-400 mt-0.5 shrink-0">&check;</span>
+              <div><strong class="text-txt-1">#111:</strong> <code class="mono text-xs bg-surface-4 px-1 rounded">\r\n</code> &rarr; <code class="mono text-xs bg-surface-4 px-1 rounded">\n</code> normalization before matching</div>
+            </div>
+            <div class="flex items-start gap-2 text-sm text-txt-2">
+              <span class="text-emerald-400 mt-0.5 shrink-0">&check;</span>
+              <div><strong class="text-txt-1">#121:</strong> Dynamic batch sizing for large docs (5/10/50 based on char count)</div>
+            </div>
+            <div class="flex items-start gap-2 text-sm text-txt-2">
+              <span class="text-emerald-400 mt-0.5 shrink-0">&check;</span>
+              <div><strong class="text-txt-1">NoneType guard:</strong> Protect against <code class="mono text-xs bg-surface-4 px-1 rounded">None</code> from <code class="mono text-xs bg-surface-4 px-1 rounded">call_gemini_async</code></div>
+            </div>
+            <div class="flex items-start gap-2 text-sm text-txt-2">
+              <span class="text-emerald-400 mt-0.5 shrink-0">&check;</span>
+              <div><strong class="text-txt-1">SKIPPED_TOO_LONG:</strong> Persist status for oversized docs (4 docs, 286 citations)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wave 2-4: Verification & Analysis -->
+        <div class="bg-surface-2 border border-border rounded-lg p-4">
+          <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Waves 2&ndash;4: Verification & Analysis
+          </h3>
+          <div class="space-y-2 text-sm text-txt-2">
+            <div class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-0.5 shrink-0">&check;</span>
+              <div>Processed 19 remaining citations (1 oversized doc, 2.47M chars) &rarr; SKIPPED_TOO_LONG</div>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-0.5 shrink-0">&check;</span>
+              <div>Re-verified 337 ERROR citations: 47 CONFIRMED, 3 NOT_FOUND, 286 SKIPPED_TOO_LONG, 1 SKIPPED_GARBLED</div>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-0.5 shrink-0">&check;</span>
+              <div>Re-anchored 9,049 snippet char positions to exact document positions (100% accuracy)</div>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="text-cyan-400 mt-0.5 shrink-0">&check;</span>
+              <div>Capped 9 oversized snippets to 2,000 chars</div>
+            </div>
+          </div>
+          <div class="mt-4 p-3 bg-surface-3 border border-border rounded-md">
+            <div class="text-xs text-txt-3 uppercase tracking-wider mb-1">Deferred</div>
+            <div class="text-sm text-txt-2">
+              <strong>#113</strong> Sabin filter year disambiguation &middot; <strong>#118</strong> CSV import script fix &mdash; no impact on correctness
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: VM Runtime Issues -->
+    <section class="mb-8 animate-fadeUp" style="animation-delay: 0.2s">
+      <div class="section-stripe stripe-orange pl-5 mb-4">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          VM Runtime Issues
+          <span class="mono text-[0.65rem] px-2 py-0.5 rounded sev-high">VMISSUE-1&ndash;4</span>
+        </h2>
+        <p class="text-xs text-txt-3 mt-0.5">Issues from 500-document test on VM (e2-standard-16, 16 vCPU, 64 GB) and full-dataset run</p>
+      </div>
+
+      <div class="space-y-2">
+        <!-- VMISSUE-1 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-20 shrink-0">VMISSUE-1</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium shrink-0">MEDIUM</span>
+            <span class="text-sm font-medium flex-1">2.6% citations with NULL verification &mdash; LLM omits citations from response</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2 space-y-2">
+              <p><strong>Escalation:</strong> 1 &rarr; 6 &rarr; 32 NULLs over the 500-doc run (2.6% final). Pattern is systemic &mdash; the verification LLM's JSON response simply omits some citations.</p>
+              <p><strong>Fix:</strong> Default unverified citations to <code class="mono text-xs bg-surface-4 px-1 rounded">UNVERIFIED</code> status. Any citation not updated by verification response gets this fallback.</p>
+              <p class="mono text-xs text-txt-3">File: citation_verification.py:~356</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VMISSUE-2 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-20 shrink-0">VMISSUE-2</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-low shrink-0">LOW</span>
+            <span class="text-sm font-medium flex-1">0.6% Phase 2A extraction failures &mdash; API returns no result</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2 space-y-2">
+              <p>3/500 documents failed with "Phase 2A extraction failed - no result returned". Processing times (27&ndash;42s) suggest multiple retry attempts. Likely safety filter or malformed JSON.</p>
+              <p><strong>Fix:</strong> Enhanced logging with <code class="mono text-xs bg-surface-4 px-1 rounded">text_len</code>. Failed docs can be retried with lower concurrency.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VMISSUE-3 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-20 shrink-0">VMISSUE-3</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium shrink-0">MEDIUM</span>
+            <span class="text-sm font-medium flex-1">Phase 5 verification fails entirely on rate limit &mdash; all doc citations left NULL</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2 space-y-2">
+              <p><strong>Distinct from VMISSUE-1:</strong> This covers <em>entire</em> Phase 5 failure (no LLM response at all), not individual citation omissions. With <code class="mono text-xs bg-surface-4 px-1 rounded">--concurrent 10</code>, rate limit exhaustion causes RuntimeError after 5 retries.</p>
+              <p><strong>Fix:</strong> Added UNVERIFIED fallback in the <code class="mono text-xs bg-surface-4 px-1 rounded">except</code> block of Phase 5 in extract_citations.py. Pre-fix NULLs (94 citations) to be fixed post-run with SQL UPDATE.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VMISSUE-4 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-3.5 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-xs text-txt-3 w-20 shrink-0">VMISSUE-4</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-high shrink-0">HIGH</span>
+            <span class="text-sm font-medium flex-1">Rate limit storm &mdash; retry cascade consumed daily quotas for Flash AND Pro</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">FIXED</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2 space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <div class="text-txt-3 text-xs uppercase tracking-wider mb-1">Root Cause</div>
+                  <p><code class="mono text-xs bg-surface-4 px-1 rounded">--concurrent 10</code> with many large docs (&gt;50K chars) hitting Gemini Flash 1M tokens/min quota. Retry logic (2s base backoff) amplified the storm &mdash; multiple workers retrying simultaneously.</p>
+                </div>
+                <div>
+                  <div class="text-txt-3 text-xs uppercase tracking-wider mb-1">Escalation Path</div>
+                  <p>&mdash;concurrent 10 &rarr; killed, &mdash;concurrent 5 &rarr; still failing &rarr; &mdash;concurrent 3 &rarr; still failing &rarr; switched to Pro &rarr; Pro also daily-capped &rarr; pipeline paused</p>
+                </div>
+              </div>
+              <div>
+                <div class="text-txt-3 text-xs uppercase tracking-wider mb-1">Fix</div>
+                <p>Updated <code class="mono text-xs bg-surface-4 px-1 rounded">gemini_client.py</code>: parse API's <code>retryDelay</code> from 429 errors, use 15s base backoff (was 2s), cap at 120s max. Switched to prolifico-edu project API key for fresh quota.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: Gemini API & Quota Issues -->
+    <section class="mb-8 animate-fadeUp" style="animation-delay: 0.25s">
+      <div class="section-stripe stripe-cyan pl-5 mb-4">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          Gemini API & Quota
+          <span class="mono text-[0.65rem] px-2 py-0.5 rounded sev-high">4 issues</span>
+        </h2>
+        <p class="text-xs text-txt-3 mt-0.5">API key management, quota tiers, and secret manager configuration</p>
+      </div>
+
+      <div class="overflow-x-auto rounded-lg border border-border">
+        <table class="data-table w-full">
+          <thead>
+            <tr><th>ID</th><th>Severity</th><th>Issue</th><th>Resolution</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>QUOTA-1</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-critical">CRITICAL</span></td>
+              <td>Retry storm burned daily TPD (Tokens Per Day) quota for both Flash &amp; Pro</td>
+              <td>Improved backoff: 15s base, API-suggested delay, 120s cap</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>QUOTA-2</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-high">HIGH</span></td>
+              <td>Undocumented TPD quota is the real bottleneck, not RPM/RPD</td>
+              <td>Accepted as constraint. Switch API keys on exhaustion.</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-design">ACCEPTED</span></td>
+            </tr>
+            <tr>
+              <td>QUOTA-3</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-high">HIGH</span></td>
+              <td>Secret Manager project mismatch &mdash; VM reads from wrong GCP project</td>
+              <td>Updated secret in BOTH projects (extreme-hull &amp; gen-lang-client)</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+            <tr>
+              <td>QUOTA-4</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium">MEDIUM</span></td>
+              <td>3 API keys tested &mdash; 2 exhausted (same project quota pool)</td>
+              <td>Switched to prolifico-edu key (fresh project, fresh quota)</td>
+              <td><span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed">FIXED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- API Keys Reference -->
+      <div class="mt-3 bg-surface-2 border border-border rounded-lg p-4">
+        <h3 class="text-xs text-txt-3 uppercase tracking-wider mb-2">API Key Registry</h3>
+        <div class="space-y-1.5 mono text-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-400"></span>
+            <span class="text-txt-3">...cqM9PI</span>
+            <span class="text-txt-3">&mdash;</span>
+            <span class="text-red-400">exhausted</span>
+            <span class="text-txt-3 ml-auto">gen-lang-client (original)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-400"></span>
+            <span class="text-txt-3">...daNFBw</span>
+            <span class="text-txt-3">&mdash;</span>
+            <span class="text-red-400">exhausted</span>
+            <span class="text-txt-3 ml-auto">same quota pool</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="text-txt-3">...JTaGo</span>
+            <span class="text-txt-3">&mdash;</span>
+            <span class="text-emerald-400">ACTIVE</span>
+            <span class="text-txt-3 ml-auto">prolifico-edu (fresh)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: Pipeline Bugs (Debugging Session) -->
+    <section class="mb-8 animate-fadeUp" style="animation-delay: 0.3s">
+      <div class="section-stripe stripe-yellow pl-5 mb-4">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          Pipeline Bugs
+          <span class="mono text-[0.65rem] px-2 py-0.5 rounded sev-high">11 bugs (5 Mar debugging session)</span>
+        </h2>
+        <p class="text-xs text-txt-3 mt-0.5">Core pipeline robustness issues discovered during Cycle 1 debugging &mdash; all resolved</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="bg-surface-2 border border-border rounded-lg p-4">
+          <h3 class="text-sm font-semibold mb-3 text-red-400">Critical Path Fixes</h3>
+          <div class="space-y-2 text-sm text-txt-2">
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> List unwrap guards &mdash; crash on list-wrapped LLM responses</div>
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> Unicode encoding errors in PDF text extraction</div>
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> JSON parsing failures on malformed LLM responses</div>
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> Fallback regex extraction in <code class="mono text-xs bg-surface-4 px-1 rounded">gemini_client.py</code></div>
+          </div>
+        </div>
+        <div class="bg-surface-2 border border-border rounded-lg p-4">
+          <h3 class="text-sm font-semibold mb-3 text-yellow-400">Data Integrity Improvements</h3>
+          <div class="space-y-2 text-sm text-txt-2">
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> Created <code class="mono text-xs bg-surface-4 px-1 rounded">citation_extraction_discarded</code> audit table</div>
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> Sync/async path divergence in 10 v7 issues fixed</div>
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> <code class="mono text-xs bg-surface-4 px-1 rounded">thinking_config</code> field name fix (SDK vs docs)</div>
+            <div class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&check;</span> Rate limit detection pattern matching</div>
+          </div>
+        </div>
+      </div>
+      <p class="mono text-xs text-txt-3 mt-2">Source: debugging_session_cycle1_20260305.md</p>
+    </section>
+
+    <!-- SECTION 7: Infrastructure -->
+    <section class="mb-8 animate-fadeUp" style="animation-delay: 0.35s">
+      <div class="section-stripe stripe-blue pl-5 mb-4">
+        <h2 class="text-base font-bold flex items-center gap-2">
+          Infrastructure
+          <span class="mono text-[0.65rem] px-2 py-0.5 rounded status-fixed">3 resolved</span>
+        </h2>
+        <p class="text-xs text-txt-3 mt-0.5">Docker removal, GCP VM setup, native PostgreSQL migration</p>
+      </div>
+
+      <div class="bg-surface-2 border border-border rounded-lg overflow-hidden">
+        <div class="divide-y divide-border/50">
+          <div class="flex items-center gap-3 px-5 py-3">
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-high shrink-0">HIGH</span>
+            <span class="text-sm flex-1"><strong>Docker removal:</strong> Eliminated Docker dependency entirely. Native PG18 on port 5433. 223 lines dead code removed. <code class="mono text-xs bg-surface-4 px-1 rounded">docker/</code> directory deleted.</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">DONE</span>
+          </div>
+          <div class="flex items-center gap-3 px-5 py-3">
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium shrink-0">MEDIUM</span>
+            <span class="text-sm flex-1"><strong>GCP VM provisioning:</strong> <code class="mono text-xs bg-surface-4 px-1 rounded">phdmutley-pipeline</code> e2-standard-16 Spot (16 vCPU, 64 GB). Secrets replicated via Secret Manager. Code/DB/PDFs uploaded via GCS bucket.</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">DONE</span>
+          </div>
+          <div class="flex items-center gap-3 px-5 py-3">
+            <span class="text-[0.65rem] px-2 py-0.5 rounded sev-medium shrink-0">MEDIUM</span>
+            <span class="text-sm flex-1"><strong>Secret Manager mismatch:</strong> VM env var overrides default project. Fixed by writing key to both GCP projects.</span>
+            <span class="text-[0.65rem] px-2 py-0.5 rounded status-fixed shrink-0">DONE</span>
+          </div>
+        </div>
+      </div>
+      <p class="mono text-xs text-txt-3 mt-2">Sources: task-73-infrastructure-leanout.md, docker-alternatives-assessment.md</p>
+    </section>
+
+  </div><!-- /tab-issues -->
+
+  <!-- ============================================================
+       TAB 2: DESIGN DECISIONS
+       ============================================================ -->
+  <div id="tab-decisions" class="tab-panel hidden">
+
+    <!-- Tab Executive Summary -->
+    <div class="bg-surface-2 border border-purple-500/20 rounded-lg p-5 mb-6 animate-fadeUp">
+      <h3 class="text-sm font-semibold mb-2 text-purple-400">Design Decisions &mdash; At a Glance</h3>
+      <ul class="space-y-1.5 text-sm text-txt-2">
+        <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">&bull;</span> <strong>9 architectural decisions</strong> made across accuracy, cost, infrastructure, and performance</li>
+        <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">&bull;</span> <strong>D1 (KB removal)</strong> is the single most consequential decision &mdash; traded minor recall loss for dramatic precision gain</li>
+        <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">&bull;</span> <strong>D2 (inline verification)</strong> eliminated orphaned unverified citations by integrating Phase 5 into the extraction loop</li>
+        <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">&bull;</span> <strong>D3 (model selection)</strong> balances cost and quality: Flash for volume work, Pro for reasoning-heavy tasks</li>
+        <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">&bull;</span> All decisions are <strong>empirically driven</strong> &mdash; backed by the Claude Chat manual verification of 1,410 citations</li>
+      </ul>
+    </div>
+
+    <section class="animate-fadeUp">
+      <div class="section-stripe stripe-purple pl-5 mb-6">
+        <h2 class="text-base font-bold">Key Design Decisions</h2>
+        <p class="text-xs text-txt-3 mt-0.5">Architectural choices shaping the v7 pipeline &mdash; each driven by empirical findings</p>
+      </div>
+
+      <div class="space-y-3">
+        <!-- D1 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D1</span>
+            <span class="text-sm font-semibold flex-1">Remove KB from extraction prompt</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Accuracy</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2 space-y-2">
+              <p><strong>Problem:</strong> 4,741 case names in the prompt (~150K tokens) caused the LLM to fabricate citations by topical association. 49.3% hallucination rate.</p>
+              <p><strong>Decision:</strong> Strip KB entirely from extraction prompt. The Sabin filter runs <em>post-extraction</em> for ID linking and name standardization &mdash; this preserves research utility without contamination.</p>
+              <p><strong>Trade-off:</strong> Slightly reduced recall for obscure case names vs. dramatically improved precision.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- D2 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D2</span>
+            <span class="text-sm font-semibold flex-1">6-phase inline pipeline with integrated verification</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Architecture</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2 space-y-2">
+              <p><strong>Before:</strong> Separate post-hoc verification script (Phase DQ). Orphaned unverified citations possible.</p>
+              <p><strong>After:</strong> Phase 0 (quality pre-check) &rarr; 1 (jurisdiction) &rarr; 2A (extraction) &rarr; Hard filters &rarr; Sabin filter &rarr; 2B (classification) &rarr; 3 (origin) &rarr; 4 (sixfold) &rarr; 5 (inline verification). No citation left unverified.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- D3 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D3</span>
+            <span class="text-sm font-semibold flex-1">Model selection: Flash for extraction, Pro for classification</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Cost & Quality</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2">
+              <div class="overflow-x-auto">
+                <table class="data-table w-full text-sm">
+                  <thead><tr><th>Role</th><th>Model</th><th>Thinking</th><th>Rationale</th></tr></thead>
+                  <tbody>
+                    <tr><td>Extraction</td><td class="text-cyan-400">gemini-2.5-flash</td><td>1024</td><td>High-volume, cost-sensitive; Flash is 10x cheaper than Pro</td></tr>
+                    <tr><td>Classification</td><td class="text-purple-400">gemini-2.5-pro</td><td>2048</td><td>Complex reasoning for court/jurisdiction mapping</td></tr>
+                    <tr><td>Origin ID</td><td class="text-purple-400">gemini-2.5-pro</td><td>1024</td><td>Disambiguation requires deeper reasoning</td></tr>
+                    <tr><td>Verification</td><td class="text-cyan-400">gemini-2.5-flash</td><td>1024</td><td>Pattern matching task; Flash sufficient</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- D4 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D4</span>
+            <span class="text-sm font-semibold flex-1">Native PostgreSQL, no Docker</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Infrastructure</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2">
+              <p>Docker added complexity for a single-user research project. Native PG18 on port 5433 avoids port conflict with Aegis's Docker PG on 5432. Simpler ops, fewer dependencies, faster startup.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- D5 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D5</span>
+            <span class="text-sm font-semibold flex-1">Shared modules for DRY verification logic</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Code Quality</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2">
+              <p>Created <code class="mono text-xs bg-surface-4 px-1 rounded">text_quality.py</code> (garbled/length checks) and <code class="mono text-xs bg-surface-4 px-1 rounded">citation_verification.py</code> (shared verification logic). Imported by both <code>extract_citations.py</code> and <code>verify_citations.py</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- D6 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D6</span>
+            <span class="text-sm font-semibold flex-1">Thinking enabled for all LLM calls (1024&ndash;2048 budget)</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Quality</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2">
+              <p>Gemini 2.5 thinking mode improves reasoning quality for classification and verification. Added <code class="mono text-xs bg-surface-4 px-1 rounded">thinking_budget</code> parameter to <code>gemini_client.py</code>. Token tracking includes thinking tokens in cost calculations.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- D7 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D7</span>
+            <span class="text-sm font-semibold flex-1">Accept SKIPPED_TOO_LONG for oversized documents</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Coverage</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2">
+              <p>4 documents exceed 2M chars (~1.1M tokens), beyond Gemini's 1M token context. Marked <code class="mono text-xs bg-surface-4 px-1 rounded">SKIPPED_TOO_LONG</code> with <code>requires_manual_review=TRUE</code>. Affects 286 citations (2.4%). Future options: Gemini 2.5 Pro (larger context), chunking, or manual review.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- D8 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D8</span>
+            <span class="text-sm font-semibold flex-1">Switch API keys on quota exhaustion (maximize throughput)</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Operations</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2">
+              <p>At ~$0.009/doc, cost is negligible. Rather than waiting for daily quota reset (midnight Pacific), switch to a fresh project's API key. Three keys tested; prolifico-edu key is active.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- D9 -->
+        <div class="bg-surface-2 border border-border rounded-lg card-hover overflow-hidden">
+          <button class="w-full flex items-center gap-3 px-5 py-4 text-left" onclick="toggleAccordion(this)">
+            <span class="mono text-sm font-bold text-purple-400 w-8 shrink-0">D9</span>
+            <span class="text-sm font-semibold flex-1">Concurrent 10 with improved backoff (16.5 docs/min throughput)</span>
+            <span class="text-xs text-txt-3 shrink-0">Impact: Performance</span>
+            <svg class="w-4 h-4 text-txt-3 accordion-chevron shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="px-5 pb-4 border-t border-border/50 pt-3 text-sm text-txt-2">
+              <p>Balances throughput vs. rate limit risk. Improved backoff (15s base, API-suggested delay, 120s cap) prevents retry storms. 23 rate limit retries in 1,450 docs &mdash; all recovered successfully. ETA for 4,724 docs: ~4.5 hours.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       TAB 3: SESSION TIMELINE
+       ============================================================ -->
+  <div id="tab-timeline" class="tab-panel hidden">
+
+    <!-- Tab Executive Summary -->
+    <div class="bg-surface-2 border border-blue-500/20 rounded-lg p-5 mb-6 animate-fadeUp">
+      <h3 class="text-sm font-semibold mb-2 text-blue-400">Session Timeline &mdash; At a Glance</h3>
+      <ul class="space-y-1.5 text-sm text-txt-2">
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&bull;</span> <strong>8 development sessions</strong> across 9 days (1&ndash;9 Mar 2026), from infrastructure setup to full-dataset extraction</li>
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&bull;</span> <strong>Days 1&ndash;4:</strong> Foundation &mdash; data integrity, Gemini migration, Docker removal, GitHub Pages, schema creation</li>
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&bull;</span> <strong>Days 5&ndash;6:</strong> Hardening &mdash; 11 bugs fixed, v6 prompt built, GCP VM provisioned, async refactor (7h &rarr; 70min)</li>
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&bull;</span> <strong>Days 7&ndash;8:</strong> Verification &mdash; Phase DQ (11,932 citations verified), v7 upgrade (model + anti-hallucination)</li>
+        <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">&bull;</span> <strong>Day 9 (today):</strong> Full-dataset extraction running on VM at 31%, 16.5 docs/min, on track for completion</li>
+      </ul>
+    </div>
+
+    <section class="animate-fadeUp">
+      <div class="section-stripe stripe-blue pl-5 mb-6">
+        <h2 class="text-base font-bold">Development Timeline</h2>
+        <p class="text-xs text-txt-3 mt-0.5">8 sessions across 9 days &mdash; from infrastructure setup to full-dataset extraction</p>
+      </div>
+
+      <div class="space-y-0">
+        <!-- Day 1-2 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-blue-400 bg-surface-1"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-txt-1">1&ndash;2 Mar</span>
+                <span class="mono text-xs text-txt-3">Phases A, B, B+</span>
+              </div>
+              <div class="bg-surface-2 border border-border rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Data integrity audit &amp; validation</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Gemini SDK migration (google-genai)</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Reproducibility improvements</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 3 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-purple-400 bg-surface-1"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-txt-1">3 Mar</span>
+                <span class="mono text-xs text-txt-3">Phase C + Touchpoint with Lucas</span>
+              </div>
+              <div class="bg-surface-2 border border-border rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Docker alternatives assessment</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Meeting with Lucas &rarr; v2.0 roadmap (10 decisions, 8 action items)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 4 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-cyan-400 bg-surface-1"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-txt-1">4 Mar</span>
+                <span class="mono text-xs text-txt-3">Phase D + Phase 1 + Phase 2 partial</span>
+              </div>
+              <div class="bg-surface-2 border border-border rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> GitHub Pages deployment</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Schema creation, seed data, --test-run infrastructure</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 5 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-yellow-400 bg-surface-1"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-txt-1">5 Mar</span>
+                <span class="mono text-xs text-txt-3">Debugging + Infrastructure lean-out</span>
+              </div>
+              <div class="bg-surface-2 border border-border rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> <strong>11 bugs fixed</strong> (list unwrap, Unicode, JSON parsing)</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Docker removal, 223 lines dead code cleaned</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> KB build, Sabin filter, v6 prompt, snippet extractor</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Cost estimation framework</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 6 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-orange-400 bg-surface-1"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-txt-1">6 Mar</span>
+                <span class="mono text-xs text-txt-3">GCP VM setup + Pipeline plan</span>
+              </div>
+              <div class="bg-surface-2 border border-border rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> VM provisioned: e2-standard-16, 16 vCPU, 64 GB</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> Secrets replicated, code+DB+PDFs uploaded via GCS</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> Classify 16K docs (async refactor: 7h &rarr; 70min)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 7 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-red-400 bg-surface-1"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-txt-1">7 Mar</span>
+                <span class="mono text-xs text-txt-3">Text extraction + Citation extraction + Touchpoint</span>
+              </div>
+              <div class="bg-surface-2 border border-border rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Step D (text extraction) + Step E (citation --concurrent 10)</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Touchpoint with Lucas: Decisions D17&ndash;D22</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Progress tracker polished for thesis deliverables</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 8 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-emerald-400 bg-surface-1"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-txt-1">8 Mar</span>
+                <span class="mono text-xs text-txt-3">Phase DQ + v7 upgrade</span>
+              </div>
+              <div class="bg-surface-2 border border-border rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> <strong>Phase DQ:</strong> 18 data quality issues, 11,932 citations verified 100%</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> <strong>v7 upgrade:</strong> Model upgrade (2.5-pro/flash), thinking support</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Verification assimilation, anti-hallucination hardening</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> KB removed from extraction prompt</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 9 Mar -->
+        <div class="timeline-connector">
+          <div class="flex items-start gap-4 pb-6">
+            <div class="flex flex-col items-center pt-1.5">
+              <div class="timeline-dot border-north bg-north" style="animation: pulse-glow 2s ease infinite;"></div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-baseline gap-3 mb-2">
+                <span class="mono text-sm font-bold text-north">9 Mar</span>
+                <span class="mono text-xs text-north">TODAY &mdash; Full dataset extraction</span>
+              </div>
+              <div class="bg-surface-2 border border-north/30 rounded-lg p-4 text-sm text-txt-2 space-y-1">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-north"></span> 500-doc test completed: 95.6% success, $4.28 cost</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-north"></span> API key rotation (3 keys tested, prolifico-edu active)</div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-north"></span> <strong>Full dataset run in progress:</strong> 1,450/4,724 (31%)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       TAB 4: METRICS & CHARTS
+       ============================================================ -->
+  <div id="tab-metrics" class="tab-panel hidden">
+
+    <!-- Tab Executive Summary -->
+    <div class="bg-surface-2 border border-cyan-500/20 rounded-lg p-5 mb-6 animate-fadeUp">
+      <h3 class="text-sm font-semibold mb-2 text-cyan-400">Metrics &mdash; At a Glance</h3>
+      <ul class="space-y-1.5 text-sm text-txt-2">
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">&bull;</span> <strong>Hallucination rate dropped from 49.3% to &lt;5%</strong> &mdash; the single most important quality improvement</li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">&bull;</span> <strong>94.9% of citations CONFIRMED</strong> by inline verification in the current full-dataset run</li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">&bull;</span> <strong>$0.009/document</strong> total cost (extraction + verification) &mdash; full run projected at ~$42</li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">&bull;</span> <strong>16.5 docs/min</strong> throughput with --concurrent 10 on 16-vCPU VM</li>
+        <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">&bull;</span> <strong>Phase DQ:</strong> 11,932 citations verified to 100% completeness at $0.16 total API cost</li>
+      </ul>
+    </div>
+
+    <section class="animate-fadeUp">
+      <div class="section-stripe stripe-cyan pl-5 mb-6">
+        <h2 class="text-base font-bold">Metrics & Charts</h2>
+        <p class="text-xs text-txt-3 mt-0.5">Quantitative overview of the pipeline's performance across all phases</p>
+      </div>
+
+      <!-- Charts Row 1 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold text-txt-2 mb-3">Issues by Category</h3>
+          <canvas id="chartCategory" height="220"></canvas>
+        </div>
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold text-txt-2 mb-3">Issues by Severity</h3>
+          <canvas id="chartSeverity" height="220"></canvas>
+        </div>
+      </div>
+
+      <!-- Charts Row 2 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold text-txt-2 mb-3">500-Doc Test &mdash; Citation Verification</h3>
+          <canvas id="chartVerification500" height="220"></canvas>
+        </div>
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold text-txt-2 mb-3">Phase DQ &mdash; Final Verification (11,932)</h3>
+          <canvas id="chartVerificationDQ" height="220"></canvas>
+        </div>
+      </div>
+
+      <!-- Cost & Performance KPIs -->
+      <div class="section-stripe stripe-green pl-5 mb-4 mt-8">
+        <h3 class="text-sm font-bold">Cost & Performance</h3>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div class="bg-surface-2 border border-border rounded-lg p-4 text-center">
+          <div class="text-xl font-bold text-emerald-400 mono">$0.009</div>
+          <div class="mono text-[0.6rem] text-txt-3 uppercase tracking-wider mt-1">Cost per Document</div>
+        </div>
+        <div class="bg-surface-2 border border-border rounded-lg p-4 text-center">
+          <div class="text-xl font-bold text-cyan-400 mono">16.5</div>
+          <div class="mono text-[0.6rem] text-txt-3 uppercase tracking-wider mt-1">Docs / Minute</div>
+        </div>
+        <div class="bg-surface-2 border border-border rounded-lg p-4 text-center">
+          <div class="text-xl font-bold text-purple-400 mono">95.6%</div>
+          <div class="mono text-[0.6rem] text-txt-3 uppercase tracking-wider mt-1">Success Rate</div>
+        </div>
+        <div class="bg-surface-2 border border-border rounded-lg p-4 text-center">
+          <div class="text-xl font-bold text-yellow-400 mono">94.9%</div>
+          <div class="mono text-[0.6rem] text-txt-3 uppercase tracking-wider mt-1">Confirmed Rate</div>
+        </div>
+      </div>
+
+      <!-- Hallucination Impact -->
+      <div class="section-stripe stripe-red pl-5 mb-4">
+        <h3 class="text-sm font-bold">Hallucination Impact (Before vs After)</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-surface-2 border border-red-500/20 rounded-lg p-5">
+          <h4 class="mono text-xs text-red-400 uppercase tracking-wider mb-3">Before (v6 with KB)</h4>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-txt-2">Hallucination rate</span><span class="font-bold text-red-400">49.3%</span></div>
+              <div class="bg-surface-4 rounded-full h-2.5"><div class="bg-red-500 h-full rounded-full progress-bar" style="width: 49.3%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-txt-2">Pipe-format contamination</span><span class="font-bold text-red-400">67.2%</span></div>
+              <div class="bg-surface-4 rounded-full h-2.5"><div class="bg-red-500/70 h-full rounded-full progress-bar" style="width: 67.2%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-txt-2">False confirm rate</span><span class="font-bold text-orange-400">4.3%</span></div>
+              <div class="bg-surface-4 rounded-full h-2.5"><div class="bg-orange-500 h-full rounded-full progress-bar" style="width: 4.3%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-surface-2 border border-emerald-500/20 rounded-lg p-5">
+          <h4 class="mono text-xs text-emerald-400 uppercase tracking-wider mb-3">After (v7 without KB + Hard Filters)</h4>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-txt-2">CONFIRMED citations</span><span class="font-bold text-emerald-400">94.9%</span></div>
+              <div class="bg-surface-4 rounded-full h-2.5"><div class="bg-emerald-500 h-full rounded-full progress-bar" style="width: 94.9%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-txt-2">NOT_FOUND</span><span class="font-bold text-yellow-400">1.0%</span></div>
+              <div class="bg-surface-4 rounded-full h-2.5"><div class="bg-yellow-500 h-full rounded-full progress-bar" style="width: 1%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1"><span class="text-txt-2">MISATTRIBUTED</span><span class="font-bold text-orange-400">0.5%</span></div>
+              <div class="bg-surface-4 rounded-full h-2.5"><div class="bg-orange-500 h-full rounded-full progress-bar" style="width: 0.5%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       TAB 5: PIPELINE STATE
+       ============================================================ -->
+  <div id="tab-pipeline" class="tab-panel hidden">
+
+    <!-- Tab Executive Summary -->
+    <div class="bg-surface-2 border border-emerald-500/20 rounded-lg p-5 mb-6 animate-fadeUp">
+      <h3 class="text-sm font-semibold mb-2 text-emerald-400">Pipeline State &mdash; At a Glance</h3>
+      <ul class="space-y-1.5 text-sm text-txt-2">
+        <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&bull;</span> <strong>Full-dataset extraction RUNNING</strong> &mdash; 1,591/4,724 (34%), process healthy, no errors</li>
+        <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&bull;</span> <strong>API key:</strong> prolifico-edu project (fresh quota), backoff improved to 15s base</li>
+        <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&bull;</span> <strong>All 97 failures are garbled OCR documents</strong> &mdash; correctly caught by Phase 0 pre-check</li>
+        <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&bull;</span> <strong>4 post-run tasks:</strong> SQL NULL fix, apply manual verification findings, Phase 2 review, VM cleanup</li>
+        <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">&bull;</span> <strong>ETA:</strong> ~3 hours remaining at current throughput (16.5 docs/min)</li>
+      </ul>
+    </div>
+
+    <section class="animate-fadeUp">
+      <div class="section-stripe stripe-blue pl-5 mb-6">
+        <h2 class="text-base font-bold">Current Pipeline State</h2>
+        <p class="text-xs text-txt-3 mt-0.5">Live status of the full-dataset extraction run on GCP VM</p>
+      </div>
+
+      <!-- Pipeline Flow Diagram -->
+      <div class="bg-surface-2 border border-border rounded-lg p-6 mb-6">
+        <h3 class="text-sm font-semibold text-txt-2 mb-4">v7 Pipeline Architecture</h3>
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <div class="bg-emerald-500/20 border border-emerald-500/40 rounded-md px-3 py-2 text-emerald-300 text-center">
+            <div class="text-xs font-bold">Phase 0</div>
+            <div class="text-[0.65rem] text-emerald-400/70">Quality Pre-check</div>
+          </div>
+          <span class="text-txt-3">&rarr;</span>
+          <div class="bg-blue-500/20 border border-blue-500/40 rounded-md px-3 py-2 text-blue-300 text-center">
+            <div class="text-xs font-bold">Phase 1</div>
+            <div class="text-[0.65rem] text-blue-400/70">Jurisdiction ID</div>
+          </div>
+          <span class="text-txt-3">&rarr;</span>
+          <div class="bg-cyan-500/20 border border-cyan-500/40 rounded-md px-3 py-2 text-cyan-300 text-center">
+            <div class="text-xs font-bold">Phase 2A</div>
+            <div class="text-[0.65rem] text-cyan-400/70">Extraction (Flash)</div>
+          </div>
+          <span class="text-txt-3">&rarr;</span>
+          <div class="bg-red-500/20 border border-red-500/40 rounded-md px-3 py-2 text-red-300 text-center">
+            <div class="text-xs font-bold">Hard Filters</div>
+            <div class="text-[0.65rem] text-red-400/70">Pipe + Anachronism</div>
+          </div>
+          <span class="text-txt-3">&rarr;</span>
+          <div class="bg-yellow-500/20 border border-yellow-500/40 rounded-md px-3 py-2 text-yellow-300 text-center">
+            <div class="text-xs font-bold">Sabin Filter</div>
+            <div class="text-[0.65rem] text-yellow-400/70">ID Linking</div>
+          </div>
+          <span class="text-txt-3">&rarr;</span>
+          <div class="bg-purple-500/20 border border-purple-500/40 rounded-md px-3 py-2 text-purple-300 text-center">
+            <div class="text-xs font-bold">Phase 3</div>
+            <div class="text-[0.65rem] text-purple-400/70">Origin ID (Pro)</div>
+          </div>
+          <span class="text-txt-3">&rarr;</span>
+          <div class="bg-orange-500/20 border border-orange-500/40 rounded-md px-3 py-2 text-orange-300 text-center">
+            <div class="text-xs font-bold">Phase 4</div>
+            <div class="text-[0.65rem] text-orange-400/70">Sixfold Class</div>
+          </div>
+          <span class="text-txt-3">&rarr;</span>
+          <div class="bg-emerald-500/20 border border-emerald-500/40 rounded-md px-3 py-2 text-emerald-300 text-center">
+            <div class="text-xs font-bold">Phase 5</div>
+            <div class="text-[0.65rem] text-emerald-400/70">Verify (Flash)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Status -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold text-txt-2 mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Extraction Progress
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-txt-2">Processed</span>
+                <span class="mono font-bold">1,450 / 4,724 <span class="text-north">(31%)</span></span>
+              </div>
+              <div class="bg-surface-4 rounded-full h-3">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-400 h-full rounded-full progress-bar" style="width: 31%"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-surface-3 rounded-md p-3">
+                <div class="mono text-lg font-bold text-emerald-400">1,359</div>
+                <div class="text-xs text-txt-3">Success (93.7%)</div>
+              </div>
+              <div class="bg-surface-3 rounded-md p-3">
+                <div class="mono text-lg font-bold text-txt-3">91</div>
+                <div class="text-xs text-txt-3">Failed / Garbled</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-surface-2 border border-border rounded-lg p-5">
+          <h3 class="text-sm font-semibold text-txt-2 mb-4">Citation Verification</h3>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> CONFIRMED</span>
+              <span class="mono font-bold text-emerald-400">4,209 <span class="text-txt-3 font-normal">(94.9%)</span></span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-yellow-400"></span> NOT_FOUND</span>
+              <span class="mono font-bold text-yellow-400">44 <span class="text-txt-3 font-normal">(1.0%)</span></span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-orange-400"></span> MISATTRIBUTED</span>
+              <span class="mono font-bold text-orange-400">21 <span class="text-txt-3 font-normal">(0.5%)</span></span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-400"></span> UNVERIFIED</span>
+              <span class="mono font-bold text-blue-400">68 <span class="text-txt-3 font-normal">(1.5%)</span></span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-400"></span> NULL (pre-fix)</span>
+              <span class="mono font-bold text-red-400">94 <span class="text-txt-3 font-normal">(2.1%)</span></span>
+            </div>
+            <div class="border-t border-border/50 pt-2 flex items-center justify-between text-sm font-bold">
+              <span>Total Citations</span>
+              <span class="mono">4,436</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending TODOs -->
+      <div class="section-stripe stripe-yellow pl-5 mb-4">
+        <h3 class="text-sm font-bold">Post-Run TODO</h3>
+      </div>
+      <div class="bg-surface-2 border border-border rounded-lg divide-y divide-border/50">
+        <div class="flex items-center gap-3 px-5 py-3">
+          <span class="w-4 h-4 rounded border border-yellow-400/50 shrink-0"></span>
+          <span class="text-sm flex-1">SQL UPDATE: Set 94 NULL verification_status &rarr; UNVERIFIED</span>
+          <span class="text-[0.65rem] px-2 py-0.5 rounded status-pending">POST-RUN</span>
+        </div>
+        <div class="flex items-center gap-3 px-5 py-3">
+          <span class="w-4 h-4 rounded border border-yellow-400/50 shrink-0"></span>
+          <span class="text-sm flex-1">Run <code class="mono text-xs bg-surface-4 px-1 rounded">apply_verification_findings.py</code> with Claude Chat Excel data</span>
+          <span class="text-[0.65rem] px-2 py-0.5 rounded status-pending">POST-RUN</span>
+        </div>
+        <div class="flex items-center gap-3 px-5 py-3">
+          <span class="w-4 h-4 rounded border border-yellow-400/50 shrink-0"></span>
+          <span class="text-sm flex-1">Phase 2: Accuracy review, DB optimization, code consolidation</span>
+          <span class="text-[0.65rem] px-2 py-0.5 rounded status-pending">PLANNED</span>
+        </div>
+        <div class="flex items-center gap-3 px-5 py-3">
+          <span class="w-4 h-4 rounded border border-yellow-400/50 shrink-0"></span>
+          <span class="text-sm flex-1">Delete VM + GCS bucket; switch gcloud back to <code class="mono text-xs bg-surface-4 px-1 rounded">extreme-hull-489213-p9</code></span>
+          <span class="text-[0.65rem] px-2 py-0.5 rounded status-pending">CLEANUP</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="border-t border-border mt-8 py-6 text-center">
+  <p class="mono text-xs text-txt-3">
+    phdMutley &middot; PhD Climate Litigation Citation Analysis &middot; Generated 2026-03-09
+  </p>
+  <p class="mono text-[0.6rem] text-txt-3/50 mt-1">
+    Compiled from 6 reports, 4 VMISSUE logs, and 8 development sessions
+  </p>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+  // ─── Tab switching ─────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    document.getElementById('tab-' + name).classList.remove('hidden');
+
+    document.querySelectorAll('#tabNav button').forEach(b => {
+      b.className = b.className.replace('tab-active', 'tab-inactive');
+    });
+    event.currentTarget.className = event.currentTarget.className.replace('tab-inactive', 'tab-active');
+  }
+
+  // ─── Accordion toggle ─────────────────────────
+  function toggleAccordion(btn) {
+    const body = btn.nextElementSibling;
+    const chevron = btn.querySelector('.accordion-chevron');
+    const isOpen = body.classList.contains('open');
+
+    if (isOpen) {
+      body.style.maxHeight = '0px';
+      body.classList.remove('open');
+      chevron.classList.remove('open');
+    } else {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      body.classList.add('open');
+      chevron.classList.add('open');
+    }
+  }
+
+  // ─── Chart.js defaults ────────────────────────
+  Chart.defaults.color = '#8b9aad';
+  Chart.defaults.borderColor = 'rgba(42,53,68,0.5)';
+  Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+  Chart.defaults.font.size = 12;
+  Chart.defaults.plugins.legend.labels.boxWidth = 12;
+  Chart.defaults.plugins.legend.labels.padding = 12;
+
+  // ─── Chart: Issues by Category ────────────────
+  new Chart(document.getElementById('chartCategory'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Hallucination', 'Sixfold Classification', 'Data Quality (DQ)', 'VM Runtime', 'API & Quota', 'Pipeline Bugs', 'Infrastructure'],
+      datasets: [{
+        data: [5, 11, 10, 4, 4, 11, 3],
+        backgroundColor: [
+          'rgba(239,68,68,0.7)',
+          'rgba(139,92,246,0.7)',
+          'rgba(16,185,129,0.7)',
+          'rgba(249,115,22,0.7)',
+          'rgba(6,182,212,0.7)',
+          'rgba(234,179,8,0.7)',
+          'rgba(59,130,246,0.7)',
+        ],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      cutout: '55%',
+      plugins: {
+        legend: { position: 'right', labels: { font: { size: 11 } } }
+      }
+    }
+  });
+
+  // ─── Chart: Issues by Severity ────────────────
+  new Chart(document.getElementById('chartSeverity'), {
+    type: 'bar',
+    data: {
+      labels: ['Critical', 'High', 'Medium', 'Low', 'Design'],
+      datasets: [{
+        label: 'Issues',
+        data: [4, 12, 14, 8, 6],
+        backgroundColor: [
+          'rgba(239,68,68,0.7)',
+          'rgba(249,115,22,0.7)',
+          'rgba(234,179,8,0.7)',
+          'rgba(16,185,129,0.7)',
+          'rgba(139,92,246,0.7)',
+        ],
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(42,53,68,0.3)' }, ticks: { stepSize: 5 } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+
+  // ─── Chart: 500-Doc Verification ──────────────
+  new Chart(document.getElementById('chartVerification500'), {
+    type: 'doughnut',
+    data: {
+      labels: ['CONFIRMED', 'NOT_FOUND', 'MISATTRIBUTED', 'NULL/UNVERIFIED'],
+      datasets: [{
+        data: [1190, 13, 10, 32],
+        backgroundColor: [
+          'rgba(16,185,129,0.8)',
+          'rgba(234,179,8,0.8)',
+          'rgba(249,115,22,0.8)',
+          'rgba(239,68,68,0.6)',
+        ],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      cutout: '55%',
+      plugins: {
+        legend: { position: 'right', labels: { font: { size: 11 } } },
+        title: { display: true, text: '1,245 total citations', color: '#5a6978', font: { size: 11, weight: 'normal' } }
+      }
+    }
+  });
+
+  // ─── Chart: Phase DQ Final ────────────────────
+  new Chart(document.getElementById('chartVerificationDQ'), {
+    type: 'doughnut',
+    data: {
+      labels: ['CONFIRMED', 'NOT_FOUND', 'MISATTRIBUTED', 'SKIPPED_TOO_LONG', 'SKIPPED_GARBLED'],
+      datasets: [{
+        data: [8506, 2716, 423, 286, 1],
+        backgroundColor: [
+          'rgba(16,185,129,0.8)',
+          'rgba(234,179,8,0.8)',
+          'rgba(249,115,22,0.8)',
+          'rgba(139,92,246,0.6)',
+          'rgba(90,105,120,0.6)',
+        ],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      cutout: '55%',
+      plugins: {
+        legend: { position: 'right', labels: { font: { size: 11 } } },
+        title: { display: true, text: '11,932 total citations', color: '#5a6978', font: { size: 11, weight: 'normal' } }
+      }
+    }
+  });
+</script>
+</body>
+</html>

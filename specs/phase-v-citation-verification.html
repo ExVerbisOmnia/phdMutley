@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase V — Citation Verification Pipeline | Discussion</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ================================================================
+           CSS CUSTOM PROPERTIES — Project Dark Theme
+           ================================================================ */
+        :root {
+            --bg-primary: #0a0f14;
+            --bg-secondary: #111820;
+            --bg-panel: #1a222d;
+            --bg-hover: #242d3a;
+            --text-primary: #e8edf3;
+            --text-secondary: #8b9aad;
+            --text-muted: #5a6978;
+            --north-primary: #3b82f6;
+            --south-primary: #10b981;
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+            --accent-yellow: #eab308;
+            --accent-cyan: #06b6d4;
+            --border-color: #2a3544;
+            --border-hover: #3d4f66;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ================================================================
+           LAYOUT
+           ================================================================ */
+        .page-wrapper {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 32px 24px 80px;
+        }
+
+        /* ================================================================
+           HEADER
+           ================================================================ */
+        .doc-header {
+            padding: 32px 0 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 32px;
+        }
+        .doc-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .doc-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .status-draft { background: rgba(234, 179, 8, 0.15); color: var(--accent-yellow); border: 1px solid rgba(234, 179, 8, 0.3); }
+        .status-decided { background: rgba(16, 185, 129, 0.15); color: var(--south-primary); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .status-open { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); border: 1px solid rgba(249, 115, 22, 0.3); }
+
+        /* ================================================================
+           TOC
+           ================================================================ */
+        .toc {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 40px;
+        }
+        .toc h2 {
+            font-size: 0.8rem;
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .toc ul { list-style: none; }
+        .toc li { margin-bottom: 6px; }
+        .toc a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.15s;
+        }
+        .toc a:hover { color: var(--north-primary); }
+        .toc .decision-tag {
+            font-size: 0.65rem;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* ================================================================
+           SECTIONS
+           ================================================================ */
+        .section {
+            margin-bottom: 48px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .section-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .section-body p, .section-body li {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            margin-bottom: 10px;
+        }
+        .section-body ul, .section-body ol {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+        .section-body strong { color: var(--text-primary); }
+
+        /* ================================================================
+           CODE BLOCKS
+           ================================================================ */
+        pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0 16px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        code {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.82em;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: var(--accent-cyan);
+        }
+        pre code { background: none; padding: 0; }
+
+        /* ================================================================
+           TABLES
+           ================================================================ */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 20px;
+            font-size: 0.85rem;
+        }
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(42, 53, 68, 0.5);
+            color: var(--text-secondary);
+        }
+        tr:hover td { background: rgba(36, 45, 58, 0.3); }
+
+        /* ================================================================
+           DECISION BOX
+           ================================================================ */
+        .decision-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-left: 4px solid var(--south-primary);
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        .decision-box .label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--south-primary);
+            margin-bottom: 6px;
+        }
+        .decision-box p {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Open question box (unanswered) */
+        .question-box {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.06) 0%, rgba(234, 179, 8, 0.06) 100%);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        .question-box .label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-orange);
+            margin-bottom: 6px;
+        }
+
+        /* Claude question embedded in section */
+        .claude-question {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+        .claude-question .label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-purple);
+            margin-bottom: 6px;
+        }
+
+        /* ================================================================
+           COMMENT SYSTEM
+           ================================================================ */
+        .comments-area {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+        }
+        .comments-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .comments-header span {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .btn-add-comment {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-add-comment:hover {
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.08);
+        }
+        .btn-add-comment .icon { font-size: 1rem; line-height: 1; }
+
+        /* Comment card / speech balloon */
+        .comment-card {
+            position: relative;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            transition: border-color 0.15s;
+        }
+        .comment-card:hover { border-color: var(--border-hover); }
+        .comment-card::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: -8px;
+            width: 14px;
+            height: 14px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
+            transform: rotate(45deg);
+        }
+        .comment-card.author-gustavo { border-left: 3px solid var(--north-primary); }
+        .comment-card.author-gustavo::before { border-left-color: var(--north-primary); }
+        .comment-card.author-lucas { border-left: 3px solid var(--south-primary); }
+        .comment-card.author-lucas::before { border-left-color: var(--south-primary); }
+        .comment-card.author-claude { border-left: 3px solid var(--accent-purple); }
+        .comment-card.author-claude::before { border-left-color: var(--accent-purple); }
+
+        .comment-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .comment-author {
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+        .author-gustavo .comment-author { color: var(--north-primary); }
+        .author-lucas .comment-author { color: var(--south-primary); }
+        .author-claude .comment-author { color: var(--accent-purple); }
+        .comment-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        .comment-text {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+        .comment-delete {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.15s, color 0.15s;
+        }
+        .comment-card:hover .comment-delete { opacity: 1; }
+        .comment-delete:hover { color: var(--accent-red); }
+
+        /* New comment form */
+        .comment-form {
+            display: none;
+            margin-top: 12px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-hover);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .comment-form.visible { display: block; }
+        .comment-form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .comment-form select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .comment-form select:focus { border-color: var(--accent-purple); }
+        .comment-form textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+        }
+        .comment-form textarea:focus { border-color: var(--accent-purple); }
+        .comment-form textarea::placeholder { color: var(--text-muted); }
+        .comment-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .btn-submit {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            background: var(--accent-purple);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-submit:hover { background: #7c3aed; }
+        .btn-cancel {
+            padding: 8px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-cancel:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+        /* Options list */
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 16px;
+        }
+        .options-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 0;
+        }
+        .option-letter {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            min-width: 20px;
+        }
+        .option-chosen .option-letter { color: var(--south-primary); }
+        .option-chosen {
+            background: rgba(16, 185, 129, 0.06);
+            border-radius: 4px;
+            padding: 6px 8px;
+            margin: -6px -8px;
+        }
+
+        /* Subsection */
+        .subsection {
+            margin: 24px 0;
+            padding-left: 16px;
+            border-left: 2px solid var(--border-color);
+        }
+        .subsection h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .subsection h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 16px 0 8px;
+            color: var(--text-secondary);
+        }
+
+        /* Tree diagram */
+        .tree { font-family: 'Space Mono', monospace; font-size: 0.78rem; white-space: pre; color: var(--text-secondary); }
+
+        /* Note/callout */
+        .note {
+            background: rgba(6, 182, 212, 0.06);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .note strong { color: var(--accent-cyan); }
+
+        /* Export button */
+        .export-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0; right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            z-index: 200;
+        }
+        .btn-export {
+            padding: 8px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-panel);
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-export:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header class="doc-header">
+        <h1>Phase V &mdash; Citation Verification Pipeline</h1>
+        <div class="doc-meta">
+            <span><span class="status-badge status-draft">draft</span></span>
+            <span>8 Mar 2026</span>
+            <span>Gustavo + Lucas + Claude</span>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         TOC
+         ============================================================ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul>
+            <li><a href="#context">1. Context & Problem Statement</a></li>
+            <li><a href="#data">2. Data Picture</a> <span class="status-badge status-decided decision-tag">decided</span></li>
+            <li><a href="#plan">3. Plan</a>
+                <ul style="padding-left:18px; margin-top:6px;">
+                    <li><a href="#step1">3.1 DB Migration</a></li>
+                    <li><a href="#step2">3.2 Gemini Client Extension</a> <span class="status-badge status-open decision-tag">question</span></li>
+                    <li><a href="#step3">3.3 Verification Script</a></li>
+                    <li><a href="#step4">3.4 Fix Export URL</a></li>
+                    <li><a href="#step5">3.5 Export Columns</a></li>
+                </ul>
+            </li>
+            <li><a href="#issue-a">4A. Truncation of raw_citation_text</a> <span class="status-badge status-decided decision-tag">decided: B</span></li>
+            <li><a href="#issue-b">4B. Circular reliance on raw_citation_text</a> <span class="status-badge status-decided decision-tag">decided: case_name only</span></li>
+            <li><a href="#issue-c">4C. Scope &mdash; discarded citations</a> <span class="status-badge status-decided decision-tag">decided: A</span></li>
+            <li><a href="#issue-d">4D. Snippet matching strategy</a> <span class="status-badge status-decided decision-tag">decided: B (fuzzy)</span></li>
+            <li><a href="#31-decisions">4E. The 31 unprocessed decisions</a> <span class="status-badge status-decided decision-tag">decided: note only</span></li>
+            <li><a href="#summary">5. Revised Summary</a></li>
+            <li><a href="#files">6. Files & Reuse</a></li>
+            <li><a href="#verification">7. Verification Steps</a></li>
+            <li><a href="#issue-unstructured">8. Known Issue: Unstructured Responses</a> <span class="status-badge status-open decision-tag">registered</span></li>
+            <li><a href="#log">9. Revision Log</a></li>
+        </ul>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: CONTEXT
+         ============================================================ -->
+    <section class="section" id="context">
+        <div class="section-header"><h2>1. Context & Problem Statement</h2></div>
+        <div class="section-body">
+            <p>Lucas reported two issues with the exported citation data:</p>
+            <ol>
+                <li><strong>Missing/bad snippets:</strong> 36.3% of 11,932 citations have no <code>snippet_text</code>, and many existing snippets don't actually contain the claimed citation (LLM paraphrased <code>raw_text</code> instead of copying verbatim, so text matching fails).</li>
+                <li><strong>Wrong URL in export:</strong> <code>export_to_excel.py</code> uses <code>document_content_url</code> (always NULL) instead of <code>document_url</code> (16,332 populated with direct PDF links).</li>
+            </ol>
+            <p><strong>Root cause (snippets):</strong> The extraction prompt asks for verbatim text, but the LLM often returns normalized forms like <code>"Case Name (Year) | Jurisdiction"</code>. The snippet extractor then can't find this in the document. Additionally, some citations may be hallucinated entirely.</p>
+            <p><strong>Proposed solution:</strong> An LLM-based verification pass that reads each document and confirms whether each claimed citation actually exists, returning truly verbatim quotes that can be char-anchored.</p>
+        </div>
+        <div class="comments-area" data-section="context"></div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 2: DATA PICTURE
+         ============================================================ -->
+    <section class="section" id="data">
+        <div class="section-header"><h2>2. Data Picture</h2><span class="status-badge status-decided">decided</span></div>
+        <div class="section-body">
+            <table>
+                <thead><tr><th>Metric</th><th>Count</th></tr></thead>
+                <tbody>
+                    <tr><td>Total documents in DB</td><td>16,352</td></tr>
+                    <tr><td>Documents classified as decisions</td><td>4,755</td></tr>
+                    <tr><td>Decisions processed through extraction</td><td>4,725</td></tr>
+                    <tr><td>Decisions with kept citations</td><td>2,680</td></tr>
+                    <tr><td>Decisions with zero kept citations</td><td>2,045</td></tr>
+                    <tr><td><strong>Unprocessed decisions</strong></td><td><strong>31</strong></td></tr>
+                    <tr><td>Total citations in <code>citation_extraction_phased</code></td><td>11,932</td></tr>
+                    <tr><td>Citations WITH snippet_text</td><td>7,600 (63.7%)</td></tr>
+                    <tr><td>Citations WITHOUT snippet_text</td><td>4,332 (36.3%)</td></tr>
+                    <tr><td><strong>Citations discarded by Sabin filter</strong></td><td><strong>75,704</strong></td></tr>
+                    <tr><td>Documents with discarded citations</td><td>3,175</td></tr>
+                    <tr><td>Discard reason: <code>below_threshold</code></td><td>75,697</td></tr>
+                    <tr><td>Discard reason: <code>empty_after_normalization</code></td><td>7</td></tr>
+                    <tr><td>Orphaned summaries (data integrity gap)</td><td>0</td></tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <strong>Key finding:</strong> The Sabin filter discarded 6.3&times; more citations than it kept. These sit in <code>citation_extraction_discarded</code>. Some may be real citations to cases not in the 4,741-case Sabin knowledge base.
+            </div>
+
+            <div class="decision-box">
+                <div class="label">Decision &mdash; Sabin Filter Scope</div>
+                <p>We will abide by the Sabin filter step for now &mdash; we don't need data concerning decisions not referenced in the Sabin seed. If verification findings point to an issue in the Sabin filter, we'll assess whether to apply logic from this verification step into previous pipeline steps for a fresh re-run.</p>
+            </div>
+        </div>
+        <div class="comments-area" data-section="data"></div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 3: PLAN
+         ============================================================ -->
+    <section class="section" id="plan">
+        <div class="section-header"><h2>3. Plan</h2></div>
+
+        <!-- Step 1 -->
+        <div class="subsection" id="step1">
+            <h3>3.1 DB Migration</h3>
+            <div class="section-body">
+                <p><strong>File:</strong> <code>scripts/6-verify-citations/migrate_verification_columns.sql</code></p>
+                <p>Add 5 columns + 1 index to <code>citation_extraction_phased</code>:</p>
+<pre><code>ALTER TABLE citation_extraction_phased
+    ADD COLUMN IF NOT EXISTS verification_status VARCHAR(20),
+    ADD COLUMN IF NOT EXISTS verification_snippet TEXT,
+    ADD COLUMN IF NOT EXISTS verification_notes TEXT,
+    ADD COLUMN IF NOT EXISTS verification_model VARCHAR(50),
+    ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP;
+CREATE INDEX IF NOT EXISTS idx_cep_verification_status
+    ON citation_extraction_phased(verification_status);</code></pre>
+                <p>Also update <code>CitationExtractionPhased</code> model in <code>scripts/0-initialize-database/init_database.py</code> (after the <code>reviewed_at</code> column, ~line 404).</p>
+            </div>
+            <div class="comments-area" data-section="step1"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="subsection" id="step2">
+            <h3>3.2 Extend <code>gemini_client.py</code> &mdash; add <code>response_schema</code> support</h3>
+            <div class="section-body">
+                <p>Currently <code>call_gemini_async()</code> only supports <code>response_mime_type</code>. Add a <code>response_schema</code> parameter that accepts a Pydantic BaseModel class:</p>
+<pre><code>async def call_gemini_async(
+    prompt: str,
+    *,
+    model: str = None,
+    response_mime_type: str = None,
+    response_schema = None,        # NEW: Pydantic BaseModel class
+    ...
+) -> dict:
+    # In config_kwargs building:
+    if response_schema:
+        config_kwargs["response_mime_type"] = "application/json"
+        config_kwargs["response_schema"] = response_schema</code></pre>
+                <p>Same change to sync <code>call_gemini()</code> for consistency.</p>
+            </div>
+
+            <div class="claude-question">
+                <div class="label">Claude &mdash; Question from Gustavo & Lucas</div>
+                <p><strong>Q:</strong> <em>"Have you built this codeblock assuring that the mime_type response is a valid option? In which scenarios are mime_type responses useful for our scope or better than json responses? Can't we unify the response method into json?"</em></p>
+                <p style="margin-top:12px;"><strong>Claude's answer:</strong></p>
+                <p>In the Gemini <code>google-genai</code> SDK, <code>response_mime_type</code> and <code>response_schema</code> are <strong>not competing options</strong> &mdash; they work together:</p>
+                <ul>
+                    <li><code>response_mime_type="application/json"</code> tells Gemini to output valid JSON (instead of free-form text). Without this, the model can return markdown, prose, etc.</li>
+                    <li><code>response_schema=SomePydanticModel</code> additionally constrains the JSON structure to match the schema (field names, types, enums). The SDK <strong>requires</strong> <code>response_mime_type="application/json"</code> to be set when using <code>response_schema</code>.</li>
+                </ul>
+                <p>Currently our codebase uses <code>response_mime_type="application/json"</code> alone in extraction scripts (free-form JSON, parsed manually). The new verification script would use <code>response_schema</code> which auto-sets the mime type. <strong>They can coexist</strong> &mdash; the schema path is strictly better when we have a known output structure (like verification verdicts), while the mime-type-only path remains useful for open-ended JSON where we don't want to define a rigid schema.</p>
+                <p><strong>Proposal:</strong> When <code>response_schema</code> is provided, we auto-set <code>response_mime_type="application/json"</code> internally. Callers never need to pass both. Existing callers using <code>response_mime_type</code> alone continue to work unchanged.</p>
+            </div>
+            <div class="comments-area" data-section="step2"></div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="subsection" id="step3">
+            <h3>3.3 Verification Script</h3>
+            <div class="section-body">
+                <p><strong>File:</strong> <code>scripts/6-verify-citations/verify_citations.py</code></p>
+
+                <h4>3.3a Pydantic schemas (structured output)</h4>
+<pre><code>class SingleCitationVerification(BaseModel):
+    citation_index: int
+    verdict: Literal["CONFIRMED", "NOT_FOUND", "MISATTRIBUTED"]
+    verbatim_quote: str | None = None
+    corrected_case_name: str | None = None
+    notes: str | None = None
+
+class DocumentVerificationResponse(BaseModel):
+    verifications: list[SingleCitationVerification]</code></pre>
+
+                <h4>3.3b Verification prompt</h4>
+                <p>System instruction + user content. The prompt:</p>
+                <ol>
+                    <li>Receives full document text</li>
+                    <li>Receives numbered list of claimed citations (<strong><code>case_name</code> only</strong> &mdash; per Issue B decision)</li>
+                    <li>For each: verdict + verbatim copy-paste quote (1-3 sentences) + corrections</li>
+                    <li>Enforced via <code>response_schema=DocumentVerificationResponse</code></li>
+                </ol>
+                <p>Key instruction: <strong>verbatim_quote MUST be an exact substring of the source document</strong> &mdash; copy-paste only, no paraphrasing.</p>
+
+                <h4>3.3c Async processing</h4>
+<pre class="tree">main()
+&#9500;&#9472;&#9472; Run migration (ALTER TABLE IF NOT EXISTS)
+&#9500;&#9472;&#9472; Query document_ids with unverified citations
+&#9500;&#9472;&#9472; Create concurrent engine (pool_size=concurrent+5)
+&#9500;&#9472;&#9472; run_concurrent()
+&#9474;   &#9500;&#9472;&#9472; sem = asyncio.Semaphore(concurrent)
+&#9474;   &#9500;&#9472;&#9472; lock = asyncio.Lock()
+&#9474;   &#9492;&#9472;&#9472; asyncio.gather(*[process_one(doc) for doc in docs])
+&#9474;       &#9492;&#9472;&#9472; verify_single_document(doc_id, ...)
+&#9474;           &#9500;&#9472;&#9472; Load document text from extracted_text
+&#9474;           &#9500;&#9472;&#9472; Load citations from citation_extraction_phased
+&#9474;           &#9500;&#9472;&#9472; Batch citations (max 50 per LLM call)
+&#9474;           &#9500;&#9472;&#9472; For each batch:
+&#9474;           &#9474;   &#9500;&#9472;&#9472; build_verification_prompt()
+&#9474;           &#9474;   &#9500;&#9472;&#9472; call_gemini_async(schema=DocumentVerificationResponse)
+&#9474;           &#9474;   &#9492;&#9472;&#9472; Parse structured response
+&#9474;           &#9500;&#9472;&#9472; For each CONFIRMED citation with verbatim_quote:
+&#9474;           &#9474;   &#9500;&#9472;&#9472; fuzzy_match(document_text, verbatim_quote, threshold=0.95)
+&#9474;           &#9474;   &#9492;&#9472;&#9472; Update snippet_text + char anchors if match
+&#9474;           &#9500;&#9472;&#9472; UPDATE all citation rows (verification_* columns)
+&#9474;           &#9492;&#9472;&#9472; Update stats under lock
+&#9492;&#9472;&#9472; Print final report (confirmed/not_found/misattributed, snippets improved, cost)</pre>
+
+                <h4>3.3d CLI</h4>
+<pre><code>python verify_citations.py                     # verify all unverified
+python verify_citations.py --concurrent 40     # VM full capacity
+python verify_citations.py --model gemini-3.1-pro-preview
+python verify_citations.py --limit 50          # test batch
+python verify_citations.py --re-verify         # re-process already verified
+python verify_citations.py --dry-run           # show counts + cost estimate
+python verify_citations.py --budget 25         # halt if cost exceeds $25</code></pre>
+
+                <h4>3.3e Key design decisions</h4>
+                <table>
+                    <thead><tr><th>#</th><th>Decision</th><th>Choice</th><th>Rationale</th></tr></thead>
+                    <tbody>
+                        <tr><td>D1</td><td>Batch size</td><td>50 citations/LLM call</td><td>Keeps output manageable; only 5% of docs have &gt;13 citations</td></tr>
+                        <tr><td>D2</td><td>Concurrency</td><td>25 (local) / 40 (VM)</td><td>VM has 16 cores; Gemini rate limits ~1500 RPM for Flash-Lite</td></tr>
+                        <tr><td>D3</td><td>Snippet matching</td><td><strong>Fuzzy &ge;95%</strong> (revised)</td><td>Per Issue D decision &mdash; avoids Unicode/whitespace false negatives</td></tr>
+                        <tr><td>D4</td><td>NOT_FOUND handling</td><td>Set <code>requires_manual_review=True</code></td><td>Lucas can review likely hallucinations</td></tr>
+                        <tr><td>D5</td><td>Doc w/ 875 citations</td><td>Batch into 18 calls of 50</td><td>Sequential within doc, parallel across docs</td></tr>
+                        <tr><td>D6</td><td>Cost tracking</td><td>Per-call accumulation, halt at <code>--budget</code></td><td>Budget safety</td></tr>
+                        <tr><td>D7</td><td>Graceful shutdown</td><td><code>_shutdown_requested</code> on SIGINT</td><td>Same pattern as extract_citations.py</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="comments-area" data-section="step3"></div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="subsection" id="step4">
+            <h3>3.4 Fix Export URL</h3>
+            <div class="section-body">
+                <p><strong>File:</strong> <code>scripts/export_to_excel.py</code></p>
+                <p>Change <code>d.document_content_url</code> &rarr; <code>d.document_url</code> in three places:</p>
+                <ul>
+                    <li>Line 77 (<code>_export_data_quality_sheet</code> download failures query)</li>
+                    <li>Line 191 (enriched query for <code>citation_extraction_phased</code>)</li>
+                    <li>Line 203 (enriched query for <code>citation_extraction_phased_summary</code>)</li>
+                </ul>
+                <p>Also rename the alias from <code>source_pdf_url</code> to <code>source_document_url</code> for clarity.</p>
+            </div>
+            <div class="comments-area" data-section="step4"></div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="subsection" id="step5">
+            <h3>3.5 Add Verification Columns to Export</h3>
+            <div class="section-body">
+                <p>The new <code>verification_status</code> and <code>verification_snippet</code> columns will be automatically included since the enriched query uses <code>cep.*</code>.</p>
+            </div>
+            <div class="comments-area" data-section="step5"></div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ISSUE A: Truncation
+         ============================================================ -->
+    <section class="section" id="issue-a">
+        <div class="section-header"><h2>4A. Truncation of <code>raw_citation_text</code></h2><span class="status-badge status-decided">decided</span></div>
+        <div class="section-body">
+            <p><strong>Problem:</strong> The original plan proposed truncating <code>raw_citation_text</code> to ~500 chars to save tokens. If the distinguishing detail falls after the truncation point, the verification LLM won't have enough to identify the correct citation &mdash; leading to false NOT_FOUND verdicts.</p>
+            <p><strong>Assessment:</strong> Premature optimization. At Flash-Lite prices, the token savings are negligible compared to the risk of wrong verdicts.</p>
+            <ul class="options-list">
+                <li><span class="option-letter">A)</span> <span>Send full <code>raw_citation_text</code></span></li>
+                <li class="option-chosen"><span class="option-letter">B)</span> <span>Don't send <code>raw_citation_text</code> at all (see Issue B)</span></li>
+            </ul>
+            <div class="decision-box">
+                <div class="label">Decision</div>
+                <p>Option B &mdash; don't send <code>raw_citation_text</code>. Use <code>case_name</code> only as identifier (linked to Issue B decision).</p>
+            </div>
+        </div>
+        <div class="comments-area" data-section="issue-a"></div>
+    </section>
+
+    <!-- ============================================================
+         ISSUE B: Circular reliance
+         ============================================================ -->
+    <section class="section" id="issue-b">
+        <div class="section-header"><h2>4B. Circular Reliance on <code>raw_citation_text</code></h2><span class="status-badge status-decided">decided</span></div>
+        <div class="section-body">
+            <p><strong>Problem:</strong> The whole pipeline exists because the extraction LLM produced unreliable output. Using that same unreliable output as the search query for verification is circular.</p>
+            <p>If <code>raw_citation_text</code> says <em>"The Hague Court held in Urgenda (2015)..."</em> but the actual document says <em>"In the Urgenda Foundation v. State of the Netherlands, the District Court of The Hague ruled..."</em>, the verification LLM might return NOT_FOUND for a citation that genuinely exists.</p>
+            <p><strong>Proposed revision:</strong> Use <code>case_name</code> as the <strong>primary identifier</strong>. The prompt becomes: <em>"For each case name below, find where this case is cited in the document."</em></p>
+            <p><strong>Trade-off:</strong> <code>case_name</code> alone may be ambiguous if a document cites the same case multiple times. The prompt should handle this ("return ALL passages where this case is cited").</p>
+            <ul class="options-list">
+                <li class="option-chosen"><span class="option-letter">A)</span> <span><code>case_name</code> only &mdash; clean, avoids circular reliance</span></li>
+                <li><span class="option-letter">B)</span> <span><code>case_name</code> + full <code>raw_citation_text</code> as hint</span></li>
+                <li><span class="option-letter">C)</span> <span><code>case_name</code> + first N chars of <code>raw_citation_text</code></span></li>
+            </ul>
+            <div class="decision-box">
+                <div class="label">Decision</div>
+                <p>Option A &mdash; <code>case_name</code> only. Clean break from the extraction LLM's unreliable output.</p>
+            </div>
+        </div>
+        <div class="comments-area" data-section="issue-b"></div>
+    </section>
+
+    <!-- ============================================================
+         ISSUE C: Scope
+         ============================================================ -->
+    <section class="section" id="issue-c">
+        <div class="section-header"><h2>4C. Scope &mdash; Discarded Citations</h2><span class="status-badge status-decided">decided</span></div>
+        <div class="section-body">
+            <p><strong>Problem:</strong> The plan only queries documents with rows in <code>citation_extraction_phased</code>. This misses:</p>
+            <ul>
+                <li><strong>3,175 documents</strong> where the LLM extracted citations but the Sabin filter rejected ALL of them</li>
+                <li><strong>31 unprocessed decisions</strong> never run through extraction</li>
+            </ul>
+            <p>The <strong>75,704 discarded citations</strong> (6.3&times; the kept count) in <code>citation_extraction_discarded</code> are significant. Nearly all were discarded for <code>below_threshold</code>.</p>
+            <ul class="options-list">
+                <li class="option-chosen"><span class="option-letter">A)</span> <span>Phase V = verify kept citations only (11,932). Discards = separate future phase.</span></li>
+                <li><span class="option-letter">B)</span> <span>Phase V + sample ~500 discards to estimate false-discard rate</span></li>
+                <li><span class="option-letter">C)</span> <span>Phase V includes all docs with any extraction output</span></li>
+            </ul>
+            <div class="decision-box">
+                <div class="label">Decision</div>
+                <p>Option A &mdash; verify kept citations only. We trust the Sabin filter for now. If verification findings reveal Sabin issues, we'll reassess and potentially apply verification logic to earlier pipeline steps for a fresh re-run.</p>
+            </div>
+        </div>
+        <div class="comments-area" data-section="issue-c"></div>
+    </section>
+
+    <!-- ============================================================
+         ISSUE D: Snippet matching
+         ============================================================ -->
+    <section class="section" id="issue-d">
+        <div class="section-header"><h2>4D. Snippet Matching Strategy</h2><span class="status-badge status-decided">decided</span></div>
+        <div class="section-body">
+            <p><strong>Problem:</strong> Store the LLM's output in <code>verification_snippet</code> always, but only overwrite <code>snippet_text</code> if char-level match confirms it. Common mismatches (whitespace, Unicode variants like &ldquo; vs ", ligatures) cause false negatives.</p>
+            <ul class="options-list">
+                <li><span class="option-letter">A)</span> <span>Strict exact substring match</span></li>
+                <li class="option-chosen"><span class="option-letter">B)</span> <span>Fuzzy match &ge;95% character similarity</span></li>
+                <li><span class="option-letter">C)</span> <span>Normalize both texts first, then exact match</span></li>
+            </ul>
+            <div class="decision-box">
+                <div class="label">Decision</div>
+                <p>Option B &mdash; fuzzy match with &ge;95% character similarity threshold. Promotes more useful snippets while maintaining quality.</p>
+            </div>
+        </div>
+        <div class="comments-area" data-section="issue-d"></div>
+    </section>
+
+    <!-- ============================================================
+         ISSUE E: 31 unprocessed
+         ============================================================ -->
+    <section class="section" id="31-decisions">
+        <div class="section-header"><h2>4E. The 31 Unprocessed Decisions</h2><span class="status-badge status-decided">decided</span></div>
+        <div class="section-body">
+            <p>31 decisions were never run through the extraction pipeline.</p>
+            <ul class="options-list">
+                <li><span class="option-letter">A)</span> <span>Run extraction on them before Phase V</span></li>
+                <li><span class="option-letter">B)</span> <span>Ignore for now, investigate why they were skipped</span></li>
+                <li class="option-chosen"><span class="option-letter">C)</span> <span>Note as known gap, address later</span></li>
+            </ul>
+            <div class="decision-box">
+                <div class="label">Decision</div>
+                <p>Option C &mdash; ignore them but register a formal note. They are a known gap to be investigated later.</p>
+            </div>
+            <div class="note">
+                <strong>Known gap:</strong> 31 decisions (of 4,755 total) were never processed through the citation extraction pipeline. Reason unknown. To be investigated in a future pass. These represent 0.65% of decisions.
+            </div>
+        </div>
+        <div class="comments-area" data-section="31-decisions"></div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 5: REVISED SUMMARY
+         ============================================================ -->
+    <section class="section" id="summary">
+        <div class="section-header"><h2>5. Revised Summary</h2></div>
+        <div class="section-body">
+            <table>
+                <thead><tr><th>Original Assumption</th><th>Reality</th><th>Impact on Plan</th></tr></thead>
+                <tbody>
+                    <tr><td><code>raw_citation_text</code> is the claim to verify</td><td>Often paraphrased/wrong itself</td><td>Use <code>case_name</code> as primary identifier</td></tr>
+                    <tr><td>Truncating saves cost</td><td>Negligible savings, risks wrong verdicts</td><td>Drop <code>raw_citation_text</code> entirely</td></tr>
+                    <tr><td>Only docs with kept citations need verification</td><td>75K discarded citations may include real ones</td><td>Phase V = kept only; Sabin audit deferred</td></tr>
+                    <tr><td>Exact char match for snippet promotion</td><td>Unicode/whitespace artifacts cause false negatives</td><td>Fuzzy match &ge;95%</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="comments-area" data-section="summary"></div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 6: FILES & REUSE
+         ============================================================ -->
+    <section class="section" id="files">
+        <div class="section-header"><h2>6. Files & Reuse</h2></div>
+        <div class="section-body">
+            <h4 style="margin-bottom:8px; color: var(--text-secondary); font-size:0.9rem;">Files to Create/Modify</h4>
+            <table>
+                <thead><tr><th>File</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>scripts/6-verify-citations/verify_citations.py</code></td><td><strong>CREATE</strong> &mdash; main verification script</td></tr>
+                    <tr><td><code>scripts/6-verify-citations/migrate_verification_columns.sql</code></td><td><strong>CREATE</strong> &mdash; SQL migration</td></tr>
+                    <tr><td><code>scripts/gemini_client.py</code></td><td><strong>MODIFY</strong> &mdash; add <code>response_schema</code> param</td></tr>
+                    <tr><td><code>scripts/0-initialize-database/init_database.py</code></td><td><strong>MODIFY</strong> &mdash; add 5 columns to model</td></tr>
+                    <tr><td><code>scripts/export_to_excel.py</code></td><td><strong>MODIFY</strong> &mdash; fix URL column</td></tr>
+                </tbody>
+            </table>
+
+            <h4 style="margin-top:20px; margin-bottom:8px; color: var(--text-secondary); font-size:0.9rem;">Existing Code to Reuse</h4>
+            <table>
+                <thead><tr><th>What</th><th>Where</th></tr></thead>
+                <tbody>
+                    <tr><td><code>call_gemini_async()</code></td><td><code>scripts/gemini_client.py</code></td></tr>
+                    <tr><td><code>extract_snippet()</code></td><td><code>scripts/snippet_extractor.py</code></td></tr>
+                    <tr><td><code>get_engine()</code>, SQLAlchemy models</td><td><code>scripts/0-initialize-database/init_database.py</code></td></tr>
+                    <tr><td><code>CONFIG</code>, model IDs</td><td><code>scripts/config.py</code></td></tr>
+                    <tr><td>Async pattern (semaphore, stats lock, shutdown)</td><td><code>scripts/5-extract-citations/extract_citations.py</code></td></tr>
+                    <tr><td><code>get_database_url_auto()</code></td><td><code>scripts/gcp_secrets.py</code></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="comments-area" data-section="files"></div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 7: VERIFICATION STEPS
+         ============================================================ -->
+    <section class="section" id="verification">
+        <div class="section-header"><h2>7. Verification Steps</h2></div>
+        <div class="section-body">
+            <ol>
+                <li><strong>Local dry-run:</strong> <code>python verify_citations.py --dry-run</code> &mdash; confirms query, counts, cost estimate</li>
+                <li><strong>Local small test:</strong> <code>python verify_citations.py --limit 5 --concurrent 1</code> &mdash; inspect results in DB</li>
+                <li><strong>VM medium test:</strong> <code>python verify_citations.py --limit 50 --concurrent 10</code> &mdash; validate concurrency</li>
+                <li><strong>VM full run:</strong> <code>python verify_citations.py --concurrent 40 --budget 25</code></li>
+                <li><strong>Post-run validation:</strong>
+<pre><code>SELECT verification_status, COUNT(*) FROM citation_extraction_phased GROUP BY 1;
+SELECT COUNT(*) FILTER (WHERE snippet_text IS NOT NULL) as improved_snippets
+  FROM citation_extraction_phased WHERE verification_status = 'CONFIRMED';</code></pre>
+                </li>
+                <li><strong>Export:</strong> <code>python export_to_excel.py</code> &mdash; verify <code>document_url</code> column is populated</li>
+            </ol>
+        </div>
+        <div class="comments-area" data-section="verification"></div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 8: FUTURE ISSUE — Unstructured Responses Re-run
+         ============================================================ -->
+    <section class="section" id="issue-unstructured">
+        <div class="section-header"><h2>8. Known Issue: Unstructured LLM Responses in Extraction</h2><span class="status-badge status-open">registered</span></div>
+        <div class="section-body">
+            <p><strong>Issue:</strong> The entire citation extraction dataset (11,932 kept + 75,704 discarded) was processed using <code>response_mime_type="application/json"</code> without a <code>response_schema</code>. This means the LLM returned free-form JSON with no schema enforcement &mdash; field names, types, and structure could vary across responses.</p>
+            <p><strong>Potential impact:</strong></p>
+            <ul>
+                <li>Inconsistent field names or missing fields in extracted citations</li>
+                <li>Hallucinated JSON structure that passed parsing but lost data</li>
+                <li>The <code>_repair_truncated_json()</code> fallback may have introduced artifacts</li>
+                <li>Some valid citations may have been lost due to malformed responses</li>
+            </ul>
+            <p><strong>Action items:</strong></p>
+            <ol>
+                <li><strong>Assess impact:</strong> Sample 100-200 documents from the extraction output and compare the raw LLM responses against a schema-enforced re-run to quantify divergence</li>
+                <li><strong>Evaluate cost/benefit of re-run:</strong> If divergence is significant (&gt;5% of citations affected), plan a full re-extraction using <code>response_schema</code> with Pydantic models. Estimated cost: same as original run (~$15-20 with Flash-Lite)</li>
+                <li><strong>Design extraction schemas:</strong> Define Pydantic BaseModel classes matching the expected Phase 2A (extraction) and Phase 2B (functional classification) outputs</li>
+            </ol>
+            <p><strong>Priority:</strong> After Phase V verification completes. The verification pipeline itself already uses structured output (<code>response_schema</code>), so this only affects the <em>upstream</em> extraction data.</p>
+        </div>
+        <div class="comments-area" data-section="issue-unstructured"></div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 9: REVISION LOG
+         ============================================================ -->
+    <section class="section" id="log">
+        <div class="section-header"><h2>9. Revision Log</h2></div>
+        <div class="section-body">
+            <table>
+                <thead><tr><th>Date</th><th>Author</th><th>Change</th></tr></thead>
+                <tbody>
+                    <tr><td>8 Mar 2026</td><td>Claude (plan mode)</td><td>Original plan drafted</td></tr>
+                    <tr><td>8 Mar 2026</td><td>Claude + Gustavo</td><td>Issues A-D identified, 4 open questions raised, 75K discards discovered</td></tr>
+                    <tr><td>8 Mar 2026</td><td>Gustavo + Lucas (call)</td><td>All 4 questions decided: scope=A (kept only), ID=A (case_name only), snippet=B (fuzzy 95%), 31 docs=C (note only). Sabin filter accepted. mime_type question answered.</td></tr>
+                    <tr><td>8 Mar 2026</td><td>Claude</td><td>Implementation complete: migration SQL, gemini_client response_schema, verify_citations.py, export URL fix. Registered Issue #8: unstructured responses re-run assessment.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="comments-area" data-section="log"></div>
+    </section>
+
+</div><!-- /page-wrapper -->
+
+<!-- ============================================================
+     EXPORT BAR
+     ============================================================ -->
+<div class="export-bar">
+    <button class="btn-export" onclick="exportComments()">Export All Comments (JSON)</button>
+    <button class="btn-export" onclick="clearAllComments()">Clear All Comments</button>
+    <span style="font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--text-muted); align-self: center;" id="comment-count"></span>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT — Comment System with localStorage
+     ============================================================ -->
+<script>
+    const DB_KEY = 'phaseV_discussion_comments';
+
+    // ── Load / Save ──────────────────────────────────────────
+    function loadComments() {
+        try {
+            return JSON.parse(localStorage.getItem(DB_KEY)) || {};
+        } catch { return {}; }
+    }
+    function saveComments(db) {
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        updateCount();
+    }
+    function updateCount() {
+        const db = loadComments();
+        const total = Object.values(db).reduce((s, arr) => s + arr.length, 0);
+        document.getElementById('comment-count').textContent = total + ' comment' + (total !== 1 ? 's' : '') + ' saved locally';
+    }
+
+    // ── Render comments for a section ────────────────────────
+    function renderComments(sectionId) {
+        const db = loadComments();
+        const comments = db[sectionId] || [];
+        const area = document.querySelector(`.comments-area[data-section="${sectionId}"]`);
+        if (!area) return;
+
+        // Clear existing rendered comments (keep the form and button)
+        area.querySelectorAll('.comment-card').forEach(c => c.remove());
+
+        // Insert before the form (or at end)
+        const form = area.querySelector('.comment-form');
+        comments.forEach((c, idx) => {
+            const card = document.createElement('div');
+            card.className = `comment-card author-${c.author.toLowerCase()}`;
+            card.innerHTML = `
+                <button class="comment-delete" title="Delete" onclick="deleteComment('${sectionId}', ${idx})">&times;</button>
+                <div class="comment-meta">
+                    <span class="comment-author">${c.author}</span>
+                    <span class="comment-time">${c.time}</span>
+                </div>
+                <div class="comment-text">${escapeHtml(c.text)}</div>
+            `;
+            if (form) {
+                area.insertBefore(card, form);
+            } else {
+                area.appendChild(card);
+            }
+        });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ── Add comment ──────────────────────────────────────────
+    function addComment(sectionId, author, text) {
+        if (!text.trim()) return;
+        const db = loadComments();
+        if (!db[sectionId]) db[sectionId] = [];
+        db[sectionId].push({
+            author,
+            text: text.trim(),
+            time: new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        });
+        saveComments(db);
+        renderComments(sectionId);
+    }
+
+    // ── Delete comment ───────────────────────────────────────
+    function deleteComment(sectionId, idx) {
+        const db = loadComments();
+        if (db[sectionId]) {
+            db[sectionId].splice(idx, 1);
+            if (db[sectionId].length === 0) delete db[sectionId];
+            saveComments(db);
+            renderComments(sectionId);
+        }
+    }
+
+    // ── Toggle form ──────────────────────────────────────────
+    function toggleForm(sectionId) {
+        const area = document.querySelector(`.comments-area[data-section="${sectionId}"]`);
+        const form = area.querySelector('.comment-form');
+        form.classList.toggle('visible');
+        if (form.classList.contains('visible')) {
+            form.querySelector('textarea').focus();
+        }
+    }
+
+    // ── Submit from form ─────────────────────────────────────
+    function submitComment(sectionId) {
+        const area = document.querySelector(`.comments-area[data-section="${sectionId}"]`);
+        const form = area.querySelector('.comment-form');
+        const author = form.querySelector('select').value;
+        const text = form.querySelector('textarea').value;
+        addComment(sectionId, author, text);
+        form.querySelector('textarea').value = '';
+        form.classList.remove('visible');
+    }
+
+    // ── Export ────────────────────────────────────────────────
+    function exportComments() {
+        const db = loadComments();
+        const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'phase-v-discussion-' + new Date().toISOString().slice(0, 10) + '.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearAllComments() {
+        if (confirm('Delete all comments? This cannot be undone.')) {
+            localStorage.removeItem(DB_KEY);
+            document.querySelectorAll('.comments-area').forEach(area => {
+                const sectionId = area.dataset.section;
+                renderComments(sectionId);
+            });
+            updateCount();
+        }
+    }
+
+    // ── Initialize all comment areas ─────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.comments-area').forEach(area => {
+            const sectionId = area.dataset.section;
+
+            // Build the header + button + form
+            area.innerHTML = `
+                <div class="comments-header">
+                    <span>Discussion</span>
+                    <button class="btn-add-comment" onclick="toggleForm('${sectionId}')">
+                        <span class="icon">+</span> Add comment
+                    </button>
+                </div>
+                <div class="comment-form">
+                    <div class="comment-form-row">
+                        <select>
+                            <option value="Gustavo">Gustavo</option>
+                            <option value="Lucas">Lucas</option>
+                            <option value="Claude">Claude</option>
+                        </select>
+                    </div>
+                    <textarea placeholder="Write a comment..."></textarea>
+                    <div class="comment-form-actions">
+                        <button class="btn-cancel" onclick="toggleForm('${sectionId}')">Cancel</button>
+                        <button class="btn-submit" onclick="submitComment('${sectionId}')">Post</button>
+                    </div>
+                </div>
+            `;
+
+            // Handle Ctrl+Enter to submit
+            area.querySelector('textarea').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    submitComment(sectionId);
+                }
+            });
+
+            renderComments(sectionId);
+        });
+        updateCount();
+
+        // Seed existing comments from the markdown discussion
+        const db = loadComments();
+        if (!db._seeded) {
+            const seeds = [
+                { section: 'data', author: 'Gustavo', text: 'We will abide by the Sabin filter step for now, as we really don\'t need data concerning decisions not referenced in the Sabin seed. If we have relevant findings spawning from this verification steps that point to an issue in the Sabin filter, we\'ll assess whether or not to apply logic from this verification step into previous steps in the pipeline to execute a fresh re-run of citations extraction.' },
+                { section: 'step2', author: 'Gustavo', text: 'Have you built this codeblock assuring that the mime_type response is a valid option? In which scenarios are mime_type responses useful for our scope or better than json responses? Can\'t we unify the response method into json? If we cannot, state the logic that implies one or the other kind of response.' },
+                { section: 'step2', author: 'Claude', text: 'In the Gemini google-genai SDK, response_mime_type and response_schema are not competing options \u2014 they work together.\n\nresponse_mime_type="application/json" tells Gemini to output valid JSON. response_schema additionally constrains the JSON structure to match the schema. The SDK requires response_mime_type to be set when using response_schema.\n\nProposal: When response_schema is provided, we auto-set response_mime_type internally. Callers never need to pass both. Existing callers using response_mime_type alone continue unchanged.' },
+                { section: 'step3', author: 'Gustavo', text: 'Check discussion below on the raw_citation_text issue and other topics of prompting.' },
+                { section: 'issue-unstructured', author: 'Gustavo', text: 'We ran the dataset through pipeline receiving unstructured responses from the LLM. We need to assess impact of this and evaluate a structured-responses re-run. Registering as a known issue for post-Phase V evaluation.' },
+            ];
+            seeds.forEach(s => {
+                if (!db[s.section]) db[s.section] = [];
+                db[s.section].push({
+                    author: s.author,
+                    text: s.text,
+                    time: '08 Mar 2026, 20:00'
+                });
+            });
+            db._seeded = true;
+            saveComments(db);
+            document.querySelectorAll('.comments-area').forEach(area => {
+                renderComments(area.dataset.section);
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
