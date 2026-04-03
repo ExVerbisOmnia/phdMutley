@@ -104,7 +104,8 @@ analysis_output/
 # Docker (removed — project uses native PostgreSQL + GitHub Pages)
 
 # Backups
-data/bakcups/
+data/backups/
+*.dump
 
 # Old/archived files
 xOld/
