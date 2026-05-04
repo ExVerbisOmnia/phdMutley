@@ -85,9 +85,9 @@ if [[ ! -f "$PROMPT_FILE" ]]; then
     exit 1
 fi
 
-if ! command -v claude >/dev/null 2>&1; then
-    log_err "claude CLI not on PATH. Aborting."
-    exit 1
+if ! claude --version >/dev/null 2>&1; then
+      log_err "claude CLI not callable. Aborting."
+      exit 1
 fi
 
 log "============================================================"
@@ -137,16 +137,15 @@ while [[ $session_idx -lt $MAX_SESSIONS ]]; do
     log "Session $session_idx — pending: $pending  (this loop: $delta processed since start)"
 
     if $DRY_RUN; then
-        log "  [dry-run] would: cat $PROMPT_FILE | claude --print --dangerously-skip-permissions"
+        log "  [dry-run] would: cat $PROMPT_FILE | claude --print "
     else
         # Spawn one fresh Claude Code session, non-interactive
-        # --dangerously-skip-permissions: no prompts (we trust the orchestrator's
         # actions; permissions are pre-allowlisted in .claude/settings.json)
         # timeout: hard cap per session
         session_log="$LOG_DIR/corpus_session_$(date +%Y%m%d_%H%M%S)_${session_idx}.log"
         log "  Session log: $session_log"
 
-        timeout "$SESSION_TIMEOUT" claude --print --dangerously-skip-permissions \
+        timeout "$SESSION_TIMEOUT" claude --print \
             < "$PROMPT_FILE" \
             > "$session_log" 2>&1
         rc=$?

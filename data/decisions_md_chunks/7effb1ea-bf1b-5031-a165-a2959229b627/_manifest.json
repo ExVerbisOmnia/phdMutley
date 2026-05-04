@@ -1,0 +1,58 @@
+{
+  "document_id": "7effb1ea-bf1b-5031-a165-a2959229b627",
+  "source_file": "data/decisions_md/7effb1ea-bf1b-5031-a165-a2959229b627.md",
+  "total_words": 100255,
+  "target_words": 20000,
+  "overlap_words": 2000,
+  "chunk_count": 6,
+  "chunks": [
+    {
+      "file": "chunk_01_of_06.md",
+      "chunk_index": 1,
+      "chunk_total": 6,
+      "word_start": 0,
+      "word_end": 19946,
+      "word_count": 19946
+    },
+    {
+      "file": "chunk_02_of_06.md",
+      "chunk_index": 2,
+      "chunk_total": 6,
+      "word_start": 17946,
+      "word_end": 37904,
+      "word_count": 19958
+    },
+    {
+      "file": "chunk_03_of_06.md",
+      "chunk_index": 3,
+      "chunk_total": 6,
+      "word_start": 35904,
+      "word_end": 55880,
+      "word_count": 19976
+    },
+    {
+      "file": "chunk_04_of_06.md",
+      "chunk_index": 4,
+      "chunk_total": 6,
+      "word_start": 53880,
+      "word_end": 73857,
+      "word_count": 19977
+    },
+    {
+      "file": "chunk_05_of_06.md",
+      "chunk_index": 5,
+      "chunk_total": 6,
+      "word_start": 71857,
+      "word_end": 91855,
+      "word_count": 19998
+    },
+    {
+      "file": "chunk_06_of_06.md",
+      "chunk_index": 6,
+      "chunk_total": 6,
+      "word_start": 89855,
+      "word_end": 100255,
+      "word_count": 10400
+    }
+  ]
+}

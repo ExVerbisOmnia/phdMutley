@@ -1,5 +1,6 @@
 {
-  "permissions": {
+"effortLevel": "medium",  
+"permissions": {
     "allow": [
       "Bash(python:*)",
       "Bash(pip:*)",

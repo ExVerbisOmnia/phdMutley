@@ -1,0 +1,242 @@
+{
+  "document_id": "9fd93d03-11dc-5dd1-af15-9fb0b1daef51",
+  "source_file": "data/decisions_md/9fd93d03-11dc-5dd1-af15-9fb0b1daef51.md",
+  "total_words": 521413,
+  "target_words": 20000,
+  "overlap_words": 2000,
+  "chunk_count": 29,
+  "chunks": [
+    {
+      "file": "chunk_01_of_29.md",
+      "chunk_index": 1,
+      "chunk_total": 29,
+      "word_start": 0,
+      "word_end": 19998,
+      "word_count": 19998
+    },
+    {
+      "file": "chunk_02_of_29.md",
+      "chunk_index": 2,
+      "chunk_total": 29,
+      "word_start": 17998,
+      "word_end": 37913,
+      "word_count": 19915
+    },
+    {
+      "file": "chunk_03_of_29.md",
+      "chunk_index": 3,
+      "chunk_total": 29,
+      "word_start": 35913,
+      "word_end": 55889,
+      "word_count": 19976
+    },
+    {
+      "file": "chunk_04_of_29.md",
+      "chunk_index": 4,
+      "chunk_total": 29,
+      "word_start": 53889,
+      "word_end": 73883,
+      "word_count": 19994
+    },
+    {
+      "file": "chunk_05_of_29.md",
+      "chunk_index": 5,
+      "chunk_total": 29,
+      "word_start": 71883,
+      "word_end": 91883,
+      "word_count": 20000
+    },
+    {
+      "file": "chunk_06_of_29.md",
+      "chunk_index": 6,
+      "chunk_total": 29,
+      "word_start": 89883,
+      "word_end": 109874,
+      "word_count": 19991
+    },
+    {
+      "file": "chunk_07_of_29.md",
+      "chunk_index": 7,
+      "chunk_total": 29,
+      "word_start": 107874,
+      "word_end": 127860,
+      "word_count": 19986
+    },
+    {
+      "file": "chunk_08_of_29.md",
+      "chunk_index": 8,
+      "chunk_total": 29,
+      "word_start": 125860,
+      "word_end": 145843,
+      "word_count": 19983
+    },
+    {
+      "file": "chunk_09_of_29.md",
+      "chunk_index": 9,
+      "chunk_total": 29,
+      "word_start": 143843,
+      "word_end": 163798,
+      "word_count": 19955
+    },
+    {
+      "file": "chunk_10_of_29.md",
+      "chunk_index": 10,
+      "chunk_total": 29,
+      "word_start": 161798,
+      "word_end": 181797,
+      "word_count": 19999
+    },
+    {
+      "file": "chunk_11_of_29.md",
+      "chunk_index": 11,
+      "chunk_total": 29,
+      "word_start": 179797,
+      "word_end": 199794,
+      "word_count": 19997
+    },
+    {
+      "file": "chunk_12_of_29.md",
+      "chunk_index": 12,
+      "chunk_total": 29,
+      "word_start": 197794,
+      "word_end": 217792,
+      "word_count": 19998
+    },
+    {
+      "file": "chunk_13_of_29.md",
+      "chunk_index": 13,
+      "chunk_total": 29,
+      "word_start": 215792,
+      "word_end": 235792,
+      "word_count": 20000
+    },
+    {
+      "file": "chunk_14_of_29.md",
+      "chunk_index": 14,
+      "chunk_total": 29,
+      "word_start": 233792,
+      "word_end": 253785,
+      "word_count": 19993
+    },
+    {
+      "file": "chunk_15_of_29.md",
+      "chunk_index": 15,
+      "chunk_total": 29,
+      "word_start": 251785,
+      "word_end": 271785,
+      "word_count": 20000
+    },
+    {
+      "file": "chunk_16_of_29.md",
+      "chunk_index": 16,
+      "chunk_total": 29,
+      "word_start": 269785,
+      "word_end": 289774,
+      "word_count": 19989
+    },
+    {
+      "file": "chunk_17_of_29.md",
+      "chunk_index": 17,
+      "chunk_total": 29,
+      "word_start": 287774,
+      "word_end": 307754,
+      "word_count": 19980
+    },
+    {
+      "file": "chunk_18_of_29.md",
+      "chunk_index": 18,
+      "chunk_total": 29,
+      "word_start": 305754,
+      "word_end": 325747,
+      "word_count": 19993
+    },
+    {
+      "file": "chunk_19_of_29.md",
+      "chunk_index": 19,
+      "chunk_total": 29,
+      "word_start": 323747,
+      "word_end": 343679,
+      "word_count": 19932
+    },
+    {
+      "file": "chunk_20_of_29.md",
+      "chunk_index": 20,
+      "chunk_total": 29,
+      "word_start": 341679,
+      "word_end": 361659,
+      "word_count": 19980
+    },
+    {
+      "file": "chunk_21_of_29.md",
+      "chunk_index": 21,
+      "chunk_total": 29,
+      "word_start": 359659,
+      "word_end": 379599,
+      "word_count": 19940
+    },
+    {
+      "file": "chunk_22_of_29.md",
+      "chunk_index": 22,
+      "chunk_total": 29,
+      "word_start": 377599,
+      "word_end": 397589,
+      "word_count": 19990
+    },
+    {
+      "file": "chunk_23_of_29.md",
+      "chunk_index": 23,
+      "chunk_total": 29,
+      "word_start": 395589,
+      "word_end": 415562,
+      "word_count": 19973
+    },
+    {
+      "file": "chunk_24_of_29.md",
+      "chunk_index": 24,
+      "chunk_total": 29,
+      "word_start": 413562,
+      "word_end": 433553,
+      "word_count": 19991
+    },
+    {
+      "file": "chunk_25_of_29.md",
+      "chunk_index": 25,
+      "chunk_total": 29,
+      "word_start": 431553,
+      "word_end": 451553,
+      "word_count": 20000
+    },
+    {
+      "file": "chunk_26_of_29.md",
+      "chunk_index": 26,
+      "chunk_total": 29,
+      "word_start": 449553,
+      "word_end": 469529,
+      "word_count": 19976
+    },
+    {
+      "file": "chunk_27_of_29.md",
+      "chunk_index": 27,
+      "chunk_total": 29,
+      "word_start": 467529,
+      "word_end": 487407,
+      "word_count": 19878
+    },
+    {
+      "file": "chunk_28_of_29.md",
+      "chunk_index": 28,
+      "chunk_total": 29,
+      "word_start": 485407,
+      "word_end": 505397,
+      "word_count": 19990
+    },
+    {
+      "file": "chunk_29_of_29.md",
+      "chunk_index": 29,
+      "chunk_total": 29,
+      "word_start": 503397,
+      "word_end": 521413,
+      "word_count": 18016
+    }
+  ]
+}
