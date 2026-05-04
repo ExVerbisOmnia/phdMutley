@@ -151,16 +151,26 @@ The sixfold system classifies the **geographic relationship** between the citing
 
 **Domestic citations** (source and target are the same jurisdiction OR the same court system) are classified as **"Domestic"** — they are outside the scope of the transnational dialogue research but should still be extracted and tagged, not discarded.
 
-> **Same-court / same-system rule (D29).** When the source court and the cited court are **the same institution** OR are **within the same court system**, the citation is classified as **Domestic** and is NOT counted in transnational dialogue analysis. This rule applies BEFORE the sixfold algorithm — same-court is Domestic regardless of source/target type.
+> **Same-court / same-system rule (D29 + D38 refinement).** When the source court and the cited court are **the same institution** OR are **within the same court system**, the classification depends on whether the body is international or national:
 >
-> Examples:
+> - **International institution** (CJEU, ECtHR, IACtHR, ACHPR, WTO DSU, ICJ, ITLOS, ICSID, etc.) → classify as **Inter-System Citation (Type 4)**, even when both source and cited are sub-bodies of the same DSU. Intra-international citations are still transnational dialogue.
+> - **Sub-body of a national jurisdiction** (US Circuit → US Supreme Court, German BVerfG → German lower court, Brazilian STF → STJ) → classify as **Domestic**. Intra-national hierarchies are out of scope.
 >
-> - CJEU judgment citing prior CJEU judgment → Domestic
-> - CJEU AG Opinion citing prior CJEU ruling → Domestic
-> - General Court (EU) citing CJEU → Domestic (same EU court system)
-> - IACtHR advisory opinion citing prior IACtHR opinion → Domestic
-> - ECtHR Grand Chamber citing ECtHR Chamber → Domestic
-> - US 9th Circuit citing US Supreme Court → Domestic (same national jurisdiction)
+> This rule applies BEFORE the sixfold algorithm.
+>
+> Examples (D38 refinement, 2026-05-03):
+>
+> | Source | Cited | Classification |
+> |---|---|---|
+> | CJEU judgment | prior CJEU ruling | **Inter-System (Type 4)** |
+> | CJEU AG Opinion | prior CJEU ruling | **Inter-System (Type 4)** |
+> | General Court (EU) | CJEU | **Inter-System (Type 4)** |
+> | IACtHR Advisory | IACtHR Contentious | **Inter-System (Type 4)** |
+> | ECtHR Grand Chamber | ECtHR Chamber | **Inter-System (Type 4)** |
+> | WTO Appellate Body | WTO Panel | **Inter-System (Type 4)** |
+> | US 9th Circuit | US Supreme Court | **Domestic** |
+> | German BVerfG | German lower court | **Domestic** |
+> | Brazilian STF | Brazilian STJ | **Domestic** |
 
 > **Vertical-dialogue boolean (D30).** Every citation in the verifier's output gains a boolean field `is_vertical_dialogue`. Set `true` ONLY when:
 >
@@ -579,7 +589,7 @@ Check each citation against the Nollkaemper criteria (Section 1.6):
 
 Using the verified origin and the source metadata from the frontmatter, classify each citation into the sixfold typology (Section 1.5).
 
-**Classification algorithm (D29 same-court rule applied first):**
+**Classification algorithm (D29 + D38 same-body rule applied first):**
 
 ```
 source_region       = frontmatter.region
@@ -589,11 +599,16 @@ target_jurisdiction = citation.origin_country
 source_court        = frontmatter (or inferred from document_title)
 target_court        = citation.origin_court
 
-# D29 — same-court / same-system rule: applied BEFORE the sixfold algorithm
+# D29 + D38 — same-court / same-system rule, applied BEFORE the sixfold algorithm
+# Split by body type per D38 (2026-05-03)
 IF source_court == target_court
-   OR (source and target belong to the same court system, e.g., CJEU & General Court, ECtHR Grand Chamber & Chamber, US 9th Circuit & US Supreme Court):
-    → "Domestic"
-    is_vertical_dialogue = false
+   OR (source and target belong to the same court system, e.g., CJEU & General Court, ECtHR Grand Chamber & Chamber, WTO AB & WTO Panel, US 9th Circuit & US Supreme Court):
+    IF source_region == "International":
+        → Type 4: "Inter-System Citation"   # D38: intra-international stays transnational
+        is_vertical_dialogue = false
+    ELSE:
+        → "Domestic"                         # D29: intra-national is domestic
+        is_vertical_dialogue = false
 
 ELSE IF source_jurisdiction == target_jurisdiction:
     → "Domestic"
@@ -816,11 +831,16 @@ Documents may cite cases in their original language. Common patterns:
 
 The agent should recognize these patterns and correctly identify the origin country.
 
-### 4.4 Self-Citation Scope (D29)
+### 4.4 Self-Citation Scope (D29 + D38)
 
-**Domestic citations** (same jurisdiction OR same court system) are extracted and tagged as "Domestic" but are NOT classified in the sixfold system (they fall outside the transnational dialogue research question). They are still valuable data for completeness and should not be discarded.
+**Domestic citations** (same national jurisdiction OR same national court system) are extracted and tagged as "Domestic" but are NOT classified in the sixfold system (they fall outside the transnational dialogue research question). They are still valuable data for completeness and should not be discarded.
 
-**Same-court self-citations** (e.g., the UK Supreme Court citing its own prior decision, the CJEU citing the General Court, the IACtHR citing its own prior advisory opinion, the ECtHR Grand Chamber citing an ECtHR Chamber) are a subset of Domestic per the D29 same-court / same-system rule (Section 1.5). The same-court rule applies BEFORE the sixfold algorithm — same-court is Domestic regardless of source/target type.
+**Same-court self-citations** are split by body type per the D38 refinement (2026-05-03):
+
+- **National same-court** (UK Supreme Court → its own prior decision; US 9th Circuit → US Supreme Court; German BVerfG → German Federal Administrative Court; Brazilian STF → STJ) → **Domestic** (intra-national hierarchy is out of scope).
+- **International same-body** (CJEU → CJEU; CJEU → General Court; ECtHR Grand Chamber → ECtHR Chamber; IACtHR Advisory → IACtHR Contentious; WTO Appellate Body → WTO Panel) → **Inter-System Citation (Type 4)** (intra-international citations are still transnational dialogue).
+
+The same-body rule applies BEFORE the sixfold algorithm.
 
 ### 4.5 Advisory Opinions vs. Contentious Cases
 

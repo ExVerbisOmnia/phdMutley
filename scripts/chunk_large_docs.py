@@ -50,7 +50,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DECISIONS_MD_DIR = PROJECT_ROOT / "data" / "decisions_md"
 CHUNKS_DIR = PROJECT_ROOT / "data" / "decisions_md_chunks"
 
-DEFAULT_TARGET_WORDS = 20_000
+DEFAULT_TARGET_WORDS = 15_000  # T17 (2026-05-03): dropped from 20K — agents reported some 20K-word chunks exceeded the Read tool's per-call limit (43K tokens / 129K chars). 15K stays comfortably below.
 DEFAULT_OVERLAP_WORDS = 2_000
 TIER3_WORD_THRESHOLD = 100_000
 

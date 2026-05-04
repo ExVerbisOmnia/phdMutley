@@ -40,6 +40,56 @@ This session pivoted the citation-extraction methodology from a 6-phase Gemini-A
 
 **Downstream.** Rule 7.1 added to `citation-verifier.md` and the rules document. v7 dataset (now frozen, see D37) preserves the original classification as a baseline.
 
+**Amended by D38** (2026-05-03) — see below for the international/national split.
+
+---
+
+### D38 — Refinement of D29: same-body classification depends on whether the body is international or national
+
+| Field | Value |
+|---|---|
+| Date | 2026-05-03 |
+| Decided by | Gus |
+| Source issue | T17 (Tier 3 validation surfaced the WTO AB → WTO Panel ambiguity) |
+
+**Context.** D29 classified ALL same-court / same-system citations as Domestic. Tier 3 validation on the WTO DS-412 doc surfaced that this collapses every WTO Appellate Body → WTO Panel reference into Domestic, which conflicts with the research question — those citations are between international decisions, not within a national legal system. The same problem applies to CJEU AG opinion → CJEU judgment, ECtHR Grand Chamber → ECtHR Chamber, IACtHR Advisory → IACtHR Contentious, etc.
+
+**Fork:**
+
+- *Left (D29 as originally written)* — all same-system = Domestic. Symmetric across national and international, but loses all intra-international dialogue including hierarchical relationships within international courts.
+- *Right (chosen)* — split by body type:
+  - If the source and cited bodies belong to an **international** institution (CJEU, ECtHR, IACtHR, ACHPR, WTO DSU, ICJ, ITLOS, ICSID, etc.) → classify as **Inter-System Citation (Type 4)**, even if both are within the same dispute-settlement system.
+  - If the source and cited bodies are **sub-bodies of the same national jurisdiction** (US 9thCir → USSC, German BVerfG → German lower courts, Brazilian STF → STJ, etc.) → classify as **Domestic**.
+
+**Rationale.** Intra-international citations (e.g., WTO AB → Panel, CJEU → AG, ECtHR Grand Chamber → Chamber) are still part of *international judicial dialogue* and matter for the thesis's transnational-dialogue research question. They sit at a different scale from purely intra-national hierarchies (US Circuit → US Supreme Court), which are clearly out of scope. The distinction tracks the source's region:
+
+- `source_region == "International"` AND `target_region == "International"` → Type 4 Inter-System (regardless of whether they're nominally the same DSU)
+- `source_country == target_country` AND both national → Domestic (D29 as originally intended for the national branch)
+
+**Examples:**
+
+| Source | Cited | Old (D29) | New (D38) |
+|---|---|---|---|
+| CJEU | CJEU | Domestic | **Inter-System (Type 4)** |
+| CJEU | General Court (EU) | Domestic | **Inter-System (Type 4)** |
+| ECtHR Grand Chamber | ECtHR Chamber | Domestic | **Inter-System (Type 4)** |
+| WTO Appellate Body | WTO Panel (different dispute) | (not specified) | **Inter-System (Type 4)** |
+| WTO Appellate Body | WTO Panel (THIS dispute, under appeal) | (not specified) | **Inter-System (Type 4)** |
+| IACtHR Advisory | IACtHR Contentious | Domestic | **Inter-System (Type 4)** |
+| US 9thCir | US Supreme Court | Domestic | Domestic (unchanged) |
+| German BVerfG | German lower court | Domestic | Domestic (unchanged) |
+| Brazilian STF | Brazilian STJ | Domestic | Domestic (unchanged) |
+
+**Scope.**
+
+- v7 frozen baseline keeps the original classification (no retro-edits per D37).
+- Agent-pipeline runs from 2026-05-03 onward apply D38.
+- Saint-Gobain's already-ingested `citation_agent_v1` rows (15 Domestic CJEU→CJEU + 1 Type 5) are now wrong under D38 — re-extract rather than SQL-patch (per D37 fresh-extraction principle).
+- Tier 3 DS-412 ingest (54 Type 4) is consistent with D38 — no re-run needed.
+- Future Tier 1/2 docs from international courts will produce more Type 4 citations than under the original D29.
+
+**Downstream.** Rule 7.0 in `citation-verifier.md` updated. The rules document's example tables updated. Saint-Gobain re-run scheduled before Phase 5.
+
 ---
 
 ### D30 — National→member international = Type 2 + `is_vertical_dialogue: true`

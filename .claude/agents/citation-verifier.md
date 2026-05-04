@@ -116,17 +116,29 @@ Assign a `functional_use_confidence` (0.0–1.0) to each classification.
 
 Using the verified origin and the source metadata from the frontmatter, classify each CONFIRMED citation. **Three rules run BEFORE the country comparison:**
 
-### 7.0 Same-court / same-system rule (D29)
+### 7.0 Same-court / same-system rule (D29 + D38 refinement)
 
-If the source court and the cited court are the same institution OR are within the same court system, classify as **Domestic** regardless of country/region. This precedes all other classification logic.
+If the source court and the cited court are the same institution OR are within the same court system, the classification depends on whether the body is international or national:
 
-Examples:
-- CJEU judgment citing prior CJEU ruling → **Domestic** (NOT Inter-System)
-- CJEU AG Opinion citing prior CJEU ruling → **Domestic**
-- General Court (EU) citing CJEU → **Domestic** (same EU court system)
-- IACtHR advisory opinion citing prior IACtHR opinion → **Domestic**
-- ECtHR Grand Chamber citing ECtHR Chamber → **Domestic**
-- US 9th Circuit citing US Supreme Court → **Domestic** (same national jurisdiction)
+- **If the body is an international institution** (CJEU, ECtHR, IACtHR, ACHPR, WTO DSU, ICJ, ITLOS, ICSID, etc.) → classify as **Inter-System Citation (Type 4)**, even when both source and cited are sub-bodies of the same DSU. Intra-international citations are still transnational dialogue (D38, 2026-05-03).
+- **If the body is a sub-body of a national jurisdiction** (US Circuit → US Supreme Court, German BVerfG → German lower court, Brazilian STF → STJ, etc.) → classify as **Domestic**. Intra-national hierarchies are out of scope for the transnational-dialogue research question.
+
+This rule precedes all other classification logic.
+
+Examples (D38 refinement):
+
+| Source | Cited | Classification |
+|---|---|---|
+| CJEU judgment | prior CJEU ruling | **Inter-System (Type 4)** |
+| CJEU AG Opinion | prior CJEU ruling | **Inter-System (Type 4)** |
+| General Court (EU) | CJEU | **Inter-System (Type 4)** |
+| IACtHR advisory opinion | prior IACtHR opinion | **Inter-System (Type 4)** |
+| ECtHR Grand Chamber | ECtHR Chamber | **Inter-System (Type 4)** |
+| WTO Appellate Body | WTO Panel | **Inter-System (Type 4)** |
+| WTO AB | WTO Panel under appeal in same dispute | **Inter-System (Type 4)** |
+| US 9th Circuit | US Supreme Court | **Domestic** (national same-jurisdiction) |
+| German BVerfG | German Federal Administrative Court | **Domestic** |
+| Brazilian STF | Brazilian STJ | **Domestic** |
 
 ### 7.1 Vertical-dialogue boolean (D30)
 
@@ -154,12 +166,16 @@ target_country   = citation.origin_country
 source_court     = frontmatter.jurisdiction (interpreted as court name when applicable)
 target_court     = citation.origin_court
 
-# RULE 7.0 first
+# RULE 7.0 (D29 + D38) — same body, split by national vs international
 IF same_court_or_system(source_court, target_court):
-    → "Domestic"
-    is_vertical_dialogue = false
+    IF source_region == "International":
+        → Type 4: "Inter-System Citation"   # D38: intra-international stays transnational
+        is_vertical_dialogue = false
+    ELSE:
+        → "Domestic"                         # D29: intra-national is domestic
+        is_vertical_dialogue = false
 
-# Then country-based
+# Then country-based for non-same-system national citations
 ELSE IF source_country == target_country:
     → "Domestic"
     is_vertical_dialogue = false
