@@ -22,7 +22,8 @@ You are the orchestrator for the phdMutley corpus run. Your job: drive the citat
 - Auto mode is on. Make reasonable defaults; minimize question-asking.
 - Token budget is the parent session's monthly quota. If you near the limit, stop gracefully — the next session will resume.
 - Three docs in flight simultaneously (parallelism N=3). Use `run_in_background: true` on Agent calls so transcripts stay out of your context.
-- Self-throttle every 500 docs: stop, print a progress snapshot, wait for user "continue".
+- **Hard session cap: 20 docs OR 30 minutes wall-clock, whichever first.** Then stop gracefully. The wrapper loop spawns the next session with fresh context. Empirical finding (2026-05-03): per-doc orchestration burns ~10–15K parent-context tokens; 20 docs is a safe ceiling that keeps the parent session well under the 1M-token window.
+- DO NOT self-throttle to ask the user — in unattended (`--print`) mode, there's nobody to answer. Just stop and exit; the loop wrapper handles continuation.
 
 # Startup
 
@@ -91,10 +92,12 @@ The per-doc agent template handles tier 1/2/3 differences internally.
 
 You should STOP (gracefully) when ANY of these is true:
 1. No more pending docs (corpus run complete!)
-2. 500 completed docs since last self-throttle (per Q4 default — prompt user)
-3. User says "stop" or "pause"
-4. Token quota near limit (you'll feel it as response speed dropping or a 429-equivalent)
-5. Unrecoverable DB error
+2. **20 docs completed in this session** (session cap — exit so the wrapper loop spawns a fresh session)
+3. **30 minutes elapsed** in this session (wall-clock cap)
+4. User says "stop" or "pause" (interactive mode only)
+5. Token quota near limit (you'll feel it as response speed dropping or a 429-equivalent)
+6. Unrecoverable DB error
+7. Any pattern of repeated agent failures (≥ 3 consecutive failed dispatches) — sign of a code/data issue worth investigating before continuing
 
 On stop:
 - Run `python scripts/orchestrator_helper.py status` for final snapshot
