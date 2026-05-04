@@ -24,7 +24,7 @@ Apply the citation-extractor + citation-verifier protocols sequentially, write t
 2. **Read the source decision.**
    - Tier 1 ({word_count} ≤ 25,000): read the entire file at `data/decisions_md/{document_id}.md` in one call.
    - Tier 2 (25,000 < {word_count} ≤ 100,000): read in 300-line chunks via `Read(offset=N, limit=300)`. Append per-chunk findings to `data/extraction_results/{document_id}_partial.json` between chunks (the partial file is your persistent memory). After all chunks, read it back and dedupe by `case_name`.
-   - Tier 3 ({word_count} > 100,000): the chunked files at `data/decisions_md_chunks/{document_id}/chunk_NN_of_TT.md` should already exist (run `python scripts/chunk_large_docs.py {document_id}` first if they don't). Process each chunk separately; save per-chunk results at `data/extraction_results/chunks/{document_id}/chunk_NN_extracted.json`. Then call `python scripts/merge_chunk_results.py {document_id}` to produce the merged extraction.
+   - Tier 3 ({word_count} > 100,000): the chunked files at `data/decisions_md_chunks/{document_id}/chunk_NN_of_TT.md` should already exist (run `python scripts/chunk_large_docs.py {document_id}` first if they don't). Process each chunk separately; save per-chunk results at `data/extraction_results/chunks/{document_id}/chunk_NN_of_TT_extracted.json` (the `_of_TT` infix is required by `merge_chunk_results.py`'s discovery regex). Then call `python scripts/merge_chunk_results.py {document_id}` to produce the merged extraction.
 
 3. **Apply the citation-extractor protocol.** Output the extraction JSON per the schema in `citation-extractor.md` Section 8. Write to:
    `data/extraction_results/{document_id}_extracted.json`
