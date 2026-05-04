@@ -109,3 +109,18 @@ data/backups/
 
 # Old/archived files
 xOld/
+
+# Agent-pipeline working artifacts (reproducible from DB + scripts)
+data/decisions_md/
+data/decisions_md_raw/
+data/extraction_results/
+
+# Investigation byproducts (one-off T1 dumps and helper scripts)
+docs/reports/_*
+scripts/investigate_misattribution*.py
+
+# Throwaway scripts (one-off experiments — keep on disk for audit, not in git)
+scripts/_temp_*
+
+# Obsidian local state (user-specific)
+.obsidian/graph.json

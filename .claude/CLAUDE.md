@@ -1,6 +1,10 @@
-# CLAUDE.md
+# CLAUDE.md — phdMutley
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Global Protocols (SIW & SIP)
+
+This project inherits the **SIW** (Standard Issue Workflow) and **SIP** (Structured Implementation Protocol) from the global `~/.claude/CLAUDE.md`. When the user invokes SIW or SIP — via "SIW:", "SIP:", "protocolo SIW", "protocolo SIP", or equivalent context — read and follow the global definitions. For SIP, also read the full protocol at `~/workspace/proj/.claude/protocols/sip.md`.
+
+---
 
 ## Project Overview
 
