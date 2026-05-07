@@ -805,6 +805,57 @@ def cmd_release_to_pending(document_id: str) -> int:
     return 0
 
 
+# =============================================================================
+# COMMAND: release_for_retry
+# =============================================================================
+
+
+def cmd_release_for_retry(document_id: str, error_message: str) -> int:
+    """
+    Release an in_progress doc back to pending after a transient failure
+    (e.g. CLI exit≠0 with empty stderr — likely a rate-limit event).
+
+    Unlike `release_to_pending`, this does NOT decrement attempts: the call
+    happened and counts against the retry cap. The claim-side filter
+    (`attempts < 3` in claim_next_pending) is what eventually quarantines
+    docs that fail this way three times in a row.
+
+    INPUT:
+        - document_id: UUID string
+        - error_message: short diagnostic for audit (kept on the row)
+    ALGORITHM:
+        1. Atomically transition status='in_progress' -> 'pending'
+        2. Preserve attempts as-is
+        3. Stamp last_attempt_finished, write error_message
+    OUTPUT: log line + exit code
+    """
+    engine = get_engine()
+    with engine.begin() as conn:
+        result = conn.execute(
+            text(
+                """
+                UPDATE citation_agent_v1_run_state
+                SET status = 'pending',
+                    last_attempt_finished = NOW(),
+                    error_message = :error
+                WHERE document_id = :doc_id AND status = 'in_progress'
+                RETURNING attempts
+                """
+            ),
+            {"doc_id": document_id, "error": error_message},
+        ).first()
+    if result is None:
+        log.warning(
+            f"release_for_retry: {document_id[:8]}... not in_progress (no-op)"
+        )
+        return 1
+    log.info(
+        f"~ retry-released {document_id[:8]}... (attempts={result[0]}/{RETRY_CAP + 1}): "
+        f"{error_message[:80]}"
+    )
+    return 0
+
+
 def cmd_status(full: bool) -> int:
     """Print run-state snapshot."""
     engine = get_engine()
@@ -901,6 +952,10 @@ def main() -> int:
     p_rel = sub.add_parser("release_to_pending")
     p_rel.add_argument("document_id")
 
+    p_retry = sub.add_parser("release_for_retry")
+    p_retry.add_argument("document_id")
+    p_retry.add_argument("error_message")
+
     p_status = sub.add_parser("status")
     p_status.add_argument("--full", action="store_true")
 
@@ -927,6 +982,8 @@ def main() -> int:
         )
     if args.cmd == "release_to_pending":
         return cmd_release_to_pending(args.document_id)
+    if args.cmd == "release_for_retry":
+        return cmd_release_for_retry(args.document_id, args.error_message)
     if args.cmd == "status":
         return cmd_status(args.full)
     return 1

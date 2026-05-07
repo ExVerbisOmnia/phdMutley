@@ -19,7 +19,11 @@ Modes:
                      terminal states for this pass; the row will not be
                      re-claimed within the same run.
                      Claims only status='pending'. Failures (timeout / non-zero
-                     exit / unparseable JSON) become status='failed'.
+                     exit / unparseable JSON) are released back to 'pending'
+                     for retry while attempts < RETRY_CAP_TOTAL, then marked
+                     'failed' once the cap is hit. A fixed sleep (RETRY_BACKOFF_S)
+                     after each transient failure gives rate-limit blips a
+                     chance to clear without manual intervention.
                      Cheap (Haiku-only) cost-prediction phase.
 
 Pipeline per document (default mode):
@@ -81,6 +85,13 @@ VERIFY_TIMEOUT_S = {1: 600, 2: 1800, 3: 3600}
 
 DEFAULT_WORKERS = 5
 DEFAULT_CONFIDENCE_THRESHOLD = 0.90
+
+# Retry policy (shared with orchestrator_helper.RETRY_CAP). Exit≠0 / empty-stderr
+# CLI failures are treated as transient: release back to pending, sleep, let the
+# claim-side filter (`attempts < RETRY_CAP_TOTAL`) eventually quarantine docs
+# that fail this way RETRY_CAP_TOTAL times in a row.
+RETRY_CAP_TOTAL = 3
+RETRY_BACKOFF_S = 60
 
 # Stop-flag set on SIGINT; checked between dispatches.
 _STOP = threading.Event()
@@ -334,6 +345,55 @@ def mark_failed(doc_id: str, message: str) -> None:
         log.error(f"[{doc_id[:8]}] mark_failed itself failed: {err.strip()}")
 
 
+def fail_or_retry(doc: dict, step: str, err_msg: str, started: float) -> dict:
+    """
+    Decide whether to release for retry (transient — under cap) or mark
+    permanently failed (cap hit).
+
+    Why: a single rate-limit event was previously enough to permanently
+    quarantine hundreds of docs in 'failed', because mark_failed jumped
+    straight to terminal status on the first exit≠0. The retry cap was
+    nominally 3 (claim-side filter) but never reachable. This helper
+    routes attempts < RETRY_CAP_TOTAL back to pending (with a fixed sleep
+    to let transient blips clear) and only marks failed once the cap is hit.
+
+    INPUT:
+        - doc: claim_next_pending row (post-increment attempts)
+        - step: short label for the failed phase ('prefilter' | 'extract' | ...)
+        - err_msg: short diagnostic (kept on the row + log)
+        - started: wall-clock when process_doc began, for elapsed reporting
+    OUTPUT: result dict with outcome="retry" or outcome="failed"
+    """
+    doc_id = doc["document_id"]
+    short = doc_id[:8]
+    attempts = doc["attempts"]
+    elapsed = time.time() - started
+    err_msg = (err_msg or "").strip()
+    short_err = err_msg[:120] if err_msg else "(empty)"
+
+    if attempts >= RETRY_CAP_TOTAL:
+        log.warning(f"[{short}] {step} fail (attempt {attempts}/{RETRY_CAP_TOTAL}); "
+                    f"cap hit, marking failed: {short_err}")
+        mark_failed(doc_id, f"{step}: {err_msg}")
+        return {"doc_id": doc_id, "outcome": "failed", "step": step,
+                "elapsed_s": elapsed}
+
+    log.warning(f"[{short}] {step} fail (attempt {attempts}/{RETRY_CAP_TOTAL}); "
+                f"releasing for retry, sleeping {RETRY_BACKOFF_S}s: {short_err}")
+    rc, _, ferr = run_helper(
+        "release_for_retry", doc_id, f"{step}: {err_msg[:300]}"
+    )
+    if rc != 0:
+        log.error(f"[{short}] release_for_retry failed; falling back to mark_failed: "
+                  f"{ferr.strip()[:200]}")
+        mark_failed(doc_id, f"{step} (release_for_retry failed): {err_msg}")
+        return {"doc_id": doc_id, "outcome": "failed", "step": step,
+                "elapsed_s": elapsed}
+    time.sleep(RETRY_BACKOFF_S)
+    return {"doc_id": doc_id, "outcome": "retry", "step": step,
+            "elapsed_s": elapsed}
+
+
 def process_doc(
     doc: dict,
     use_prefilter: bool,
@@ -375,11 +435,9 @@ def process_doc(
         if not ok:
             err_msg = (err or "").strip()[:300]
             if prefilter_only:
-                log.warning(f"[{short}] prefilter agent exit≠0 ({err_msg[:120]}); marking failed")
-                mark_failed(doc_id, f"prefilter agent failure: {err_msg}")
-                elapsed = time.time() - started
-                return {"doc_id": doc_id, "outcome": "failed", "step": "prefilter",
-                        "elapsed_s": elapsed}
+                return fail_or_retry(
+                    doc, "prefilter", f"agent exit≠0: {err_msg}", started
+                )
             log.warning(f"[{short}] prefilter agent exit≠0 ({err_msg[:120]}); "
                         f"falling through to full pipeline")
         else:
@@ -417,10 +475,9 @@ def process_doc(
                                  f"signals={signals} ({elapsed:.0f}s)")
                         return {"doc_id": doc_id, "outcome": "prefilter_keep",
                                 "confidence": conf, "elapsed_s": elapsed}
-                    log.error(f"[{short}] mark_prefilter_keep failed: {ferr.strip()[:200]}")
-                    mark_failed(doc_id, f"mark_prefilter_keep failed: {ferr.strip()[:300]}")
-                    return {"doc_id": doc_id, "outcome": "failed", "step": "mark_prefilter_keep",
-                            "elapsed_s": elapsed}
+                    return fail_or_retry(
+                        doc, "mark_prefilter_keep", ferr.strip()[:300], started
+                    )
                 else:
                     # KEEP in full-pipeline mode → continue to extract+verify
                     log.info(f"[{short}] prefilter: has={has} conf={conf:.2f} "
@@ -428,11 +485,9 @@ def process_doc(
             else:
                 # Unparseable JSON
                 if prefilter_only:
-                    log.warning(f"[{short}] prefilter returned unparseable JSON; marking failed")
-                    mark_failed(doc_id, "prefilter returned unparseable JSON")
-                    elapsed = time.time() - started
-                    return {"doc_id": doc_id, "outcome": "failed", "step": "prefilter",
-                            "elapsed_s": elapsed}
+                    return fail_or_retry(
+                        doc, "prefilter", "unparseable JSON", started
+                    )
                 log.warning(f"[{short}] prefilter returned unparseable JSON; "
                             f"falling through to full pipeline")
 
@@ -455,20 +510,16 @@ def process_doc(
         doc_id,
     )
     if not ok:
-        msg = f"extractor exit≠0: {err.strip()[:300]}"
-        log.error(f"[{short}] {msg}")
-        mark_failed(doc_id, msg)
-        return {"doc_id": doc_id, "outcome": "failed", "step": "extract",
-                "elapsed_s": time.time() - started}
+        return fail_or_retry(
+            doc, "extract", f"agent exit≠0: {err.strip()[:300]}", started
+        )
 
     extract_summary = parse_agent_json_result(out)
     extracted_path = EXTRACTION_DIR / f"{doc_id}_extracted.json"
     if not extracted_path.exists():
-        msg = f"extractor returned no file at {extracted_path}"
-        log.error(f"[{short}] {msg}")
-        mark_failed(doc_id, msg)
-        return {"doc_id": doc_id, "outcome": "failed", "step": "extract",
-                "elapsed_s": time.time() - started}
+        return fail_or_retry(
+            doc, "extract", f"no output file at {extracted_path}", started
+        )
     log.info(f"[{short}] extracted ({extract_summary.get('citations_extracted', '?') if extract_summary else '?'} citations)")
 
     # ----- VERIFY -----
@@ -480,27 +531,23 @@ def process_doc(
         doc_id,
     )
     if not ok:
-        msg = f"verifier exit≠0: {err.strip()[:300]}"
-        log.error(f"[{short}] {msg}")
-        mark_failed(doc_id, msg)
-        return {"doc_id": doc_id, "outcome": "failed", "step": "verify",
-                "elapsed_s": time.time() - started}
+        return fail_or_retry(
+            doc, "verify", f"agent exit≠0: {err.strip()[:300]}", started
+        )
 
     verified_path = EXTRACTION_DIR / f"{doc_id}_verified.json"
     if not verified_path.exists():
-        msg = f"verifier returned no file at {verified_path}"
-        log.error(f"[{short}] {msg}")
-        mark_failed(doc_id, msg)
-        return {"doc_id": doc_id, "outcome": "failed", "step": "verify",
-                "elapsed_s": time.time() - started}
+        return fail_or_retry(
+            doc, "verify", f"no output file at {verified_path}", started
+        )
 
     # ----- INGEST -----
     rc, _, ierr = run_helper("ingest", doc_id, str(verified_path))
-    elapsed = time.time() - started
     if rc != 0:
-        log.error(f"[{short}] ingest failed: {ierr.strip()[:300]}")
-        return {"doc_id": doc_id, "outcome": "failed", "step": "ingest",
-                "elapsed_s": elapsed}
+        return fail_or_retry(
+            doc, "ingest", f"helper rc={rc}: {ierr.strip()[:300]}", started
+        )
+    elapsed = time.time() - started
 
     log.info(f"[{short}] COMPLETE ({elapsed:.0f}s)")
     return {"doc_id": doc_id, "outcome": "complete", "elapsed_s": elapsed}
@@ -525,7 +572,7 @@ def driver(args) -> int:
 
     counters = {
         "complete": 0, "prefiltered": 0, "prefilter_keep": 0,
-        "released": 0, "failed": 0, "dispatched": 0,
+        "released": 0, "retry": 0, "failed": 0, "dispatched": 0,
     }
     counters_lock = threading.Lock()
 
@@ -578,6 +625,7 @@ def driver(args) -> int:
     log.info(f"  complete       : {counters['complete']}")
     log.info(f"  prefiltered    : {counters['prefiltered']}     (Sonnet bypassed)")
     log.info(f"  prefilter_keep : {counters['prefilter_keep']}  (full pipeline owes work)")
+    log.info(f"  retried        : {counters['retry']}  (transient — released back to pending)")
     log.info(f"  failed         : {counters['failed']}")
     if counters["released"]:
         log.info(f"  released       : {counters['released']}  (legacy outcome — should be 0)")
