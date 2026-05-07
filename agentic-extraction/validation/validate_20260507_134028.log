@@ -1,0 +1,92 @@
+2026-05-07 13:40:28,836 [INFO] ======================================================================
+2026-05-07 13:40:28,837 [INFO] validate_prefilter starting  threshold=0.9  workers=5  sample=all
+2026-05-07 13:40:28,837 [INFO] ======================================================================
+2026-05-07 13:40:28,915 [INFO] test set: 58 docs   (14 with ≥1 confirmed citation, 44 with 0)
+2026-05-07 13:40:28,915 [INFO]   tier 1: 57 docs
+2026-05-07 13:40:28,915 [INFO]   tier 3: 1 docs
+2026-05-07 13:40:28,915 [INFO] 
+dispatching prefilter on 58 docs with N=5 workers...
+2026-05-07 13:40:48,538 [INFO]   [1/58] 17449754 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (19.6s)
+2026-05-07 13:40:49,212 [INFO]   [2/58] 4d0c42bd truth=-0 pred=- conf=0.96 → CORRECT_BYPASS  (20.3s)
+2026-05-07 13:40:49,623 [INFO]   [3/58] eee9a4d4 truth=-0 pred=- conf=0.93 → CORRECT_BYPASS  (20.7s)
+2026-05-07 13:40:50,035 [INFO]   [4/58] bf7ef98a truth=-0 pred=- conf=0.94 → CORRECT_BYPASS  (21.1s)
+2026-05-07 13:40:53,515 [INFO]   [5/58] 5191e1cb truth=-0 pred=- conf=0.92 → CORRECT_BYPASS  (24.6s)
+2026-05-07 13:41:08,491 [INFO]   [6/58] 83e83675 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (18.5s)
+2026-05-07 13:41:10,415 [INFO]   [7/58] 25625707 truth=-0 pred=- conf=0.93 → CORRECT_BYPASS  (20.8s)
+2026-05-07 13:41:15,013 [INFO]   [8/58] 4571f526 truth=-0 pred=+ conf=0.89 → WASTED  (21.5s)
+2026-05-07 13:41:24,495 [INFO]   [9/58] c2533efa truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (35.3s)
+2026-05-07 13:41:27,849 [INFO]   [10/58] 1082f0f0 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (19.4s)
+2026-05-07 13:41:30,429 [INFO]   [11/58] 8c862164 truth=-0 pred=+ conf=0.88 → WASTED  (41.9s)
+2026-05-07 13:41:37,767 [INFO]   [12/58] 1e3961cb truth=-0 pred=- conf=0.93 → CORRECT_BYPASS  (22.8s)
+2026-05-07 13:41:44,799 [INFO]   [13/58] bb8f45b9 truth=+1 pred=+ conf=0.96 → CORRECT_KEPT  (16.9s)
+2026-05-07 13:41:44,919 [INFO]   [14/58] 0cba2fb9 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (20.4s)
+2026-05-07 13:41:50,620 [INFO]   [15/58] ad36ede1 truth=-0 pred=- conf=0.93 → CORRECT_BYPASS  (40.2s)
+2026-05-07 13:42:00,029 [INFO]   [16/58] 5788798c truth=-0 pred=- conf=0.93 → CORRECT_BYPASS  (29.6s)
+2026-05-07 13:42:00,881 [INFO]   [17/58] d1da3caa truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (23.1s)
+2026-05-07 13:42:06,381 [INFO]   [18/58] f0138829 truth=+1 pred=+ conf=0.94 → CORRECT_KEPT  (21.6s)
+2026-05-07 13:42:11,907 [INFO]   [19/58] 5b5ec11e truth=-0 pred=- conf=0.92 → CORRECT_BYPASS  (27.0s)
+2026-05-07 13:42:16,390 [INFO]   [20/58] 96a95b29 truth=-0 pred=+ conf=0.85 → WASTED  (25.8s)
+2026-05-07 13:42:21,145 [INFO]   [21/58] d8862425 truth=+1 pred=+ conf=0.95 → CORRECT_KEPT  (21.1s)
+2026-05-07 13:42:24,767 [INFO]   [22/58] 3420d16a truth=-0 pred=- conf=0.97 → CORRECT_BYPASS  (23.9s)
+2026-05-07 13:42:28,657 [INFO]   [23/58] 0891ad34 truth=-0 pred=- conf=0.92 → CORRECT_BYPASS  (22.3s)
+2026-05-07 13:42:34,625 [INFO]   [24/58] 63486213 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (22.7s)
+2026-05-07 13:42:40,717 [INFO]   [25/58] 0f1f5a5f truth=+1 pred=+ conf=0.95 → CORRECT_KEPT  (24.3s)
+2026-05-07 13:42:41,394 [INFO]   [26/58] a0feb5d7 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (20.2s)
+2026-05-07 13:42:48,716 [INFO]   [27/58] 8c437dc4 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (23.9s)
+2026-05-07 13:42:49,154 [INFO]   [28/58] 976e3e36 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (20.5s)
+2026-05-07 13:42:59,257 [INFO]   [29/58] 4ec28659 truth=-0 pred=+ conf=0.95 → WASTED  (24.6s)
+2026-05-07 13:42:59,853 [INFO]   [30/58] 4365c133 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (19.1s)
+2026-05-07 13:43:04,499 [INFO]   [31/58] be01c3bc truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (23.1s)
+2026-05-07 13:43:11,154 [INFO]   [32/58] 6f66e995 truth=+2 pred=+ conf=0.94 → CORRECT_KEPT  (22.0s)
+2026-05-07 13:43:21,180 [INFO]   [33/58] b52176b4 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (21.3s)
+2026-05-07 13:43:22,515 [INFO]   [34/58] cc691c40 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (23.3s)
+2026-05-07 13:43:26,519 [INFO]   [35/58] cc4e3c7f truth=-0 pred=- conf=0.93 → CORRECT_BYPASS  (22.0s)
+2026-05-07 13:43:30,911 [INFO]   [36/58] 80fda76b truth=+3 pred=+ conf=0.96 → CORRECT_KEPT  (19.8s)
+2026-05-07 13:43:40,770 [INFO]   [37/58] 5eba21dc truth=+1 pred=+ conf=0.95 → CORRECT_KEPT  (18.3s)
+2026-05-07 13:43:43,850 [INFO]   [38/58] a0e20bf8 truth=-0 pred=- conf=0.93 → CORRECT_BYPASS  (22.7s)
+2026-05-07 13:43:44,913 [INFO]   [39/58] 1c2d9dc2 truth=-0 pred=+ conf=0.70 → WASTED  (56.2s)
+2026-05-07 13:43:46,977 [INFO]   [40/58] 88588361 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (20.5s)
+2026-05-07 13:43:54,936 [INFO]   [41/58] dfd5ca72 truth=-0 pred=+ conf=0.88 → WASTED  (24.0s)
+2026-05-07 13:44:01,628 [INFO]   [42/58] 2c6b364e truth=+2 pred=+ conf=0.96 → CORRECT_KEPT  (16.7s)
+2026-05-07 13:44:08,312 [INFO]   [43/58] b754cf9d truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (21.3s)
+2026-05-07 13:44:15,293 [INFO]   [44/58] 88780c2c truth=-0 pred=- conf=0.92 → CORRECT_BYPASS  (31.4s)
+2026-05-07 13:44:16,969 [INFO]   [45/58] d3075d46 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (22.0s)
+2026-05-07 13:44:17,097 [INFO]   [46/58] 52818bf8 truth=-0 pred=+ conf=0.83 → WASTED  (36.3s)
+2026-05-07 13:44:26,974 [INFO]   [47/58] 4edbef1c truth=-0 pred=+ conf=0.78 → WASTED  (25.3s)
+2026-05-07 13:44:33,079 [INFO]   [48/58] 794354df truth=-0 pred=+ conf=0.95 → WASTED  (17.8s)
+2026-05-07 13:44:37,143 [INFO]   [49/58] 6c431d29 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (20.2s)
+2026-05-07 13:44:39,484 [INFO]   [50/58] 1c616c31 truth=+1 pred=+ conf=0.98 → CORRECT_KEPT  (22.4s)
+2026-05-07 13:44:46,550 [INFO]   [51/58] 8db36fba truth=-0 pred=- conf=0.94 → CORRECT_BYPASS  (38.2s)
+2026-05-07 13:44:47,166 [INFO]   [52/58] b18494a6 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (20.2s)
+2026-05-07 13:44:54,660 [INFO]   [53/58] ecd82838 truth=-0 pred=- conf=0.95 → CORRECT_BYPASS  (15.2s)
+2026-05-07 13:44:56,262 [INFO]   [54/58] c40d619c truth=+1 pred=+ conf=0.94 → CORRECT_KEPT  (23.2s)
+2026-05-07 13:45:04,235 [INFO]   [55/58] 11f23599 truth=+16 pred=+ conf=0.99 → CORRECT_KEPT  (17.7s)
+2026-05-07 13:45:05,499 [INFO]   [56/58] 5d9d8742 truth=+1 pred=+ conf=0.93 → CORRECT_KEPT  (28.4s)
+2026-05-07 13:45:14,317 [INFO]   [57/58] 7effb1ea truth=+54 pred=+ conf=0.98 → CORRECT_KEPT  (19.7s)
+2026-05-07 13:45:19,308 [INFO]   [58/58] 7b99bf45 truth=+6 pred=+ conf=0.98 → CORRECT_KEPT  (32.1s)
+2026-05-07 13:45:19,309 [INFO] 
+per-doc results: C:\Users\gusta\workspace\proj\phdMutley\agentic-extraction\validation\results_20260507_134519.jsonl
+2026-05-07 13:45:19,309 [INFO] 
+======================================================================
+2026-05-07 13:45:19,309 [INFO] VALIDATION REPORT
+2026-05-07 13:45:19,309 [INFO] ======================================================================
+2026-05-07 13:45:19,309 [INFO]   threshold:       0.9
+2026-05-07 13:45:19,309 [INFO]   total docs:      58
+2026-05-07 13:45:19,309 [INFO]   total wall time: 290.4s (5.0s/doc avg)
+2026-05-07 13:45:19,310 [INFO] 
+2026-05-07 13:45:19,310 [INFO]   Category         Count   Meaning
+2026-05-07 13:45:19,310 [INFO]   ---------------- -----   -----------------------------------------------
+2026-05-07 13:45:19,310 [INFO]   CORRECT_KEPT        14   truth=yes, pred=yes — full pipeline runs (correct)
+2026-05-07 13:45:19,310 [INFO]   CORRECT_BYPASS      35   truth=no,  pred=no, conf≥t — bypass (cost saved!)
+2026-05-07 13:45:19,310 [INFO]   WASTED               9   truth=no,  pred=yes — full pipeline runs (cost wasted)
+2026-05-07 13:45:19,310 [INFO]   LOW_CONF_NEG         0   truth=no,  pred=no, conf<t — full pipeline runs (no bypass)
+2026-05-07 13:45:19,310 [INFO]   SOFT_MISS            0   truth=yes, pred=no, conf<t — full pipeline runs (safe, no bypass)
+2026-05-07 13:45:19,310 [INFO]   HARD_MISS            0   truth=yes, pred=no, conf≥t — DATA LOSS, would bypass
+2026-05-07 13:45:19,310 [INFO]   PREFILTER_FAILED     0   agent crashed / unparseable JSON
+2026-05-07 13:45:19,310 [INFO] 
+2026-05-07 13:45:19,310 [INFO]   bypass rate (cost saved):  60.3%  (35 docs)
+2026-05-07 13:45:19,310 [INFO]   waste rate (false alarm):  15.5%  (9 docs)
+2026-05-07 13:45:19,310 [INFO] 
+2026-05-07 13:45:19,310 [INFO] ======================================================================
+2026-05-07 13:45:19,310 [INFO] ✓ VALIDATION GATE: PASS  (zero hard misses)
+2026-05-07 13:45:19,310 [INFO] ======================================================================

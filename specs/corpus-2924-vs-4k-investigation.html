@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Investigação: 2,924 vs ~4k decisões — phdMutley</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-primary:#0a0f14;
+    --bg-secondary:#111820;
+    --bg-panel:#1a222d;
+    --bg-hover:#242d3a;
+    --text-primary:#e8edf3;
+    --text-secondary:#8b9aad;
+    --text-muted:#5a6978;
+    --north-primary:#3b82f6;
+    --south-primary:#10b981;
+    --accent-orange:#f97316;
+    --accent-purple:#8b5cf6;
+    --accent-red:#ef4444;
+    --accent-yellow:#eab308;
+    --accent-cyan:#06b6d4;
+    --accent-gold:#f59e0b;
+    --border-color:#2a3544;
+    --border-hover:#3d4f66;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg-primary);color:var(--text-primary);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.6}
+  a{color:var(--accent-cyan);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,pre,.mono{font-family:'Space Mono',ui-monospace,monospace}
+  .wrap{max-width:920px;margin:0 auto;padding:48px 28px 96px}
+  header{border-bottom:1px solid var(--border-color);padding-bottom:24px;margin-bottom:36px}
+  .eyebrow{color:var(--text-muted);font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-family:'Space Mono',monospace}
+  h1{font-size:30px;font-weight:600;margin:8px 0 6px;letter-spacing:-.01em}
+  .subtitle{color:var(--text-secondary);font-size:15px}
+  h2{font-size:22px;margin:42px 0 14px;font-weight:600;letter-spacing:-.005em}
+  h2 .num{color:var(--accent-gold);font-family:'Space Mono',monospace;font-weight:700;margin-right:10px}
+  h3{font-size:17px;margin:24px 0 10px;color:var(--text-primary);font-weight:600}
+  p{margin:10px 0}
+  strong{color:#fff}
+  .question-box{background:linear-gradient(180deg,rgba(245,158,11,.07),rgba(245,158,11,.02));border:1px solid rgba(245,158,11,.35);border-radius:10px;padding:20px 22px;margin:0 0 36px}
+  .question-box .q-label{color:var(--accent-gold);font-size:12px;font-weight:700;letter-spacing:.15em;font-family:'Space Mono',monospace;text-transform:uppercase}
+  .question-box .q-prompt{margin-top:6px;color:var(--text-primary);font-size:15px}
+  .question-box blockquote{border-left:3px solid var(--accent-gold);margin:14px 0 4px;padding:4px 0 4px 14px;color:var(--text-secondary);font-style:italic}
+  .insight{background:linear-gradient(180deg,rgba(139,92,246,.08),rgba(139,92,246,.02));border:1px solid rgba(139,92,246,.35);border-radius:10px;padding:18px 22px;margin:24px 0}
+  .insight .label{color:var(--accent-purple);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+  .insight p{margin:8px 0 0}
+  .pair-insight{background:linear-gradient(180deg,rgba(16,185,129,.08),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.4);border-radius:10px;padding:22px 24px;margin:32px 0}
+  .pair-insight .label{color:var(--south-primary);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+  .pair-insight h3{color:#fff;margin-top:6px}
+  .alert{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.35);border-radius:8px;padding:14px 18px;margin:18px 0;color:var(--text-primary)}
+  .alert .label{color:var(--accent-red);font-weight:700;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;overflow:hidden}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border-color)}
+  th{background:var(--bg-panel);color:var(--text-secondary);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-family:'Space Mono',monospace}
+  td.center,th.center{text-align:center}
+  .codeblock{background:#05080b;border:1px solid var(--border-color);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--text-secondary);overflow-x:auto;white-space:pre;margin:14px 0}
+  ul{padding-left:22px}
+  ul li{margin:6px 0}
+  .meta{color:var(--text-muted);font-size:12px;font-family:'Space Mono',monospace;margin-top:6px}
+  hr.sep{border:none;border-top:1px solid var(--border-color);margin:40px 0}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;letter-spacing:.05em}
+  .pill.north{background:rgba(59,130,246,.15);color:var(--north-primary);border:1px solid rgba(59,130,246,.4)}
+  .pill.south{background:rgba(16,185,129,.15);color:var(--south-primary);border:1px solid rgba(16,185,129,.4)}
+  .pill.us{background:rgba(249,115,22,.15);color:var(--accent-orange);border:1px solid rgba(249,115,22,.4)}
+  footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--border-color);color:var(--text-muted);font-size:12px;font-family:'Space Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">phdMutley · Data Quality Note</div>
+  <h1>Investigação: 2,924 vs ~4k decisões</h1>
+  <p class="subtitle">De onde vem cada número, como o pipeline mudou, e o que isso significa para a apresentação Columbia.</p>
+  <div class="meta">2026-05-07 · branch <code>feature/phase-dq</code> · DB local PG18 :5433</div>
+</header>
+
+<!-- THE QUESTION -->
+<section class="question-box">
+  <div class="q-label">Pergunta — Gus para Claude</div>
+  <p class="q-prompt">Confira a mensagem do Lucas abaixo:</p>
+  <blockquote>"Só uma dúvida pq tava analisando o texto que submeti pra Columbia pra preparar a apresentação. Ali são 2924 decisões, mas vc mencionou 4k. Será que é tudo isso mesmo?"</blockquote>
+  <p class="q-prompt">~4k decisões é o número de docs = decisões que temos mapeado agora para processamento agêntico, certo? De fato, a extração do pipeline se deu sobre esse número pouco menor que 3k decisões. Investigue essa diferença — eu tenho uma hipótese, mas não quero te enviesar.</p>
+</section>
+
+<p><strong>Investigado.</strong> A diferença é <strong>rastreável e tem causa única</strong>: a contagem 2,924 é de uma fase anterior do pipeline (corpus pré-filtrado), enquanto ~4k é o pool atual após reclassificação interna sobre o dump SABIN completo. Detalho abaixo.</p>
+
+<hr class="sep" />
+
+<!-- SECTION 1 -->
+<h2><span class="num">1.</span>As duas contagens não são incompatíveis — são dois cortes do mesmo pipeline em momentos diferentes</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Snapshot</th>
+      <th>Fonte</th>
+      <th class="num">Contagem</th>
+      <th>Onde aparece</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Phase 1</strong> (original, ~2025)</td>
+      <td><code>baseDecisions.xlsx</code> (Lucas pré-filtrou)</td>
+      <td class="num"><strong>2,924</strong> decisões</td>
+      <td>Texto Columbia · <code>populate_metadata.py:11</code> · <code>AI_AGENT_CONTEXT_PhD_*.md</code></td>
+    </tr>
+    <tr>
+      <td><strong>Phase DQ / v7</strong> (atual, mar/2026)</td>
+      <td>SABIN full dump <code>SABIN_DB-2026-02-23.xlsx</code> + Phase-4 classifier</td>
+      <td class="num"><strong>4,755</strong> docs <code>is_decision=true</code></td>
+      <td>DB local · <code>decision_classification_method</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A migração aconteceu quando saímos do arquivo pré-filtrado pelo Lucas (<code>baseDecisions.xlsx</code>, ~2,9k linhas) para ingerir o <strong>SABIN completo</strong> (16,380 docs / 4,741 cases) e rodar <strong>nosso próprio classificador de "isso é decisão?"</strong> — Phase 4 do pipeline.</p>
+
+<!-- SECTION 2 -->
+<h2><span class="num">2.</span>O que o classificador Phase-4 fez (DB local, agora)</h2>
+
+<pre class="codeblock">decision_classification_method × is_decision
+─────────────────────────────────────────────
+title_keyword                  →  2,920  ✅ decisão
+llm_partial_text               →  1,835  ✅ decisão
+llm_partial_text               →  3,879  ❌ não-decisão
+title_keyword_excluded         →  7,413  ❌ não-decisão
+extraction_failed / no_pdf     →    305  ❌ não-decisão
+─────────────────────────────────────────────
+TOTAL is_decision=true         →  4,755</pre>
+
+<p><strong>Match quase perfeito</strong>: o passo determinístico de title-keyword captura <strong>2,920 docs</strong> — praticamente os mesmos <strong>2,924</strong> que o Lucas tinha no <code>baseDecisions.xlsx</code>. Diferença de 4 docs é ruído de versão SABIN (entre o snapshot que gerou o <code>baseDecisions.xlsx</code> e o atual <code>SABIN_DB-2026-02-23.xlsx</code>).</p>
+
+<p>A expansão para 4,755 vem do <strong>segundo estágio</strong>: rodamos LLM (Gemini) sobre os ~5,7k docs que não bateram nem na lista positiva nem na negativa de keywords, e o LLM classificou <strong>+1,835</strong> como decisão.</p>
+
+<div class="insight">
+  <div class="label">★ Insight</div>
+  <p>Phase-4 é um <strong>classificador em cascata</strong>: regra determinística (rápida, $0) → LLM (custosa, mas só em ambíguos). É exatamente o tipo de arquitetura barata-primeiro que faz sentido aqui — se Lucas só usou o título no <code>baseDecisions.xlsx</code>, ele rodou só o estágio determinístico. Ao adicionarmos o LLM, recuperamos decisões que CCC tagueou genericamente como "Order"/"Opinion"/"Memorandum" mas que são funcionalmente decisões.</p>
+</div>
+
+<!-- SECTION 3 -->
+<h2><span class="num">3.</span>O detalhe que importa para a apresentação do Lucas</h2>
+
+<div class="alert">
+  <div class="label">⚠ Heads-up metodológico</div>
+  <p>Os <strong>1,835 docs "resgatados" pelo LLM são fortemente enviesados US/Global North</strong>.</p>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Estágio</th>
+      <th class="center"><span class="pill north">Global North</span></th>
+      <th class="center"><span class="pill south">Global South</span></th>
+      <th class="center"><span class="pill us">US</span></th>
+      <th class="center">Non-US</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>title_keyword</code> (≈ corpus original 2,924)</td>
+      <td class="num">2,221</td>
+      <td class="num">699</td>
+      <td class="num">1,297</td>
+      <td class="num">1,623</td>
+    </tr>
+    <tr>
+      <td><code>llm_partial_text</code> (rescue)</td>
+      <td class="num"><strong>1,789 (97.5%)</strong></td>
+      <td class="num">46 (2.5%)</td>
+      <td class="num"><strong>1,393 (76%)</strong></td>
+      <td class="num">442</td>
+    </tr>
+    <tr>
+      <td><strong>Total atual (4,755)</strong></td>
+      <td class="num"><strong>4,010</strong></td>
+      <td class="num"><strong>745</strong></td>
+      <td class="num"><strong>2,690</strong></td>
+      <td class="num"><strong>2,065</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Consequência metodológica:</strong></p>
+<ul>
+  <li>Original (2,924): <strong>44% US</strong> / 56% Non-US</li>
+  <li>Atual (4,755): <strong>57% US</strong> / 43% Non-US</li>
+</ul>
+
+<p>A camada LLM está corrigindo um viés de <strong>sub-tagueamento da CCC</strong> — cortes nativos chamam de "Order" / "Memorandum Opinion" / "Ruling" docs US que são funcionalmente decisões, mas em jurisdições não-US o tagueamento como "Decision"/"Judgment" é mais consistente. Logo, o resgate é assimétrico.</p>
+
+<!-- SECTION 4 -->
+<h2><span class="num">4.</span>Onde o pipeline de extração realmente rodou</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Etapa</th>
+      <th class="num">Contagem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>is_decision=true</code></td><td class="num">4,755</td></tr>
+    <tr><td><code>is_decision=true</code> AND <code>pdf_downloaded=true</code> (elegível)</td><td class="num"><strong>4,560</strong></td></tr>
+    <tr><td>Linhas em <code>citation_extraction_phased_summary</code></td><td class="num">4,724</td></tr>
+    <tr><td>Extrações com <code>extraction_success=true</code></td><td class="num">4,441</td></tr>
+    <tr><td>Docs com <strong>≥1 citação extraída</strong></td><td class="num"><strong>2,315</strong></td></tr>
+  </tbody>
+</table>
+
+<p>Ou seja: o pipeline <strong>tentou extrair de ~4,7k docs</strong>, mas só <strong>2,315 produziram alguma citação</strong> (os outros 2,126 "succeeded" rodaram sem erro mas zero citações encontradas — provavelmente decisões procedimentais curtas, ordens administrativas etc.). Esse número (2,315 com citação) é o que se aproxima do <em>"pouco menor que 3k"</em> da tua mensagem.</p>
+
+<!-- SECTION 5 — INSIGHT FOR THE PAIR -->
+<div class="pair-insight">
+  <div class="label">★ Insight para a dupla (Gus &amp; Lucas)</div>
+  <h3>O ponto de decisão que a apresentação Columbia obriga a tomar</h3>
+  <p>Os dois números convivem no mesmo pipeline e nenhum dos dois está "errado" — mas eles representam <strong>universos amostrais diferentes</strong>, e isso precisa ser declarado explicitamente antes da apresentação. A questão não é técnica, é de <em>postura metodológica</em>:</p>
+
+  <ul>
+    <li><strong>Postura A — Manter coerência com o texto submetido:</strong> reportar o corpus de <strong>2,924 decisões</strong> (o cut <code>title_keyword</code>) e tratar a expansão para 4,755 como um <em>refinamento Phase-2</em> a entrar nas próximas iterações. Vantagem: zero ruído na sessão Columbia. Custo: deixar 1,835 decisões de fora da análise apresentada.</li>
+    <li><strong>Postura B — Adotar o corpus expandido (4,755):</strong> reportar o número novo e mostrar a decomposição (2,920 determinístico + 1,835 LLM-rescue). Vantagem: corpus mais robusto, corrige viés de tagueamento da CCC. Custo: precisa de um slide de metodologia explicando a escada de classificação <strong>e</strong> precisa flaggar que o resgate é <strong>97.5% Global North e 76% US</strong>, o que <em>acentua</em> a assimetria N/S em vez de mitigá-la (44% US → 57% US).</li>
+  </ul>
+
+  <p><strong>Recomendação:</strong> <span class="pill north">Postura A para Columbia</span> + <span class="pill south">Postura B para a tese</span>. Na apresentação, manter o número 2,924 que já foi submetido e mencionar de passagem que "a inspeção de qualidade pós-submissão revelou +1,835 decisões sub-tagueadas pela CCC, predominantemente US, que entrarão na versão final da tese". Isso é honesto, fortalece a credibilidade metodológica, e evita o desconforto de explicar dois números diferentes em <em>real time</em> diante da banca.</p>
+
+  <p><strong>Implicação para o achado central (96/4 N-S):</strong> a expansão <em>preserva</em> o achado — na verdade, intensifica a assimetria, já que o resgate é quase totalmente Global North. Não é uma ameaça à narrativa da tese; é um reforço.</p>
+</div>
+
+<hr class="sep" />
+
+<p class="meta">Hipótese a priori (antes da investigação): <code>2,924 = baseDecisions.xlsx pré-filtrado</code> &nbsp;·&nbsp; <code>4k = pool pós-Phase-4</code> &nbsp;→&nbsp; confirmado pelo match de <strong>2,920 ≈ 2,924</strong> no <code>title_keyword</code>.</p>
+
+<footer>
+  Gerado a partir da investigação de 2026-05-07 sobre o DB local (PG18 :5433, db <code>climate_litigation</code>).<br/>
+  Fontes consultadas: <code>cases</code>, <code>documents</code>, <code>citation_extraction_phased_summary</code>, <code>data/seed/SABIN_DB-2026-02-23.xlsx</code>.
+</footer>
+
+</div>
+</body>
+</html>

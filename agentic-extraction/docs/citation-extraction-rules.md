@@ -140,47 +140,47 @@ See **Appendix A** for the definitive list of ~44 Global North countries (expand
 
 The sixfold system classifies the **geographic relationship** between the citing court (source) and the cited case (target):
 
-| #   | Type                               | Direction                             | Condition                                                                                                |
-| --- | ---------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| 1   | **Foreign Citation**               | National → National                   | Source and target are different national jurisdictions                                                   |
+| #   | Type                               | Direction                             | Condition                                                                                                                               |
+| --- | ---------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Foreign Citation**               | National → National                   | Source and target are different national jurisdictions                                                                                  |
 | 2   | **International Citation**         | National → International (member)     | Source is a national court; target is an international court of which source country is a **member**. Set `is_vertical_dialogue: true`. |
-| 3   | **Foreign International Citation** | National → International (non-member) | Source is a national court; target is an international court of which source country is **NOT a member** |
-| 4   | **Inter-System Citation**          | International → International         | Both source and target are international courts (and not the same court system — see Domestic rule below) |
-| 5   | **Member-State Citation**          | International → National (member)     | Source is an international court; target is a national court from a **member state**                     |
-| 6   | **Non-Member Citation**            | International → National (non-member) | Source is an international court; target is a national court from a **non-member state**                 |
+| 3   | **Foreign International Citation** | National → International (non-member) | Source is a national court; target is an international court of which source country is **NOT a member**                                |
+| 4   | **Inter-System Citation**          | International → International         | Both source and target are international courts (and not the same court system — see Domestic rule below)                               |
+| 5   | **Member-State Citation**          | International → National (member)     | Source is an international court; target is a national court from a **member state**                                                    |
+| 6   | **Non-Member Citation**            | International → National (non-member) | Source is an international court; target is a national court from a **non-member state**                                                |
 
 **Domestic citations** (source and target are the same jurisdiction OR the same court system) are classified as **"Domestic"** — they are outside the scope of the transnational dialogue research but should still be extracted and tagged, not discarded.
 
 > **Same-court / same-system rule (D29 + D38 refinement).** When the source court and the cited court are **the same institution** OR are **within the same court system**, the classification depends on whether the body is international or national:
->
+> 
 > - **International institution** (CJEU, ECtHR, IACtHR, ACHPR, WTO DSU, ICJ, ITLOS, ICSID, etc.) → classify as **Inter-System Citation (Type 4)**, even when both source and cited are sub-bodies of the same DSU. Intra-international citations are still transnational dialogue.
 > - **Sub-body of a national jurisdiction** (US Circuit → US Supreme Court, German BVerfG → German lower court, Brazilian STF → STJ) → classify as **Domestic**. Intra-national hierarchies are out of scope.
->
+> 
 > This rule applies BEFORE the sixfold algorithm.
->
+> 
 > Examples (D38 refinement, 2026-05-03):
->
-> | Source | Cited | Classification |
-> |---|---|---|
-> | CJEU judgment | prior CJEU ruling | **Inter-System (Type 4)** |
-> | CJEU AG Opinion | prior CJEU ruling | **Inter-System (Type 4)** |
-> | General Court (EU) | CJEU | **Inter-System (Type 4)** |
-> | IACtHR Advisory | IACtHR Contentious | **Inter-System (Type 4)** |
-> | ECtHR Grand Chamber | ECtHR Chamber | **Inter-System (Type 4)** |
-> | WTO Appellate Body | WTO Panel | **Inter-System (Type 4)** |
-> | US 9th Circuit | US Supreme Court | **Domestic** |
-> | German BVerfG | German lower court | **Domestic** |
-> | Brazilian STF | Brazilian STJ | **Domestic** |
+> 
+> | Source              | Cited              | Classification            |
+> | ------------------- | ------------------ | ------------------------- |
+> | CJEU judgment       | prior CJEU ruling  | **Inter-System (Type 4)** |
+> | CJEU AG Opinion     | prior CJEU ruling  | **Inter-System (Type 4)** |
+> | General Court (EU)  | CJEU               | **Inter-System (Type 4)** |
+> | IACtHR Advisory     | IACtHR Contentious | **Inter-System (Type 4)** |
+> | ECtHR Grand Chamber | ECtHR Chamber      | **Inter-System (Type 4)** |
+> | WTO Appellate Body  | WTO Panel          | **Inter-System (Type 4)** |
+> | US 9th Circuit      | US Supreme Court   | **Domestic**              |
+> | German BVerfG       | German lower court | **Domestic**              |
+> | Brazilian STF       | Brazilian STJ      | **Domestic**              |
 
 > **Vertical-dialogue boolean (D30).** Every citation in the verifier's output gains a boolean field `is_vertical_dialogue`. Set `true` ONLY when:
->
+> 
 > - Source = a national court (not international), AND
 > - Cited = an international court of which the source's country is a member (per Appendix B).
->
+> 
 > Set `false` everywhere else (international→international, international→national, national→non-member-international, etc.).
->
+> 
 > Examples:
->
+> 
 > - Germany citing ECtHR → Type 2, `is_vertical_dialogue: true`
 > - Colombia citing IACtHR → Type 2, `is_vertical_dialogue: true`
 > - Netherlands citing CJEU → Type 2, `is_vertical_dialogue: true`
@@ -197,16 +197,16 @@ Court membership lookups use the tables in **Appendix B**.
 How the **citing court** uses each citation in its reasoning. Based on Nollkaemper (2025), "Avoid, Align or Contest?", *Transnational Environmental Law* 14(3), pp. 469-499, adapted from the ILA Study Group typology (2011-2016) to citation-level granularity.
 
 > **Court engagement = inclusion criterion (D31).** A citation is included in the dataset only if the court itself engages with it (aligns, contests, distinguishes, applies, or actively avoids the cited case). Citations only invoked by parties with mere court acknowledgement (the court summarizes a party's argument without endorsing or refuting the citation) get `functional_use: dismissed`. They are kept in the dataset (soft tag) but excluded from the default analysis layer.
->
+> 
 > **Rationale:** in citation-network research, the citations that matter are those that influenced the court's reasoning (ratio decidendi or substantive engagement). Mere mentions in dictum or party-argument summaries are not load-bearing. The `dismissed` soft-tag preserves these for "what parties cite vs. what courts engage with" gap analysis but excludes them from the default analysis layer.
 
-| Category      | Label       | Definition                                                                                                                                                | Signal Words                                                                                                                                                          |
-| ------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Aligned**   | `aligned`   | Court **endorses, follows, or relies on** the cited case                                                                                                  | "following", "applying", "as held in", "consistent with", "we adopt", "in line with", "relying on", "in accordance with", "as established in"                         |
-| **Contested** | `contested` | Court **rejects, distinguishes, or refuses to follow** the cited case                                                                                     | "distinguish", "unlike", "differs from", "not applicable", "little transfer value", "we disagree", "this case is distinguishable", "overruled", "departed from"       |
-| **Avoided**   | `avoided`   | Court **declines to engage** with a case it could have applied                                                                                            | "not necessary to consider", "need not address", "not justiciable", "outside our jurisdiction", "we decline to rule on", "moot", "not applicable to the present case" |
+| Category      | Label       | Definition                                                                                                                                                                                         | Signal Words                                                                                                                                                          |
+| ------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Aligned**   | `aligned`   | Court **endorses, follows, or relies on** the cited case                                                                                                                                           | "following", "applying", "as held in", "consistent with", "we adopt", "in line with", "relying on", "in accordance with", "as established in"                         |
+| **Contested** | `contested` | Court **rejects, distinguishes, or refuses to follow** the cited case                                                                                                                              | "distinguish", "unlike", "differs from", "not applicable", "little transfer value", "we disagree", "this case is distinguishable", "overruled", "departed from"       |
+| **Avoided**   | `avoided`   | Court **declines to engage** with a case it could have applied                                                                                                                                     | "not necessary to consider", "need not address", "not justiciable", "outside our jurisdiction", "we decline to rule on", "moot", "not applicable to the present case" |
 | **Invoked**   | `invoked`   | Party invoked the case AND the court subsequently engaged with it. Use only when the party-introduction is integral; usually re-tag with the court's actual treatment (aligned/contested/avoided). | "submitted", "argued", "contended", "relied on", "the appellant/respondent invoked", "plaintiff cited", "as argued by"                                                |
-| **Dismissed** | `dismissed` | Party invoked, court only **acknowledged in passing or in summarizing arguments**, no endorsement or rejection. Soft-tag — kept in the dataset but excluded from the default analysis layer. | "the petitioner cited X", "counsel referred to Y" (with no subsequent engagement by the court)                                                                        |
+| **Dismissed** | `dismissed` | Party invoked, court only **acknowledged in passing or in summarizing arguments**, no endorsement or rejection. Soft-tag — kept in the dataset but excluded from the default analysis layer.       | "the petitioner cited X", "counsel referred to Y" (with no subsequent engagement by the court)                                                                        |
 
 **Default rule:** If the functional use cannot be determined with reasonable confidence and the court engages with the citation, classify as `aligned` with low confidence. If the court does not engage at all, classify as `dismissed`.
 
@@ -250,11 +250,11 @@ Before extracting, the agent performs a quick quality assessment:
 
 Document size determines the extraction strategy:
 
-| Tier | Size                       | Strategy                                                                                                  |
-| ---- | -------------------------- | --------------------------------------------------------------------------------------------------------- |
-| 1    | ≤ 500 lines (~25K words)   | Single-pass extraction — current default behavior, no changes                                             |
-| 2    | 500–2000 lines (25–100K w) | Progressive file output — see below                                                                       |
-| 3    | > 2000 lines (> 100K w)    | Pre-split + parallel + merge (handled by external scripts: `scripts/chunk_large_docs.py`, `scripts/merge_chunk_results.py` — not yet implemented) |
+| Tier | Size                       | Strategy                                                                                                                                          |
+| ---- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | ≤ 500 lines (~25K words)   | Single-pass extraction — current default behavior, no changes                                                                                     |
+| 2    | 500–2000 lines (25–100K w) | Progressive file output — see below                                                                                                               |
+| 3    | > 2000 lines (> 100K w)    | Pre-split + parallel + merge (handled by external scripts: `agentic-extraction/chunk_large_docs.py`, `agentic-extraction/merge_chunk_results.py`) |
 
 **Tier 2 — Progressive file output (for documents over 500 lines):**
 

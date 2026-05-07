@@ -5,7 +5,7 @@ Handles DB operations (cleanup, ingest, status updates). The LLM operations
 (extract, verify) are handled by the citation-extractor and citation-verifier
 subagents — invoked by the orchestrator session, not by this script.
 
-Per `docs/plans/corpus-orchestrator-plan.md`:
+Per `agentic-extraction/docs/architecture-plan.md`:
   - Layer A (orchestrator session) drives the loop
   - Layer B (per-doc work) splits into:
       * LLM steps (extract, verify) → registered subagents
@@ -18,30 +18,51 @@ target doc before marking it in_progress.
 
 USAGE
 -----
-    python scripts/orchestrator_helper.py startup
+    python agentic-extraction/orchestrator_helper.py startup
         Reset all in_progress rows to pending and clean up partial DB writes.
         Run once at the start of each orchestrator session.
 
-    python scripts/orchestrator_helper.py next [--tier 1|2|3] [--limit N]
+    python agentic-extraction/orchestrator_helper.py next [--tier 1|2|3] [--limit N]
         Print up to N pending docs as JSON (default N=10), optionally
         filtered by tier. The orchestrator picks from this list.
 
-    python scripts/orchestrator_helper.py prepare <document_id>
+    python agentic-extraction/orchestrator_helper.py prepare <document_id>
         Clean up partial state for the doc + mark in_progress.
         Returns the doc's tier on stdout (for tier-aware dispatch).
 
-    python scripts/orchestrator_helper.py ingest <document_id> <verified_json_path>
+    python agentic-extraction/orchestrator_helper.py ingest <document_id> <verified_json_path>
         Read the verifier's JSON, INSERT into citation_agent_v1*, mark complete.
         Idempotent: cleans up first.
 
-    python scripts/orchestrator_helper.py mark_failed <document_id> <error_message>
+    python agentic-extraction/orchestrator_helper.py mark_failed <document_id> <error_message>
         Mark the doc as failed with the error message. Bumps attempts.
         If attempts >= 2, stays failed (won't auto-retry).
 
-    python scripts/orchestrator_helper.py mark_skipped <document_id> <reason>
+    python agentic-extraction/orchestrator_helper.py mark_skipped <document_id> <reason>
         Mark the doc as skipped (manual exclusion, won't be picked up).
 
-    python scripts/orchestrator_helper.py status [--full]
+    python agentic-extraction/orchestrator_helper.py mark_prefiltered <document_id>         <reason> <confidence> <signals_json>
+        Mark the doc as prefiltered (Haiku triage classified it as having no
+        citations with confidence >= bypass threshold). Bypasses the full
+        extractor/verifier pipeline. Audit fields:
+          - prefilter_reason: one-sentence justification from the classifier
+          - prefilter_confidence: float in [0, 1]
+          - prefilter_signals: JSON array of signal slugs observed
+
+    python agentic-extraction/orchestrator_helper.py mark_prefilter_keep <document_id> \
+        <reason> <confidence> <signals_json>
+        Mark the doc as 'prefilter_keep' — Haiku triaged as worth running
+        through the full extractor/verifier pipeline (has_citations=true or
+        confidence below the bypass threshold). Persistent terminal status for
+        the prefilter pass; the full-pipeline pass claims these alongside
+        'pending'. Audit columns are populated identically to mark_prefiltered.
+
+    python agentic-extraction/orchestrator_helper.py release_to_pending <document_id>
+        Release an in_progress doc back to pending without burning a retry
+        attempt. Used by --prefilter-only mode: after the prefilter says
+        "keep", the doc should remain pending for a later full-pipeline pass.
+
+    python agentic-extraction/orchestrator_helper.py status [--full]
         Print a snapshot of run_state counts.
 
 INPUT
@@ -64,7 +85,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 
 # Add scripts dir to path for config import
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 from config import DB_CONFIG  # noqa: E402
 
 logging.basicConfig(
@@ -588,6 +609,202 @@ def cmd_mark_skipped(document_id: str, reason: str) -> int:
 # =============================================================================
 
 
+# =============================================================================
+# COMMAND: mark_prefiltered
+# =============================================================================
+
+
+def cmd_mark_prefiltered(
+    document_id: str,
+    reason: str,
+    confidence: float,
+    signals_json: str,
+) -> int:
+    """
+    Mark the doc as prefiltered (Haiku triage skipped extraction).
+
+    INPUT:
+        - document_id: UUID string
+        - reason: one-sentence justification from the classifier
+        - confidence: float in [0, 1] (caller is expected to ensure >= bypass threshold)
+        - signals_json: JSON-encoded array of signal slugs (audit trail)
+    ALGORITHM:
+        1. Validate confidence is parseable and signals_json is a JSON array
+        2. UPDATE run_state: status=prefiltered, prefilter_* columns populated,
+           last_attempt_finished=NOW()
+    OUTPUT: log line + exit code
+    """
+    try:
+        conf = float(confidence)
+    except (TypeError, ValueError):
+        log.error(f"prefilter_confidence not parseable as float: {confidence!r}")
+        return 1
+    if not (0.0 <= conf <= 1.0):
+        log.error(f"prefilter_confidence out of range [0,1]: {conf}")
+        return 1
+    try:
+        signals = json.loads(signals_json)
+        if not isinstance(signals, list):
+            raise ValueError("signals must be a JSON array")
+    except (json.JSONDecodeError, ValueError) as e:
+        log.error(f"prefilter_signals not a valid JSON array: {e}")
+        return 1
+
+    engine = get_engine()
+    with engine.begin() as conn:
+        result = conn.execute(
+            text(
+                """
+                UPDATE citation_agent_v1_run_state
+                SET status = 'prefiltered',
+                    last_attempt_finished = NOW(),
+                    prefilter_reason = :reason,
+                    prefilter_confidence = :conf,
+                    prefilter_signals = CAST(:signals AS JSONB),
+                    error_message = NULL
+                WHERE document_id = :doc_id
+                """
+            ),
+            {
+                "doc_id": document_id,
+                "reason": reason,
+                "conf": conf,
+                "signals": json.dumps(signals),
+            },
+        )
+    if result.rowcount == 0:
+        log.error(f"document_id {document_id} not found in run_state")
+        return 1
+    log.info(
+        f"✓ prefiltered {document_id[:8]}… "
+        f"conf={conf:.2f} signals={signals} reason={reason[:60]}"
+    )
+    return 0
+
+
+# =============================================================================
+# COMMAND: mark_prefilter_keep
+# =============================================================================
+
+
+def cmd_mark_prefilter_keep(
+    document_id: str,
+    reason: str,
+    confidence: float,
+    signals_json: str,
+) -> int:
+    """
+    Mark the doc as prefilter_keep — Haiku said "keep" (has_citations or
+    sub-threshold confidence). Persistent terminal state for the prefilter
+    pass; the full-pipeline pass claims these rows alongside 'pending'.
+
+    INPUT:
+        - document_id: UUID string
+        - reason: one-sentence justification from the classifier
+        - confidence: float in [0, 1]
+        - signals_json: JSON-encoded array of signal slugs (audit trail)
+    ALGORITHM:
+        1. Validate confidence is a float in [0, 1].
+        2. Validate signals_json parses as a JSON array.
+        3. UPDATE run_state: status='prefilter_keep', prefilter_* columns
+           populated, last_attempt_finished=NOW(), error_message cleared.
+           Attempts is left as-is (this WAS a real attempt that produced a
+           verdict).
+    OUTPUT: log line + exit code
+    """
+    try:
+        conf = float(confidence)
+    except (TypeError, ValueError):
+        log.error(f"prefilter_confidence not parseable as float: {confidence!r}")
+        return 1
+    if not (0.0 <= conf <= 1.0):
+        log.error(f"prefilter_confidence out of range [0,1]: {conf}")
+        return 1
+    try:
+        signals = json.loads(signals_json)
+        if not isinstance(signals, list):
+            raise ValueError("signals must be a JSON array")
+    except (json.JSONDecodeError, ValueError) as e:
+        log.error(f"prefilter_signals not a valid JSON array: {e}")
+        return 1
+
+    engine = get_engine()
+    with engine.begin() as conn:
+        result = conn.execute(
+            text(
+                """
+                UPDATE citation_agent_v1_run_state
+                SET status = 'prefilter_keep',
+                    last_attempt_finished = NOW(),
+                    prefilter_reason = :reason,
+                    prefilter_confidence = :conf,
+                    prefilter_signals = CAST(:signals AS JSONB),
+                    error_message = NULL
+                WHERE document_id = :doc_id
+                """
+            ),
+            {
+                "doc_id": document_id,
+                "reason": reason,
+                "conf": conf,
+                "signals": json.dumps(signals),
+            },
+        )
+    if result.rowcount == 0:
+        log.error(f"document_id {document_id} not found in run_state")
+        return 1
+    log.info(
+        f"~ prefilter_keep {document_id[:8]}... "
+        f"conf={conf:.2f} signals={signals} reason={reason[:60]}"
+    )
+    return 0
+
+
+# =============================================================================
+# COMMAND: release_to_pending
+# =============================================================================
+
+
+def cmd_release_to_pending(document_id: str) -> int:
+    """
+    Release an in_progress doc back to pending. Used by --prefilter-only mode:
+    after the prefilter says "keep", we want the doc to remain pending so a
+    later full-pipeline pass picks it up.
+
+    Decrements `attempts` because the prefilter call does not count against
+    the extractor''s retry cap.
+
+    INPUT: document_id (UUID string)
+    ALGORITHM:
+        1. Atomically transition status='in_progress' -> 'pending'
+        2. Decrement attempts (clamped >= 0)
+        3. Clear last_attempt_finished + error_message
+    OUTPUT: log line + exit code
+    """
+    engine = get_engine()
+    with engine.begin() as conn:
+        result = conn.execute(
+            text(
+                """
+                UPDATE citation_agent_v1_run_state
+                SET status = 'pending',
+                    attempts = GREATEST(attempts - 1, 0),
+                    last_attempt_started = NULL,
+                    last_attempt_finished = NULL,
+                    error_message = NULL
+                WHERE document_id = :doc_id AND status = 'in_progress'
+                RETURNING attempts
+                """
+            ),
+            {"doc_id": document_id},
+        ).first()
+    if result is None:
+        log.warning(f"release_to_pending: {document_id[:8]}... not in_progress (no-op)")
+        return 1
+    log.info(f"~ released {document_id[:8]}... back to pending (attempts={result[0]})")
+    return 0
+
+
 def cmd_status(full: bool) -> int:
     """Print run-state snapshot."""
     engine = get_engine()
@@ -669,6 +886,21 @@ def main() -> int:
     p_skip.add_argument("document_id")
     p_skip.add_argument("reason")
 
+    p_pre = sub.add_parser("mark_prefiltered")
+    p_pre.add_argument("document_id")
+    p_pre.add_argument("reason")
+    p_pre.add_argument("confidence", type=float)
+    p_pre.add_argument("signals_json", help="JSON array of signal slugs")
+
+    p_keep = sub.add_parser("mark_prefilter_keep")
+    p_keep.add_argument("document_id")
+    p_keep.add_argument("reason")
+    p_keep.add_argument("confidence", type=float)
+    p_keep.add_argument("signals_json", help="JSON array of signal slugs")
+
+    p_rel = sub.add_parser("release_to_pending")
+    p_rel.add_argument("document_id")
+
     p_status = sub.add_parser("status")
     p_status.add_argument("--full", action="store_true")
 
@@ -685,6 +917,16 @@ def main() -> int:
         return cmd_mark_failed(args.document_id, args.error_message)
     if args.cmd == "mark_skipped":
         return cmd_mark_skipped(args.document_id, args.reason)
+    if args.cmd == "mark_prefiltered":
+        return cmd_mark_prefiltered(
+            args.document_id, args.reason, args.confidence, args.signals_json
+        )
+    if args.cmd == "mark_prefilter_keep":
+        return cmd_mark_prefilter_keep(
+            args.document_id, args.reason, args.confidence, args.signals_json
+        )
+    if args.cmd == "release_to_pending":
+        return cmd_release_to_pending(args.document_id)
     if args.cmd == "status":
         return cmd_status(args.full)
     return 1

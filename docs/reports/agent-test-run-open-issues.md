@@ -289,8 +289,8 @@ Python merge script → deduplicates across chunks → final.json
 
 **Scripts needed:**
 
-- `scripts/chunk_large_docs.py` — splits documents into overlapping chunks
-- `scripts/merge_chunk_results.py` — merges and deduplicates chunk outputs
+- `agentic-extraction/chunk_large_docs.py` — splits documents into overlapping chunks
+- `agentic-extraction/merge_chunk_results.py` — merges and deduplicates chunk outputs
 
 **Recommendation:** Implement Tier 2 first (covers 271 docs). Implement Tier 3 only if/when we process the 47 largest documents.
 

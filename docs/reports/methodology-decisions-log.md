@@ -166,7 +166,7 @@ This session pivoted the citation-extraction methodology from a 6-phase Gemini-A
 - *Right (chosen)* — tiered approach:
   - **Tier 1** (≤500 lines, ~93%, 3,331 docs ≤ 10K words + 848 docs 10K–25K) — single pass, current behavior
   - **Tier 2** (500–2000 lines, ~6%, 271 docs in 25K–100K range) — progressive file output: agent reads in 300-line chunks, appends to `data/extraction_results/{document_id}_partial.json` on disk, dedupes at end
-  - **Tier 3** (>2000 lines, ~1%, 47 docs >100K words) — pre-split + parallel agents + merge. Separate scripts (`scripts/chunk_large_docs.py`, `scripts/merge_chunk_results.py`). Deferred until Tier 2 proves out.
+  - **Tier 3** (>2000 lines, ~1%, 47 docs >100K words) — pre-split + parallel agents + merge. Separate scripts (`agentic-extraction/chunk_large_docs.py`, `agentic-extraction/merge_chunk_results.py`). Deferred until Tier 2 proves out.
 
 **Rationale.** Most documents fit comfortably in single-pass. Adding chunking infrastructure for the 7% that need it is cheap; forcing it on all 4,497 docs is wasteful and complicates the simple case. The disk-resident partial JSON is the persistent memory between chunks — no inter-agent state passing.
 
@@ -328,7 +328,7 @@ Same database (`climate_litigation`), parallel tables. Both queryable. Methodolo
 - **T4 test report** (raw_text vs text_md): `docs/reports/raw-vs-md-test.md`
 - **T1 metadata misattribution investigation** (in flight): `docs/reports/metadata-misattribution-T1.md`
 - **Agent definition files**: `.claude/agents/citation-extractor.md`, `.claude/agents/citation-verifier.md`
-- **Master rules document**: `docs/agent-citation-extraction-rules.md`
+- **Master rules document**: `agentic-extraction/docs/citation-extraction-rules.md`
 - **Export script**: `scripts/export_decisions_md.py`
 - **v7 pipeline (frozen reference)**: `scripts/5-extract-citations/`
 

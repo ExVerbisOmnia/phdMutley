@@ -446,7 +446,7 @@ These are decisions the orchestrator design depends on. None block writing the p
 5. **Where does the orchestration prompt live?** Two options:
    - As a `.md` file under `docs/plans/` that the user pastes when starting a session
    - As a slash command (`/run-corpus`) — requires Claude Code plugin setup
-   - **Recommend: a markdown file (`docs/plans/orchestrator-prompt.md`) for v1.** Slash command is a future improvement.
+   - **Recommend: a markdown file (`agentic-extraction/docs/orchestrator-prompt.md`) for v1.** Slash command is a future improvement.
 
 6. **Exclusion list for known-bad docs.** Aside from `is_garbled` (already filtered at seeding), are there docs you want to pre-exclude (e.g., the sibling Juliana docs with empty extracted_text)?
 

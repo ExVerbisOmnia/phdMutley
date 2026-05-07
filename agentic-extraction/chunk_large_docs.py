@@ -37,7 +37,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 
 # Add scripts dir to path for config import
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 from config import DB_CONFIG
 
 logging.basicConfig(
