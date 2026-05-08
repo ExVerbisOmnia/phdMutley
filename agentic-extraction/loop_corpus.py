@@ -65,7 +65,9 @@ from sqlalchemy import create_engine, text
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
-from config import DB_CONFIG  # noqa: E402
+from gcp_secrets import get_db_config  # noqa: E402
+
+DB_CONFIG = get_db_config()
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -73,13 +75,17 @@ from config import DB_CONFIG  # noqa: E402
 DECISIONS_DIR = PROJECT_ROOT / "data" / "decisions_md"
 EXTRACTION_DIR = PROJECT_ROOT / "data" / "extraction_results"
 LOG_DIR = PROJECT_ROOT / "logs"
+AGENT_DUMP_DIR = LOG_DIR / "agent_dumps"
 LOG_DIR.mkdir(exist_ok=True)
 EXTRACTION_DIR.mkdir(parents=True, exist_ok=True)
+AGENT_DUMP_DIR.mkdir(parents=True, exist_ok=True)
 
 ORCH_HELPER = "agentic-extraction/orchestrator_helper.py"
 
 # Per-step timeouts (seconds). A bit slack over what the agent should need.
-PREFILTER_TIMEOUT_S = 180          # Haiku reads one doc once. 3 min is generous.
+# Prefilter is one Haiku read+classify; cost scales with input size, so Tier 2/3
+# need more wall-clock than Tier 1 (which routinely lands in 20-35s).
+PREFILTER_TIMEOUT_S = {1: 180, 2: 600, 3: 1800}  # by tier
 EXTRACT_TIMEOUT_S = {1: 600, 2: 1800, 3: 3600}   # by tier
 VERIFY_TIMEOUT_S = {1: 600, 2: 1800, 3: 3600}
 
@@ -171,7 +177,7 @@ def claim_next_pending(
 def reset_in_progress_at_startup(engine) -> int:
     """Reset stale in_progress rows from a prior interrupted run."""
     return subprocess.run(
-        ["python", ORCH_HELPER, "startup"], cwd=str(PROJECT_ROOT)
+        [sys.executable, ORCH_HELPER, "startup"], cwd=str(PROJECT_ROOT)
     ).returncode
 
 
@@ -199,6 +205,7 @@ def run_claude_agent(
             capture_output=True,
             text=True,
             encoding="utf-8",
+            errors="replace",
             timeout=timeout_s,
             cwd=str(PROJECT_ROOT),
         )
@@ -232,6 +239,28 @@ def parse_agent_json_result(raw_stdout: str) -> dict | None:
     return _extract_json_block(raw_stdout)
 
 
+def is_agent_error_envelope(raw_stdout: str) -> bool:
+    """
+    Detect whether `claude --output-format json` returned a structurally-valid
+    *error* envelope rather than a successful result. Distinct from "unparseable
+    JSON" — the JSON parses fine; it just signals the agent's turn was aborted
+    (often `stop_reason=tool_use` mid-streaming) and produced no usable result.
+
+    Example shape we want to flag:
+        {"type":"result","subtype":"error_during_execution","is_error":true,
+         "stop_reason":"tool_use","terminal_reason":"aborted_streaming", ...}
+    """
+    if not raw_stdout:
+        return False
+    try:
+        env = json.loads(raw_stdout)
+    except json.JSONDecodeError:
+        return False
+    if not isinstance(env, dict):
+        return False
+    return bool(env.get("is_error")) or env.get("subtype") == "error_during_execution"
+
+
 def _extract_json_block(s: str) -> dict | None:
     """Find the last balanced {...} in s and parse it. Returns None on failure."""
     last_close = s.rfind("}")
@@ -249,6 +278,50 @@ def _extract_json_block(s: str) -> dict | None:
                 except json.JSONDecodeError:
                     continue
     return None
+
+
+MAX_DUMP_BYTES = 100_000  # cap per stream — Haiku occasionally echoes the source doc
+
+
+def dump_agent_output(
+    agent: str, doc_id: str, stdout: str, stderr: str, reason: str
+) -> Path | None:
+    """
+    Persist a failing agent invocation's raw stdout/stderr to AGENT_DUMP_DIR for
+    post-mortem inspection. Called from process_doc when the agent CLI exited
+    non-zero or returned output we couldn't parse as JSON. Best-effort — never
+    raises into the caller.
+
+    Filename: {ts}_{agent}_{reason}_{doc_id_short}.txt (sortable by time,
+    greppable by reason). Each stream is capped at MAX_DUMP_BYTES with a
+    truncation footer so a single failure can't blow up disk usage during a
+    4k-doc run.
+    """
+    def _truncate(s: str) -> str:
+        if not s:
+            return "(empty)"
+        b = s.encode("utf-8", errors="replace")
+        if len(b) <= MAX_DUMP_BYTES:
+            return s
+        head = b[:MAX_DUMP_BYTES].decode("utf-8", errors="replace")
+        return f"{head}\n\n[... truncated, total {len(b)} bytes ...]"
+
+    try:
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        path = AGENT_DUMP_DIR / f"{ts}_{agent}_{reason}_{doc_id[:8]}.txt"
+        body = (
+            f"timestamp: {datetime.now().isoformat()}\n"
+            f"agent:     {agent}\n"
+            f"doc_id:    {doc_id}\n"
+            f"reason:    {reason}\n"
+            f"\n--- STDOUT ---\n{_truncate(stdout)}\n"
+            f"\n--- STDERR ---\n{_truncate(stderr)}\n"
+        )
+        path.write_text(body, encoding="utf-8")
+        return path
+    except Exception as e:
+        log.warning(f"dump_agent_output failed for {doc_id[:8]}/{reason}: {e}")
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -332,10 +405,16 @@ Do NOT touch the database. Do NOT commit. Do NOT spawn sub-agents.
 # Per-doc pipeline
 # ---------------------------------------------------------------------------
 def run_helper(*args: str) -> tuple[int, str, str]:
-    """Invoke orchestrator_helper.py and return (rc, stdout, stderr)."""
-    cmd = ["python", ORCH_HELPER, *args]
+    """Invoke orchestrator_helper.py and return (rc, stdout, stderr).
+
+    Uses sys.executable (the running parent's interpreter path) instead of
+    bare "python" so a Windows PATH ambiguity can't silently swap out the
+    interpreter and cause import failures (e.g. missing sqlalchemy in a
+    different installation than the parent's).
+    """
+    cmd = [sys.executable, ORCH_HELPER, *args]
     p = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                       cwd=str(PROJECT_ROOT))
+                       errors="replace", cwd=str(PROJECT_ROOT))
     return (p.returncode, p.stdout, p.stderr)
 
 
@@ -384,8 +463,10 @@ def fail_or_retry(doc: dict, step: str, err_msg: str, started: float) -> dict:
         "release_for_retry", doc_id, f"{step}: {err_msg[:300]}"
     )
     if rc != 0:
+        # Log the full helper stderr — previously truncated at 200 chars, which
+        # cut off Python tracebacks before the actual exception message.
         log.error(f"[{short}] release_for_retry failed; falling back to mark_failed: "
-                  f"{ferr.strip()[:200]}")
+                  f"{ferr.strip()}")
         mark_failed(doc_id, f"{step} (release_for_retry failed): {err_msg}")
         return {"doc_id": doc_id, "outcome": "failed", "step": step,
                 "elapsed_s": elapsed}
@@ -426,14 +507,16 @@ def process_doc(
     # in practice the default mode will not re-prefilter when claiming a prefilter_keep
     # row, see the early-return branch below).
     if use_prefilter:
+        prefilter_to = PREFILTER_TIMEOUT_S.get(tier, 180)
         ok, out, err = run_claude_agent(
             "citation-prefilter",
             PREFILTER_PROMPT.format(doc_id=doc_id),
-            PREFILTER_TIMEOUT_S,
+            prefilter_to,
             doc_id,
         )
         if not ok:
             err_msg = (err or "").strip()[:300]
+            dump_agent_output("citation-prefilter", doc_id, out, err, "exit_nonzero")
             if prefilter_only:
                 return fail_or_retry(
                     doc, "prefilter", f"agent exit≠0: {err_msg}", started
@@ -483,12 +566,24 @@ def process_doc(
                     log.info(f"[{short}] prefilter: has={has} conf={conf:.2f} "
                              f"→ full pipeline")
             else:
-                # Unparseable JSON
+                # No usable verdict — distinguish two shapes:
+                #   * agent_error_envelope : CLI returned a valid JSON envelope
+                #     with is_error=true / subtype=error_during_execution
+                #     (e.g. aborted_streaming with stop_reason=tool_use). Cost
+                #     was real, no work done; transient — retry.
+                #   * unparseable_json     : envelope present but inner result
+                #     wasn't parseable JSON (markdown fences, prose wrapping,
+                #     malformed model output).
+                if is_agent_error_envelope(out):
+                    label = "agent_error_envelope"
+                    retry_msg = "agent error envelope (CLI aborted)"
+                else:
+                    label = "unparseable_json"
+                    retry_msg = "unparseable JSON"
+                dump_agent_output("citation-prefilter", doc_id, out, err, label)
                 if prefilter_only:
-                    return fail_or_retry(
-                        doc, "prefilter", "unparseable JSON", started
-                    )
-                log.warning(f"[{short}] prefilter returned unparseable JSON; "
+                    return fail_or_retry(doc, "prefilter", retry_msg, started)
+                log.warning(f"[{short}] prefilter returned {retry_msg}; "
                             f"falling through to full pipeline")
 
     # Defense-in-depth: if --prefilter-only somehow reached this point without
