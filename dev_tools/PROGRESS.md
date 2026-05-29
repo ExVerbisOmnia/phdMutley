@@ -1,6 +1,6 @@
 # phdMutley Progress Tracker
 
-**Primary tracking is now in `progress.db` (SQLite).** Use `python scripts/progress_tracker.py status` for current state. Dashboard at `docs/progress.html`.
+**Primary tracking is now in `docs/tracker/tracker.db` (SPP v2, Harness-managed).** Read with `sqlite3 docs/tracker/tracker.db "SELECT id, name, status FROM tasks WHERE status='in_progress'"` or via the Harness UI. Refresh the dashboard (`docs/progress.html`) with `python scripts/export_tracker_json.py`. Legacy: `progress.legacy.db` + `scripts/progress_tracker.legacy.py` (frozen, audit only). ID map: `docs/tracker/legacy-id-mapping.md`.
 
 ## Completed Phases
 - [x] Phase A: Data integrity fixes (Mar 2026)

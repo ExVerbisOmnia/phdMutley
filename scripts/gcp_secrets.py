@@ -1,16 +1,25 @@
 """
-Centralized Secrets Management via Google Cloud Secret Manager
-===============================================================
-All credentials are stored in GCP Secret Manager. No .env files — ever.
+Centralized Secrets Management
+==============================
+Primary source of credentials is Google Cloud Secret Manager. Env vars
+(loaded from `.env` if present, or set in the shell) take precedence —
+useful when Secret Manager is unreachable or for local dev.
+
+Resolution order, per credential:
+    DB_PASSWORD env var       -> Secret Manager `phdmutley-db-password`
+    GEMINI_API_KEY env var    -> Secret Manager `phdmutley-gemini-api-key`
+    GEMINI_KEY_* env vars     -> Secret Manager (single-key fallback)
 
 Local dev:  project extreme-hull-489213-p9, PostgreSQL on localhost:5433.
 GCP VM:     project gen-lang-client-0764097936, PostgreSQL on localhost:5432.
-            Set GCP_SECRET_PROJECT and DB_PORT env vars; password resolves
-            from Secret Manager automatically (same secret, both projects).
+            Set GCP_SECRET_PROJECT and DB_PORT env vars to switch.
 
-Authentication: IAM via Application Default Credentials (ADC).
+Authentication for Secret Manager: IAM via Application Default Credentials.
   - Local: `gcloud auth application-default login`
   - VM:    default Compute Engine service account (scopes=cloud-platform)
+
+Env vars are documented in `.env.template` at the project root. The local
+`.env` file is gitignored.
 
 Usage:
     from gcp_secrets import get_secret, get_db_config, get_database_url
@@ -63,11 +72,14 @@ def get_secret(secret_id: str, version: str = "latest") -> str:
 
 def get_db_password() -> str:
     """
-    Resolve DB password from GCP Secret Manager.
+    Resolve DB password: env var override -> GCP Secret Manager.
 
-    INPUT: None
-    OUTPUT: Password string
+    INPUT: None (checks DB_PASSWORD env var, then GCP)
+    OUTPUT: Password string (empty if both sources unavailable)
     """
+    env_pwd = os.environ.get("DB_PASSWORD")
+    if env_pwd:
+        return env_pwd
     try:
         return get_secret("phdmutley-db-password")
     except Exception:

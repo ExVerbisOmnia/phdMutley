@@ -1,0 +1,11 @@
+timestamp: 2026-05-10T18:45:17.030143
+agent:     citation-prefilter
+doc_id:    3f4f79ce-81be-54ad-9edd-353dbf0e8c45
+reason:    exit_nonzero
+
+--- STDOUT ---
+{"type":"result","subtype":"success","is_error":true,"api_error_status":429,"duration_ms":586,"duration_api_ms":0,"num_turns":1,"result":"You're out of extra usage · resets 7:10pm (Asia/Tokyo)","stop_reason":"stop_sequence","session_id":"1b728667-4e3f-4d6f-9754-40116fd88c0b","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"completed","fast_mode_state":"off","uuid":"324a770f-f42a-49f7-ba63-dbbed3f35ca9"}
+
+
+--- STDERR ---
+(empty)

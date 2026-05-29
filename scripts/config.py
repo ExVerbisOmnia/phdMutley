@@ -6,8 +6,9 @@ Centralizes paths, database connections, constants, and jurisdiction logic.
 
 VERSION: 5.0 - Pydantic Settings
 - Pydantic-validated configuration with __getitem__ bridge for backward compat
-- All credentials fetched from GCP Secret Manager (project: extreme-hull-489213-p9)
-- No .env files used — authentication via IAM/ADC
+- Credentials resolve via gcp_secrets: env vars first, then GCP Secret Manager
+  (project: extreme-hull-489213-p9). Env vars documented in .env.template.
+- Authentication for Secret Manager: IAM via Application Default Credentials.
 """
 
 import os

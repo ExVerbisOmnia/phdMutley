@@ -50,7 +50,9 @@ from sqlalchemy import create_engine, text
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
-from config import DB_CONFIG  # noqa: E402
+from gcp_secrets import get_db_config  # noqa: E402
+
+DB_CONFIG = get_db_config()
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -142,6 +144,7 @@ def run_prefilter(doc_id: str) -> tuple[dict | None, str | None, float]:
             capture_output=True,
             text=True,
             encoding="utf-8",
+            errors="replace",
             timeout=PREFILTER_TIMEOUT_S,
             cwd=str(PROJECT_ROOT),
         )

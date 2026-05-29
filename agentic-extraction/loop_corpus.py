@@ -101,6 +101,12 @@ RETRY_BACKOFF_S = 60
 
 # Stop-flag set on SIGINT; checked between dispatches.
 _STOP = threading.Event()
+# Set when a Claude Max usage-cap (429) envelope is detected from any agent
+# invocation. Distinct from _STOP so the shutdown banner can say "cap hit"
+# instead of "Ctrl+C". When set, also sets _STOP.
+_CAP_HIT = threading.Event()
+_CAP_LOCK = threading.Lock()  # serializes the cap-trip side effects (log banner + ntfy)
+_CAP_RESET_MSG: str = ""  # captured for the shutdown banner + ntfy
 
 
 # ---------------------------------------------------------------------------
@@ -259,6 +265,80 @@ def is_agent_error_envelope(raw_stdout: str) -> bool:
     if not isinstance(env, dict):
         return False
     return bool(env.get("is_error")) or env.get("subtype") == "error_during_execution"
+
+
+def detect_usage_cap(raw_stdout: str) -> str | None:
+    """
+    Return a short reset-time message if the agent CLI's stdout envelope signals
+    a Claude Max usage cap (HTTP 429), else None.
+
+    Why this exists: when Gus's Max subscription quota is exhausted, the
+    `claude --print` CLI does NOT raise or write to stderr. It returns exit≠0
+    with a structurally-valid result envelope like:
+        {"type":"result","subtype":"success","is_error":true,
+         "api_error_status":429,
+         "result":"You're out of extra usage · resets 9:40am (Asia/Tokyo)", ...}
+    Every subsequent dispatch will hit the same cap until the reset window —
+    burning one DB-side `attempts` increment per doc — so we want to trip a
+    kill switch on the first detection and let the run die cleanly with the
+    doc released back to 'pending'.
+    """
+    if not raw_stdout:
+        return None
+    try:
+        env = json.loads(raw_stdout)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(env, dict):
+        return None
+    if env.get("api_error_status") == 429:
+        return str(env.get("result") or "rate limited (HTTP 429)")
+    # Belt-and-braces: scan the result string for literal cap phrasing in case
+    # Anthropic ever changes the api_error_status field shape.
+    result = env.get("result")
+    if isinstance(result, str):
+        lo = result.lower()
+        if ("out of extra usage" in lo
+                or "usage limit reached" in lo
+                or "claude usage limit" in lo):
+            return result
+    return None
+
+
+def _trip_cap_killswitch(reset_msg: str) -> None:
+    """
+    Idempotently latch the cap-hit state. Logs a loud banner and fires a ntfy
+    notification on the first trip; later calls (e.g. from a second worker that
+    saw 429 before the SIGINT-style stop propagated) just return.
+
+    The check-then-set is wrapped in _CAP_LOCK so two workers racing into a
+    429 detection don't both fire ntfy and log the banner twice.
+    """
+    global _CAP_RESET_MSG
+    with _CAP_LOCK:
+        if _CAP_HIT.is_set():
+            return
+        _CAP_RESET_MSG = reset_msg
+        _CAP_HIT.set()
+        _STOP.set()
+    log.error("=" * 70)
+    log.error("CLAUDE MAX USAGE CAP DETECTED — kill switch tripped")
+    log.error(f"  reset signal: {reset_msg}")
+    log.error("  no new docs will be claimed; in-flight docs released to pending "
+              "(attempts decremented)")
+    log.error("=" * 70)
+    # Best-effort ntfy. Don't let notify failure crash the orchestrator.
+    try:
+        subprocess.Popen(
+            [
+                "powershell.exe", "-NoProfile",
+                "-File", "C:/Users/gusta/bin/notify.ps1",
+                "-Message", f"loop_corpus: Max usage cap hit. {reset_msg[:200]}",
+            ],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+    except Exception as e:
+        log.warning(f"ntfy dispatch failed (non-fatal): {e}")
 
 
 def _extract_json_block(s: str) -> dict | None:
@@ -475,6 +555,43 @@ def fail_or_retry(doc: dict, step: str, err_msg: str, started: float) -> dict:
             "elapsed_s": elapsed}
 
 
+def _cap_check_and_release(doc: dict, step: str, stdout: str, started: float) -> dict | None:
+    """
+    If `stdout` contains a Max usage-cap envelope, trip the kill switch, release
+    the doc back to 'pending' WITH `attempts` rolled back (the cap-hit was not
+    a real attempt — no work happened), and return a 'cap_hit' outcome dict.
+    Otherwise return None.
+
+    Why `release_to_pending` and not `release_for_retry`: a 429 from the Max
+    subscription is an environmental condition, not a doc-level failure. The
+    extractor never got a chance to read the document. Counting it against the
+    3-attempt retry cap would permanently quarantine docs that happen to catch
+    the cap window three times — even though they were never processed.
+    `release_to_pending` decrements attempts back to its pre-claim value, so
+    the doc returns to the queue in exactly the state it was claimed in.
+
+    Returning a dict short-circuits process_doc so the caller's normal failure/
+    success path is skipped — we don't want fail_or_retry to mark the doc
+    'failed' on the last attempt when the real cause was the cap.
+    """
+    reset_msg = detect_usage_cap(stdout)
+    if reset_msg is None:
+        return None
+    _trip_cap_killswitch(reset_msg)
+    doc_id = doc["document_id"]
+    short = doc_id[:8]
+    # release_to_pending takes only the document_id (no error message arg);
+    # the audit trail of WHY this doc was released lives in the log file and
+    # in _CAP_RESET_MSG, which the shutdown banner echoes.
+    rc, _, ferr = run_helper("release_to_pending", doc_id)
+    if rc != 0:
+        log.error(f"[{short}] release_to_pending after cap-hit failed: {ferr.strip()[:300]}")
+    else:
+        log.info(f"[{short}] released to pending (attempts rolled back) — cap at {step}")
+    return {"doc_id": doc_id, "outcome": "cap_hit", "step": step,
+            "elapsed_s": time.time() - started}
+
+
 def process_doc(
     doc: dict,
     use_prefilter: bool,
@@ -514,6 +631,9 @@ def process_doc(
             prefilter_to,
             doc_id,
         )
+        cap_result = _cap_check_and_release(doc, "prefilter", out, started)
+        if cap_result is not None:
+            return cap_result
         if not ok:
             err_msg = (err or "").strip()[:300]
             dump_agent_output("citation-prefilter", doc_id, out, err, "exit_nonzero")
@@ -604,6 +724,9 @@ def process_doc(
         extract_to,
         doc_id,
     )
+    cap_result = _cap_check_and_release(doc, "extract", out, started)
+    if cap_result is not None:
+        return cap_result
     if not ok:
         return fail_or_retry(
             doc, "extract", f"agent exit≠0: {err.strip()[:300]}", started
@@ -625,6 +748,9 @@ def process_doc(
         verify_to,
         doc_id,
     )
+    cap_result = _cap_check_and_release(doc, "verify", out, started)
+    if cap_result is not None:
+        return cap_result
     if not ok:
         return fail_or_retry(
             doc, "verify", f"agent exit≠0: {err.strip()[:300]}", started
@@ -667,7 +793,8 @@ def driver(args) -> int:
 
     counters = {
         "complete": 0, "prefiltered": 0, "prefilter_keep": 0,
-        "released": 0, "retry": 0, "failed": 0, "dispatched": 0,
+        "released": 0, "retry": 0, "failed": 0, "cap_hit": 0,
+        "dispatched": 0,
     }
     counters_lock = threading.Lock()
 
@@ -722,6 +849,9 @@ def driver(args) -> int:
     log.info(f"  prefilter_keep : {counters['prefilter_keep']}  (full pipeline owes work)")
     log.info(f"  retried        : {counters['retry']}  (transient — released back to pending)")
     log.info(f"  failed         : {counters['failed']}")
+    if counters["cap_hit"]:
+        log.info(f"  cap_hit        : {counters['cap_hit']}  (released back to pending — Max usage cap)")
+        log.info(f"  reset signal   : {_CAP_RESET_MSG}")
     if counters["released"]:
         log.info(f"  released       : {counters['released']}  (legacy outcome — should be 0)")
     log.info("=" * 70)

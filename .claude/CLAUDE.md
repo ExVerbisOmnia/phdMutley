@@ -6,6 +6,17 @@ This project inherits the **SIW** (Standard Issue Workflow) and **SIP** (Structu
 
 ---
 
+## Progress Tracking (SPP v2 — Harness)
+
+This project's tracker is **SPP v2** (Harness ADR-0015/0016; protocol at `~/.claude/protocols/SPP.md`). The canonical store is `docs/tracker/tracker.db` (SQLite, committed to git despite the `*.db` ignore rule). Tasks use `T-NNN` IDs, decisions `D-YYYYMMDD-NN`.
+
+- **Read:** `sqlite3 docs/tracker/tracker.db "SELECT id, name, status FROM tasks WHERE status='in_progress'"`, or the Harness UI at `localhost:3000/projetos` (project id `phdmutley`).
+- **Write:** through Claude / `harness tracker` operations — not by hand. Harness mirrors this tracker read-only every ~15 min; never edit via the Harness UI.
+- **Dashboard:** `docs/progress.html` reads `docs/data/progress.json`; regenerate with `python scripts/export_tracker_json.py` after tracker changes.
+- **Legacy (frozen, audit only):** `progress.legacy.db`, `scripts/progress_tracker.legacy.py`. Legacy→SPP ID map: `docs/tracker/legacy-id-mapping.md`. Migration one-off: `scripts/migrate_to_spp_v2.py`.
+
+---
+
 ## Project Overview
 
 **PhD Climate Litigation Citation Analysis** — doctoral research analyzing citation patterns between Global North and Global South courts in climate litigation decisions. Processes 2,924 judicial decisions from the Climate Case Chart database to quantify transnational judicial dialogue and North-South citation asymmetries.

@@ -36,9 +36,11 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, text
 
-# Add scripts dir to path for config import
+# Add scripts dir to path for gcp_secrets import (DB credentials only — no Gemini)
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from config import DB_CONFIG
+from gcp_secrets import get_db_config
+
+DB_CONFIG = get_db_config()
 
 logging.basicConfig(
     level=logging.INFO,

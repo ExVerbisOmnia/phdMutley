@@ -1,3 +1,6 @@
+# Nested independent repo (own git history + 113MB .venv) — not part of phdMutley
+climatecaselab/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -53,6 +56,9 @@ pdfs/failed/*
 *.sqlite
 *.sqlite3
 scripts/8-python_back_engine/db_backup/*
+# SPP v2 tracker is committed to git despite *.db above (Harness ADR-0015 §2)
+!docs/tracker/
+!docs/tracker/tracker.db
 
 # Logs
 logs/*.log

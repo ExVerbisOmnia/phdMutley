@@ -147,8 +147,7 @@ These live outside `agentic-extraction/` and are *not* moved:
 
 | Path                              | Why it's external                                            |
 |-----------------------------------|--------------------------------------------------------------|
-| `scripts/config.py`               | Project-wide config (DB creds, model IDs); shared with other pipelines |
-| `scripts/gcp_secrets.py`          | Secret Manager helper; shared                                |
+| `scripts/gcp_secrets.py`          | Secret Manager helper; the agentic pipeline imports `get_db_config` directly (bypasses `scripts/config.py` to avoid its eager Gemini-key fetch — agentic uses Claude only). |
 | `scripts/export_to_excel.py`      | The general exporter; `export_agentic_to_excel.py` reuses its `_clean_df_for_excel` helper |
 | `data/decisions_md/`              | Source corpus (Markdown decisions); read-only input          |
 | `data/extraction_results/`        | Pipeline outputs land here (per-doc JSON files)              |
@@ -156,7 +155,7 @@ These live outside `agentic-extraction/` and are *not* moved:
 | `logs/`                           | Run logs                                                     |
 | `documents`, `cases`, `extracted_text` (DB tables) | Source-of-truth read inputs; shared with other pipelines |
 
-`loop_corpus.py` adds `<project>/scripts` to `sys.path` so `from config import DB_CONFIG`
+`loop_corpus.py` adds `<project>/scripts` to `sys.path` so `from gcp_secrets import get_db_config`
 keeps working from the new location.
 
 ---

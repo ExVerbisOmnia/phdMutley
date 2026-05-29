@@ -1,0 +1,75 @@
+2026-05-09 05:29:30,638 [INFO] [MainThread] ======================================================================
+2026-05-09 05:29:30,638 [INFO] [MainThread] loop_corpus starting  mode=PREFILTER-ONLY  workers=2  prefilter=on  threshold=0.9  tier=any  max_docs=30
+2026-05-09 05:29:30,638 [INFO] [MainThread] log file: C:\Users\gusta\workspace\proj\phdMutley\logs\loop_corpus_20260509_052930.log
+2026-05-09 05:29:30,638 [INFO] [MainThread] ======================================================================
+2026-05-09 05:29:31,253 [INFO] Found 1 in_progress rows from previous session — resetting
+2026-05-09 05:29:31,267 [INFO] ✓ Reset 1 docs to pending; partial citation rows cleared
+2026-05-09 05:29:31,394 [INFO] [wkr_0] [f108e88e] start  tier=1 words=2814
+2026-05-09 05:29:31,398 [INFO] [wkr_1] [df038d1e] start  tier=1 words=2815
+2026-05-09 05:29:52,484 [INFO] [wkr_1] [df038d1e] PREFILTER_KEEP has=True conf=0.95 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'procedural_history_reference'] (21s)
+2026-05-09 05:29:52,488 [INFO] [wkr_1] [6837bc64] start  tier=1 words=2816
+2026-05-09 05:30:02,328 [INFO] [wkr_0] [f108e88e] PREFILTER_KEEP has=True conf=0.98 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'procedural_history_reference', 'legal_citation_signal', 'footnote_or_id_reference'] (31s)
+2026-05-09 05:30:02,333 [INFO] [wkr_0] [da5159b7] start  tier=1 words=2833
+2026-05-09 05:30:35,900 [INFO] [wkr_0] [da5159b7] PREFILTER_KEEP has=True conf=0.99 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal', 'footnote_or_id_reference'] (34s)
+2026-05-09 05:30:35,904 [INFO] [wkr_0] [bc9277e0] start  tier=1 words=2834
+2026-05-09 05:30:37,863 [INFO] [wkr_1] [6837bc64] PREFILTERED conf=0.92 signals=['statute_treaty_or_regulation_only', 'procedural_administrative_only'] (45s)
+2026-05-09 05:30:37,868 [INFO] [wkr_1] [7e989aec] start  tier=1 words=2835
+2026-05-09 05:31:01,143 [INFO] [wkr_0] [bc9277e0] PREFILTER_KEEP has=True conf=0.99 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal', 'procedural_history_reference'] (25s)
+2026-05-09 05:31:01,148 [INFO] [wkr_0] [70ad053d] start  tier=1 words=2841
+2026-05-09 05:31:09,730 [INFO] [wkr_1] [7e989aec] PREFILTER_KEEP has=True conf=0.98 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal', 'footnote_or_id_reference', 'procedural_history_reference'] (32s)
+2026-05-09 05:31:09,734 [INFO] [wkr_1] [efa68bd0] start  tier=1 words=2851
+2026-05-09 05:31:27,833 [INFO] [wkr_0] [70ad053d] PREFILTER_KEEP has=True conf=0.99 signals=['formal_reporter_or_neutral_citation', 'party_pairing_pattern', 'procedural_history_reference', 'legal_citation_signal'] (27s)
+2026-05-09 05:31:27,840 [INFO] [wkr_0] [0dc88f02] start  tier=1 words=2853
+2026-05-09 05:31:42,837 [INFO] [wkr_1] [efa68bd0] PREFILTERED conf=0.93 signals=['statute_treaty_or_regulation_only', 'general_topic_no_specific_case'] (33s)
+2026-05-09 05:31:42,842 [INFO] [wkr_1] [4a65ac1c] start  tier=1 words=2859
+2026-05-09 05:31:54,096 [INFO] [wkr_0] [0dc88f02] PREFILTER_KEEP has=True conf=0.98 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal'] (26s)
+2026-05-09 05:31:54,101 [INFO] [wkr_0] [dc3c5d8e] start  tier=1 words=2863
+2026-05-09 05:32:14,591 [INFO] [wkr_1] [4a65ac1c] PREFILTER_KEEP has=True conf=0.97 signals=['formal_reporter_or_neutral_citation', 'party_pairing_pattern', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal', 'footnote_or_id_reference', 'procedural_history_reference'] (32s)
+2026-05-09 05:32:14,597 [INFO] [wkr_1] [3a4283e1] start  tier=1 words=2868
+2026-05-09 05:32:17,067 [INFO] [wkr_0] [dc3c5d8e] PREFILTER_KEEP has=True conf=0.98 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal'] (23s)
+2026-05-09 05:32:17,072 [INFO] [wkr_0] [7a4c3eb5] start  tier=1 words=2869
+2026-05-09 05:32:38,313 [INFO] [wkr_0] [7a4c3eb5] PREFILTER_KEEP has=True conf=0.99 signals=['formal_reporter_or_neutral_citation', 'party_pairing_pattern', 'narrative_court_attribution'] (21s)
+2026-05-09 05:32:38,318 [INFO] [wkr_0] [87f68fea] start  tier=1 words=2876
+2026-05-09 05:32:41,726 [INFO] [wkr_1] [3a4283e1] PREFILTER_KEEP has=True conf=0.98 signals=['formal_reporter_or_neutral_citation', 'party_pairing_pattern', 'narrative_court_attribution', 'procedural_history_reference'] (27s)
+2026-05-09 05:32:41,729 [INFO] [wkr_1] [b5fd43b2] start  tier=1 words=2879
+2026-05-09 05:33:04,040 [INFO] [wkr_0] [87f68fea] PREFILTER_KEEP has=True conf=0.95 signals=['formal_reporter_or_neutral_citation', 'narrative_court_attribution'] (26s)
+2026-05-09 05:33:04,045 [INFO] [wkr_0] [c1a7e659] start  tier=1 words=2880
+2026-05-09 05:33:06,640 [WARNING] [wkr_1] [b5fd43b2] prefilter fail (attempt 1/3); releasing for retry, sleeping 60s: unparseable JSON
+2026-05-09 05:33:23,915 [INFO] [wkr_0] [c1a7e659] PREFILTER_KEEP has=True conf=0.95 signals=['formal_reporter_or_neutral_citation', 'party_pairing_pattern'] (20s)
+2026-05-09 05:33:23,920 [INFO] [wkr_0] [b5fd43b2] start  tier=1 words=2879
+2026-05-09 05:33:50,946 [INFO] [wkr_0] [b5fd43b2] PREFILTER_KEEP has=True conf=0.98 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference'] (27s)
+2026-05-09 05:33:50,953 [INFO] [wkr_0] [b42b057b] start  tier=1 words=2881
+2026-05-09 05:34:07,356 [INFO] [wkr_1] [33feac55] start  tier=1 words=2882
+2026-05-09 05:34:18,840 [INFO] [wkr_0] [b42b057b] PREFILTER_KEEP has=True conf=0.97 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'legal_citation_signal'] (28s)
+2026-05-09 05:34:18,846 [INFO] [wkr_0] [74e8918b] start  tier=1 words=2897
+2026-05-09 05:34:36,667 [INFO] [wkr_1] [33feac55] PREFILTER_KEEP has=True conf=0.91 signals=['formal_reporter_or_neutral_citation', 'narrative_court_attribution'] (29s)
+2026-05-09 05:34:36,671 [INFO] [wkr_1] [dead8120] start  tier=1 words=2901
+2026-05-09 05:34:46,650 [INFO] [wkr_0] [74e8918b] PREFILTER_KEEP has=True conf=0.96 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'shorthand_case_reference', 'footnote_or_id_reference'] (28s)
+2026-05-09 05:34:46,657 [INFO] [wkr_0] [bd8c2d1b] start  tier=1 words=2902
+2026-05-09 05:35:08,122 [INFO] [wkr_1] [dead8120] PREFILTER_KEEP has=True conf=0.99 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'legal_citation_signal'] (31s)
+2026-05-09 05:35:08,126 [INFO] [wkr_1] [81ebdf16] start  tier=1 words=2904
+2026-05-09 05:35:17,351 [INFO] [wkr_0] [bd8c2d1b] PREFILTER_KEEP has=True conf=0.98 signals=['formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'legal_citation_signal'] (31s)
+2026-05-09 05:35:17,354 [INFO] [wkr_0] [af90df33] start  tier=1 words=2908
+2026-05-09 05:35:38,636 [INFO] [wkr_1] [81ebdf16] PREFILTER_KEEP has=True conf=0.98 signals=['formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal', 'footnote_or_id_reference'] (31s)
+2026-05-09 05:35:38,643 [INFO] [wkr_1] [bc625dfd] start  tier=1 words=2909
+2026-05-09 05:35:43,585 [INFO] [wkr_0] [af90df33] PREFILTER_KEEP has=True conf=0.98 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'shorthand_case_reference', 'legal_citation_signal', 'footnote_or_id_reference', 'procedural_history_reference'] (26s)
+2026-05-09 05:35:43,591 [INFO] [wkr_0] [4773b530] start  tier=1 words=2914
+2026-05-09 05:36:07,006 [INFO] [wkr_1] [bc625dfd] PREFILTER_KEEP has=True conf=0.99 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'legal_citation_signal', 'footnote_or_id_reference'] (28s)
+2026-05-09 05:36:07,010 [INFO] [wkr_1] [7e64e243] start  tier=1 words=2915
+2026-05-09 05:36:15,646 [INFO] [wkr_0] [4773b530] PREFILTER_KEEP has=True conf=0.99 signals=['formal_reporter_or_neutral_citation', 'party_pairing_pattern', 'narrative_court_attribution', 'shorthand_case_reference'] (32s)
+2026-05-09 05:36:15,650 [INFO] [wkr_0] [80bb15c9] start  tier=1 words=2915
+2026-05-09 05:36:31,087 [INFO] [wkr_1] [7e64e243] PREFILTER_KEEP has=True conf=0.98 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference'] (24s)
+2026-05-09 05:36:31,092 [INFO] [wkr_1] [db348d8b] start  tier=1 words=2915
+2026-05-09 05:36:51,148 [INFO] [wkr_0] [80bb15c9] PREFILTER_KEEP has=True conf=0.95 signals=['formal_reporter_or_neutral_citation'] (35s)
+2026-05-09 05:36:51,154 [INFO] [wkr_0] [2db3558d] start  tier=1 words=2917
+2026-05-09 05:36:57,940 [INFO] [wkr_1] [db348d8b] PREFILTER_KEEP has=True conf=0.97 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'legal_citation_signal'] (27s)
+2026-05-09 05:37:18,938 [INFO] [wkr_0] [2db3558d] PREFILTER_KEEP has=True conf=0.99 signals=['party_pairing_pattern', 'formal_reporter_or_neutral_citation', 'narrative_court_attribution', 'shorthand_case_reference', 'legal_citation_signal', 'footnote_or_id_reference', 'procedural_history_reference'] (28s)
+2026-05-09 05:37:18,939 [INFO] [MainThread] ======================================================================
+2026-05-09 05:37:18,939 [INFO] [MainThread] loop_corpus finished in 7.8 min
+2026-05-09 05:37:18,939 [INFO] [MainThread]   dispatched     : 30
+2026-05-09 05:37:18,939 [INFO] [MainThread]   complete       : 0
+2026-05-09 05:37:18,939 [INFO] [MainThread]   prefiltered    : 2     (Sonnet bypassed)
+2026-05-09 05:37:18,940 [INFO] [MainThread]   prefilter_keep : 27  (full pipeline owes work)
+2026-05-09 05:37:18,940 [INFO] [MainThread]   retried        : 1  (transient — released back to pending)
+2026-05-09 05:37:18,940 [INFO] [MainThread]   failed         : 0
+2026-05-09 05:37:18,940 [INFO] [MainThread] ======================================================================
