@@ -1457,6 +1457,145 @@
           "scope": "Phase H: Pipeline v8 Redesign (D24)"
         }
       ]
+    },
+    {
+      "id": 20,
+      "name": "Meeting Action Items (5 May)",
+      "status": "in_progress",
+      "sort_order": 20,
+      "tasks": [
+        {
+          "id": "T-116",
+          "subject": "Re-engineer agentic extraction for token economy",
+          "description": "Reduce per-document token burn in the headless Claude Code (Max-quota) extraction so more documents run per session and fewer sessions are needed. Gustavo claims ~5x token saving from the morning reconfig.",
+          "owner": null,
+          "priority": "medium",
+          "status": "in_progress",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-117",
+          "subject": "Resume agentic extraction run to build review volume",
+          "description": "After the token-economy reconfig, keep the agentic extraction running to accumulate enough output to review. No target North->South citations (e.g., STF citing the Dutch Urgenda court) have surfaced yet.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-118",
+          "subject": "Explore token-saving rules for domestic citations",
+          "description": "Investigate short-circuiting expensive downstream rules once a citation is identified as domestic (e.g., when reviewing a US case), to cut token spend on domestications. Discuss approach with Claude.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-119",
+          "subject": "Send Lucas the 3 agent rule files + extraction script",
+          "description": "Deliver the three agent rule documents (translated/edited pipeline rules) plus the current extraction script so Lucas can review. He can load the MDs into Claude for a quick read and verify details by hand.",
+          "owner": null,
+          "priority": "medium",
+          "status": "in_progress",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-120",
+          "subject": "Review agent rule docs + sample extraction output",
+          "description": "Lucas reviews the three agent rule docs and the sample Excel export, then sends questions/feedback.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-121",
+          "subject": "Sync with Kate (Fri) + probe October workshop deadline & data provision",
+          "description": "Friday call with Kate: share project updates and explicitly probe (a) the deadline for the October workshop deliverable and (b) whether they will provide the data.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-122",
+          "subject": "Prepare & deliver Sabin Center seminar presentation",
+          "description": "Lucas's submitted text was accepted for the Sabin Center online seminar (21-22 May). Build an updated PowerPoint from the LSI deck (possibly using the new format) and present 10-15 min.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-123",
+          "subject": "Read & comment on co-presenters' seminar texts",
+          "description": "Read the other participants' texts and provide live comments during the Sabin Center seminar.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-124",
+          "subject": "Review Lucas's seminar presentation (on request)",
+          "description": "Gustavo to give Lucas's seminar presentation a look to help refine it, when asked.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-125",
+          "subject": "Investigate WTO (OMC) decision in corpus — non-jurisdictional body",
+          "description": "A WTO (OMC) decision showed up being analyzed in the extraction output. WTO is not a jurisdictional body — check whether it belongs in scope and whether this is a data-quality/classification issue.",
+          "owner": null,
+          "priority": "medium",
+          "status": "pending",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-126",
+          "subject": "Set up Lucas access to Gustavo's Claude account (Safari login, tablet 2FA)",
+          "description": "Enable Lucas to run things on Gustavo's Claude account by saving the login in Safari; login confirmation routes to Gustavo's tablet for 2FA. Claude Team plan rejected (needs >=5 users + corporate domain).",
+          "owner": null,
+          "priority": "medium",
+          "status": "completed",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-127",
+          "subject": "PENDENCY: October workshop deliverable deadline unknown",
+          "description": "Kate has not given a deadline for the October workshop deliverable, nor confirmed whether they will provide the data. Two risks: they decline to provide data, or there is still ample time. Blocks run-cadence planning.",
+          "owner": null,
+          "priority": "medium",
+          "status": "blocked",
+          "due_date": null,
+          "completed_date": null
+        },
+        {
+          "id": "T-128",
+          "subject": "PENDENCY: Gustavo scholarship (bolsa) appeal pending — capacity impact",
+          "description": "Gustavo was not selected for the scholarship and has filed an appeal. If granted, it requires a 40 h/week minimum in-person commitment (project-based curriculum, per-project deadlines), affecting project availability.",
+          "owner": null,
+          "priority": "medium",
+          "status": "blocked",
+          "due_date": null,
+          "completed_date": null
+        }
+      ],
+      "decisions": []
     }
   ],
   "decisions": [
@@ -1747,6 +1886,46 @@
       "source": "D24 Comment Review (C6/C36/C37)",
       "status": "pending",
       "scope": "Phase H: Pipeline v8 Redesign (D24)"
+    },
+    {
+      "id": "D-20260505-01",
+      "title": "Keep running agentic extraction (post reconfig) to build review volume",
+      "rationale": "Both principals agreed; more volume is the prerequisite for methodology validation and for showing Kate signal.",
+      "source": null,
+      "status": "active",
+      "scope": "Phase I: Agentic Extraction"
+    },
+    {
+      "id": "D-20260505-02",
+      "title": "Counting rule reaffirmed — collapse repeated same-case citations to one count, retain all snippets",
+      "rationale": "Preserves the agreed unit of analysis (one cite per case per decision) without losing the underlying evidence.",
+      "source": null,
+      "status": "active",
+      "scope": "Phase I: Agentic Extraction"
+    },
+    {
+      "id": "D-20260505-03",
+      "title": "Domestic citations — capture & bucket, skip expensive downstream classification",
+      "rationale": "Domestic citations must still be read/captured, but they are not relevant to the cross-border categorizations, so the costly steps can be short-circuited.",
+      "source": null,
+      "status": "active",
+      "scope": "Phase I: Agentic Extraction"
+    },
+    {
+      "id": "D-20260505-04",
+      "title": "Processing scope = own-DB is_decision/processed; motions & amicus excluded",
+      "rationale": "The in-house classification (built on Lucas's rules) is authoritative for scope; reuses prior decision-classification work.",
+      "source": null,
+      "status": "active",
+      "scope": "project"
+    },
+    {
+      "id": "D-20260505-05",
+      "title": "Account access via shared Safari login (tablet 2FA), not Claude Team plan",
+      "rationale": "Lowest-friction path; the Claude Team plan requires >=5 users and a corporate domain, which is not viable for a two-person project.",
+      "source": null,
+      "status": "active",
+      "scope": "infra"
     }
   ],
   "dependencies": [
@@ -1903,6 +2082,20 @@
       "dep_type": "blocks",
       "task_subject": "Clean up GCP resources (VM + GCS bucket)",
       "depends_on_subject": "Step F: Post-extraction VM analysis & data export"
+    },
+    {
+      "task_id": "T-117",
+      "depends_on": "T-116",
+      "dep_type": "blocks",
+      "task_subject": "Resume agentic extraction run to build review volume",
+      "depends_on_subject": "Re-engineer agentic extraction for token economy"
+    },
+    {
+      "task_id": "T-127",
+      "depends_on": "T-121",
+      "dep_type": "blocks",
+      "task_subject": "PENDENCY: October workshop deliverable deadline unknown",
+      "depends_on_subject": "Sync with Kate (Fri) + probe October workshop deadline & data provision"
     }
   ],
   "action_items": [
@@ -1972,20 +2165,21 @@
     }
   ],
   "summary": {
-    "total_tasks": 107,
+    "total_tasks": 120,
     "tasks_by_status": {
-      "completed": 69,
-      "in_progress": 1,
-      "pending": 33,
-      "deferred": 4
+      "completed": 70,
+      "in_progress": 3,
+      "pending": 41,
+      "deferred": 4,
+      "blocked": 2
     },
-    "total_phases": 19,
+    "total_phases": 20,
     "phases_by_status": {
       "completed": 14,
       "pending": 4,
-      "in_progress": 1
+      "in_progress": 2
     },
-    "exported_at": "2026-05-29T10:21:42.878898+00:00",
+    "exported_at": "2026-06-10T17:41:03.487233+00:00",
     "deliverable_deadline": "2026-03-09",
     "article_deadline": "2026-03-15",
     "source": "docs/tracker/tracker.db (SPP v2)"
