@@ -1,1 +1,0 @@
-winget install --id PostgreSQL.PostgreSQL.18 -e --accept-source-agreements --accept-package-agreements --override "--mode unattended --unattendedmodeui none --superpassword phdmutley_local --servicename postgresql-x64-18 --serviceaccount postgres --servicepassword phdmutley_local --serverport 5433 --enable-components server,commandlinetools"
